@@ -16,6 +16,9 @@
     "maintainer": true
   },
   "exclude": [
+    "scripts",
+    "work",
+    "temp",
     "tests"
   ],
   "frameworks": "arduino",

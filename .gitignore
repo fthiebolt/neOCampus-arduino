@@ -1,32 +1,19 @@
-# Prerequisites
-*.d
+# Files to ignore
+*.sav
+*.bak
+*.old
+*.swp
+*.kate-swp
+*.pyc
+*.bin
+.~*
+*~
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+# PlatformIO specific
+.clang_complete
+.gcc-flags.json
+.pioenvs
+.piolibdeps
 
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
+# others
+.vscode

@@ -1,0 +1,23 @@
+{
+  "name": "neOCampus-arduino",
+  "keywords": "sensOCampus, library, client, nodemcu, neOCampus, IoT",
+  "description": "A library for arduino end-devices to interact with the neOCampus IoT framework.",
+  "homepage": "https://neocampus.univ-tlse3.fr",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/fthiebolt/neOCampus-arduino.git"
+  },
+  "version": "0.0.1",
+  "authors":
+  {
+    "name": "fthiebolt",
+    "url": "https://github.com/fthiebolt",
+    "maintainer": true
+  },
+  "exclude": [
+    "tests"
+  ],
+  "frameworks": "arduino",
+  "platforms": "*"
+}

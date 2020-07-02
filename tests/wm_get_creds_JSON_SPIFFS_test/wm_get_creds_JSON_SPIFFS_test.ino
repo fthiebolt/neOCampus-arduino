@@ -1,6 +1,8 @@
 #include <WiFiManager.h>
 #include <HTTPClient.h>
-
+#include <PubSubClient.h>
+#include <ArduinoJson.h>
+#include <SPIFFS.h>
 
 /* MAC vars */
 uint8_t macAddr[6];
@@ -15,6 +17,12 @@ WiFiManager wm;
 HTTPClient httpsClient;
 const char* root_ca = NULL;
 char url [90];
+
+/* JSon Vars */
+StaticJsonDocument<200> JSON_cred;
+
+/* MQTTS vars */
+WiFiClientSecure wcs;
 
 void get_MAC(){
   Serial.println();
@@ -49,6 +57,44 @@ void get_credentials(){
       String payload = httpsClient.getString();
       Serial.println(httpCode);
       Serial.println(payload);
+      DeserializationError error = deserializeJson(JSON_cred, payload);
+
+      // Test if parsing succeeds.
+      if (error) {
+        Serial.print(F("deserializeJson() failed: "));
+        Serial.println(error.c_str());
+        return;
+      }
+      const char* login = JSON_cred["login"];
+      const char* pwd = JSON_cred["password"];
+      const char* server = JSON_cred["server"];
+      int port = JSON_cred["port"];
+      Serial.println(login);
+      Serial.println(pwd);
+      Serial.println(server);
+      Serial.println(port);
+      File file = SPIFFS.open("/credentials.txt", "w");
+ 
+      if (!file) {
+        Serial.println("Error opening file for writing");
+        return;
+      }
+     
+      int bytesWritten = file.print("Login");
+      if (serializeJson(doc, file) == 0) {
+        Serial.println(F("Failed to write to file"));
+      }
+
+      if (bytesWritten > 0) {
+      Serial.println("File was written");
+      Serial.println(bytesWritten);
+   
+      } else {
+      Serial.println("File write failed");
+    }
+   
+    file.close();
+    }
     }else {
       Serial.println("Error on HTTPs request");
     }
@@ -59,9 +105,21 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
   delay(1000);
+  bool success = SPIFFS.begin();
+ 
+  if (success) {
+    Serial.println("File system mounted with success");
+  } else {
+    Serial.println("Error mounting the file system");
+    return;
+  }
   get_MAC();
   set_WiFi();
-  get_credentials();
+  if(!SPIFFS.exists("/creds.txt"));
+    get_credentials();
+  else{
+    
+  }
 }
 
 void loop() {

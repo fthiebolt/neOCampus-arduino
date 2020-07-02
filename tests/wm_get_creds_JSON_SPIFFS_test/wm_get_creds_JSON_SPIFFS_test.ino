@@ -4,6 +4,8 @@
 #include <ArduinoJson.h>
 #include <SPIFFS.h>
 
+#define CREDENTIALS "/cred.txt"
+
 /* MAC vars */
 uint8_t macAddr[6];
 char strMacAddr[32];
@@ -44,8 +46,6 @@ void set_WiFi(){
     Serial.println("Conn Doomed");
   else{
     Serial.println("Conn est");
-    Serial.print("New IP Addr: ");
-    Serial.println(WiFi.localIP());
   }
 }
 
@@ -57,8 +57,8 @@ void get_credentials(){
       String payload = httpsClient.getString();
       Serial.println(httpCode);
       Serial.println(payload);
+      /* Unboxing credentials from cred server */
       DeserializationError error = deserializeJson(JSON_cred, payload);
-
       // Test if parsing succeeds.
       if (error) {
         Serial.print(F("deserializeJson() failed: "));
@@ -73,37 +73,30 @@ void get_credentials(){
       Serial.println(pwd);
       Serial.println(server);
       Serial.println(port);
-      File file = SPIFFS.open("/credentials.txt", "w");
- 
+      
+      /* Saving credentials to SPIFFS */
+      File file = SPIFFS.open(CREDENTIALS, "w");
       if (!file) {
         Serial.println("Error opening file for writing");
         return;
       }
-     
-      int bytesWritten = file.print("Login");
-      if (serializeJson(doc, file) == 0) {
+      if (serializeJson(JSON_cred, file) == 0) {
         Serial.println(F("Failed to write to file"));
-      }
-
-      if (bytesWritten > 0) {
-      Serial.println("File was written");
-      Serial.println(bytesWritten);
-   
       } else {
-      Serial.println("File write failed");
-    }
-   
-    file.close();
-    }
+        Serial.println(F("Credentials successfully saved"));
+      }
+      file.close();
     }else {
-      Serial.println("Error on HTTPs request");
+      Serial.println(F("Error on HTTPs request"));
     }
     httpsClient.end();
 }
 
 void setup() {
+  delay(3000);
   // put your setup code here, to run once:
-  Serial.begin(9600);
+  Serial.begin(115200);
+  Serial.println(F("Hello ..."));
   delay(1000);
   bool success = SPIFFS.begin();
  
@@ -115,10 +108,35 @@ void setup() {
   }
   get_MAC();
   set_WiFi();
-  if(!SPIFFS.exists("/creds.txt"));
+  /* Do I have my credentials? */
+  if(!SPIFFS.exists(CREDENTIALS))
     get_credentials();
   else{
-    
+    /* Yes i do */
+    File file = SPIFFS.open(CREDENTIALS);
+    if(!file){
+      Serial.println("Failed to open file for reading");
+      return;
+    }
+    /* credentials are stored as StaticJsonDocument, let's deserialize it*/
+    DeserializationError error = deserializeJson(JSON_cred, file);
+    // Test if parsing succeeds.
+    if (error) {
+      Serial.print(F("deserializeJson() failed: "));
+      Serial.println(error.c_str());
+      return;
+    }
+    file.close();
+    const char* login = JSON_cred["login"];
+    const char* pwd = JSON_cred["password"];
+    const char* server = JSON_cred["server"];
+    int port = JSON_cred["port"];
+    Serial.println("I found this in my config!");
+    Serial.println(login);
+    Serial.println(pwd);
+    Serial.println(server);
+    Serial.println(port);
+
   }
 }
 

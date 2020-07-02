@@ -43,7 +43,7 @@ void set_WiFi(){
 
 void get_credentials(){
   Serial.println("getting credentials");
-  httpsClient.begin(url);
+  httpsClient.begin(url); //since URL start by HTTPS, implicit call to begin(url, ca_cert = NULL);
     int httpCode = httpsClient.GET();
     if (httpCode > 0) { //Check for the returning code
       String payload = httpsClient.getString();

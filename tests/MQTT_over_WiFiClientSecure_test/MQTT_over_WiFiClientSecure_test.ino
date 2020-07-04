@@ -152,12 +152,11 @@ void mqtts(){
       //snprintf(topic,sizeof(topic),"%s/%s",topic_base, topic_class);
       //Serial.print(F("Topic: "));
       //Serial.println(F(topic));
-      client.unsubscribe("device");
-      if(!client.subscribe("/irit2/366/airquality/command")){
-        Serial.println("Failed to subscribe");
-      }else{
-        Serial.println("subscribing done");
-      }
+      //if(!client.subscribe("/irit2/366/airquality/command")){
+      //  Serial.println("Failed to subscribe");
+      //}else{
+      //  Serial.println("subscribing done");
+      //}
       //snprintf(topic,sizeof(topic),"%s/%s",topic, "/command");
       //Serial.print(F("Topic: "));
       //Serial.println(F(topic));

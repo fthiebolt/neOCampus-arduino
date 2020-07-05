@@ -2,6 +2,7 @@
 #include <WiFiClientSecure.h>
 #include <HTTPClient.h>
 #include <PubSubClient.h>
+#include <Arduino.h>
 #include <ArduinoJson.h>
 /*#include <WiFiManager.h>*/
 /* MAC vars */
@@ -9,8 +10,8 @@ uint8_t macAddr[6];
 char strMacAddr[32];
 
 /* WiFi vars */
-const char * wifi_ssid; //TODO
-const char* wifi_pwd;   //TODO
+const char *wifi_ssid; //TODO
+const char *wifi_pwd;  //TODO
 WiFiClientSecure wifiClient;
 PubSubClient client(wifiClient);
 

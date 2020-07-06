@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <ArduinoJson.h>
+#include "neologger.hpp"
 
 #define JSON_CRED_SIZE 256
 #define LOGIN_SIZE 32

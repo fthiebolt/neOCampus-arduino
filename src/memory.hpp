@@ -19,9 +19,16 @@
 
 class memory{
 public:
+    /* starting the file system*/
     memory();
-    bool write(char* buf, int buf_size);
-    char* read(char* doc);
+    /* Writes a buffer int a file 
+     * return true if no errors
+     */
+    bool write(char* file, char* buf, int buf_size);
+    /* Read from a file
+     * return what has been read.
+     */
+    char* read(char* file);
 
 };
 

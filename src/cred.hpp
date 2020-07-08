@@ -9,10 +9,13 @@
 #include "neologger.hpp"
 /* credential answer size */
 #define JSON_CRED_SIZE (JSON_OBJECT_SIZE(4))
+/* credential field sizes */
 #define LOGIN_SIZE 32
 #define PWD_SIZE 64
 #define SERVER_SIZE 32
 
+#define SANDBOX_MODE true 
+/* sandbox values */
 #define DEFT_LOGIN "test"
 #define DEFT_PWD "test"
 #define DEFT_SERV "https://neocampus.univ-tlse3.fr"

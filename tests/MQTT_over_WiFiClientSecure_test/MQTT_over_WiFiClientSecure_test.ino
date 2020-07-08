@@ -7,6 +7,10 @@
 #define CREDENTIALS "/cred.txt"
 #define CONFIG "/conf.txt"
 
+#define DEFT_LOGIN "test"
+#define DEFT_PWD "test"
+#define DEFT_SERVER "neocampus.univ-tlse3.fr"
+#define DEFT_PORT "10888"
 /* MAC vars */
 uint8_t macAddr[6];
 char strMacAddr[32];
@@ -32,8 +36,8 @@ int cred_port = JSON_cred["port"];*/
 
 
 /* MQTTS vars */
-WiFiClientSecure wcs;
-
+WiFiClientSecure *WCSClient = new WiFiClientSecure;
+PubSubClient client(*WCSClient);
 
 void get_MAC(){
   Serial.println();
@@ -130,33 +134,41 @@ void get_conf(){
    } 
    httpsClient.end();
 }
+void callback(char* topic, byte* payload, unsigned int length){
+  // byte* p = (byte*)malloc(length);
+  // memcpy(p, payload,length);
+  Serial.print("Message arrived [");
+  Serial.print(topic);
+  Serial.print("] ");
+  for (int i=0;i<length;i++) {
+    Serial.print((char)payload[i]);
+  }
+  Serial.println();
+  
+}
 
 void mqtts(){
   Serial.println("Attempting to get conf");
-  WiFiClientSecure *WCSClient = new WiFiClientSecure;
   if(WCSClient) {
     WCSClient -> setCACert(root_ca);
     const char* cred_login = JSON_cred["login"];
     const char* cred_pwd = JSON_cred["password"];
     const char*  conf_server = JSON_cred["server"];
     int conf_port = JSON_cred["port"]; 
-    PubSubClient client(conf_server, conf_port, *WCSClient);
+    client.setServer(conf_server, conf_port);
     if(client.connect(conf_server,cred_login, cred_pwd)){
       const char* topic_base = JSON_conf["topic"];
-      Serial.println("Topic found:");
-      Serial.println(F(topic_base));
+      //Serial.println("Topic found:");
+      //Serial.println(topic_base);
       const char* topic_class = JSON_conf["module"];
-      Serial.println("class found:");
-      Serial.println(F(topic_class));
-      //char topic [30];
-      //snprintf(topic,sizeof(topic),"%s/%s",topic_base, topic_class);
-      //Serial.print(F("Topic: "));
-      //Serial.println(F(topic));
-      //if(!client.subscribe("/irit2/366/airquality/command")){
-      //  Serial.println("Failed to subscribe");
-      //}else{
-      //  Serial.println("subscribing done");
-      //}
+      //Serial.println("class found:");
+      //Serial.println(topic_class);
+      if(!client.subscribe("testTopic/airquality/command")){
+        Serial.println("Failed to subscribe");
+      }else{
+        Serial.println("subscribing done");
+      }
+      client.setCallback(callback);
       //snprintf(topic,sizeof(topic),"%s/%s",topic, "/command");
       //Serial.print(F("Topic: "));
       //Serial.println(F(topic));
@@ -170,6 +182,24 @@ void mqtts(){
     Serial.println("Failed to set up WiFiClientSecure");
   }
 }
+
+void reconnect(){
+  while(client.connected()){
+    Serial.print(F("MQTT connection pending..."));
+    if(client.connect(DEFT_SERVER)){
+      Serial.println(F("Connected"));
+      client.publish("test/Airquality","hello world");
+      client.subscribe("airquality/command");
+    }else{
+      Serial.print("failed, rc=");
+      Serial.print(client.state());
+      Serial.println(" try again in 5 seconds");
+      // Wait 5 seconds before retrying
+      delay(5000);
+    }
+  }
+}
+
 void setup() {
   delay(3000);
   // put your setup code here, to run once:
@@ -232,9 +262,14 @@ void setup() {
   }
   mqtts();
 }
+
 void loop() {
   // put your main code here, to run repeatedly:
   delay(1000);
   Serial.print(".");
   Serial.flush();
+  if(!client.connected()){
+    reconnect();
+  }
+  client.loop();
 }

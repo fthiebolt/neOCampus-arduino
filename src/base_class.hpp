@@ -21,6 +21,7 @@ private:
     char *sen_type;
     /* how often does this sensor acquires data? */
     float acqusisition_frequency;
+    /* Add more generic sensor settings */
 };
 
 

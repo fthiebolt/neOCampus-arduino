@@ -10,7 +10,11 @@
 #define DEFT_LOGIN "test"
 #define DEFT_PWD "test"
 #define DEFT_SERVER "neocampus.univ-tlse3.fr"
-#define DEFT_PORT "10888"
+#define DEFT_TOPIC "TestTopic/airquality"
+#define DEFT_TOPIC_CLASS "TestTopic/airquality/command"
+
+#define DEFT_PORT 8883
+
 /* MAC vars */
 uint8_t macAddr[6];
 char strMacAddr[32];
@@ -36,8 +40,11 @@ int cred_port = JSON_cred["port"];*/
 
 
 /* MQTTS vars */
-WiFiClientSecure *WCSClient = new WiFiClientSecure;
-PubSubClient client(*WCSClient);
+const char* _cacert = NULL;
+const char* _clicert = nullptr;
+const char* _clikey = nullptr;
+WiFiClientSecure *wcsClient = new WiFiClientSecure;
+PubSubClient client(*wcsClient);
 
 void get_MAC(){
   Serial.println();
@@ -140,56 +147,53 @@ void callback(char* topic, byte* payload, unsigned int length){
   Serial.print("Message arrived [");
   Serial.print(topic);
   Serial.print("] ");
-  for (int i=0;i<length;i++) {
-    Serial.print((char)payload[i]);
+  if(strncmp(topic,DEFT_TOPIC_CLASS,size_t(sizeof(DEFT_TOPIC_CLASS)))==0){
+    Serial.println(F(": message received"));
+    for (int i=0;i<length;i++) {
+      Serial.print((char)payload[i]);
+    }
+  }else{
+    Serial.println(F("Received a non-airquality related message"));
   }
-  Serial.println();
-  
 }
 
 void mqtts(){
+wcsClient->setCACert(_cacert);
+wcsClient->setCertificate(_clicert);
+wcsClient->setPrivateKey(_clikey);
   Serial.println("Attempting to get conf");
-  if(WCSClient) {
-    WCSClient -> setCACert(root_ca);
+  if(wcsClient) {
     const char* cred_login = JSON_cred["login"];
     const char* cred_pwd = JSON_cred["password"];
     const char*  conf_server = JSON_cred["server"];
     int conf_port = JSON_cred["port"]; 
-    client.setServer(conf_server, conf_port);
-    if(client.connect(conf_server,cred_login, cred_pwd)){
-      const char* topic_base = JSON_conf["topic"];
-      //Serial.println("Topic found:");
-      //Serial.println(topic_base);
-      const char* topic_class = JSON_conf["module"];
-      //Serial.println("class found:");
-      //Serial.println(topic_class);
-      if(!client.subscribe("testTopic/airquality/command")){
-        Serial.println("Failed to subscribe");
+    //client.setServer(conf_server, conf_port);
+    client.setServer(DEFT_SERVER, DEFT_PORT);
+    //if(client.connect(conf_server,cred_login, cred_pwd)){
+      if(client.connect(DEFT_SERVER, DEFT_LOGIN, DEFT_PWD)){
+      Serial.println(F("Client connected"));
+      if(!client.subscribe(DEFT_TOPIC_CLASS)){
+        Serial.println("Failed to subscribe to ");
+        Serial.println(DEFT_TOPIC_CLASS);
       }else{
-        Serial.println("subscribing done");
+        Serial.println("subscribing done to ");
+        Serial.println(DEFT_TOPIC_CLASS);
       }
       client.setCallback(callback);
-      //snprintf(topic,sizeof(topic),"%s/%s",topic, "/command");
-      //Serial.print(F("Topic: "));
-      //Serial.println(F(topic));
-      //if(!client.publish("device/command")){
-      //  Serial.println("Failed to subscribe");  
-      //}else{
-      //  Serial.println("subscribing done");
-      //}
-    }
+    }else
+      Serial.println(F("MQTT connection failed."));
   }else{
     Serial.println("Failed to set up WiFiClientSecure");
   }
 }
 
 void reconnect(){
-  while(client.connected()){
+  while(!client.connected()){
     Serial.print(F("MQTT connection pending..."));
     if(client.connect(DEFT_SERVER)){
       Serial.println(F("Connected"));
-      client.publish("test/Airquality","hello world");
-      client.subscribe("airquality/command");
+      client.publish(DEFT_TOPIC,"hello world");
+      client.subscribe(DEFT_TOPIC_CLASS);
     }else{
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -265,10 +269,13 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  delay(1000);
+  delay(5000);
   Serial.print(".");
   Serial.flush();
+  
+  boolean rc = client.publish(DEFT_TOPIC, "test message");
   if(!client.connected()){
+    Serial.println(F("Connection lost, reconnecting... "));
     reconnect();
   }
   client.loop();

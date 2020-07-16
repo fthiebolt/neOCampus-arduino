@@ -106,7 +106,6 @@ void get_conf(){
    if (httpCode > 0) { //Check for the returning code
      String payload = httpsClient.getString();
      Serial.println(httpCode);
-     //Serial.println(payload);
      /* Unboxing credentials from cred server */
      DeserializationError error = deserializeJson(JSON_conf, payload);
      // Test if parsing succeeds.

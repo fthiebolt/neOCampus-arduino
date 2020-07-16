@@ -1,7 +1,14 @@
 #include "mqttclient.hpp"
 
-mqttclient::mqttclient(char *login, char *pwd, char *server, unsigned int port, char *topic_base) : _login(login),_pwd(pwd),_server(server), _port(port),_topic_base(topic_base) { }
+mqttclient::mqttclient(const char *login, const char *pwd, const char *server, unsigned int port, const char *topic_base, const char *topic) : _login(login),_pwd(pwd),_server(server), _port(port),_topic_base(topic_base),_topic(topic) { };
 
+mqttclient::~mqttclient(){
+    delete(_topic);
+    delete(_login);
+    delete(_pwd);
+    delete(_server);
+    delete(_topic_base);
+}
 bool mqttclient::connect(){
     bool success;
     log_debug("--- beg of mqttclient::connect ---");
@@ -33,22 +40,27 @@ void mqttclient::reconnect(){
     log_debug("--- end of mqttclient::reconnect ---\n");
 }
 
-void callback(char* topic, byte* payload, unsigned int length){
-    
+void on_message(char* topic, byte* payload, unsigned int length){
+    //split topic token
+    char *t_tok;
+    do{
+        t_tok = strtok(topic,"/");
+        log_debug(t_tok);
+    }while (t_tok != NULL);
+    //use the right on_mesage function
 }
 
 bool mqttclient::add(base_class bc){
     bool success;
     log_debug("--- beg of mqttclient::add ---\n");
     if(_bc_cpt <= MAX_CLASS)
-        _bc[_bc_cpt++] = bc;
+        //_bc[_bc_cpt++] = &bc;
 
     log_debug("--- end of mqttclient::add ---\n");
     return success;
 }
-void mqttclient::serialize(){
-    //log_info("MQTT client status is :", _client.state());
 
+void mqttclient::serialize(){
     log_info("--- beg of mqttclient::serialize ---");
     char login[48];
     snprintf(login, 48, "%s%s","login: ",_login);
@@ -69,5 +81,10 @@ void mqttclient::serialize(){
     snprintf(status, 48, "%s%d","mqttclient status: ",_client.state());
     log_info(status);
     log_info("--- end of mqttclient::serialize ---\n");
-    Serial.println();Serial.flush();
+    /*delete (login);
+    delete (pwd);
+    delete (server);
+    delete (port);
+    delete (bt);
+    delete (status);*/
 }

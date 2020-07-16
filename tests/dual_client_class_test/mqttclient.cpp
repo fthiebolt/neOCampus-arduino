@@ -1,6 +1,6 @@
 #include "mqttclient.hpp"
 
-mqttclient::mqttclient(const char *login, const char *pwd, const char *server, unsigned int port, const char *topic_base, const char *topic) : _login(login),_pwd(pwd),_server(server), _port(port),_topic_base(topic_base),_topic(topic) { };
+mqttclient::mqttclient(const char *login, const char *pwd, const char *server, unsigned int port, const char *topic_base, const char *topic) : _login(login), _pwd(pwd), _server(server), _port(port), _topic_base(topic_base), _topic(topic), _numb_users(0) { };
 
 mqttclient::~mqttclient(){
     delete(_topic);
@@ -9,15 +9,21 @@ mqttclient::~mqttclient(){
     delete(_server);
     delete(_topic_base);
 }
+
+void callback(char *t, byte *p, unsigned int l){
+    this->on_message(t,p,l);
+    return;
+}
 bool mqttclient::connect(){
     bool success;
     log_debug("--- beg of mqttclient::connect ---");
     if(_wcsClient){
         _client.setClient(*_wcsClient);
         _client.setServer(_server, _port);
+        _client.setCallback(callback);
         if(_client.connect(_server, _login, _pwd)){
             log_info("mqttclient connected")
-            // TODO
+            
             success = true;
         }else{
             success = false;
@@ -40,24 +46,48 @@ void mqttclient::reconnect(){
     log_debug("--- end of mqttclient::reconnect ---\n");
 }
 
-void on_message(char* topic, byte* payload, unsigned int length){
-    //split topic token
-    char *t_tok;
-    do{
-        t_tok = strtok(topic,"/");
-        log_debug(t_tok);
-    }while (t_tok != NULL);
-    //use the right on_mesage function
+bool mqttclient::subscribe(){
+    log_debug("--- beg of mqttclient::subscribe ---\n");
+    char base_token[64];
+    for(int i = 0; i < _numb_users; ++i){
+        snprintf(base_token,64,"%s/%s/%s",DEFT_TOPIC_BASE,_users[i].topic,"command");
+        log_debug(base_token);
+        if(!_client.subscribe(base_token))
+            return false;
+    }
+    log_debug("--- beg of mqttclient::subscribe ---\n");
+    return true;;
 }
 
-bool mqttclient::add(base_class bc){
+void mqttclient::on_message(char *t_chain, byte *payload, unsigned int length){
+    //split topic token
+    const char *topic = split_topic(t_chain);
+    //use the right on_message function
+    for(int i = 0; i < _numb_users; ++i){
+        if(strncmp(topic,_users[i].topic,_users[i].topic_size)==0)
+            _users[i].on_message(payload, length);
+    }
+    return;
+}
+
+bool mqttclient::add(const char* topic, void(*on_message)(byte *playload, unsigned int length)){
     bool success;
     log_debug("--- beg of mqttclient::add ---\n");
-    if(_bc_cpt <= MAX_CLASS)
-        //_bc[_bc_cpt++] = &bc;
-
+    _users[_numb_users].topic = topic;
+    _users[_numb_users].topic_size = size_t(sizeof(topic));
+    _users[_numb_users].on_message = on_message;
+    char numb_usr[48];
+    snprintf(numb_usr, 48, "%s%s%s","This module has now: ",_numb_users," different sensor types");
+    log_debug(numb_usr);
+    ++ _numb_users;
     log_debug("--- end of mqttclient::add ---\n");
     return success;
+}
+
+char * mqttclient::split_topic(char *tok_str){
+    char * topic;
+
+    return tok_str;
 }
 
 void mqttclient::serialize(){
@@ -81,10 +111,4 @@ void mqttclient::serialize(){
     snprintf(status, 48, "%s%d","mqttclient status: ",_client.state());
     log_info(status);
     log_info("--- end of mqttclient::serialize ---\n");
-    /*delete (login);
-    delete (pwd);
-    delete (server);
-    delete (port);
-    delete (bt);
-    delete (status);*/
 }

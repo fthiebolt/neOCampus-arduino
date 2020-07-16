@@ -54,10 +54,7 @@ StaticJsonDocument<MAX_JSON_SIZE> esp32_memory::read(const char *file){
     StaticJsonDocument<MAX_JSON_SIZE> json_buf;
     char output[64];
     snprintf(output, 64, "%s%s","reading memory from ",file);
-    log_debug(output);
-    //delete(output);
-    Serial.flush();
- 
+    log_debug(output); 
     if(exists(file)){
         File f = SPIFFS.open(file, "r");
         if(!f){

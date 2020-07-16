@@ -14,8 +14,7 @@
 #define TOPIC_BASE_SIZE 32
 #define TOPIC_SIZE 20
 
-#define MAX_CLASS 10
-
+#define MAX_SENSORS 30
 
 /* memory vars */
 #define CRED_FILE "/cred.txt"

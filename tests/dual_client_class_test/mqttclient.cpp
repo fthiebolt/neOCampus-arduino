@@ -10,17 +10,13 @@ mqttclient::~mqttclient(){
     delete(_topic_base);
 }
 
-void callback(char *t, byte *p, unsigned int l){
-    this->on_message(t,p,l);
-    return;
-}
 bool mqttclient::connect(){
     bool success;
     log_debug("--- beg of mqttclient::connect ---");
     if(_wcsClient){
         _client.setClient(*_wcsClient);
         _client.setServer(_server, _port);
-        _client.setCallback(callback);
+        _client.setCallback([this](char *t, byte *p, unsigned int l){this->on_message(t,p,l);});
         if(_client.connect(_server, _login, _pwd)){
             log_info("mqttclient connected")
             

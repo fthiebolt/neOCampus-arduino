@@ -43,7 +43,7 @@ private:
     struct users{
         const char* topic;
         size_t topic_size;
-        void(*on_message)(byte *payload,unsigned int length);
+        void(*on_message)(byte*, unsigned int);
     } _users [MAX_SENSORS]; 
     int _numb_users;
 

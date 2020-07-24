@@ -1,10 +1,10 @@
-#include "mqttclient.hpp"
-#include "wifimanager.hpp"
-#include "esp32_memory.hpp"
-#include "neologger.hpp"
 #include <Arduino.h>
 #include <ArduinoJson.h>
-#include "base_class.hpp"
+#include "src/mqttclient.hpp"
+#include "src/wifimanager.hpp"
+#include "src/esp32_memory.hpp"
+#include "src/neologger.hpp"
+#include "src/base_class.hpp"
 
 mqttclient client;
 wifimanager wm;
@@ -21,7 +21,7 @@ void func2(byte *p, unsigned int l){
     log_debug("func 2 was called");
     return;
 }
-void setup(){
+void setup(){   
     delay(3000);
     Serial.begin(115200);
     Serial.println(F("Setup begin"));

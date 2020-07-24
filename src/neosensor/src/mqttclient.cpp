@@ -63,15 +63,16 @@ void mqttclient::on_message(char *t_chain, byte *payload, unsigned int length){
     //use the right on_message function
     for(int i = 0; i < _numb_users; ++i){
         if(strncmp(topic,_users[i].topic,_users[i].topic_size)==0)
-            _users[i].on_message(payload, length);
+            (_users[i].on_message)(payload, length);
     }
     return;
 }
 
 bool mqttclient::add(const char* topic, void(*on_message)(byte *playload, unsigned int length)){
     bool success;
-    byte b[] = {0x43, 0x55,0x87};
-    on_message(b,2);
+    char numb_usr[64];
+    snprintf(numb_usr, 64, "%s%d%s","This module has ",_numb_users," different sensor types");
+    log_debug(numb_usr);
     log_debug("--- beg of mqttclient::add ---\n");
     _users[_numb_users].topic = topic;
     log_debug(_users[_numb_users].topic);
@@ -79,13 +80,10 @@ bool mqttclient::add(const char* topic, void(*on_message)(byte *playload, unsign
     log_debug(_users[_numb_users].topic_size);
     _users[_numb_users].on_message = on_message;
     log_debug("sensor type added");
-    char numb_usr[64];
-    snprintf(numb_usr, 64, "%s%s%s","This module has now: ",_numb_users," different sensor types");
-    log_debug(numb_usr);
     ++ _numb_users;
+    snprintf(numb_usr, 64, "%s%d%s","This module has now: ",_numb_users," different sensor types");
+    log_debug(numb_usr);
     log_debug("--- end of mqttclient::add ---\n");
-    Serial.flush();
-    delay(1000);
     return success;
 }
 

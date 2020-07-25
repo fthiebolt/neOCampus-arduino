@@ -1,13 +1,19 @@
 #ifndef CONST_HPP
 #define CONST_HPP
 
-/* mqttclient vars */
+/* https consts */
+#define AUTH_SERVER "https://sensocampus.univ-tlse3.fr"
+#define CRED_REQ "/device/credentials?mac="
+#define CONF_REQ "/device/config"
+
+/* mqttsclient consts */
 #define DEFT_LOGIN "test"
 #define DEFT_PWD "test"
 #define DEFT_SERVER "neocampus.univ-tlse3.fr"
 #define DEFT_PORT 8883
 #define DEFT_TOPIC_BASE "TestTopic"
 #define DEFT_TOPIC "airquality"
+
 #define LOGIN_SIZE 32
 #define PWD_SIZE 64
 #define SERVER_SIZE 32
@@ -16,7 +22,7 @@
 
 #define MAX_SENSORS 30
 
-/* memory vars */
+/* memory consts */
 #define CRED_FILE "/cred.txt"
 #define MQTT_FILE "/conf.txt"
 #define WIFI_FILE "/wconf.txt"

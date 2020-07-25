@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 #include "const.hpp"
-#include "mqttclient.hpp"
+#include "mqttsclient.hpp"
 
 class base_class{
 public:
@@ -22,7 +22,7 @@ private:
     char *_sensor_array;
     const char *_topic;
     int _sensor_qty;
-    mqttclient _mqttclient;
+    mqttsclient _mqttsclient;
 };
 
 #endif

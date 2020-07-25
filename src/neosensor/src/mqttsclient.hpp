@@ -1,5 +1,5 @@
-#ifndef MQTTCLIENT_hpp
-#define MQTTCLIENT_hpp
+#ifndef MQTTSCLIENT_HPP
+#define MQTTSCLIENT_HPP
 
 #include <Arduino.h>
 #include <PubSubClient.h>
@@ -8,7 +8,7 @@
 #include "neologger.hpp"
 
 
-class mqttclient{
+class mqttsclient{
 public:
     /* Default constructor leads to the sandbox mode */
     mqttclient(const char *login = DEFT_LOGIN, const char *pwd = DEFT_PWD, const char *server = DEFT_SERVER, unsigned int port = DEFT_PORT,const char *topic_base = DEFT_TOPIC_BASE, const char *topic = DEFT_TOPIC);

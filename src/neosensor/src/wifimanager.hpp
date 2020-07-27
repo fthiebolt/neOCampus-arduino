@@ -12,7 +12,7 @@ public:
     inline bool setup(){  
         log_debug("--- beg of wifimanager::setup ---")
         _wm.resetSettings();
-          Serial.print("ESP BOARD MAC Address: ");
+        Serial.print("ESP BOARD MAC Address: ");
         WiFi.macAddress(_macAddr);
         snprintf( _strMacAddr, sizeof(_strMacAddr), "%02X:%02X:%02X:%02X:%02X:%02X", _macAddr[0],_macAddr[1],_macAddr[2],_macAddr[3],_macAddr[4],_macAddr[5]);
         snprintf(_ssid, sizeof(_ssid),"%s%02X:%02X","airquality_",_macAddr[4], _macAddr[5]);

@@ -11,9 +11,9 @@
 class mqttsclient{
 public:
     /* Default constructor leads to the sandbox mode */
-    mqttclient(const char *login = DEFT_LOGIN, const char *pwd = DEFT_PWD, const char *server = DEFT_SERVER, unsigned int port = DEFT_PORT,const char *topic_base = DEFT_TOPIC_BASE, const char *topic = DEFT_TOPIC);
+    mqttsclient(const char *login = DEFT_LOGIN, const char *pwd = DEFT_PWD, const char *server = DEFT_SERVER, unsigned int port = DEFT_PORT,const char *topic_base = DEFT_TOPIC_BASE, const char *topic = DEFT_TOPIC);
     /* destructor */
-    ~mqttclient();
+    ~mqttsclient();
     /* callback renamed to fit neOCampus logic */
     void on_message(char* topic, byte *payload, unsigned int length); //TODO
     /* subscribe to topic */

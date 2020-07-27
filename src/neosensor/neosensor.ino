@@ -1,12 +1,12 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
-#include "src/mqttclient.hpp"
+#include "src/mqttsclient.hpp"
 #include "src/wifimanager.hpp"
 #include "src/esp32_memory.hpp"
 #include "src/neologger.hpp"
 #include "src/base_class.hpp"
 
-mqttclient client;
+mqttsclient client;
 wifimanager wm;
 esp32_memory mem;
 StaticJsonDocument<(JSON_OBJECT_SIZE (128))> jso;
@@ -39,7 +39,7 @@ void setup(){
     log_debug("Attempting to read conf from mem");
 
     jso = mem.read(MQTT_FILE);
-    
+    serializeJsonPretty(jso,Serial);
     Serial.println(F("\nsetup end"));
 }
 

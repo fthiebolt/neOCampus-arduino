@@ -9,19 +9,26 @@
 #include "wifimanager.hpp"
 
 class neoscheduler{
-neoscheduler();
+public:
+    neoscheduler(float d);
 
-/* function to call in the .ino setup 
- * User don't have to manually setup everything hence this function
- */
-void setup();
+    /* function to call in the .ino setup 
+    * User don't have to manually setup everything hence this function
+    */
+    void setup();
 
-/* function to call in the .ino loop 
- * User inputs how often the loop should repeat (in seconds)
- */
-void loop(float latency);
+    /* function to call in the .ino loop 
+    * User inputs how often the loop should repeat (in seconds)
+    */
+    void loop();
 
-/* add user's custom publish and on_message functions */
-void add_sen_type();
-}
+    /* add user's custom publish and on_message functions */
+    void add_sen_type();
+private:
+    float _delay;
+    wifimanager _wm;
+    httpsclient _httpsclient;
+    mqttsclient _mqttsclient;
+
+};
 #endif

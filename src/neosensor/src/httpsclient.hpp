@@ -4,10 +4,11 @@
 #include "const.hpp"
 
 class httpsclient{
-httpsclient();
+public :     
+    httpsclient();
 
 
 
-}
+};
 
 #endif

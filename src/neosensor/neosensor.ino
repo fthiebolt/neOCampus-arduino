@@ -1,16 +1,18 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
+#include "src/httpsclient.hpp"
 #include "src/mqttsclient.hpp"
 #include "src/wifimanager.hpp"
 #include "src/esp32_memory.hpp"
 #include "src/neologger.hpp"
 #include "src/base_class.hpp"
 
-mqttsclient client;
+httpsclient https;
+mqttsclient mqtts;
 wifimanager wm;
 esp32_memory mem;
 StaticJsonDocument<(JSON_OBJECT_SIZE (128))> jso;
-
+char * strMacAddr;
 //base_class bc[MAX_SENSORS];
 
 void func1(byte *p, unsigned int l){
@@ -32,7 +34,7 @@ void setup(){
     Serial.println(F("Setup begin"));
     mem.begin(true);
     mem.makedir("/");
-    //wm.setup();
+    strMacAddr = wm.setup();
     //byte b[] = {0x43, 0x55,0x87};
     //bc1.on_message(b, 0);
     //bc1.add();
@@ -45,7 +47,9 @@ void setup(){
     if(mem.exists(CRED_FILE)){
         jso = mem.read(CRED_FILE);
     }else{
-        log_error("this file wasn't found in memory");
+        StaticJsonDocument<CRED_JSON_SIZE> json_doc;
+        json_doc = https.get_credentials(strMacAddr);
+        mem.write(CRED_FILE,json_doc);
     }
     if(mem.exists(MQTT_FILE)){
         jso = mem.read(MQTT_FILE);

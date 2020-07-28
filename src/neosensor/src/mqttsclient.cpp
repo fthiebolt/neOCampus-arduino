@@ -58,6 +58,7 @@ bool mqttsclient::subscribe(){
 }
 
 void mqttsclient::on_message(char *t_chain, byte *payload, unsigned int length){
+    log_debug("--- beg of mqttsclient::on_message ---\n");
     //split topic token
     const char *topic = split_topic(t_chain);
     //use the right on_message function
@@ -65,15 +66,16 @@ void mqttsclient::on_message(char *t_chain, byte *payload, unsigned int length){
         if(strncmp(topic,_users[i].topic,_users[i].topic_size)==0)
             (_users[i].on_message)(payload, length);
     }
+    log_debug("--- end of mqttsclient::on_message ---\n");
     return;
 }
 
 bool mqttsclient::add(const char* topic, void(*on_message)(byte *playload, unsigned int length)){
+    log_debug("--- beg of mqttsclient::add ---\n");
     bool success;
     char numb_usr[64];
     snprintf(numb_usr, 64, "%s%d%s","This module has ",_numb_users," different sensor types");
     log_debug(numb_usr);
-    log_debug("--- beg of mqttsclient::add ---\n");
     _users[_numb_users].topic = topic;
     log_debug(_users[_numb_users].topic);
     _users[_numb_users].topic_size = size_t(sizeof(topic));

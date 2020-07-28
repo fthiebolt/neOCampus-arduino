@@ -74,6 +74,7 @@ bool esp32_memory::exists(const char* file){
 }
 
 void esp32_memory::write(const char* path, StaticJsonDocument<MAX_JSON_SIZE> buf){
+    log_debug("--- beg of esp32_memory::write ---");
     char log[64];
     File file = LITTLEFS.open(path, FILE_WRITE);
     if(!file){
@@ -91,9 +92,12 @@ void esp32_memory::write(const char* path, StaticJsonDocument<MAX_JSON_SIZE> buf
         log_debug(serializeJsonPretty(buf,Serial));
     }
     file.close();
+    log_debug("--- end of esp32_memory::write ---");
+    return;
 }
 
 StaticJsonDocument<MAX_JSON_SIZE> esp32_memory::read(const char *path){
+    log_debug("--- beg of esp32_memory::read ---");
     StaticJsonDocument<MAX_JSON_SIZE> json_buf;
     char log[64];
     File file = LITTLEFS.open(path);
@@ -112,5 +116,6 @@ StaticJsonDocument<MAX_JSON_SIZE> esp32_memory::read(const char *path){
         log_debug(serializeJsonPretty(json_buf,Serial));
     }
     file.close();
+    log_debug("--- end of esp32_memory::read ---");
     return json_buf;
 }

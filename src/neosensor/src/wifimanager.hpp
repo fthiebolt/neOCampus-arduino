@@ -9,7 +9,7 @@ class wifimanager{
 public:
     wifimanager() {};
     
-    inline bool setup(){  
+    inline char* setup(){  
         log_debug("--- beg of wifimanager::setup ---")
         _wm.resetSettings();
         Serial.print("ESP BOARD MAC Address: ");
@@ -26,6 +26,7 @@ public:
             Serial.println("Conn est");
         }
         log_debug("--- end of wifimanager::setup---\n");
+        return _strMacAddr;
     }
 private:
     WiFiManager _wm;

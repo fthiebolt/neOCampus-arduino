@@ -42,13 +42,11 @@ void setup(){
     log_debug("Attempting to read conf from mem");
     if(mem.exists(CRED_FILE)){
         jso = mem.read(CRED_FILE);
-        serializeJsonPretty(jso,Serial);
     }else{
         log_error("this file wasn't found in memory");
     }
     if(mem.exists(MQTT_FILE)){
         jso = mem.read(MQTT_FILE);
-        serializeJsonPretty(jso,Serial);
     }else{
         log_error("this file wasn't found in memory");
     }

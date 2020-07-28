@@ -77,44 +77,44 @@ bool esp32_memory::exists(const char* file){
     return success;
 }
 
-void esp32_memory::write(const char* file, StaticJsonDocument<MAX_JSON_SIZE> buf){
+void esp32_memory::write(const char* path, StaticJsonDocument<MAX_JSON_SIZE> buf){
     char log[64];
-    File f = fs.open(path, FILE_WRITE);
+    File file = LITTLEFS.open(path, FILE_WRITE);
     if(!file){
-        snprintf(log, 64, "%s%s","Failed to open file ",file);
+        snprintf(log, 64, "%s%s","Failed to open file ",path);
         log_error(log);
         return;
     }
-    snprintf(log,64,"%s%s","The following file has been opened ", file);
+    snprintf(log,64,"%s%s","The following file has been opened ", path);
     log_debug(log);
-        bool err; = serializeJson(buf,f);
+        bool err = serializeJson(buf,file);
     if(err){
         log_error("failed to write buffer to memory");
     }else{
         log_debug("file wrote from buffer");
-        log_debug(serializeJsonPretty(json_buf,Serial));
+        log_debug(serializeJsonPretty(buf,Serial));
     }
-    f.close();
+    file.close();
 }
 
-StaticJsonDocument<MAX_JSON_SIZE> esp32_memory::read(const char *file){
+StaticJsonDocument<MAX_JSON_SIZE> esp32_memory::read(const char *path){
     StaticJsonDocument<MAX_JSON_SIZE> json_buf;
     char log[64];
-    File f = LITTLEFS.open(path);
-    if(!f || f.isDirectory()){
-        snprintf(log, 64, "%s%s","Failed to open file ",file);
+    File file = LITTLEFS.open(path);
+    if(!file || file.isDirectory()){
+        snprintf(log, 64, "%s%s","Failed to open file ",path);
         log_error(log);
-        return;
+        return json_buf;
     }
-    snprintf(log,64,"%s%s","The following file has been opened ", file);
+    snprintf(log,64,"%s%s","The following file has been opened ", path);
     log_debug(log);
-    DeserializationError err = deserializeJson(json_buf, f);
+    DeserializationError err = deserializeJson(json_buf, file);
     if(err){
         log_error("failed to read memory into buffer");
     }else{
         log_debug("buffer read from file");
         log_debug(serializeJsonPretty(json_buf,Serial));
     }
-    f.close();
+    file.close();
     return json_buf;
 }

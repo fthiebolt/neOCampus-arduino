@@ -14,13 +14,13 @@ public:
     esp32_memory();
     bool begin();
     /* checks if a file exists */
-    bool exists(const char *file);
+    bool exists(const char *);
     /* Writes a buffer int a file */
-    bool write(const char *file, StaticJsonDocument<MAX_JSON_SIZE> buf);
+    void write(const char *, StaticJsonDocument<MAX_JSON_SIZE>);
     /* Read from a file
      * return what has been read.
      */
-    StaticJsonDocument<MAX_JSON_SIZE> read(const char *file);
+    StaticJsonDocument<MAX_JSON_SIZE> read(const char *);
 };
 
 

@@ -3,7 +3,8 @@
 
 #include <Arduino.h>
 #include <ArduinoJson.h>
-#include <SPIFFS.h>
+#include <FS.h>
+#include <LITTLEFS.h>
 #include "const.hpp"
 #include "neologger.hpp"
 
@@ -20,12 +21,6 @@ public:
      * return what has been read.
      */
     StaticJsonDocument<MAX_JSON_SIZE> read(const char *file);
-
-    StaticJsonDocument<MAX_JSON_SIZE> read_configuration();
-    StaticJsonDocument<MAX_JSON_SIZE> read_credentials();
-
-    bool write_configuration(StaticJsonDocument<MAX_JSON_SIZE> buf);
-    bool write_credentials(StaticJsonDocument<MAX_JSON_SIZE> buf);
 };
 
 

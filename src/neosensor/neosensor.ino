@@ -39,6 +39,7 @@ void setup(){
     //client.subscribe();
     client.connect();
     client.serialize();
+    
     log_debug("Attempting to read conf from mem");
     if(mem.exists(CRED_FILE)){
         jso = mem.read(CRED_FILE);

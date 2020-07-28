@@ -16,7 +16,7 @@ public :
 private:
     HTTPClient _client;
     char _url [90];
-    const char* root_ca = NULL;
+    const char* _root_ca = NULL;
 };
 
 #endif

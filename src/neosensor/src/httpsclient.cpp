@@ -7,8 +7,9 @@ StaticJsonDocument<CRED_JSON_SIZE> httpsclient::get_credentials(char* str_mac_ad
     snprintf(_url, 90, "%s%s%s", AUTH_SERVER, CRED_REQ,str_mac_addr);
     log_debug(_url);
     String payload;
-    _client.begin(_url,root_ca);
+    _client.begin(_url,_root_ca);
     int httpCode = _client.GET();
+    log_debug(httpCode);
     if (httpCode > 0) { //Check for the returning code
         payload = _client.getString();
     }
@@ -22,6 +23,7 @@ StaticJsonDocument<CRED_JSON_SIZE> httpsclient::get_credentials(char* str_mac_ad
         Serial.println(error.c_str());
     }else{
         log_debug("--- beg of httpsclient::get_credentials ---");
-        return cred_json;
     }
+    _client.end();
+    return cred_json;
 }

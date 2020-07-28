@@ -2,15 +2,15 @@
 
 esp32_memory::esp32_memory() { }
 
-bool esp32_memory::begin(){
+bool esp32_memory::begin(bool format_if_fail){
     bool success;
     log_debug("memory warming up FS");
-    success = LITTLEFS.begin();
+    success = LITTLEFS.begin(format_if_fail);
     if(!success)
         log_error("failed to boot up LITTLEFS");
 }
-/*
-void esp3_memory::mkdir(const char * path){
+
+void esp32_memory::makedir(const char * path){
     char log[64];
     if(LITTLEFS.mkdir(path)){
         snprintf(log, 32, "%s%s%s", "Directory ", path," has been created");
@@ -21,7 +21,7 @@ void esp3_memory::mkdir(const char * path){
     }
 }
 
-void esp32_memory::rmdir(const char * path){
+void esp32_memory::rmvdir(const char * path){
     char log[64];
     if(LITTLEFS.rmdir(path)){
         snprintf(log, 32, "%s%s%s", "Directory ", path," has been deleted");
@@ -31,7 +31,7 @@ void esp32_memory::rmdir(const char * path){
         log_error(log);
     }
 }
-
+/*
 void appendFile(fs::FS &fs, const char * path, const char * message){
     Serial.printf("Appending to file: %s\r\n", path);
 
@@ -67,14 +67,10 @@ void deleteFile(fs::FS &fs, const char * path){
 }
 */
 bool esp32_memory::exists(const char* file){
-    bool success;
     char output[40];
     snprintf(output, 40, "%s%s","checking existence of ",file);
     log_debug(output);
-    success = LITTLEFS.exists(file);
-    if (!success)
-        log_warning("file doesn't exist");
-    return success;
+    return LITTLEFS.exists(file);
 }
 
 void esp32_memory::write(const char* path, StaticJsonDocument<MAX_JSON_SIZE> buf){

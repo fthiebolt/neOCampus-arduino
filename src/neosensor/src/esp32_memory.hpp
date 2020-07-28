@@ -12,9 +12,16 @@ class esp32_memory{
 public:
     /* starting the file system*/
     esp32_memory();
-    bool begin();
+    bool begin(bool);
+
+
+    void makedir(const char * path);
+
+    void rmvdir(const char * path);
+
     /* checks if a file exists */
     bool exists(const char *);
+
     /* Writes a buffer int a file */
     void write(const char *, StaticJsonDocument<MAX_JSON_SIZE>);
     /* Read from a file

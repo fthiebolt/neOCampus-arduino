@@ -10,13 +10,14 @@ class httpsclient{
 public :     
     httpsclient();
 
-    StaticJsonDocument<JSON_OBJECT_SIZE(4)> get_credentials(char *);
-
+    StaticJsonDocument<JSON_OBJECT_SIZE(4)> get_credentials(uint8_t *);
+    
     void get_config();
 private:
-    HTTPClient _client;
-    char _url [90];
-    const char* _root_ca = NULL;
+    HTTPClient _https;
+    char _url[90];
+    char *_root_ca = NULL;
+    
 };
 
 #endif

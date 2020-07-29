@@ -1,6 +1,8 @@
 #ifndef NEOSCHEDULER_HPP
 #define NEOSCHEDULER_HPP
 
+
+#include <ArduinoJson.h>
 #include "const.hpp"
 #include "esp32_memory.hpp"
 #include "httpsclient.hpp"
@@ -27,8 +29,10 @@ public:
 private:
     float _delay;
     wifimanager _wm;
-    httpsclient _httpsclient;
-    mqttsclient _mqttsclient;
-
+    httpsclient _https;
+    mqttsclient _mqtts;
+    esp32_memory _mem;
+    StaticJsonDocument<(JSON_OBJECT_SIZE (128))> _jso;
+    uint8_t _mac_addr[6];
 };
 #endif

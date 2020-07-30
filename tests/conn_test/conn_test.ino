@@ -1,9 +1,7 @@
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
 #include <HTTPClient.h>
-#include <PubSubClient.h>
 #include <Arduino.h>
-#include <ArduinoJson.h>
 /*#include <WiFiManager.h>*/
 /* MAC vars */
 uint8_t macAddr[6];
@@ -13,15 +11,6 @@ char strMacAddr[32];
 const char *wifi_ssid = "Livebox-5C78"; //TODO
 const char *wifi_pwd = "9FE23C6C67A54E26D3EAEF3AC5";  //TODO
 //PubSubClient client(wifiClient);
-
-
-/* MQTTS vars */
-/*
-char* mqtt_id;
-char* mqtt_pwd;
-const char* mqtt_server = "neocampus.univ-tlse3.fr";
-const int  mqtt_port = 1883;
-*/
 
 /* HTTPS vars */
 const char* root_ca = NULL;
@@ -59,31 +48,31 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  Serial.print('.');Serial.flush();
-  delay(1000);
-  WiFiClientSecure *wcs;
-  if(wcs){
-	    wcs->setCACert(root_ca);
-	    HTTPClient http;
-	    if(http.begin(*wcs,url)){
-	      Serial.print(F("Begin ok, calling GET"));
-	      int httpCode = http.GET();
-	    /*if (httpCode > 0) { //Check for the returning code
-	      String payload = http.getString();
-	      Serial.println(httpCode);
-	      Serial.println(payload);
-	      }else {
+	// put your main code here, to run repeatedly:
+	Serial.print('.');Serial.flush();
+	delay(1000);
+	//WiFiClientSecure *wcs;
+	//if(wcs){
+		//wcs->setCACert(root_ca);
+		HTTPClient http;
+		if(http.begin(url)){
+			Serial.print(F("Begin ok, calling GET"));
+			int httpCode = http.GET();
+		/*if (httpCode > 0) { //Check for the returning code
+			String payload = http.getString();
+			Serial.println(httpCode);
+			Serial.println(payload);
+			}else {
 		Serial.println("Error on HTTPs request");
-	      }*/
-	      Serial.println(F(httpCode));
-	      
-	    http.end();
-	    }else{
-	    Serial.println("Failed to init HTTPS");
-	  }
-	  }else{
-	  Serial.println("Failed to init WiFiClientSecure");
-	  }
-	  delete wcs;
+			}*/
+			Serial.println(F(httpCode));
+			
+		http.end();
+		}else{
+			Serial.println("Failed to init HTTPS");
+		}
+	//}else{
+	//  Serial.println("Failed to init WiFiClientSecure");
+	//}
+	//delete wcs;
 }

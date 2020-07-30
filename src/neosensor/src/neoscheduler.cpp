@@ -6,7 +6,7 @@ void neoscheduler::setup(){
     delay(3000);
     Serial.begin(115200);
     log_debug("--- beg of neoscheduler::setup ---")
-    _mem.begin(false);
+    _mem.begin(true);
     _mem.makedir("/");
     memcpy(_mac_addr, _wm.setup(),6);
     //byte b[] = {0x43, 0x55,0x87};

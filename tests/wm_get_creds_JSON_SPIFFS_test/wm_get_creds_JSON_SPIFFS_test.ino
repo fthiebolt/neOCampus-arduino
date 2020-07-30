@@ -21,7 +21,7 @@ const char* root_ca = NULL;
 char url [90];
 
 /* JSon Vars */
-StaticJsonDocument<200> JSON_cred;
+//StaticJsonDocument<200> JSON_cred;
 
 void get_MAC(){
   Serial.println();
@@ -37,7 +37,7 @@ void get_MAC(){
 }
 
 void set_WiFi(){
-  wm.resetSettings();
+  //wm.resetSettings();
   WiFi.mode(WIFI_STA);
   if(!wm.autoConnect(ssid,pwd))
     Serial.println("Conn Doomed");
@@ -50,11 +50,12 @@ void get_credentials(){
   Serial.println("getting credentials");
   httpsClient.begin(url);
     int httpCode = httpsClient.GET();
-    if (httpCode > 0) { //Check for the returning code
+    Serial.println(httpCode);
+
+    /*if (httpCode > 0) { //Check for the returning code
       String payload = httpsClient.getString();
-      Serial.println(httpCode);
       Serial.println(payload);
-      /* Unboxing credentials from cred server */
+      // Unboxing credentials from cred server
       DeserializationError error = deserializeJson(JSON_cred, payload);
       // Test if parsing succeeds.
       if (error) {
@@ -71,7 +72,7 @@ void get_credentials(){
       Serial.println(server);
       Serial.println(port);
       
-      /* Saving credentials to SPIFFS */
+      // Saving credentials to SPIFFS
       File file = SPIFFS.open(CREDENTIALS, "w");
       if (!file) {
         Serial.println("Error opening file for writing");
@@ -85,7 +86,7 @@ void get_credentials(){
       file.close();
     }else {
       Serial.println(F("Error on HTTPs request"));
-    }
+    }*/
     httpsClient.end();
 }
 
@@ -95,46 +96,45 @@ void setup() {
   Serial.begin(115200);
   Serial.println(F("Hello ..."));
   delay(1000);
-  bool success = SPIFFS.begin();
+  /*bool success = SPIFFS.begin();
  
   if (success) {
     Serial.println("File system mounted with success");
   } else {
     Serial.println("Error mounting the file system");
     return;
-  }
+  }*/
   get_MAC();
   set_WiFi();
   /* Do I have my credentials? */
-  if(!SPIFFS.exists(CREDENTIALS))
-    get_credentials();
-  else{
+  //if(!SPIFFS.exists(CREDENTIALS))
+  get_credentials();
+  //else{
     /* Yes i do */
-    File file = SPIFFS.open(CREDENTIALS);
-    if(!file){
-      Serial.println("Failed to open file for reading");
-      return;
-    }
+  // File file = SPIFFS.open(CREDENTIALS);
+  // if(!file){
+  //    Serial.println("Failed to open file for reading");
+  //    return;
+  //  }
     /* credentials are stored as StaticJsonDocument, let's deserialize it*/
-    DeserializationError error = deserializeJson(JSON_cred, file);
+  //  DeserializationError error = deserializeJson(JSON_cred, file);
     // Test if parsing succeeds.
-    if (error) {
-      Serial.print(F("deserializeJson() failed: "));
-      Serial.println(error.c_str());
-      return;
-    }
-    file.close();
-    const char* login = JSON_cred["login"];
-    const char* pwd = JSON_cred["password"];
-    const char* server = JSON_cred["server"];
-    int port = JSON_cred["port"];
-    Serial.println("I found this in my config!");
-    Serial.println(login);
-    Serial.println(pwd);
-    Serial.println(server);
-    Serial.println(port);
-
-  }
+  //  if (error) {
+  //    Serial.print(F("deserializeJson() failed: "));
+  //    Serial.println(error.c_str());
+  //    return;
+  //  }
+  //  file.close();
+  //  const char* login = JSON_cred["login"];
+  //  const char* pwd = JSON_cred["password"];
+  //  const char* server = JSON_cred["server"];
+  //  int port = JSON_cred["port"];
+  //  Serial.println("I found this in my config!");
+  //  Serial.println(login);
+  //  Serial.println(pwd);
+  //  Serial.println(server);
+  //  Serial.println(port);
+  //}
 }
 
 void loop() {

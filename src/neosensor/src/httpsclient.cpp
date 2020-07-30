@@ -24,6 +24,7 @@ StaticJsonDocument<CRED_JSON_SIZE> httpsclient::get_credentials(uint8_t *mac_add
     }
     log_debug("where's the core dump at?");
     int httpCode= _https.GET();
+    Serial.println(httpCode);
     delay(5000);
     String payload;
     if (httpCode > 0) { 

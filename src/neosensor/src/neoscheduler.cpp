@@ -18,13 +18,13 @@ void neoscheduler::setup(){
     //client.serialize();
     
     log_debug("Attempting to read conf from mem");
-    if(_mem.exists(CRED_FILE)){
-        _jso = _mem.read(CRED_FILE);
-    }else{
+    //if(_mem.exists(CRED_FILE)){
+    //    _jso = _mem.read(CRED_FILE);
+    //}else{
         StaticJsonDocument<CRED_JSON_SIZE> json_doc;
         json_doc = _https.get_credentials(_mac_addr);
         _mem.write(CRED_FILE,json_doc);
-    }
+    //}
     if(_mem.exists(MQTT_FILE)){
         _jso = _mem.read(MQTT_FILE);
     }else{

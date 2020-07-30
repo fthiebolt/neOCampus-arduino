@@ -8,16 +8,16 @@ StaticJsonDocument<CRED_JSON_SIZE> httpsclient::get_credentials(uint8_t *mac_add
     const char* _cacert = NULL;
     const char* _clicert = nullptr;
     const char* _clikey = nullptr;
-    WiFiClientSecure *wcsClient = new WiFiClientSecure;
-    wcsClient->setCACert(_cacert);
-    wcsClient->setCertificate(_clicert);
-    wcsClient->setPrivateKey(_clikey);
+    //WiFiClientSecure *wcsClient = new WiFiClientSecure;
+    //wcsClient->setCACert(_cacert);
+    //wcsClient->setCertificate(_clicert);
+    //wcsClient->setPrivateKey(_clikey);
 
-    //snprintf(_url, 90, "%s%s", AUTH_SERVER, CRED_REQ);
+    snprintf(_url, 90, "%s%s", AUTH_SERVER, CRED_REQ);
     //log_debug(_url)
-    //snprintf(_url, 90, "%s%02X:%02X:%02X:%02X:%02X:%02X", _url, mac_addr[0],mac_addr[1],mac_addr[2],mac_addr[3],mac_addr[4],mac_addr[5]);
+    snprintf(_url, 90, "%s%02X:%02X:%02X:%02X:%02X:%02X", _url, mac_addr[0],mac_addr[1],mac_addr[2],mac_addr[3],mac_addr[4],mac_addr[5]);
     //log_debug(_url);
-    if(!_https.begin(*wcsClient,"https://sensocampus.univ-tlse3.fr/device/credentials?mac=24:0A:C4:02:8B:60")){
+    if(!_https.begin(_url)){
         log_error("Beginning of https communication failed" );
     }else{
         log_debug("https communication established")
@@ -41,7 +41,7 @@ StaticJsonDocument<CRED_JSON_SIZE> httpsclient::get_credentials(uint8_t *mac_add
         Serial.print(F("deserializeJson() failed: "));
         Serial.println(error.c_str());
     }else{
-        log_debug("--- beg of httpsclient::get_credentials ---");
+        log_debug("--- end of httpsclient::get_credentials ---");
     }
     return cred_json;
 }

@@ -19,35 +19,35 @@
 
 /* Output debug level messages */
 #if (LOG_LVL <= LOG_LVL_DEBUG)
-    #define log_debug(X,...) {Serial.print("\n[DBG] : ");Serial.print(X, ## __VA_ARGS__);Serial.flush();delay(1000);}
+    #define log_debug(X,...) {Serial.print("[DBG] : ");Serial.println(X, ## __VA_ARGS__);Serial.flush();delay(1000);}
 #else 
     #define log_debug(X,...) {}
 #endif
 
 /* Outputs info level messages*/
 #if (LOG_LVL <= LOG_LVL_INFO)
-    #define log_info(X,...) {Serial.print("\n[INF] : ");Serial.print(X, ## __VA_ARGS__);Serial.flush();delay(1000);}
+    #define log_info(X,...) {Serial.print("[INF] : ");Serial.println(X, ## __VA_ARGS__);Serial.flush();delay(1000);}
 #else 
     #define log_info(X,...) {}
 #endif
 
 /* Outputs warning level messages*/
 #if (LOG_LVL <= LOG_LVL_WARN)
-    #define log_warning(X,...) {Serial.print("\n[WRN] : ");Serial.print(X, ## __VA_ARGS__);Serial.flush();delay(1000);abort();}
+    #define log_warning(X,...) {Serial.print("[WRN] : ");Serial.println(X, ## __VA_ARGS__);Serial.flush();delay(1000);abort();}
 #else 
     #define log_warning(X,...) {}
 #endif
 
 /* Outputs error level messages*/
 #if (LOG_LVL <= LOG_LVL_ERR)
-    #define log_error(X,...) {Serial.print("\n[ERR] : ");Serial.print(X, ## __VA_ARGS__);Serial.flush();delay(1000);}
+    #define log_error(X,...) {Serial.print("[ERR] : ");Serial.println(X, ## __VA_ARGS__);Serial.flush();delay(1000);}
 #else 
     #define log_error(X,...) {}
 #endif
 
 /* Outputs critical level messages*/
 #if (LOG_LVL <= LOG_LVL_CRIT)
-    #define log_critical(X,...) {Serial.print("\n[CRT] : ");Serial.print(X, ## __VA_ARGS__);Serial.flush();delay(1000);}
+    #define log_critical(X,...) {Serial.print("[CRT] : ");Serial.println(X, ## __VA_ARGS__);Serial.flush();delay(1000);}
 #else 
     #define log_critical(X,...) {}
 #endif

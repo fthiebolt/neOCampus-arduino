@@ -9,21 +9,21 @@ StaticJsonDocument<CRED_JSON_SIZE> httpsclient::get_credentials(uint8_t *mac_add
     const char* _clicert = nullptr;
     const char* _clikey = nullptr;
     StaticJsonDocument<CRED_JSON_SIZE> cred_json;
-    //WiFiClientSecure *wcsClient = new WiFiClientSecure;
-    //wcsClient->setCACert(_cacert);
-    //wcsClient->setCertificate(_clicert);
-    //wcsClient->setPrivateKey(_clikey);
+    WiFiClientSecure *wcsClient = new WiFiClientSecure;
+    wcsClient->setCACert(_cacert);
+    wcsClient->setCertificate(_clicert);
+    wcsClient->setPrivateKey(_clikey);
 
     snprintf(_url, 90, "%s%s", AUTH_SERVER, CRED_REQ);
     //log_debug(_url)
     snprintf(_url, 90, "%s%02X:%02X:%02X:%02X:%02X:%02X", _url, mac_addr[0],mac_addr[1],mac_addr[2],mac_addr[3],mac_addr[4],mac_addr[5]);
     //log_debug(_url);
-    if(!_https.begin(_url)){
+    if(!_https.begin(*wcsClient, _url)){
         log_error("Beginning of https communication failed" );
     }else{
         log_debug("https communication established");
-        int httpCode= _https.GET();
-        Serial.println(httpCode);
+        int httpCode= _https.GET(); 
+        log_debug(httpCode);
         delay(5000);
         String payload;
         if (httpCode > 0) { 

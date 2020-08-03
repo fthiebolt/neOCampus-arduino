@@ -3,6 +3,9 @@
 httpsclient::httpsclient () {};
 
 StaticJsonDocument<CRED_JSON_SIZE> httpsclient::get_credentials(uint8_t *mac_addr){
+    /* TODO 
+     * Add certificate if unsecure connection successful
+     */
     log_debug("--- beg of httpsclient::get_credentials ---");
     const char* root_ca = NULL;
     const char* _cacert = NULL;
@@ -14,9 +17,7 @@ StaticJsonDocument<CRED_JSON_SIZE> httpsclient::get_credentials(uint8_t *mac_add
     wcsClient->setCertificate(_clicert);
     wcsClient->setPrivateKey(_clikey);
 
-    snprintf(_url, 90, "%s%s", AUTH_SERVER, CRED_REQ);
-    //log_debug(_url)
-    snprintf(_url, 90, "%s%02X:%02X:%02X:%02X:%02X:%02X", _url, mac_addr[0],mac_addr[1],mac_addr[2],mac_addr[3],mac_addr[4],mac_addr[5]);
+    snprintf(_url, sizeof(_url), "%s%s%02X:%02X:%02X:%02X:%02X:%02X", AUTH_SERVER, CRED_REQ, mac_addr[0],mac_addr[1],mac_addr[2],mac_addr[3],mac_addr[4],mac_addr[5]);
     //log_debug(_url);
     if(!_https.begin(*wcsClient, _url)){
         log_error("Beginning of https communication failed" );
@@ -24,7 +25,6 @@ StaticJsonDocument<CRED_JSON_SIZE> httpsclient::get_credentials(uint8_t *mac_add
         log_debug("https communication established");
         int httpCode= _https.GET(); 
         log_debug(httpCode);
-        delay(5000);
         String payload;
         if (httpCode > 0) { 
             //Check for the returning code
@@ -44,5 +44,4 @@ StaticJsonDocument<CRED_JSON_SIZE> httpsclient::get_credentials(uint8_t *mac_add
         }
     }
     return cred_json;
-    
 }

@@ -117,8 +117,8 @@ void setup() {
         //LITTLEFS.mkdir("/");
         get_MAC();
         set_WiFi();
+        /* for testing purposes, this file has to be rewritten everytime. However ths test SHALL BE in the neOScheduler library*/
         //if(!LITTLEFS.exists(CRED_FILE)){
-        LITTLEFS.remove(CRED_FILE);
             get_credentials();
         //}else{
         //    log_debug("credentials file OK");            

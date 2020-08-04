@@ -1,6 +1,7 @@
 #ifndef HTTPSCLIENT_HPP
 #define HTTPSCLIENT_HPP
 
+#include <Arduino.h>
 #include <ArduinoJson.h>
 #include <HTTPClient.h>
 #include "const.hpp"
@@ -10,7 +11,7 @@ class httpsclient{
 public :     
     httpsclient();
 
-    StaticJsonDocument<JSON_OBJECT_SIZE(4)> get_credentials(uint8_t *);
+    StaticJsonDocument<CRED_JSON_SIZE> get_credentials(uint8_t *);
     
     void get_config();
 private:

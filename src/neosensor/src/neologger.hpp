@@ -9,7 +9,7 @@
 #include <Arduino.h>
 
 #define LOG_LVL_RELEASE 6
-#define LOG_LVL DBUG 1
+#define LOG_LVL_DBUG 1
 #define LOG_LVL_INFO 2
 #define LOG_LVL_WARN 3
 #define LOG_LVL_ERR 4

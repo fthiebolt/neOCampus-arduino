@@ -1,6 +1,6 @@
 #include <WiFiManager.h>
 #include <HTTPClient.h>
-#include <src/neosensor/libraries/LitteFS/LITTLEFS.h>
+#include <LITTLEFS.h>
 #include <ArduinoJson.h>
 #include <Arduino.h>
 
@@ -18,7 +18,7 @@ WiFiManager wm;
 /*HTTPS vars*/
 HTTPClient httpsClient;
 char url [90];
-StaticJsonDocument<JSON_OBJECT_SIZE(4)> json_credentials;
+StaticJsonDocument<(JSON_OBJECT_SIZE(4)+4*32)> json_credentials;
 
 /*
  * Retrieves the module's MAC address to use as AP reference when setting WiFi sor the first time
@@ -42,9 +42,9 @@ void set_WiFi(){
     log_debug("--- beg of set_WiFi ---");
     //wm.resetSettings();
     WiFi.mode(WIFI_STA);
-    if(!wm.autoConnect(ssid,pwd))
+    if(!wm.autoConnect(ssid,pwd)){
         log_debug("WiFiManager autoConnection OK");
-    else{
+    }else{
         log_debug("WiFiManager autoConnection KO");
     }
     log_debug("--- beg of set_WiFi ---");
@@ -64,32 +64,34 @@ void get_credentials(){
         //Check for the returning code
         if (httpCode > 0) { 
             log_debug("GET return code OK");
-            payload = _https.getString();
+            payload = httpsClient.getString();
             /* Unboxing credentials from cred server */
-            DeserializationError error = deserializeJson(cred_json, payload);
+            log_debug(json_credentials.capacity());
+            log_debug(payload);
+            DeserializationError error = deserializeJson(json_credentials, payload);
             log_debug("Credentials requested from auth");
-            log_debug(_url);
+            log_debug(url);
             // Test if parsing succeeds.
             if (error) {
                 log_debug("deserializeJson() KO: ");
                 log_debug(error.c_str());
             }else{
                 log_debug("deserializeJson() OK");
-                File file = LITTLEFS.open(CRED_FILE);
+                File file = LITTLEFS.open(CRED_FILE,FILE_WRITE);
                 if(!file || file.isDirectory()){
                     snprintf(log, 64, "%s%s","Failed to open file ",CRED_FILE);
-                    log_error(log);
+                    log_debug(log);
                     return;
                 }
                 snprintf(log,64,"%s%s","The following file has been opened ", CRED_FILE);
                 log_debug(log);
-                DeserializationError err = deserializeJson(json_buf, file);
+                DeserializationError err = deserializeJson(json_credentials, file);
                 if(err){
                     log_debug("writing to cred file KO");
                     return;
                 }else{
                     log_debug("writing to cred file OK");
-                    log_debug(serializeJsonPretty(json_buf,Serial));
+                    serializeJsonPretty(json_credentials,Serial);
                 }
                 file.close();
             }
@@ -107,18 +109,20 @@ void setup() {
     // put your setup code here, to run once:
     Serial.begin(115200);
     Serial.println(F("Hello ..."));
-    if(!LITTLEFS.begin()){
-        log_error("LittleFS Boot KO");
+    bool success = LITTLEFS.begin(true);
+    if(!success){
+        log_debug("LittleFS Boot KO");
     }else{
-        log_error("LittleFS Boot OK");
-        LITTLEFS.makedir("/");
+        log_debug("LittleFS Boot OK");
+        //LITTLEFS.mkdir("/");
         get_MAC();
         set_WiFi();
-        if(!LITTLEFS.exists(CRED_FILE)){
+        //if(!LITTLEFS.exists(CRED_FILE)){
+        LITTLEFS.remove(CRED_FILE);
             get_credentials();
-        }else{
-            log_debug("credentials file OK")
-        }
+        //}else{
+        //    log_debug("credentials file OK");            
+        //}
 
     }
 }

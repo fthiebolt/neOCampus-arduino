@@ -68,13 +68,13 @@ void get_credentials(){
             /* Unboxing credentials from cred server */
             log_debug(json_credentials.capacity());
             log_debug(payload);
-            DeserializationError error = deserializeJson(json_credentials, payload);
+            DeserializationError err = deserializeJson(json_credentials, payload);
             log_debug("Credentials requested from auth");
             log_debug(url);
             // Test if parsing succeeds.
             if (error) {
                 log_debug("deserializeJson() KO: ");
-                log_debug(error.c_str());
+                log_debug(err.c_str());
             }else{
                 log_debug("deserializeJson() OK");
                 File file = LITTLEFS.open(CRED_FILE,FILE_WRITE);
@@ -82,17 +82,10 @@ void get_credentials(){
                     snprintf(log, 64, "%s%s","Failed to open file ",CRED_FILE);
                     log_debug(log);
                     return;
-                }
+               }
                 snprintf(log,64,"%s%s","The following file has been opened ", CRED_FILE);
                 log_debug(log);
-                DeserializationError err = deserializeJson(json_credentials, file);
-                if(err){
-                    log_debug("writing to cred file KO");
-                    return;
-                }else{
-                    log_debug("writing to cred file OK");
-                    serializeJsonPretty(json_credentials,Serial);
-                }
+                serializeJson(json_credentials,file);
                 file.close();
             }
         }else{
@@ -117,12 +110,20 @@ void setup() {
         //LITTLEFS.mkdir("/");
         get_MAC();
         set_WiFi();
-        /* for testing purposes, this file has to be rewritten everytime. However ths test SHALL BE in the neOScheduler library*/
-        //if(!LITTLEFS.exists(CRED_FILE)){
+        if(!LITTLEFS.exists(CRED_FILE)){
             get_credentials();
-        //}else{
-        //    log_debug("credentials file OK");            
-        //}
+        }else{
+            log_debug("credentials file OK");   
+            File file = LITTLEFS.open(CRED_FILE);
+            DeserializationError err = deserializeJson(json_credentials, file);
+            if(err){
+            		log_debug("reading from cred file KO");
+                return;
+            }else{
+                log_debug("reading from cred file OK");
+                serializeJsonPretty(json_credentials,Serial);
+            }         
+        }
 
     }
 }

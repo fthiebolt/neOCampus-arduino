@@ -22,6 +22,6 @@
 #define WIFI_FILE "/wconf.txt"
 
 #define FILE_SIZE 10
-#define MAX_JSON_SIZE (JSON_OBJECT_SIZE(128))
+#define MAX_JSON_SIZE (JSON_OBJECT_SIZE(128)+128*32)
 
 #endif

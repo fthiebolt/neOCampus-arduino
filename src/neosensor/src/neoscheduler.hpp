@@ -10,9 +10,10 @@
 #include "neologger.hpp"
 #include "wifimanager.hpp"
 
-class neoscheduler{
+class neoscheduler {
 public:
-    neoscheduler(float d);
+    neoscheduler( void );
+    ~neoscheduler( void );
 
     /* function to call in the .ino setup 
     * User don't have to manually setup everything hence this function
@@ -27,7 +28,6 @@ public:
     /* add user's custom publish and on_message functions */
     void add_sen_type();
 private:
-    float _delay;
     wifimanager _wm;
     httpsclient _https;
     mqttsclient _mqtts;

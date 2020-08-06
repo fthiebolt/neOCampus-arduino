@@ -1,10 +1,16 @@
 #include "neoscheduler.hpp"
 
-neoscheduler::neoscheduler(float d) :_delay(d) {};
+// constructor
+neoscheduler::neoscheduler( void ) {
+    // neOScheduler init
+}
+
+// destructor
+neoscheduler::~neoscheduler( void ) {
+  // free dynamically allocated memory (if any)
+}
 
 void neoscheduler::setup(){
-    delay(3000);
-    Serial.begin(115200);
     log_debug("--- beg of neoscheduler::setup ---")
     _mem.begin(true);
     _mem.makedir("/");
@@ -34,6 +40,5 @@ void neoscheduler::setup(){
 }
 
 void neoscheduler::loop(){
-    delay(_delay);
-    Serial.print(".");
+    // main loop processing sensors algorithms
 }

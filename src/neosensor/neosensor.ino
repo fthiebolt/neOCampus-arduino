@@ -5,7 +5,7 @@
 #include "src/base_class.hpp"
 #include "src/neologger.hpp"
 
-neoscheduler neo(1000);
+neoscheduler neo = neoscheduler();
 
 void func1(byte *p, unsigned int l){
     log_debug("func 1 was called");
@@ -20,10 +20,16 @@ void func2(byte *p, unsigned int l){
 base_class bc1("airquality",func1);
 base_class bc2("temperature",func2);
 
-void setup(){   
-    neo.setup();
+
+void setup() {
+  Serial.begin(115200);
+  delay(3000);
+
+  neo.setup();
 }
 
 void loop(){
    neo.loop();
+
+   delay(250);
 }

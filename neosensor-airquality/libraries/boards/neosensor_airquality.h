@@ -37,6 +37,7 @@
 #define INVALID_GPIO        (uint8_t)(-1)
 
 /* system led ... not present on ESP32 ... it is the blue led on ESP8266 near the antenna */
+#define SYS_LED               INVALID_GPIO
 
 /* main LED ... this board does not feature any led :( */
 #define LED                   INVALID_GPIO

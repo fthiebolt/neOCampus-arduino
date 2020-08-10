@@ -62,7 +62,7 @@
  * ... thus it is better to set GPIO2 directly
  */
 //#define SYS_LED           LED_BUILTIN   // GPIO2 (ESP8266 embedded led)
-//#define SYS_LED             2             // GPIO2 (ESP8266 embedded led)
+#define SYS_LED             2             // GPIO2 (ESP8266 embedded led)
 
 // main output led
 #define LED                 5   // GPIO5 (our main led)

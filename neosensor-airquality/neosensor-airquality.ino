@@ -46,6 +46,11 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include <Ticker.h>
+#ifdef ESP8266
+  #include <ESP8266WiFi.h>
+#elif defined(ESP32)
+  #include <WiFi.h>
+#endif
 
 /* As of esp8266 arduino lib >=2.4.0, time is managed via local or sntp along with TZ support :) */ 
 #include <time.h>                       // time() ctime()
@@ -73,13 +78,12 @@
 /* neOCampus related includes */
 #include "neocampus.h"
 
-#if 0
 #include "neocampus_debug.h"
 #include "neocampus_utils.h"
 #include "neocampus_i2c.h"
 //#include "sensocampus.h"  later
 #include "neocampus_OTA.h"
-#endif /* 0 */
+
 
 
 
@@ -208,15 +212,33 @@ void setupSerial( void ) {
 }
 
 
-// ---
-// Setup Serial link1 used to either core debugging or just to blink led2
-void setupSerial1( void ) {
-  // ESP8266's GPIO2 is tied to Serial1's TX
-  Serial1.begin( 115200, (SerialConfig)SERIAL_8N1, (SerialMode)UART_TX_ONLY, 2);
 
-  // Arduino libs v2.4.1, to enable printf and debug messages output
-  // Serial1.setDebugOutput( true ); // default
+// ---
+// Setup system led (mostly led2 on ESP8266) i.e blud led on ESP12E/F near antenna
+// we then use serial link1 used to either core debugging or just to blink led2
+void setupSysLed( void ) {
+#if defined(ESP8266) && defined(SYS_LED)
+  if( SYS_LED!=(uint8_t)INVALID_GPIO ) {
+    // ESP8266's GPIO2 is tied to Serial1's TX
+    Serial1.begin( 115200, (SerialConfig)SERIAL_8N1, (SerialMode)UART_TX_ONLY, SYS_LED);
+  
+    // Arduino libs v2.4.1, to enable printf and debug messages output
+    // Serial1.setDebugOutput( true ); // default
+    return;
+  }
+#elif defined(ESP32) && defined(SYS_LED)
+  if( SYS_LED!=(uint8_t)INVALID_GPIO ) {  
+    pinMode(SYS_LED, OUTPUT);
+    return;
+  }
+#endif
+  log.info(F("\nNO SYS_LED defined.")); log_flush();
 }
+
+
+
+TO BE CONTINUED
+
 
 
 // ---
@@ -273,6 +295,12 @@ void endLoop( void ) {
   // a second elapsed ?
   if( ((millis() - _lastCheck) >= (unsigned long)1000UL) == true ) {
     _lastCheck = millis();
+
+
+TO MODIFY with a call to a blinkSysLed function
+
+    /* blink SYS_LED */
+    
 
     /* ESP8266's onboard blue led (GPIO2) is tied to Serial1:
      * send zero(s) to blink the led
@@ -563,9 +591,9 @@ void setup() {
   setupSerial();
 
   /*
-   * Setup Serial1 to enable on-board blue led to blink
+   * Setup system led (mostly ESP8266 with blue led on GPIO2)
    */
-  setupSerial1();
+  setupSysLed();
 
   /*
    * Check for CLEAR switch status:

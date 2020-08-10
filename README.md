@@ -10,9 +10,13 @@ neOCampus IoT support library for Arduino. This library will provides support fo
 ## neOSensor AirQuality board ##
 This board comes from CNRS LCC lab, it's a PhD work undertalen by Aymen Sendhi (sendhi@laas.fr).
 The board features four specific sensors able to measure NO2, CO, CH20, NO2 alternate.
-We added support to our neOCampus IoT management infrastructure named [sensOCampus](https://neocampus.univ-tlse3.fr "neOCampus's Wiki Home") whicj enables this sensor to publish data and to have those data stored in our databases.
+We added support to our neOCampus IoT management infrastructure named [sensOCampus](https://neocampus.univ-tlse3.fr "neOCampus's Wiki Home") which enables this sensor to publish data and to have those data stored in our databases.
 
-Once you've gone through the later 'getting started', you can compile and upload the firmware to the board (we're currently using a regular ESP32-WROOM32 board).
+Once you've gone through the later [getting started](#markdown-header-Getting-started), you can compile and upload the firmware to the board (we're currently using a regular ESP32-WROOM32 board).
+To achiev this, you'll need to:
+  - @preferences --> set your Arduino sketchbook to `~/neOCampus-arduino/nesensor-airquality' ... this will lead to proper libraries
+  - select board 'ESP32 arduino' --> 'neOSensor AirQuality'
+  - compile :)
 
 ### Getting started
 First of all, you ought to install esp32 support in your Arduino IDE.

@@ -22,7 +22,7 @@ neOSensor-airquality.build.flash_size=4MB
 neOSensor-airquality.build.flash_freq=80m
 neOSensor-airquality.build.boot=dio
 neOSensor-airquality.build.partitions=default
-neOSensor-airquality.build.defines=-DNEOSENSOR_BOARD=NEOSENSOR_AIRQUALITY -DMQTT_KEEPALIVE=60 -DMQTT_SOCKET_TIMEOUT=60 -DMQTT_MAX_PACKET_SIZE=256
+neOSensor-airquality.build.defines=-DNEOSENSOR_AIRQUALITY_BOARD -DMQTT_KEEPALIVE=60 -DMQTT_SOCKET_TIMEOUT=60 -DMQTT_MAX_PACKET_SIZE=256
 
 neOSensor-airquality.menu.UploadSpeed.921600=921600
 neOSensor-airquality.menu.UploadSpeed.921600.upload.speed=921600

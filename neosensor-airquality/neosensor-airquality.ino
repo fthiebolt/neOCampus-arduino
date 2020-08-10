@@ -2,7 +2,7 @@
  *
  * neOCampus operation
  * 
- * neOSensor based on ESP32 boards
+ * neOSensor board based on ESP32 --> LCC's neOSensor-AirQuality
  * -----------------------------------------------------------------------------
  * 
  * NOTES:
@@ -39,7 +39,9 @@
  * Includes
  */
 /* specify timezone; daylight will automatically follow :) */
-#include <TZ.h>
+#ifdef ESP8266
+  #include <TZ.h>
+#endif
 
 #include <Arduino.h>
 #include <Wire.h>
@@ -47,10 +49,12 @@
 
 /* As of esp8266 arduino lib >=2.4.0, time is managed via local or sntp along with TZ support :) */ 
 #include <time.h>                       // time() ctime()
-#include <coredecls.h>                  // settimeofday_cb(), tune_timeshift64()
+#ifdef ESP8266
+  #include <coredecls.h>                  // settimeofday_cb(), tune_timeshift64()
 
-#include <sntp.h>
-//#include <lwipopts.h>                   // for SNTP_UPDATE_DELAY (1 hour default, it's ok :) )
+  #include <sntp.h>
+  //#include <lwipopts.h>                   // for SNTP_UPDATE_DELAY (1 hour default, it's ok :) )
+#endif /* ESP8266 */
 
 /*
  * ESP8266 advanced ops
@@ -69,13 +73,13 @@
 /* neOCampus related includes */
 #include "neocampus.h"
 
+#if 0
 #include "neocampus_debug.h"
 #include "neocampus_utils.h"
 #include "neocampus_i2c.h"
-#include "sensocampus.h"
-#include "neocampus_eeprom.h"
+//#include "sensocampus.h"  later
 #include "neocampus_OTA.h"
-
+#endif /* 0 */
 
 
 
@@ -101,15 +105,21 @@
 */
 // Debug related definitions
 #define SERIAL_BAUDRATE   115200
-#if (LOG_LEVEL > 0) || defined(DEBUG_WIFI_MANAGER)
-  #include <SoftwareSerial.h>
-#endif
+#ifdef ESP8266
+  #if (LOG_LEVEL > 0) || defined(DEBUG_WIFI_MANAGER)
+    #include <SoftwareSerial.h>
+  #endif
+#endif /* ESP8266 */
 
 // sensOCampus related definitions
 #define SENSO_MAX_RETRIES         5   // maximum number of sensOCampus configuration retrieval retries
 
 // Time related definitions
 #define MYTZ                      TZ_Europe_Paris
+#ifdef ESP32
+  const long  gmtOffset_sec = 3600;
+  const int   daylightOffset_sec = 3600;
+#endif
 #define NTP_DEFAULT_SERVER1       "0.fr.pool.ntp.org" // DNS location aware
 //#define NTP_DEFAULT_SERVER2       "time.nist.gov"     // DNS location aware
 #define NTP_DEFAULT_SERVER2       "pool.ntp.org"      // DNS location aware
@@ -200,7 +210,7 @@ void setupSerial( void ) {
 
 // ---
 // Setup Serial link1 used to either core debugging or just to blink led2
-void n( void ) {
+void setupSerial1( void ) {
   // ESP8266's GPIO2 is tied to Serial1's TX
   Serial1.begin( 115200, (SerialConfig)SERIAL_8N1, (SerialMode)UART_TX_ONLY, 2);
 
@@ -218,9 +228,6 @@ void clearSensor( void ) {
   // clear WiFi credentials
   WiFi.disconnect();
 
-  // invalidate EEPROM
-  clearEEPROMvalidity();
-
   // clear JSON config files (SPIFFS)
   formatSPIFFS();
 }
@@ -228,9 +235,15 @@ void clearSensor( void ) {
 
 // ---
 // I2C setup pins and frequency
-void setupI2C( void ) {
+bool setupI2C( void ) {
 
-  if( _need2reboot ) return;
+  if( _need2reboot ) return false;
+
+  // if not defined SDA and SCL ... give up
+  if( SDA==(uint8_t)INVALID_GPIO or SCL==(uint8_t)INVALID_GPIO ) {
+    log.info(F("\nI2C bus disabled.")); log_flush();
+    return false;
+  }
   
   log_info(F("\n[i2c] start setup ..."));
   Wire.begin(SDA,SCL);
@@ -240,6 +253,7 @@ void setupI2C( void ) {
   #else
     log_debug(F("\nI2C frequency set to default 100kHz")); log_flush();
   #endif
+  return true;
 }
 
 
@@ -398,11 +412,18 @@ bool setupNTP( void ) {
 
   log_debug(F("\n[NTP] start setup of (S)NTP ..."));
 
-  // register ntp sync callback
-  settimeofday_cb( syncNTP_cb );
-
-  // [may.20] as default, NTP server is provided by the DHCP server
-  configTime( MYTZ, NTP_DEFAULT_SERVER1, NTP_DEFAULT_SERVER2, NTP_DEFAULT_SERVER3 );
+  #ifdef ESP8266
+    // register ntp sync callback
+    settimeofday_cb( syncNTP_cb );
+    // [may.20] as default, NTP server is provided by the DHCP server
+    configTime( MYTZ, NTP_DEFAULT_SERVER1, NTP_DEFAULT_SERVER2, NTP_DEFAULT_SERVER3 );
+  #else /* ESP32 */
+    // register ntp sync callback
+    #warning "no sntp callback in ESP32 ?!?!"
+    // set_time_sync_notification_cb()
+    // is it possible to retrive the one from the DHCP server ??
+    configTime(gmtOffset_sec, daylightOffset_sec, NTP_DEFAULT_SERVER1, NTP_DEFAULT_SERVER2, NTP_DEFAULT_SERVER3 );
+  #endif    
 
   log_flush();
   // the end ...

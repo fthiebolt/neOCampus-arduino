@@ -1,0 +1,35 @@
+# neOCampus / ESP32 additional boards
+
+neOSensor-airquality.name=neOSensor-airquality
+
+neOSensor-airquality.upload.tool=esptool_py
+neOSensor-airquality.upload.maximum_size=1310720
+neOSensor-airquality.upload.maximum_data_size=327680
+neOSensor-airquality.upload.wait_for_upload_port=true
+
+neOSensor-airquality.serial.disableDTR=true
+neOSensor-airquality.serial.disableRTS=true
+
+neOSensor-airquality.build.mcu=esp32
+neOSensor-airquality.build.core=esp32
+# [aug.20] we keep node32s variant
+neOSensor-airquality.build.variant=node32s
+neOSensor-airquality.build.board=node32s
+
+neOSensor-airquality.build.f_cpu=160000000L
+neOSensor-airquality.build.flash_mode=dio
+neOSensor-airquality.build.flash_size=4MB
+neOSensor-airquality.build.flash_freq=80m
+neOSensor-airquality.build.boot=dio
+neOSensor-airquality.build.partitions=default
+neOSensor-airquality.build.defines=-DNEOSENSOR_BOARD=NEOSENSOR_AIRQUALITY -DMQTT_KEEPALIVE=60 -DMQTT_SOCKET_TIMEOUT=60 -DMQTT_MAX_PACKET_SIZE=256
+
+neOSensor-airquality.menu.UploadSpeed.921600=921600
+neOSensor-airquality.menu.UploadSpeed.921600.upload.speed=921600
+neOSensor-airquality.menu.UploadSpeed.115200=115200
+neOSensor-airquality.menu.UploadSpeed.115200.upload.speed=115200
+
+# FLASH partitioning
+neOSensor-airquality.menu.PartitionScheme.default=Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)
+neOSensor-airquality.menu.PartitionScheme.default.build.partitions=default
+

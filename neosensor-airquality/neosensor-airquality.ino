@@ -14,7 +14,8 @@
  * -----------------------------------------------------------------------------
  * 
  * TODO:
- * - everything!
+ * - add sntp_cb once available for ESP32
+ * - check sntp!=IPADDR_ANY works with ESP8266 (line 342)
  * -----------------------------------------------------------------------------
  * 
  * F.DeMiguel
@@ -36,7 +37,12 @@
  * ############################################################################# */
 
 
+
+/*
+ * TESTS TESTS TESTS
+ */
 #define DISABLE_MODULES
+
 
 
 /*
@@ -277,6 +283,26 @@ bool setupI2C( void ) {
 
 
 // ---
+// Blink system led
+inline void blinkSysLed( void ) {
+#ifdef SYS_LED
+  #ifdef ESP8266
+    /* ESP8266's onboard blue led (GPIO2) is tied to Serial1:
+     * send zero(s) to blink the led
+     */
+    byte _msg[] = {0x00, 0x00, 0x00, 0x00 };
+    Serial1.write(_msg, sizeof(_msg));Serial1.flush();
+  #elif defined(ESP32)
+    /* ESP32 does not feature the blue led like in ESP12E/F modules */
+    digitalWrite( SYS_LED, HIGH);
+    delay(50);
+    digitalWrite( SYS_LED, LOW);
+  #endif
+#endif /* SYS_LED */  
+}
+
+
+// ---
 // process end of main loop: specific functions executed every seconds
 void endLoop( void ) {
   static unsigned long _lastCheck = 0;    // elapsed ms since last check
@@ -309,9 +335,14 @@ void endLoop( void ) {
       
       // list active ntp servers
       for( uint8_t i=0; i<SNTP_MAX_SERVERS; i++ ) {
-        IPAddress sntp = *sntp_getserver(i);
+        IPAddress sntp = *(IPAddress *)sntp_getserver(i);
         const char* sntp_name = sntp_getservername(i);
-        if (sntp.isSet()) {
+        // check if address is valid
+#ifdef ESP8266
+        if( sntp.isSet() ) {
+#elif defined(ESP32)
+        if( sntp != IPADDR_ANY ) {
+#endif
           log_debugF("\n[NTP][%d]:     ", i);
           if( sntp_name ) {
             log_debugF("%s (%s) ", sntp_name, sntp.toString().c_str());
@@ -328,30 +359,11 @@ void endLoop( void ) {
 }
 
 
-// --- Blink system led
-inline void blinkSysLed( void ) {
-#ifdef SYS_LED
-  #ifdef ESP8266
-    /* ESP8266's onboard blue led (GPIO2) is tied to Serial1:
-     * send zero(s) to blink the led
-     */
-    byte _msg[] = {0x00, 0x00, 0x00, 0x00 };
-    Serial1.write(_msg, sizeof(_msg));Serial1.flush();
-  #elif defined(ESP32)
-    /* ESP32 does not feature the blue led like in ESP12E/F modules */
-    digitalWrite( SYS_LED, HIGH);
-    delay(50);
-    digitalWrite( SYS_LED, LOW);
-  #endif
-#endif /* SYS_LED */  
-}
-
-
 // --- LED MODES while in setup()
-// ledWiFiMode
+// ledWiFiMode, i.e fade-in / fade-out constantly
 void _ledWiFiMode( uint8_t led ) {
   if( led == INVALID_GPIO ) return;
-  
+#ifdef ESP8266  
   const uint8_t _val_steps = 50;
   static int16_t _val=0;
   
@@ -359,6 +371,11 @@ void _ledWiFiMode( uint8_t led ) {
   else _val=-PWMRANGE;
 
   analogWrite( led, (abs(_val)<PWMRANGE) ? abs(_val) : PWMRANGE );
+#elif defined(ESP32)
+
+TODO !
+
+#endif
 }
 
 

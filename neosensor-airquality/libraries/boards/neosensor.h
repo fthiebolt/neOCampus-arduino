@@ -1,7 +1,7 @@
 /*
  * neOCampus operation
  * 
- * neOSensor ESP8266 hardware board definitions
+ * neOSensor ESP8266/ESP32 hardware board definitions
  * 
  * 
  * ---
@@ -10,23 +10,20 @@
  *  - luminosity (TSL2561)
  *  - temperature (MCP9808)
  *  - noise detector (8bits DAC MCP4706)
+ * ---
  *
- * F.Thiebolt Jun.18  merged neOClock as options to neOSensor
- * F.Thiebolt May.18  set GPIO2 for embedded led
- * F.Thiebolt Sep.17  added microswitch on NOISE_LED output to read at startup if a config reset is required
- *                    replaced MCP4706 DAC with MCP47FEB01A0 (because it's impossible to read MCP4706 status via i2c)
- * F.Thiebolt July17  initial release
+ * F.Thiebolt   Aug.20  added definitions for future ESP32 version (e.g LED PWM channel)
+ * F.Thiebolt   Jun.18  merged neOClock as options to neOSensor
+ * F.Thiebolt   May.18  set GPIO2 for embedded led
+ * F.Thiebolt   Sep.17  added microswitch on NOISE_LED output to read at startup if a config reset is required
+ *                      replaced MCP4706 DAC with MCP47FEB01A0 (because it's impossible to read MCP4706 status via i2c)
+ * F.Thiebolt   July17  initial release
  * 
  */
 
 
 #ifndef _NEOSENSOR_H_
 #define _NEOSENSOR_H_
-
-/* Check module */
-#if !defined(ESP8266)
-#error "WRONG TARGET, ought to be an ESP8266!"
-#endif /* ESP8266 */
 
 /*
  * Includes
@@ -62,12 +59,26 @@
  * ... thus it is better to set GPIO2 directly
  */
 //#define SYS_LED           LED_BUILTIN   // GPIO2 (ESP8266 embedded led)
+#ifndef SYS_LED
 #define SYS_LED             2             // GPIO2 (ESP8266 embedded led)
+#endif
 
 // main output led
+#ifndef LED
 #define LED                 5   // GPIO5 (our main led)
+#endif
+
+// main output led PWM settings (ESP32 ONLY)
+#ifdef ESP32
+#define LED_CHANNEL         (uint8_t)0  // PWM controller from 0 to 15
+#define LED_RESOLUTION      10          // Timer precision from 1 to 16 bits
+#define LED_BASE_FREQ       5000
+#endif /* ESP32 */
+
 // [Sep.17] reset microswitch is connected to the NOISE_LED output
+#ifndef CLEAR_SW
 #define CLEAR_SW            LED
+#endif
 
 // i2c bus related definition
 /* [Jun.18] we observed some unusual values for temperature

@@ -16,6 +16,7 @@
  * TODO:
  * - add sntp_cb once available for ESP32
  * - check sntp!=IPADDR_ANY works with ESP8266 (line 342)
+ * - check SYS_LED is working (add -DSYS_LED=2)
  * -----------------------------------------------------------------------------
  * 
  * F.DeMiguel
@@ -39,10 +40,12 @@
 
 
 /*
- * TESTS TESTS TESTS
+ * TESTS TESTS TESTS TESTS
  */
 #define DISABLE_MODULES
+char* clockModule = nullptr;
 
+/* --- END OF TESTS ------ */
 
 
 /*
@@ -361,8 +364,10 @@ void endLoop( void ) {
 
 // --- LED MODES while in setup()
 // ledWiFiMode, i.e fade-in / fade-out constantly
-void _ledWiFiMode( uint8_t led ) {
-  if( led == INVALID_GPIO ) return;
+// input is either the led_pin (esp8266)
+// or the channel_id (esp32)
+void _ledWiFiMode( uint8_t id ) {
+
 #ifdef ESP8266  
   const uint8_t _val_steps = 50;
   static int16_t _val=0;
@@ -370,11 +375,22 @@ void _ledWiFiMode( uint8_t led ) {
   if( _val < PWMRANGE ) _val+=_val_steps;
   else _val=-PWMRANGE;
 
-  analogWrite( led, (abs(_val)<PWMRANGE) ? abs(_val) : PWMRANGE );
+  analogWrite( id, (abs(_val)<PWMRANGE) ? abs(_val) : PWMRANGE );
+
 #elif defined(ESP32)
+  /* Ok, we'll get called every 50ms ... 
+   *  we want fade_in across 1s and fade_out across another 1s
+   *  ==> 20 steps for each fade_
+   *  Channel resolution being 10bits ==> 1024 / 20 = #50
+   *  ... thus each steo will increase/decrese duty by this step
+   */
+  const uint8_t _val_steps = (pow(2,LED_RESOLUTION)-1) / 20;
+  static int32_t _duty = 0;
 
-TODO !
+  if( _duty < pow(2,LED_RESOLUTION) ) _duty+=_val_steps;
+  else _duty = -pow(2,LED_RESOLUTION);
 
+  ledcWrite( id, (abs(_duty)<(pow(2,LED_RESOLUTION)-1)) ? abs(_duty) : pow(2,LED_RESOLUTION)-1 );
 #endif
 }
 
@@ -388,14 +404,24 @@ void setupLed( uint8_t led, enum_ledmode_t led_mode ) {
   switch( led_mode ) {
     case WIFI:
       // set led to show we're waiting for WiFi connect
+#ifdef ESP8266
       pinMode(led,OUTPUT);
       timer_led.attach_ms(50, _ledWiFiMode, led);
+#elif defined(ESP32)
+      ledcSetup(LED_CHANNEL, LED_BASE_FREQ, LED_RESOLUTION);
+      ledcAttachPin( led, LED_CHANNEL);
+      timer_led.attach_ms(50, _ledWiFiMode, LED_CHANNEL);
+#endif
       break;
 
     case DISABLE:
       // switch back to INPUT mode (default after reset)
       timer_led.detach();
+#ifdef ESP8266
       analogWrite( led, 0 );  // [Dec.17] workaround for resilient analog value written to led
+#elif defined(ESP32)
+      ledcDetachPin( led );
+#endif
       pinMode(led,INPUT);
       break;
 

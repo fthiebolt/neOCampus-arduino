@@ -37,16 +37,28 @@
 #define INVALID_GPIO        (uint8_t)(-1)
 
 /* system led ... not present on ESP32 ... it is the blue led on ESP8266 near the antenna */
+#ifndef SYS_LED
 #define SYS_LED               INVALID_GPIO
+#endif
 
 /* main LED ... this board does not feature any led :( */
+#ifndef LED
 #define LED                   INVALID_GPIO
 //#define LED                 2   // GPIO2 (our main led)
+#endif
+
+// main output led PWM settings (ESP32 ONLY)
+#ifdef ESP32
+#define LED_CHANNEL           (uint8_t)0  // PWM controller from 0 to 15
+#define LED_RESOLUTION        10          // Timer precision from 1 to 16 bits
+#define LED_BASE_FREQ         5000
+#endif /* ESP32 */
 
 /* Clear switch ... this board does not feature a clear switch :( */
+#ifndef CLEAR_SW
 #define CLEAR_SW              INVALID_GPIO
 //#define CLEAR_SW            LED
-
+#endif
 
 // i2c bus related definition ... not on this board
 #define SDA                 INVALID_GPIO

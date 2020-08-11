@@ -10,8 +10,6 @@
  * 
  * ---
  * F.Thiebolt   aug.20  removed EEPROM support
- *                      switched to generic WiFi.h (instead of ESP8266WiFi.h) and
- *                      generic HTTPClient.h (instead of ESP8266HTTPClient.h)
  * F.Thiebolt   Nov.19  set 30s WiFi connexion timeout with previous credentials
  * Thiebolt F. July 17
  * 
@@ -61,8 +59,11 @@ bool _WMsaveAddonConfigFlag = false;
  * if pin == -1 --> check disabled
  */
 bool checkCLEARswitch( uint8_t sw_pin ) {
-  if (sw_pin == INVALID_GPIO) return false;
-  
+  if (sw_pin == INVALID_GPIO) {
+    log.debug(F("\n[CLEAR] no CLEAR_SW defined !")); log_flush();
+    return false;
+  }
+
   // set pin as input
   pinMode( sw_pin, INPUT );
   
@@ -232,16 +233,6 @@ bool setupWiFi( wifiParametersMgt *wp ) {
     p_sevenSegTM1637._customHTML = _customHtml_checkbox_checked;
   }
   
-/*
-  // I2C SCL and SDA parameters are integers so we need to convert them to char array but
-  // no other special considerations
-  char convertedValue[3];
-  sprintf(convertedValue, "%d", NEOCLOCK_TM1637_DIO);
-  WiFiManagerParameter p_pinTM1637dio("pinTM1637dio", "TM1637 DIO pin", convertedValue, 3);
-  sprintf(convertedValue, "%d", NEOCLOCK_TM1637_CLK);
-  WiFiManagerParameter p_pinTM1637clk("pinTM1637clk", "TM1637 CLK pin", convertedValue, 3);
-*/
-
   // PIR sensor
   WiFiManagerParameter p_PIRsensor("PIRsensor", "PIR sensor (pin=5)", "T", 2, _customHtml_checkbox, WFM_LABEL_AFTER);
   if( wp->isEnabledPIR() ) {

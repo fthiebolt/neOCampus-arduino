@@ -20,7 +20,7 @@
 #include <ArduinoJson.h>          // https://github.com/bblanchon/ArduinoJson
 #ifdef ESP8266
   #include <ESP8266httpUpdate.h>
-#else /* ESP32 */
+#elif defined(ESP32)
   #include <HTTPUpdate.h>
 #endif
 
@@ -168,9 +168,10 @@ firmwareRev_t getFirmwareRev() {
 const char *getHardware( void ) {
 #ifdef ESP8266
   static const char hardware[] = "esp8266";
-#elif ESP32
+#elif defined(ESP32)
   static const char hardware[] = "esp32";
 #else
+  #warning "unknown hardwrae ... strange ..."
   static const char hardware[] = "unknown";
 #endif
   return hardware;

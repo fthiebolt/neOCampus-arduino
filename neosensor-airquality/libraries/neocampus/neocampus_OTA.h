@@ -4,7 +4,7 @@
  * Over The Air (OTA) firmware upgrade utilities
  *
  * ---
- * F.Thiebolt   aug.20  switched to HTTP with ssl support :)
+ * F.Thiebolt   aug.20  switched to HTTPs (i.e with ssl support) :s
  * Thiebolt F.  aug.17  initial release
  * 
  */

@@ -2,7 +2,8 @@
  *
  * neOCampus operation
  * 
- * neOSensor board based on ESP32 --> LCC's neOSensor-AirQuality
+ * neOSensor-AirQuality
+ * is an ESP32 based board from CNRS LCC lab able to monitor air quality.
  * -----------------------------------------------------------------------------
  * 
  * NOTES:
@@ -27,30 +28,29 @@
  * ###                       BOARD HARDWARE SELECTION                        ###
  * ###                                                                       ###
  * 
- *      No more need to modify the proper board in >>> 'neocampus.h' <<<
- *      because we now use a compilation flag -DNEOSENSOR_BOARD :)
+ *      Proper board will be selected and included in >>> 'neocampus.h' <<<
+ *      according to the selection you made within Arduino's board selector
  * 
  * >>>     Don't forget to update BOARD_FWREV from your 'board/neOXxx.h'     <<<
  * 
  * ############################################################################# */
 
 
+#define DISABLE_MODULES
+
+
 /*
  * Includes
  */
-/* specify timezone; daylight will automatically follow :) */
 #ifdef ESP8266
+  /* specify timezone; daylight will automatically follow :) */
   #include <TZ.h>
 #endif
 
 #include <Arduino.h>
 #include <Wire.h>
 #include <Ticker.h>
-#ifdef ESP8266
-  #include <ESP8266WiFi.h>
-#elif defined(ESP32)
-  #include <WiFi.h>
-#endif
+#include <WiFi.h>
 
 /* As of esp8266 arduino lib >=2.4.0, time is managed via local or sntp along with TZ support :) */ 
 #include <time.h>                       // time() ctime()
@@ -59,7 +59,9 @@
 
   #include <sntp.h>
   //#include <lwipopts.h>                   // for SNTP_UPDATE_DELAY (1 hour default, it's ok :) )
-#endif /* ESP8266 */
+#elif defined(ESP32)
+  #include "lwip/apps/sntp.h"
+#endif
 
 /*
  * ESP8266 advanced ops
@@ -218,7 +220,7 @@ void setupSerial( void ) {
 // we then use serial link1 used to either core debugging or just to blink led2
 void setupSysLed( void ) {
 #if defined(ESP8266) && defined(SYS_LED)
-  if( SYS_LED!=(uint8_t)INVALID_GPIO ) {
+  if( SYS_LED != INVALID_GPIO ) {
     // ESP8266's GPIO2 is tied to Serial1's TX
     Serial1.begin( 115200, (SerialConfig)SERIAL_8N1, (SerialMode)UART_TX_ONLY, SYS_LED);
   
@@ -227,18 +229,13 @@ void setupSysLed( void ) {
     return;
   }
 #elif defined(ESP32) && defined(SYS_LED)
-  if( SYS_LED!=(uint8_t)INVALID_GPIO ) {  
+  if( SYS_LED != INVALID_GPIO ) {  
     pinMode(SYS_LED, OUTPUT);
     return;
   }
 #endif
-  log.info(F("\nNO SYS_LED defined.")); log_flush();
+  log_info(F("\nNO SYS_LED defined.")); log_flush();
 }
-
-
-
-TO BE CONTINUED
-
 
 
 // ---
@@ -262,8 +259,8 @@ bool setupI2C( void ) {
   if( _need2reboot ) return false;
 
   // if not defined SDA and SCL ... give up
-  if( SDA==(uint8_t)INVALID_GPIO or SCL==(uint8_t)INVALID_GPIO ) {
-    log.info(F("\nI2C bus disabled.")); log_flush();
+  if( SDA==INVALID_GPIO or SCL==INVALID_GPIO ) {
+    log_info(F("\nI2C bus disabled.")); log_flush();
     return false;
   }
   
@@ -287,7 +284,9 @@ void endLoop( void ) {
   // check if a reboot has been requested ...
   if( _need2reboot ) {
     log_info(F("\n[REBOOT] a reboot has been asked ..."));log_flush();
+    #ifndef DISABLE_MODULES
     modulesList.stopAll();
+    #endif
     neOSensor_reboot();
     delay(5000); // to avoid an infinite loop
   }
@@ -296,17 +295,8 @@ void endLoop( void ) {
   if( ((millis() - _lastCheck) >= (unsigned long)1000UL) == true ) {
     _lastCheck = millis();
 
-
-TO MODIFY with a call to a blinkSysLed function
-
     /* blink SYS_LED */
-    
-
-    /* ESP8266's onboard blue led (GPIO2) is tied to Serial1:
-     * send zero(s) to blink the led
-     */
-    byte _msg[] = {0x00, 0x00, 0x00, 0x00 };
-    Serial1.write(_msg, sizeof(_msg));Serial1.flush();
+    blinkSysLed();
 
     // check Heap available
     if( ESP.getFreeHeap() < 4096 ) {
@@ -338,9 +328,30 @@ TO MODIFY with a call to a blinkSysLed function
 }
 
 
+// --- Blink system led
+inline void blinkSysLed( void ) {
+#ifdef SYS_LED
+  #ifdef ESP8266
+    /* ESP8266's onboard blue led (GPIO2) is tied to Serial1:
+     * send zero(s) to blink the led
+     */
+    byte _msg[] = {0x00, 0x00, 0x00, 0x00 };
+    Serial1.write(_msg, sizeof(_msg));Serial1.flush();
+  #elif defined(ESP32)
+    /* ESP32 does not feature the blue led like in ESP12E/F modules */
+    digitalWrite( SYS_LED, HIGH);
+    delay(50);
+    digitalWrite( SYS_LED, LOW);
+  #endif
+#endif /* SYS_LED */  
+}
+
+
 // --- LED MODES while in setup()
 // ledWiFiMode
 void _ledWiFiMode( uint8_t led ) {
+  if( led == INVALID_GPIO ) return;
+  
   const uint8_t _val_steps = 50;
   static int16_t _val=0;
   
@@ -353,6 +364,8 @@ void _ledWiFiMode( uint8_t led ) {
 
 // various led modes to express neOSensor status while in setup()
 void setupLed( uint8_t led, enum_ledmode_t led_mode ) {
+
+  if( led == INVALID_GPIO ) return;
   static Ticker timer_led;
 
   switch( led_mode ) {
@@ -526,8 +539,8 @@ void earlySetup( void ) {
   // note: no log_xxx msg since they will get defined later
   // log_info(F("\n[Early] disable autoConnect and clear saved IP ...")); log_flush();
 
-#ifdef MAX_TCP_CONNECTIONS
-  // set maximum number of simultaneous TCP connexions
+#if defined(MAX_TCP_CONNECTIONS) && defined(ESP8266)
+  // set maximum number of simultaneous TCP connexions 
   // log_info(F("\n[Early] set max TCP concurrent sockets to ")); log_info(MAX_TCP_CONNECTIONS, DEC); log_flush();
   espconn_tcp_set_max_con( MAX_TCP_CONNECTIONS );
 #endif /* MAX_TCP_CONNECTIONS */
@@ -547,7 +560,9 @@ void lateSetup( void ) {
   if( _need2reboot ) {
     log_warning(F("\nA reboot has been asked while in setup() ... probably a faulty WiFi connect ...")); log_flush();
     delay(3000);
+    #ifndef DISABLE_MODULES
     modulesList.stopAll();
+    #endif /* DISABLE_MODULES */
     neOSensor_reboot();
     delay(5000); // to avoid an infinite loop
   }
@@ -566,7 +581,7 @@ void lateSetup( void ) {
   // for the (future) loop mode ...
   WiFi.setAutoConnect(true);
 
-#ifdef MAX_TCP_CONNECTIONS
+#if defined(MAX_TCP_CONNECTIONS) && defined(ESP8266)
   log_info(F("\n# max TCP concurrent sockets = ")); log_info(MAX_TCP_CONNECTIONS, DEC); log_flush();
 #endif /* MAX_TCP_CONNECTIONS */
 
@@ -605,11 +620,6 @@ void setup() {
     clearSensor();
   }
 #endif
-
-  /*
-   * Setup neOCampus EEPROM
-   */
-  setupEEPROM();
 
 
   /*
@@ -667,6 +677,12 @@ void setup() {
   yield();
 
 
+
+
+#if 0
+
+TO BE CONTINUED ...
+
   /*
    * Check for updates ...
    * - following example read a file containing config SSID and psk, it then compare to actual WiFi.SSID() and WiFi.psk()
@@ -704,8 +720,6 @@ void setup() {
       _need2reboot = true;
     }
   }
-  // EEPROM dump (debug purpose ;)
-  // hexdumpEEPROM();
 
 
   /*
@@ -887,8 +901,10 @@ void setup() {
   /*
    * start all modules ...
    */
+  #ifndef DISABLE_MODULES
   modulesList.startAll( &sensocampus );
-
+  #endif /* DISABLE_MODULES */
+#endif /* 0 */
 
   /*
    * Very end of setup() :)
@@ -900,10 +916,12 @@ void setup() {
 // --- LOOP --------------------------------------------------------------------
 void loop() {
 
+#if 0
   /*
    * Process device, module sensors ...
    */
   modulesList.processAll();
+#endif /* 0 */
 
   /* 
    * end of main loop

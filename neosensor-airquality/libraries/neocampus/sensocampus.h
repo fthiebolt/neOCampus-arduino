@@ -9,7 +9,6 @@
  * 
  */
 
-TODO: make use of filesystem to store credentials and config
 
 #ifndef _SENSOCAMPUS_H_
 #define _SENSOCAMPUS_H_
@@ -19,7 +18,7 @@ TODO: make use of filesystem to store credentials and config
  */
 
 #include <Arduino.h>
-//#include <ArduinoJson.h>
+#include <ArduinoJson.h>
 
 #include "neocampus.h"
 #include "neocampus_debug.h"
@@ -31,10 +30,15 @@ TODO: make use of filesystem to store credentials and config
 /*
  * Definitions
  */
-#define SENSO_GET_CREDENTIALS_URL       "https://sensocampus.univ-tlse3.fr/device/credentials?mac="
-#define SENSO_GET_CONFIG_URL            "https://sensocampus.univ-tlse3.fr/device/config"
+#ifdef DISABLED_SSL
+  #define SENSO_GET_CREDENTIALS_URL       "http://sensocampus.univ-tlse3.fr/device/credentials?mac="
+  #define SENSO_GET_CONFIG_URL            "http://sensocampus.univ-tlse3.fr/device/config"
+#else
+  #define SENSO_GET_CREDENTIALS_URL       "https://sensocampus.univ-tlse3.fr/device/credentials?mac="
+  #define SENSO_GET_CONFIG_URL            "https://sensocampus.univ-tlse3.fr/device/config"
+#endif /* DISABLED_SSL */
 #define SENSO_HTTP_URL_MAXSIZE          128   // maximum size of a URL sent to sensOCampus
-#define SENSO_HTTP_MAX_RESPONSE_SIZE    1024  // maximum size of a response from from an url sent to sensOCampus
+#define SENSO_HTTP_MAX_RESPONSE_SIZE    1024  // maximum size of a response sent from sensOCampus
 #define SENSO_JSON_SIZE                 (JSON_OBJECT_SIZE(128))   // no more than 128 objects in any sensOCampus JSON response
 #define SENSO_UNITID_SIZE               18    // unitID field maxsize (mac addr is 17 bytes)
 
@@ -47,10 +51,9 @@ class senso {
     senso( void );
     senso( wifiParametersMgt * );
     
-to add !
+    bool isValid( void );               // tell parameters have been initialized at least once
     bool loadConfigFile( void );
     bool saveConfigFile( void );
-
 
     boolean begin( const char * );
     bool http_getCredentials( const char * );
@@ -69,15 +72,18 @@ private:
     void _applyDefaults( void );
     bool _parseCredentials( char * );
     bool _parseConfig( char * );
+    bool _loadConfig( JsonObject );       // interprets JSON buffer from config file
+    bool _saveConfig( JsonObject );       // fill JSON buffer with things to save to config file
 
     /*
      * private attributes
      */
-    // check if structure is valid
-    bool _initialized;
+    bool _initialized;                    // check if structure is valid
+    bool _updated;                        // any change in current parameters ?
+    bool _defaults;                       // default parameters, hence no need to save
     
     // global wifiParametersMgt
-    wifiParametersMgt *_wifiParams;
+    wifiParametersMgt *_wp;
     
     // grabbed from sensocampus sever
     char _mqtt_server[MQTT_SERVER_NAME_LENGTH];

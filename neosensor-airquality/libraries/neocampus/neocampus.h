@@ -114,10 +114,13 @@ typedef uint32_t firmwareRev_t;
 
 // defaults values for testing purposes
 #define DEFL_MQTT_SERVER                "neocampus.univ-tlse3.fr"
-#define DEFL_MQTT_STD_PORT              1883            // MQTT
-#define DEFL_MQTT_ABROAD_PORT           10883           // MQTT for abroad access
-#define DEFL_MQTTS_STD_PORT             8883            // MQTTs
-#define DEFL_MQTTS_ABROAD_PORT          10888           // MQTTs for abroad access
+#ifdef DISABLED_SSL
+  #define DEFL_MQTT_STD_PORT            1883            // MQTT
+  #define DEFL_MQTT_ABROAD_PORT         10883           // MQTT for abroad access
+#elif
+  #define DEFL_MQTT_STD_PORT            8883            // MQTTs
+  #define DEFL_MQTT_ABROAD_PORT         10888           // MQTTs for abroad access
+#endif /* DISABLED_SSL */
 #define DEFL_MQTT_LOGIN                 "test"          // for SANDBOX mode
 #define DEFL_MQTT_PASSWD                "test"          // for SANDBOX mode
 #define DEFL_MQTT_TOPIC                 "TestTopic"     // for SANDBOX mode
@@ -146,11 +149,6 @@ typedef uint32_t firmwareRev_t;
  */
 // type for mac address in raw format
 typedef uint8_t mac_addr_t[6];
-
-/* --- SPIFFS WiFi related definitions
- * Note: remember there's no directory support @ SPIFFS level!
- */
-#define WIFI_CONFIG_FILE        "/wifi.json"        // (optional) WiFi configuration file for large-scale deployment in well-known env
 
 /*
 typedef struct { 

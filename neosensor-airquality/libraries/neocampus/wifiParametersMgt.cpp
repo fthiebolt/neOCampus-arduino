@@ -40,7 +40,12 @@ extern bool _need2reboot;
 /*
  * Definitions
  */
-#define CONFIG_JSON_SIZE        (JSON_OBJECT_SIZE(20))    // config file contains: frequency
+/* --- SPIFFS WiFi related definitions
+ * Note: remember there's no directory support @ SPIFFS level!
+ */
+#define WIFI_CONFIG_FILE        "/wifi.json"        // WiFi configuration file to store credentials and locales confs
+
+#define CONFIG_JSON_SIZE        (JSON_OBJECT_SIZE(20))
 
 
 // constructor
@@ -182,7 +187,8 @@ bool wifiParametersMgt::saveConfigFile( void ) {
   configFile.close();
   
   log_info(F("\n[wifiParams] successfully saved JSON config file: "));log_debug(WIFI_CONFIG_FILE);log_flush();
-    
+  
+  _updated = false;
   return true;
 }
 

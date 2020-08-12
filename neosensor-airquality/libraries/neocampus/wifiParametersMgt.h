@@ -67,7 +67,7 @@ class wifiParametersMgt {
     bool _updated;                    // did WEB options have been saved ?
 
     char _ssid[32];
-    char _pass[64];              // for WEP keys ?? (yes ?)
+    char _pass[64];                   // for WEP keys ?? (yes ?)
     
     bool _opt_sandboxMode;            // sensOCampus NORMAL / SANDBOX mode
     bool _opt_7segTM1637;             // TM1737 7segment display available

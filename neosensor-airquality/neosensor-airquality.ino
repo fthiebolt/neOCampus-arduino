@@ -10,13 +10,14 @@
  * - you need to 'deploy' our boards definitions
  * - select 'neOSensor AirQuality' board from menu (located end of list)
  * - NO MORE NEED TO PATCH standard libs ... we now have our own defines !!! :)
- * - 'NEOSENSOR_BOARD' compilation flag tells which bord it is (i.e NEOSENSOR_AIRQUALITY)
+ * - a compilation flag tells which bord it is (i.e NEOSENSOR_AIRQUALITY)
  * -----------------------------------------------------------------------------
  * 
  * TODO:
  * - add sntp_cb once available for ESP32
  * - check sntp!=IPADDR_ANY works with ESP8266 (line 342)
  * - check SYS_LED is working (add -DSYS_LED=2)
+ * - remove DISABLED_SSL compilation flag
  * -----------------------------------------------------------------------------
  * 
  * F.DeMiguel
@@ -158,12 +159,12 @@ bool _need2reboot = false;              // flag to tell a reboot is requested
 // WiFi parameters management statically allocated instance
 wifiParametersMgt wifiParameters = wifiParametersMgt();
 
+// sensOCampus statically allocated instance with link to global wifi parameters (to check against sandbox mode)
+senso sensocampus = senso( &wifiParameters );
+
 #if 0
 // modules management statically allocated instance
 modulesMgt modulesList = modulesMgt();
-
-// sensOCampus statically allocated instance with link to global wifi parameters
-senso sensocampus = senso( &wifiParameters );
 
 // device statically allocated instance
 device deviceModule = device();
@@ -699,8 +700,10 @@ void setup() {
 #endif
   }
 #else
+  // TODO: add a ifdef LED
   setupLed( LED, (enum_ledmode_t)WIFI );
 #endif /* 0 */
+
 
   /*
    * setupNTP
@@ -708,6 +711,7 @@ void setup() {
    * note: real ntp server may get sent from dhcp server :)
    */
   setupNTP();
+
 
   /*
    * WiFiManager to activate the network :)
@@ -729,6 +733,7 @@ void setup() {
 #endif
   }
 #else
+  // TODO: add a ifdef LED
   setupLed( LED, (enum_ledmode_t)DISABLE );
 #endif /* 0 */
   
@@ -770,6 +775,9 @@ TO BE CONTINUED ...
    * - MQTT password (first time only)
    */
   uint8_t _retry=SENSO_MAX_RETRIES;
+  // now FS is initialized, load our config file
+  sensocampus.loadConfigFile();
+
   while( not _need2reboot and sensocampus.begin(getMacAddress()) != true ) {
     log_info(F("\n[senso] WARNING unable to achieve sensOCampus credentials and/or config :|"));
     if( _retry-- ) {

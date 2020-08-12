@@ -60,7 +60,7 @@ bool _WMsaveAddonConfigFlag = false;
  */
 bool checkCLEARswitch( uint8_t sw_pin ) {
   if (sw_pin == INVALID_GPIO) {
-    log.debug(F("\n[CLEAR] no CLEAR_SW defined !")); log_flush();
+    log_debug(F("\n[CLEAR] no CLEAR_SW defined !")); log_flush();
     return false;
   }
 

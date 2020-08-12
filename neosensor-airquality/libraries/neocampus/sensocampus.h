@@ -40,7 +40,7 @@
 #define SENSO_HTTP_URL_MAXSIZE          128   // maximum size of a URL sent to sensOCampus
 #define SENSO_HTTP_MAX_RESPONSE_SIZE    1024  // maximum size of a response sent from sensOCampus
 #define SENSO_JSON_SIZE                 (JSON_OBJECT_SIZE(128))   // no more than 128 objects in any sensOCampus JSON response
-#define SENSO_UNITID_SIZE               18    // unitID field maxsize (mac addr is 17 bytes)
+
 
 
 /*

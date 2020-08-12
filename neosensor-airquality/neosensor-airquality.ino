@@ -744,11 +744,6 @@ void setup() {
 
 
 
-
-#if 0
-
-TO BE CONTINUED ...
-
   /*
    * Check for updates ...
    * - following example read a file containing config SSID and psk, it then compare to actual WiFi.SSID() and WiFi.psk()
@@ -797,6 +792,10 @@ TO BE CONTINUED ...
   yield();
 
 
+
+#if 0
+
+TO BE CONTINUED ...
 
   /*
    * Manage WiFi parameters options

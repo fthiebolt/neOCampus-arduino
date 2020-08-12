@@ -12,7 +12,12 @@
 /*
  * Includes
  */
-#include <FS.h>
+#ifdef ESP8266
+  #include <FS.h>
+#elif defined(ESP32)
+  #include "FS.h"
+  #include "SPIFFS.h"
+#endif
 
 /*
  * ESP8266 advanced ops

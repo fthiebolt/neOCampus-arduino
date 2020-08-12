@@ -117,7 +117,7 @@ typedef uint32_t firmwareRev_t;
 #ifdef DISABLED_SSL
   #define DEFL_MQTT_STD_PORT            1883            // MQTT
   #define DEFL_MQTT_ABROAD_PORT         10883           // MQTT for abroad access
-#elif
+#else
   #define DEFL_MQTT_STD_PORT            8883            // MQTTs
   #define DEFL_MQTT_ABROAD_PORT         10888           // MQTTs for abroad access
 #endif /* DISABLED_SSL */

@@ -16,8 +16,12 @@
 /*
  * Includes
  */
-#include <Arduino.h>
-#include <ArduinoJson.h>
+#ifdef ESP8266
+  #include <FS.h>
+#elif defined(ESP32)
+  #include "FS.h"
+  #include "SPIFFS.h"
+#endif
 
 #include "sensocampus.h"
 
@@ -32,7 +36,7 @@
  */
 #define CONFIG_FILE             "/sensocampus.json"     // senOCampus config file contains credentials and access to MQTT(s)
                                                         // note that config of various modules is NOT saved
-#define CONFIG_JSON_SIZE        (JSON_OBJECT_SIZE(20))
+#define CONFIG_JSON_SIZE        (JSON_OBJECT_SIZE(20))  // used to parse sensOCampus credentials
 
 
 
@@ -201,7 +205,7 @@ bool senso::saveConfigFile( void ) {
  * Begin ... means populate everything from HTTP(s) server sensocampus
  */
 boolean senso::begin( const char *mac ) {
-  log_info(F("\n[sensOCampus] start with provided mac addr ")); log_info( mac); log_flush();
+  log_info(F("\n[senso] start with provided mac addr ")); log_info( mac); log_flush();
 
   // check global parameters
   if( _wp and _wp->isValid() and _wp->isEnabledSandbox()== true ) {
@@ -245,12 +249,9 @@ boolean senso::begin( const char *mac ) {
 }
 
 
-TO BE CONTINUED
-
-
 // obtain CREDENTIALS from sensOCampus server
 bool senso::http_getCredentials( const char *mac ) {
-  log_debug(F("\n[sensOCampus] start http getCredentials ... ")); log_flush();
+  log_debug(F("\n[senso] start http getCredentials ... ")); log_flush();
 
   // get JSON response to url credentials http get
   char url[SENSO_HTTP_URL_MAXSIZE];
@@ -271,7 +272,7 @@ bool senso::http_getCredentials( const char *mac ) {
 
 // obtain CONFIG from sensOCampus server
 bool senso::http_getConfig( void ) {
-  log_debug(F("\n[sensOCampus] start http getConfig ... ")); log_flush();
+  log_debug(F("\n[senso] start http getConfig ... ")); log_flush();
 
   // get JSON response to url config http get
   char url[SENSO_HTTP_URL_MAXSIZE];
@@ -289,8 +290,6 @@ bool senso::http_getConfig( void ) {
   return true;
 }
 
-
-END
 
 
 /*
@@ -451,12 +450,6 @@ for (JsonObject::iterator it=root.begin(); it!=root.end(); ++it) {
 }
 
 
-
-TO BE CONTINUED
-- ne pas oublier de positionner le flag _updated !
-
-
-
 // parse JSON buffer that contains credentials
 bool senso::_parseCredentials( char *json ) {
   log_debug(F("\n[senso] start parsing JSON credentials ..."));
@@ -483,56 +476,41 @@ bool senso::_parseCredentials( char *json ) {
 
   // check for "login" in JSON buffer
   if( (root.containsKey(F("login"))==false) ) {
-    log_error(F("\n[senso] JSON credentials without 'login' ?!?!"));
+    log_error(F("\n[senso] JSON credentials without 'login' ?!?!")); log_flush();
     return false;
   }
   /* ok, we have a 'login' field ...
-   * ... if we have a password field we save both
+   * ... if we have a password field we save both ...
+   * otherwise we'll compare if both login match
    */
   // check for password in JSON
   if( (root.containsKey(F("password"))==true) ) {
     snprintf(_mqtt_login,sizeof(_mqtt_login),"%s", (const char *)(root[F("login")]) );
     snprintf(_mqtt_passwd,sizeof(_mqtt_passwd),"%s", (const char *)(root[F("password")]) );
-    log_info(F("\n[senso] stored login & password :)"));
-    return true;
+    log_info(F("\n[senso] retrieved MQTT credentials :)")); log_flush();
   }
-
-
-TODO: we need to save sensOCampus credentials because passwd is only sent on first attempt!!
-
-
-  /*
-   * So far, we have a login field but without a password field ...
-   * ... thus it means that this later ought to get stored within
-   * EEPROM along with corresponding login in EEPROM too
-   */
-  // retrieve login from EEPROM
-  if( !getEEPROMlogin( _mqtt_login, sizeof(_mqtt_login) ) ) {
-    log_error(F("\n[senso] login not found in EEPROM ?!?!")); log_flush();
-    return false;
-  }
-  size_t len1=strlen(_mqtt_login);
-  size_t len2=strlen(root[F("login")]);
-  if( (len1!=len2) or strncmp(_mqtt_login, root[F("login")], max(len1,len2)) ) {
-    log_error(F("\n[senso] error login does not match the one stored in EEPROM ?!")); log_flush();
+  // no password provided --> does login match ?
+  else if( strncmp(_mqtt_login,(const char *)(root[F("login")]),sizeof(_mqtt_login))!=0 ) {
+    // mqtt_login does not match and no password provided ... you're dead!
+    log_error(F("\n[senso] no password provided and logins do not match ... dead")); log_flush();
     return false;
   }
 
   /*
-   * ok, JSON credentials provided login is the same as the one within EEPROM ...
-   * ... now retrieve saved password from EEPROM
+   * Success: we feature matching MQTT credentials ... that need to get saved
    */
-  if( !getEEPROMpasswd( _mqtt_passwd, sizeof(_mqtt_passwd) ) ) {
-    log_error(F("\n[senso] error passwd not found in EEPROM !!")); log_flush();
-    return false;
-  }
+  _updated = true;
 
   // success :)
   return true;
 }
 
 
-// parse JSON buffer that contains config
+/* 
+ * parse JSON buffer that contains config:
+ * - https://arduinojson.org/v6/assistant/
+ * [{\"topic\":\"irit2/366\",\"modules\":[{\"module\":\"Airquality\",\"unit\":\"lcc_sensor\",\"params\":[{\"param\":\"frequency\",\"value\":0},{\"param\":\"subIDs\",\"value\":[\"NO2\",\"CO\",\"CH20\",\"NO2_alt\"]},{\"param\":\"inputs\",\"value\":[[16,17,5,18,35],[19,21,22,23,34],[13,12,14,27,33],[15,2,0,4,32]]},{\"param\":\"outputs\",\"value\":[-1,-1,25,26]}]}]}]
+ */
 bool senso::_parseConfig( char *json ) {
   log_debug(F("\n[senso] start parsing JSON config ..."));
 
@@ -543,34 +521,29 @@ bool senso::_parseConfig( char *json ) {
     log_error(F("\n[senso] ERROR parsing JSON config: "));log_error(err.c_str()); log_flush();
     return false;
   }
+#if (LOG_LEVEL >= LOG_LVL_DEBUG)
+  serializeJsonPretty( root, Serial );
+#endif
 
   // check for "topic" in JSON buffer
   if( (root.containsKey(F("topics"))==false) ) {
-    log_error(F("\n[senso] JSON config without base 'topic' ?!?!"));
+    log_error(F("\n[senso] JSON config without base 'topic' ?!?!")); log_flush();
+    return false;
+  }
+  // check that topic match our MQTT_BASE_TOPIC
+  if( strncmp(_mqtt_base_topic, (const char *)(root[F("topics")][0]), sizeof(_mqtt_base_topic)) ) {
+    log_error(F("\n[senso] MQTT topic does not match with our mqtt_base_topic ?!?!")); log_flush();
     return false;
   }
   log_info(F("\n[senso] WARNING: only 1st topic taken into account!"));
-  //strcpy(_mqtt_base_topic,root[F("topics")][0]);
-  snprintf( _mqtt_base_topic, sizeof(_mqtt_base_topic), "%s", (const char *)(root[F("topics")][0]) );
-  log_info(F("\n[senso] base TOPIC = ")); log_debug(_mqtt_base_topic); log_flush();
 
-  // check for server (MQTT)
-  if( (root.containsKey(F("server"))==true) ) {
-    snprintf( _mqtt_server, sizeof(_mqtt_server), "%s", (const char *)root[F("server")] );
-    log_info(F("\n[senso] set MQTT server to ")); log_debug(_mqtt_server); log_flush();  
-  }
 
-  // check for server (MQTT)
-  if( (root.containsKey(F("server"))==true) ) {
-    snprintf( _mqtt_server, sizeof(_mqtt_server), "%s", (const char *)root[F("server")] );
-    log_info(F("\n[senso] set MQTT server to ")); log_debug(_mqtt_server); log_flush();  
-  }
+  /*
+   * TODO: retrieve all modules config
+   * and save them somewhere in sensocampus!
+   */
 
-  // check for server port (MQTT)
-  if( (root.containsKey(F("port"))==true) ) {
-    _mqtt_port = (uint16_t)root[F("port")];
-    log_info(F("\n[senso] set MQTT port to ")); log_debug(_mqtt_port,DEC); log_flush();  
-  }
+
 
   // parse additional parameters here :)
 

@@ -43,8 +43,6 @@
  * TESTS TESTS TESTS TESTS
  */
 #define DISABLE_MODULES
-char* clockModule = nullptr;
-
 /* --- END OF TESTS ------ */
 
 
@@ -92,7 +90,7 @@ char* clockModule = nullptr;
 #include "neocampus_debug.h"
 #include "neocampus_utils.h"
 #include "neocampus_i2c.h"
-//#include "sensocampus.h"  later
+#include "sensocampus.h"
 #include "neocampus_OTA.h"
 
 
@@ -109,10 +107,11 @@ char* clockModule = nullptr;
 
 // modules management
 #include "modulesMgt.h"
+#endif /* 0 */
 
 // WiFi parameters management
 #include "wifiParametersMgt.h"
-#endif /* 0 */
+
 
 
 /*
@@ -156,11 +155,10 @@ typedef enum {
  */
 bool _need2reboot = false;              // flag to tell a reboot is requested
 
-
-#if 0
 // WiFi parameters management statically allocated instance
 wifiParametersMgt wifiParameters = wifiParametersMgt();
 
+#if 0
 // modules management statically allocated instance
 modulesMgt modulesList = modulesMgt();
 
@@ -535,6 +533,7 @@ void processWIFIparameters( wifiParametersMgt *wp=nullptr ) {
     return;
   }
 
+/* TESTS TESTS TESTS
   //
   // TM1637 display
   if( wp->isEnabled7segTM1637() and !clockModule ) {
@@ -556,7 +555,8 @@ void processWIFIparameters( wifiParametersMgt *wp=nullptr ) {
     free( clockModule );
     clockModule = nullptr;
   }
-
+ --- END OF TESTS */
+ 
   //
   // PIR sensor
   if( wp->isEnabledPIR() ) {
@@ -591,8 +591,12 @@ void earlySetup( void ) {
   // WiFi.disconnect(true); // to erase default credentials
   WiFi.setAutoConnect(false);
 
-  // Disable WiFi sleep mode
+  // Disable sleep modes
+#ifdef ESP8266
   WiFi.setSleepMode(WIFI_NONE_SLEEP);
+#elif defined(ESP32)
+  esp_sleep_pd_config(ESP_PD_DOMAIN_MAX,ESP_PD_OPTION_ON);
+#endif
 }
 
 
@@ -623,6 +627,13 @@ void lateSetup( void ) {
 
   // for the (future) loop mode ...
   WiFi.setAutoConnect(true);
+
+#ifdef ESP32
+  // switch back POWER MODES to auto
+  if( esp_sleep_pd_config(ESP_PD_DOMAIN_MAX,ESP_PD_OPTION_AUTO) != ESP_OK ) {
+    log_warning(F("\nerror while restoring ESP32 power modes ?!?! ... continuing")); log_flush();
+  }
+#endif
 
 #if defined(MAX_TCP_CONNECTIONS) && defined(ESP8266)
   log_info(F("\n# max TCP concurrent sockets = ")); log_info(MAX_TCP_CONNECTIONS, DEC); log_flush();
@@ -678,6 +689,7 @@ void setup() {
    */
   wifiParameters.loadConfigFile();
   processWIFIparameters( &wifiParameters );
+#if 0
   if( clockModule ) {
     clockModule->animate();
   }
@@ -686,6 +698,9 @@ void setup() {
     setupLed( NOISE_LED, (enum_ledmode_t)WIFI );
 #endif
   }
+#else
+  setupLed( LED, (enum_ledmode_t)WIFI );
+#endif /* 0 */
 
   /*
    * setupNTP
@@ -704,6 +719,7 @@ void setup() {
   /*
    * Disable led blinking for WiFI setup mode since we're already connected
    */
+#if 0
   if( clockModule ) {
     clockModule->animate( false );
   }
@@ -712,7 +728,9 @@ void setup() {
     setupLed( NOISE_LED, (enum_ledmode_t)DISABLE );
 #endif
   }
-
+#else
+  setupLed( LED, (enum_ledmode_t)DISABLE );
+#endif /* 0 */
   
   /*
    * Allocate time for ESP's firmware ...

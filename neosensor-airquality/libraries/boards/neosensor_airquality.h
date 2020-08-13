@@ -60,9 +60,17 @@
 //#define CLEAR_SW            LED
 #endif
 
-// i2c bus related definition ... not on this board
-#define SDA                 INVALID_GPIO
-#define SCL                 INVALID_GPIO
+/* i2c bus related definition ... not on this board
+ * note: this board already makes use of SDA & SCL pins
+ * thus enabling I2C means you know what you're doing ;)
+ */
+#ifdef ENABLE_I2C
+  #define SDA                 21
+  #define SCL                 22
+#else
+  #define SDA                 INVALID_GPIO
+  #define SCL                 INVALID_GPIO
+#endif
 
 #endif /* _NEOSENSOR_AIRQUALITY_H_ */
 

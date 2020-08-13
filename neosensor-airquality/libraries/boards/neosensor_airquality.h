@@ -28,7 +28,7 @@
 /*
  * Definitions
  */
-#define BOARD_NAME          "neOSensor-AirQuality"
+#define BOARD_NAME          "AirQuality"    // no more than 10 chars
 #define BOARD_REVISION      1.0
 #define BOARD_FWREV         200901          // Firmware revision <year><month><day> in 2 digits each
 

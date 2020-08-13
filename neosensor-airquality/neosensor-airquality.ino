@@ -22,7 +22,8 @@
  * 
  * ---
  * F.DeMiguel
- * F.Thiebolt   aug.20  initial release
+ * F.Thiebolt   aug.20  initial port from neOSensor based on ESP8266
+ *                      setupNTP called AFTER network setup
  * ----------------------------------------------------------------------------- */
 
 
@@ -209,7 +210,7 @@ void setupSerial( void ) {
   // Arduino libs v2.4.1, to enable printf and debug messages output
   Serial.setDebugOutput( true );
   
-  char tmp[64];
+  char tmp[96];
   snprintf(tmp,sizeof(tmp),"\n# %s firmware rev %d for neOCampus is starting ... ",getBoardName(),getFirmwareRev());
   log_info(tmp);
   log_info(F("\n#\tMac address is ")); log_info(getMacAddress());
@@ -256,11 +257,7 @@ void clearSensor( void ) {
   // clear WiFi credentials
   WiFi.disconnect();
 
-  /* delete all JSON config files (SPIFFS)
-   * As an alternative, you may only delete modules' config files
-   * with 'neOSensor_reset()'
-   */
-  //neOSensor_reset();
+  // clear JSON config files (SPIFFS)
   formatSPIFFS();
 }
 
@@ -403,6 +400,11 @@ void _ledWiFiMode( uint8_t id ) {
 void setupLed( uint8_t led, enum_ledmode_t led_mode ) {
 
   if( led == INVALID_GPIO ) return;
+
+  log_debug(F("\n[setupLed] starting to setup led '"));log_debug(led,DEC);
+  log_debug(F("' with mode: "));log_debug(led_mode,DEC);
+  log_flush();
+  
   static Ticker timer_led;
 
   switch( led_mode ) {
@@ -711,18 +713,18 @@ void setup() {
 
 
   /*
+   * WiFiManager to activate the network :)
+   * - we added a 'sensOCampus' check box
+   */
+  setupWiFi( &wifiParameters );
+
+
+  /*
    * setupNTP
    * Configure Timezone & DST
    * note: real ntp server may get sent from dhcp server :)
    */
   setupNTP();
-
-
-  /*
-   * WiFiManager to activate the network :)
-   * - we added a 'sensOCampus' check box
-   */
-  setupWiFi( &wifiParameters );
 
 
   /*

@@ -197,7 +197,7 @@ bool setupWiFi( wifiParametersMgt *wp ) {
   wifiManager.setMinimumSignalQuality();      // min. default is 8%
 
   // set custom ip for AP portal
-  wifiManager.setAPStaticIPConfig(IPAddress(10,0,1,1), IPAddress(10,0,1,1), IPAddress(255,255,255,0));
+  //wifiManager.setAPStaticIPConfig(IPAddress(10,0,1,1), IPAddress(10,0,1,1), IPAddress(255,255,255,0));
 
   // set to exit portal after config
   wifiManager.setBreakAfterConfig( true );

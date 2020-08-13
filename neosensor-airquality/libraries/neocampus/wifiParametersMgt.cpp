@@ -28,6 +28,8 @@
   }
 #endif /* ESP8266 */
 
+#include "WiFi.h"
+
 #include "neocampus.h"
 
 #include "neocampus_debug.h"
@@ -204,16 +206,16 @@ bool wifiParametersMgt::saveConfigFile( void ) {
  */
 bool wifiParametersMgt::_getWIFIsettings( void ) {
   // grab WIFI station connexion parameters from current connexion ...
+#ifdef ESP8266
   struct station_config _conf;
-  
   if( wifi_station_get_config(&_conf) and strlen(reinterpret_cast<const char*>(_conf.ssid)) ) {
   
     log_debug(F("\n[wifiParams] retrieved current ssid = ")); log_debug(reinterpret_cast<const char*>(_conf.ssid));
     log_debug(F("\n[wifiParams] retrieved current pass = ")); log_debug(reinterpret_cast<const char*>(_conf.password));
     log_flush();
     
-    if( strcmp(_ssid, reinterpret_cast<const char*>(_conf.ssid)) or
-        !strcmp(_pass, reinterpret_cast<const char*>(_conf.password)) ) {
+    if( strncmp(_ssid, reinterpret_cast<const char*>(_conf.ssid), sizeof(_ssid)) or
+        strncmp(_pass, reinterpret_cast<const char*>(_conf.password)), sizeof(_pass) ) {
     
       log_debug(F("\n[wifiParams] new credentials detected ... update!")); log_flush();
       strncpy( _ssid, reinterpret_cast<const char*>(_conf.ssid), sizeof(_ssid) );
@@ -225,6 +227,23 @@ bool wifiParametersMgt::_getWIFIsettings( void ) {
     log_debug(F("\n[wifiParams] no SSID / PASS found neither in config file nor struct station ... probably first time connect ...")); log_flush();
     return false;
   }
+#elif defined(ESP32)
+  log_debug(F("\n[wifiParams] retrieved current ssid = ")); log_debug(WiFi.SSID());
+  log_debug(F("\n[wifiParams] retrieved current pass = ")); log_debug(WiFi.psk());
+  log_flush();
+  
+  if( strncmp(_ssid, reinterpret_cast<const char*>(WiFi.SSID()), sizeof(_ssid)) or
+      strncmp(_pass, reinterpret_cast<const char*>(WiFi.psk()), sizeof(_pass)) ) {
+  
+    log_debug(F("\n[wifiParams] new credentials detected ... update!")); log_flush();
+    strncpy( _ssid, reinterpret_cast<const char*>(WiFi.SSID()), sizeof(_ssid) );
+    strncpy( _pass, reinterpret_cast<const char*>(WiFi.psk()), sizeof(_pass) );
+    _updated = true;
+  }
+  else {
+    log_debug(F("\n[wifiParams] already matching wifi credentials thus nothing todo !")); log_flush();
+  }
+#endif
 
   return true;
 }

@@ -20,7 +20,12 @@
  * --- Includes ---------------------------------------------------------------
  * ----------------------------------------------------------------------------
  */
-#include <FS.h>                   //this needs to be first, or it all crashes and burns ... still nowdays ??
+#ifdef ESP8266
+  #include <FS.h>
+#elif defined(ESP32)
+  #include "FS.h"
+  #include "SPIFFS.h"
+#endif
 
 #include <Arduino.h>
 #include <Esp.h>                  // ESP specific API for watchdog and others functionnalities
@@ -150,10 +155,6 @@ bool setupWiFi( wifiParametersMgt *wp ) {
     // load WiFi parameters and options
     wp->loadConfigFile();
   }
-
-  // Disable WiFi sleep mode ...
-  log_debug("\n[WiFi] disable WiFi sleep mode ...");
-  WiFi.setSleepMode( WIFI_NONE_SLEEP );
 
   // WiFi parameters availables ?
   if( strlen(wp->getWIFIssid()) ) {
@@ -325,10 +326,6 @@ bool setupWiFi( wifiParametersMgt *wp ) {
   log_debug(F("\n\tSSID ")); log_debug(WiFi.SSID());
   log_debug(F("\n\tIP ")); log_debug(WiFi.localIP());
   log_debug(F("\n\tRSSI ")); log_debug(WiFi.RSSI());
-
-  // Disable WiFi sleep mode ...
-  log_debug("\n[WiFi] disable WiFi sleep mode ...");
-  WiFi.setSleepMode(WIFI_NONE_SLEEP);
 
   // well done :)
   return true;

@@ -4,6 +4,9 @@
  * Over The Air (OTA) firmware upgrade utilities
  * 
  * ---
+ * TODO:
+ * - provide a secure way for OTA to occur
+ * ---
  * F.Thiebolt   aug.20  removed EEPROM support (useless with ESP chips ;) )
  * Thiebolt F. Nov.19   upgrade to Arduino JSON6
  * Thiebolt F. August 17
@@ -72,7 +75,7 @@ bool neOCampusOTA( void ) {
     return false;
   }
   
-  // get url's ArduinoJson file content
+  // get url's Json file content
   char ota_json[OTA_JSON_LENGTH];
   if( http_get( ota_url, ota_json, sizeof(ota_json) ) != true ) {
     return false;
@@ -125,19 +128,36 @@ bool neOCampusOTA( void ) {
 bool neOCampusOTA_url( const char *img_url ) {
 
   bool status = false;
-  
-  log_debug(F("\n[OTA] choosen firmware: "));log_debug(img_url);log_flush();
-  // disable reboot on update
-  ESPhttpUpdate.rebootOnUpdate(false);
+  WiFiClient client;
 
-  t_httpUpdate_return ret = ESPhttpUpdate.update(img_url);
+  log_debug(F("\n[OTA] choosen firmware: "));log_debug(img_url);log_flush();
+
+  // disable reboot on update
+#ifdef ESP8266
+  ESPhttpUpdate.rebootOnUpdate(false);
+  t_httpUpdate_return ret = ESPhttpUpdate.update(client,img_url);
+#elif defined(ESP32)
+  httpUpdate.rebootOnUpdate(false);
+  t_httpUpdate_return ret = httpUpdate.update(client,img_url);
+#endif
+
   switch(ret) {
     case HTTP_UPDATE_FAILED:
-      log_error(F("[OTA] ERROR update failed (!!): ")); log_error(ESPhttpUpdate.getLastErrorString());
+      log_error(F("[OTA] ERROR update failed (!!): "));
+#ifdef ESP8266
+      log_error(ESPhttpUpdate.getLastErrorString());
+#elif defined(ESP32)
+      log_error(httpUpdate.getLastErrorString());
+#endif
       log_error(F(" ... continuing ...")); log_flush();
       break;
     case HTTP_UPDATE_NO_UPDATES:
-      log_error(F("[OTA] no update ?!?!: ")); log_error(ESPhttpUpdate.getLastErrorString());
+      log_error(F("[OTA] no update ?!?!: "));
+#ifdef ESP8266
+      log_error(ESPhttpUpdate.getLastErrorString());
+#elif defined(ESP32)
+      log_error(httpUpdate.getLastErrorString());
+#endif
       log_error(F("... continuing ...")); log_flush();
       break;
     case HTTP_UPDATE_OK:

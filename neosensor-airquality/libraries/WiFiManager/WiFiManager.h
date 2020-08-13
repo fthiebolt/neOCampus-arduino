@@ -127,6 +127,9 @@ class WiFiManagerParameter {
     const char *getCustomHTML();
     void        setValue(const char *defaultValue, int length);
 
+    // [may.20] Francois: added as a public attr
+    const char *_customHTML;
+
   protected:
     void init(const char *id, const char *label, const char *defaultValue, int length, const char *custom, int labelPlacement);
 
@@ -137,7 +140,9 @@ class WiFiManagerParameter {
     char       *_value;
     int         _length;
     int         _labelPlacement;
-    const char *_customHTML;
+    // [may.20] Francois: moved as a public attr
+    // const char *_customHTML;
+
     friend class WiFiManager;
 };
 

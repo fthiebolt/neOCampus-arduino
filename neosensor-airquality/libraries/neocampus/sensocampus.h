@@ -4,6 +4,9 @@
  * sensOCampus client class for interactions with sensOCampus server
  *
  * ---
+ * TODO
+ * - provide methods for modules to get their configuration
+ * ---
  * F.Thiebolt   aug.20  switched to httpS and make use of filesystem to store things
  * Thiebolt F. July 17
  * 

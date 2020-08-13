@@ -4,22 +4,23 @@
  * 
  * neOSensor-AirQuality
  * is an ESP32 based board from CNRS LCC lab able to monitor air quality.
- * -----------------------------------------------------------------------------
  * 
+ * ---
  * NOTES:
  * - you need to 'deploy' our boards definitions
  * - select 'neOSensor AirQuality' board from menu (located end of list)
  * - NO MORE NEED TO PATCH standard libs ... we now have our own defines !!! :)
  * - a compilation flag tells which bord it is (i.e NEOSENSOR_AIRQUALITY)
- * -----------------------------------------------------------------------------
  * 
+ * ---
  * TODO:
  * - add sntp_cb once available for ESP32
  * - check sntp!=IPADDR_ANY works with ESP8266 (line 342)
  * - check SYS_LED is working (add -DSYS_LED=2)
  * - remove DISABLED_SSL compilation flag
- * -----------------------------------------------------------------------------
+ * - AutoConnect lib vs WiFiManager --> have a look to https://github.com/Hieromon/AutoConnect
  * 
+ * ---
  * F.DeMiguel
  * F.Thiebolt   aug.20  initial release
  * ----------------------------------------------------------------------------- */

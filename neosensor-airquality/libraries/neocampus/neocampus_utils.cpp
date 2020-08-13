@@ -20,15 +20,19 @@
  * --- Includes ---------------------------------------------------------------
  * ----------------------------------------------------------------------------
  */
-#ifdef ESP8266
-  #include <FS.h>
-#elif defined(ESP32)
-  #include "FS.h"
+#include <FS.h>
+#if defined(ESP32)
   #include "SPIFFS.h"
 #endif
 
 #include <Arduino.h>
 #include <Esp.h>                  // ESP specific API for watchdog and others functionnalities
+
+#ifdef ESP8266
+  #include <ESP8266HTTPClient.h>
+#elif defined(ESP32)
+  #include <HTTPClient.h>
+#endif
 
 //needed for WiFiManager library
 #include <DNSServer.h>            // for captive portal
@@ -414,11 +418,16 @@ const char *getDomainName( void ) {
     
   // esp8266 affects a default hostname if not set by DHCP server
   const char *_esp_defl_hostname = PSTR("ESP_");
+#ifdef ESP8266
+  const char *cur_hostname = WiFi.hostname().c_str();
+#elif defined(ESP32)
+  const char *cur_hostname = WiFi.getHostname();
+#endif
   
   /* is hostname one of the defaults esp8266 hostname ?
    * i.e it starts with ESP_XXXXXX */
-  if( not strncmp_P( WiFi.hostname().c_str(), _esp_defl_hostname, strlen_P(_esp_defl_hostname) ) ) {
-    log_debug(F("\n[getDomainName] hostname is a default one: ")); log_debug( WiFi.hostname().c_str() ); log_flush();
+  if( not strncmp_P( cur_hostname, _esp_defl_hostname, strlen_P(_esp_defl_hostname) ) ) {
+    log_debug(F("\n[getDomainName] hostname is a default one: ")); log_debug(cur_hostname); log_flush();
 
     /*
      * [Jun.18] DHCP_OPTION_HOSTNAME does not exist in dhcp.c (client)
@@ -432,7 +441,7 @@ const char *getDomainName( void ) {
   /* Does hostname contains domain name too ?
    * e.g esp8266-bu-hall.neocampus.univ-tlse3.fr */
   // lets find first dot
-  const char *cur_domain = strchr( WiFi.hostname().c_str(), '.' );
+  const char *cur_domain = strchr( cur_hostname, '.' );
   if( cur_domain == NULL ) return nullptr;
   // ... and at least a second dot ?
   if( strchr( cur_domain+1, '.' ) == NULL ) return nullptr;
@@ -525,7 +534,7 @@ bool http_get( const char *url, char *buf, size_t bufsize, const char *login, co
 // Reset configuration and restart (delete module's config files and reboot)
 bool neOSensor_reset( void ) {
 
-  log_info(F("\n[reboot] neOSensor is about to reboot in a few seconds ..."));
+  log_info(F("\n[reset] neOSensor reset procedure will clean your FS and then reboot ..."));
   
   /* 
    * Delete ALL modules JSON config files
@@ -533,16 +542,41 @@ bool neOSensor_reset( void ) {
    * Note: it works because modules' config files are ONLY WRITTEN
    * upon config change ... not at the end of the module's life ;)
    */
-  const char *_prefix = PSTR(MCFG_FILE_PREFIX); // TBC: useful ?
-  const char *_suffix = PSTR(MCFG_FILE_SUFFIX); // TBC: useful ?
+  const char *_prefix = PSTR(MCFG_FILE_PREFIX);
+  const char *_suffix = PSTR(MCFG_FILE_SUFFIX);
+#ifdef ESP8266
+#warning "code not tested!"
   Dir dir = SPIFFS.openDir("/");
   while( dir.next() ) {
-    if( strncmp_P( dir.fileName().c_str(), _prefix, strlen_P(_prefix))!=0 ) continue;
-    if( strncmp_P( dir.fileName().c_str(), _suffix, strlen_P(_suffix))!=0 ) continue;
+    log_debug(F("\n[reset] found file: "));log_debug(dir.fileName());log_flush();
+    if( not strstr_P( dir.fileName().c_str(), _prefix ) ) continue;
+    if( not strstr_P( dir.fileName().c_str(), _suffix ) ) continue;
     // delete matching file
-    log_debug(F("\n[reboot] deleting file : "));log_debug(dir.fileName());log_flush();
+    log_debug(F("\n[reset] deleting file : "));log_debug(dir.fileName());log_flush();
+    if( !SPIFFS.remove(dir.filename()) ) {
+      log_warning(F("\n[reset] failed to delete file: "));log_warning(dir.fileName());log_flush();
+    }
   }
-  
+#elif defined(ESP32)
+#warning "code not tested!"
+  File root = SPIFFS.open("/");
+  if( root and root.isDirectory() ) {
+    File file;
+    while( file=root.openNextFile() ) {
+      log_debug(F("\n[reset] found file: "));log_debug(file.name());log_flush();
+      if( strstr_P( file.name(), _prefix ) ) continue;
+      if( strstr_P( file.name(), _suffix ) ) continue;
+      // delete matching file
+      log_debug(F("\n[reset] deleting file : "));log_debug(file.name());log_flush();
+      if( !SPIFFS.remove(file.name()) ) {
+        log_warning(F("\n[reset] failed to delete file: "));log_warning(file.name());log_flush();
+      }
+    }
+  }
+  else {
+    log_error(F("\n[reset] failed to open ROOT directory ?!?!")); log_flush();
+  }
+#endif  
   // reboot
   neOSensor_reboot();
   

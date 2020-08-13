@@ -12,10 +12,8 @@
 /*
  * Includes
  */
-#ifdef ESP8266
-  #include <FS.h>
-#elif defined(ESP32)
-  #include "FS.h"
+#include <FS.h>
+#if defined(ESP32)
   #include "SPIFFS.h"
 #endif
 
@@ -232,12 +230,12 @@ bool wifiParametersMgt::_getWIFIsettings( void ) {
   log_debug(F("\n[wifiParams] retrieved current pass = ")); log_debug(WiFi.psk());
   log_flush();
   
-  if( strncmp(_ssid, reinterpret_cast<const char*>(WiFi.SSID()), sizeof(_ssid)) or
-      strncmp(_pass, reinterpret_cast<const char*>(WiFi.psk()), sizeof(_pass)) ) {
+  if( strncmp(_ssid, WiFi.SSID().c_str(), sizeof(_ssid)) or
+      strncmp(_pass, WiFi.psk().c_str(), sizeof(_pass)) ) {
   
     log_debug(F("\n[wifiParams] new credentials detected ... update!")); log_flush();
-    strncpy( _ssid, reinterpret_cast<const char*>(WiFi.SSID()), sizeof(_ssid) );
-    strncpy( _pass, reinterpret_cast<const char*>(WiFi.psk()), sizeof(_pass) );
+    strncpy( _ssid, WiFi.SSID().c_str(), sizeof(_ssid) );
+    strncpy( _pass, WiFi.psk().c_str(), sizeof(_pass) );
     _updated = true;
   }
   else {

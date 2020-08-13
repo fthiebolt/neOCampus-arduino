@@ -16,10 +16,8 @@
 /*
  * Includes
  */
-#ifdef ESP8266
-  #include <FS.h>
-#elif defined(ESP32)
-  #include "FS.h"
+#include <FS.h>
+#if defined(ESP32)
   #include "SPIFFS.h"
 #endif
 

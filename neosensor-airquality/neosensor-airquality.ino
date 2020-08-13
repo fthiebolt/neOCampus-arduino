@@ -256,7 +256,11 @@ void clearSensor( void ) {
   // clear WiFi credentials
   WiFi.disconnect();
 
-  // clear JSON config files (SPIFFS)
+  /* delete all JSON config files (SPIFFS)
+   * As an alternative, you may only delete modules' config files
+   * with 'neOSensor_reset()'
+   */
+  //neOSensor_reset();
   formatSPIFFS();
 }
 

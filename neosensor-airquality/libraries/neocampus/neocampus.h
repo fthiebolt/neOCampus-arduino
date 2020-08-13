@@ -162,7 +162,9 @@ typedef char mac_str_t[18];
 /* WiFi AP mode credentials:
  *   Password required to get connected to the WiFi settings mode.
  */
+#if !defined(WIFI_AP_CREDENTIALS) && !defined(DISABLE_AP_PASSWD)
 #define WIFI_AP_CREDENTIALS     "neOSensor"
+#endif /* WIFI_AP_CREDENTIALS */
 
 
 /*

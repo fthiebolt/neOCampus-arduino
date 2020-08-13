@@ -485,7 +485,7 @@ bool senso::_parseCredentials( char *json ) {
   if( (root.containsKey(F("password"))==true) ) {
     snprintf(_mqtt_login,sizeof(_mqtt_login),"%s", (const char *)(root[F("login")]) );
     snprintf(_mqtt_passwd,sizeof(_mqtt_passwd),"%s", (const char *)(root[F("password")]) );
-    log_info(F("\n[senso] retrieved MQTT credentials :)")); log_flush();
+    log_info(F("\n[senso] retrieved MQTT login and MQTT password :)")); log_flush();
   }
   // no password provided --> does login match ?
   else if( strncmp(_mqtt_login,(const char *)(root[F("login")]),sizeof(_mqtt_login))!=0 ) {

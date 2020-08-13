@@ -196,8 +196,13 @@ bool setupWiFi( wifiParametersMgt *wp ) {
   // set minimum signal level
   wifiManager.setMinimumSignalQuality();      // min. default is 8%
 
-  // set custom ip for AP portal
-  //wifiManager.setAPStaticIPConfig(IPAddress(10,0,1,1), IPAddress(10,0,1,1), IPAddress(255,255,255,0));
+  /* [aug.20] does not work on ESP32 ... segfault :(
+   * set custom ip for AP portal
+   *
+  IPAddress _apIP(10,0,1,1);
+  wifiManager.setAPStaticIPConfig( _apIP, _apIP, IPAddress(255,255,255,0) );
+  //WiFi.softAPConfig( _apIP, _apIP, IPAddress(255,255,255,0));
+   */
 
   // set to exit portal after config
   wifiManager.setBreakAfterConfig( true );
@@ -286,7 +291,11 @@ bool setupWiFi( wifiParametersMgt *wp ) {
    * and goes into a blocking loop awaiting configuration
    */
   log_debug(F("\n"));
+#ifdef WIFI_AP_CREDENTIALS
   wifiManager.startConfigPortal( getAPname(), WIFI_AP_CREDENTIALS ); // blocking call
+#else
+  wifiManager.startConfigPortal( getAPname() ); // blocking call
+#endif
   delay(500);
   
   // whatever the result of the connection ... we save all parameters :)

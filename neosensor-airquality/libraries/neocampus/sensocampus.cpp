@@ -42,7 +42,7 @@
 /*
  * Class constructor
  */
-senso::senso( void ) {
+senso::senso( void ) : _modulesJSON(SENSO_JSON_SIZE) {
   _initialized = false;
   // set default values
   _applyDefaults();
@@ -50,7 +50,7 @@ senso::senso( void ) {
   _wp = nullptr;
 }
 
-senso::senso( wifiParametersMgt *p ) {
+senso::senso( wifiParametersMgt *p ) : _modulesJSON(SENSO_JSON_SIZE) {
   _initialized = false;
   // set default values
   _applyDefaults();
@@ -313,6 +313,9 @@ void senso::_applyDefaults( void ) {
   snprintf(_mqtt_passwd, sizeof(_mqtt_passwd), DEFL_MQTT_PASSWD);
   snprintf(_mqtt_base_topic, sizeof(_mqtt_base_topic), "%s/%s", DEFL_MQTT_TOPIC, getAPname());
 
+  // clear modules configuration from sensOCampus
+  _modulesJSON.clear();
+
   _defaults = true;
   _updated = false;
 }
@@ -335,7 +338,7 @@ bool senso::_saveConfig( JsonObject root ) {
     root["mqtt_port"]         = _mqtt_port;
     root["mqtt_login"]        = _mqtt_login;
     root["mqtt_passwd"]       = _mqtt_passwd;
-    root["mqtt_base_topic"]   = _mqtt_base_topic;
+    // root["mqtt_base_topic"]   = _mqtt_base_topic; don't save because default value does not need to get saved neither value grab from sensOCampus
 
     /*
      * add additional parameters to save here
@@ -358,7 +361,6 @@ bool senso::_loadConfig( JsonObject root ) {
 
   bool _loginSet = false;
   bool _passwdSet = false;
-  bool _baseTopicSet = false;
 
 /*
 // using C++98 syntax (for older compilers):
@@ -436,9 +438,8 @@ for (JsonObject::iterator it=root.begin(); it!=root.end(); ++it) {
     {
       const char *_key = PSTR("mqtt_base_topic");
       if( strncmp_P(it->key().c_str(), _key, strlen_P(_key))==0 ) {
-        // MQTT_BASE_TOPIC is present :)
+        // MQTT_BASE_TOPIC is present ?! ... ok ...
         if( it->value().is<const char*>() ) {
-          _baseTopicSet = true;
           strncpy( _mqtt_base_topic, it->value(), sizeof(_mqtt_base_topic) );
           log_debug(F("\n[senso][config_file] mqtt_base_topic = ")); log_debug(_mqtt_base_topic); log_flush();
         }
@@ -454,7 +455,7 @@ for (JsonObject::iterator it=root.begin(); it!=root.end(); ++it) {
   }
   
   // over :)
-  return ( _loginSet==true and _passwdSet==true and _baseTopicSet==true );
+  return ( _loginSet==true and _passwdSet==true );
 }
 
 
@@ -535,38 +536,38 @@ bool senso::_parseCredentials( char *json ) {
 bool senso::_parseConfig( char *json ) {
   log_debug(F("\n[senso] start parsing JSON config ..."));
 
-  StaticJsonDocument<SENSO_JSON_SIZE> root;
+  if( !_modulesJSON.capacity() ) {
+    log_error(F("\n[senso] unable to allocated modules JSON whose size is: ")); log_error(SENSO_JSON_SIZE,DEC); log_flush();
+    return false;
+  }
+  log_debug(F("\n[senso] cleared JSON modules whose capacity is: ")); log_debug(_modulesJSON.capacity()); log_flush();
 
-  auto err = deserializeJson( root, json );
+  // deserialize
+  auto err = deserializeJson( _modulesJSON, json );
   if( err ) {
     log_error(F("\n[senso] ERROR parsing JSON config: "));log_error(err.c_str()); log_flush();
     return false;
   }
 #if (LOG_LEVEL >= LOG_LVL_DEBUG)
-  serializeJsonPretty( root, Serial );
+  serializeJsonPretty( _modulesJSON, Serial );
 #endif
 
   // check for "topic" in JSON buffer
-  if( (root.containsKey(F("topics"))==false) ) {
+  if( (_modulesJSON.containsKey(F("topics"))==false) ) {
     log_error(F("\n[senso] JSON config without base 'topic' ?!?!")); log_flush();
     return false;
   }
-  // check that topic match our MQTT_BASE_TOPIC
-  if( strncmp(_mqtt_base_topic, (const char *)(root[F("topics")][0]), sizeof(_mqtt_base_topic)) ) {
-    log_error(F("\n[senso] MQTT topic does not match with our mqtt_base_topic ?!?!")); log_flush();
-    return false;
-  }
+  // save topic
+  snprintf(_mqtt_base_topic,sizeof(_mqtt_base_topic),"%s", (const char *)(_modulesJSON[F("topics")][0]) );
+  log_info(F("\n[senso] found 'topic' = "));log_info(_mqtt_base_topic); log_flush();
   log_info(F("\n[senso] WARNING: only 1st topic taken into account!"));
 
 
-  /*
-   * TODO: retrieve all modules config
-   * and save them somewhere in sensocampus!
-   */
-
-
-
   // parse additional parameters here :)
+
+  /*
+   * now we'll make JSON modules config available to the others modules
+   */
 
   return true;
 }

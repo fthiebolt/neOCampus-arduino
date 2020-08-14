@@ -85,9 +85,10 @@ private:
     bool _updated;                        // any change in current parameters ?
     bool _defaults;                       // default parameters, hence no need to save
     
-    // global wifiParametersMgt
-    wifiParametersMgt *_wp;
-    
+    wifiParametersMgt *_wp;               // global wifiParametersMgt
+
+    DynamicJsonDocument _modulesJSON;     // modules configuration
+
     // grabbed from sensocampus sever
     char _mqtt_server[MQTT_SERVER_NAME_LENGTH];
     uint16_t _mqtt_port;

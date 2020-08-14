@@ -17,7 +17,7 @@
  * - add sntp_cb once available for ESP32
  * - check sntp!=IPADDR_ANY works with ESP8266 (line 342)
  * - check SYS_LED is working (add -DSYS_LED=2)
- * - remove DISABLED_SSL compilation flag
+ * - remove DISABLE_SSL compilation flag
  * - AutoConnect lib vs WiFiManager --> have a look to https://github.com/Hieromon/AutoConnect
  * 
  * ---

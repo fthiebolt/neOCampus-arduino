@@ -34,7 +34,7 @@
  */
 #define CONFIG_FILE             "/sensocampus.json"     // senOCampus config file contains credentials and access to MQTT(s)
                                                         // note that config of various modules is NOT saved
-#define CONFIG_JSON_SIZE        (JSON_OBJECT_SIZE(20))  // used to parse sensOCampus credentials
+#define CONFIG_JSON_SIZE        (JSON_OBJECT_SIZE(20))  // used to parse sensOCampus config FILE
 
 
 
@@ -151,6 +151,11 @@ bool senso::saveConfigFile( void ) {
     log_debug(F("\n[senso] config has not been changed since last save ... thus nothing to save!")); log_flush();
     return false;
   }
+
+  if( _defaults ) {
+    log_debug(F("\n[senso] config is a default one ... thus nothing to save!")); log_flush();
+    return false;
+  }
   
   log_info(F("\n[senso] start to SAVE sensOCampus parameters in config file ...")); log_flush();
   
@@ -230,11 +235,16 @@ boolean senso::begin( const char *mac ) {
     }
     // ok, credentials properly grabbed --> no more defaults
     _defaults = false;
+    _initialized = true;  // to allow saveConfigFile()
+    // note that senso config file IS ONLY RELATED TO sensOCampus CREDENTIALS !
+    // we're successful --> save config file :)
+    saveConfigFile();
     
     // get device CONFIG
     if( http_getConfig( ) != true ) {
       log_error(F("\n[senso] error getting CONFIG from sensOCampus server ?!")); log_flush();
-      _applyDefaults();
+      _initialized = false;
+      // _applyDefaults(); NO default to apply otherwise you'll loose current credentials !
       return false;
     }
     // since we don't save modules config, we don't set the _defaults flag to false
@@ -448,7 +458,7 @@ for (JsonObject::iterator it=root.begin(); it!=root.end(); ++it) {
 }
 
 
-// parse JSON buffer that contains credentials
+// parse JSON buffer that contains CREDENTIALS
 bool senso::_parseCredentials( char *json ) {
   log_debug(F("\n[senso] start parsing JSON credentials ..."));
 
@@ -462,14 +472,26 @@ bool senso::_parseCredentials( char *json ) {
 
   // check for "server" (i.e MQTT broker) in JSON buffer
   if( (root.containsKey(F("server"))==true) ) {
-    snprintf(_mqtt_server, sizeof(_mqtt_server),"%s", (const char *)(root[F("server")]) );
-    log_info(F("\n[senso] found 'server' = "));log_info(_mqtt_server); log_flush();
+    if( strncmp(_mqtt_server, (const char *)(root[F("server")]), sizeof(_mqtt_server)) ) {
+      snprintf(_mqtt_server, sizeof(_mqtt_server),"%s", (const char *)(root[F("server")]) );
+      log_info(F("\n[senso] found 'server' = "));log_info(_mqtt_server); log_flush();
+      _updated = true;
+    }
+    else {
+      log_info(F("\n[senso] found SAME 'server' = "));log_info(_mqtt_server); log_flush();
+    }
   }
   
   // check for "port" (i.e MQTT broker port) in JSON buffer
   if( (root.containsKey(F("port"))==true) ) {
-    _mqtt_port = (uint16_t)root[F("port")];
-    log_info(F("\n[senso] found 'port' = "));log_info(_mqtt_port,DEC); log_flush();
+    if( _mqtt_port != (uint16_t)root[F("port")] ) {
+      _mqtt_port = (uint16_t)root[F("port")];
+      log_info(F("\n[senso] found 'port' = "));log_info(_mqtt_port,DEC); log_flush();
+      _updated = true;
+    }
+    else {
+      log_info(F("\n[senso] found SAME 'port' = "));log_info(_mqtt_port,DEC); log_flush();
+    }
   }
 
   // check for "login" in JSON buffer
@@ -485,19 +507,20 @@ bool senso::_parseCredentials( char *json ) {
   if( (root.containsKey(F("password"))==true) ) {
     snprintf(_mqtt_login,sizeof(_mqtt_login),"%s", (const char *)(root[F("login")]) );
     snprintf(_mqtt_passwd,sizeof(_mqtt_passwd),"%s", (const char *)(root[F("password")]) );
-    log_info(F("\n[senso] retrieved MQTT login and MQTT password :)")); log_flush();
+    log_info(F("\n[senso] found 'login' = "));log_info(_mqtt_login); log_flush();
+    log_info(F("\n[senso] found 'password' = "));log_info(_mqtt_passwd); log_flush();
+    _updated = true;
   }
   // no password provided --> does login match ?
   else if( strncmp(_mqtt_login,(const char *)(root[F("login")]),sizeof(_mqtt_login))!=0 ) {
     // mqtt_login does not match and no password provided ... you're dead!
-    log_error(F("\n[senso] no password provided and logins do not match ... dead")); log_flush();
+    log_error(F("\n[senso] no password provided and logins do not match ... dead :(")); log_flush();
     return false;
   }
-
-  /*
-   * Success: we feature matching MQTT credentials ... that need to get saved
-   */
-  _updated = true;
+  else {
+    // no password provided but login matches ours :)
+    log_info(F("\n[senso] found SAME 'login' = "));log_info(_mqtt_login); log_flush();
+  }
 
   // success :)
   return true;
@@ -505,9 +528,9 @@ bool senso::_parseCredentials( char *json ) {
 
 
 /* 
- * parse JSON buffer that contains config:
+ * parse JSON buffer that contains MODULES config:
  * - https://arduinojson.org/v6/assistant/
- * [{\"topic\":\"irit2/366\",\"modules\":[{\"module\":\"Airquality\",\"unit\":\"lcc_sensor\",\"params\":[{\"param\":\"frequency\",\"value\":0},{\"param\":\"subIDs\",\"value\":[\"NO2\",\"CO\",\"CH20\",\"NO2_alt\"]},{\"param\":\"inputs\",\"value\":[[16,17,5,18,35],[19,21,22,23,34],[13,12,14,27,33],[15,2,0,4,32]]},{\"param\":\"outputs\",\"value\":[-1,-1,25,26]}]}]}]
+ * see sensOCampus JSON config file sample at the end of this file.
  */
 bool senso::_parseConfig( char *json ) {
   log_debug(F("\n[senso] start parsing JSON config ..."));
@@ -574,3 +597,81 @@ const char *senso::getPassword( void ) const {
   return _mqtt_passwd;
 }
 
+/*
+ * [aug.20] sample config from sensOCampus server
+
+{
+  "topics": [
+    "irit2/366"
+  ],
+  "zones": [
+    {
+      "topic": "irit2/366",
+      "modules": [
+        {
+          "module": "Airquality",
+          "unit": "lcc_sensor",
+          "params": [
+            {
+              "param": "frequency",
+              "value": 0
+            },
+            {
+              "param": "subIDs",
+              "value": [
+                "NO2",
+                "CO",
+                "CH20",
+                "NO2_alt"
+              ]
+            },
+            {
+              "param": "inputs",
+              "value": [
+                [
+                  16,
+                  17,
+                  5,
+                  18,
+                  35
+                ],
+                [
+                  19,
+                  21,
+                  22,
+                  23,
+                  34
+                ],
+                [
+                  13,
+                  12,
+                  14,
+                  27,
+                  33
+                ],
+                [
+                  15,
+                  2,
+                  0,
+                  4,
+                  32
+                ]
+              ]
+            },
+            {
+              "param": "outputs",
+              "value": [
+                -1,
+                -1,
+                25,
+                26
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+ */

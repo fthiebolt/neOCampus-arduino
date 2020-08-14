@@ -64,12 +64,12 @@
  * note: this board already makes use of SDA & SCL pins
  * thus enabling I2C means you know what you're doing ;)
  */
-#ifdef ENABLE_I2C
-  #define SDA                 21
-  #define SCL                 22
-#else
+#ifdef DISABLE_I2C
   #define SDA                 INVALID_GPIO
   #define SCL                 INVALID_GPIO
+#else
+  #define SDA                 21
+  #define SCL                 22
 #endif
 
 #endif /* _NEOSENSOR_AIRQUALITY_H_ */

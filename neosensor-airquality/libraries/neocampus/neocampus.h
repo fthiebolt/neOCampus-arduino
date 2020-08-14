@@ -114,13 +114,13 @@ typedef uint32_t firmwareRev_t;
 
 // defaults values for testing purposes
 #define DEFL_MQTT_SERVER                "neocampus.univ-tlse3.fr"
-#ifdef DISABLED_SSL
+#ifdef DISABLE_SSL
   #define DEFL_MQTT_STD_PORT            1883            // MQTT
   #define DEFL_MQTT_ABROAD_PORT         10883           // MQTT for abroad access
 #else
   #define DEFL_MQTT_STD_PORT            8883            // MQTTs
   #define DEFL_MQTT_ABROAD_PORT         10888           // MQTTs for abroad access
-#endif /* DISABLED_SSL */
+#endif /* DISABLE_SSL */
 #define DEFL_MQTT_LOGIN                 "test"          // for SANDBOX mode
 #define DEFL_MQTT_PASSWD                "test"          // for SANDBOX mode
 #define DEFL_MQTT_TOPIC                 "TestTopic"     // for SANDBOX mode

@@ -33,13 +33,13 @@
 /*
  * Definitions
  */
-#ifdef DISABLED_SSL
+#ifdef DISABLE_SSL
   #define SENSO_GET_CREDENTIALS_URL       "http://sensocampus.univ-tlse3.fr/device/credentials?mac="
   #define SENSO_GET_CONFIG_URL            "http://sensocampus.univ-tlse3.fr/device/config"
 #else
   #define SENSO_GET_CREDENTIALS_URL       "https://sensocampus.univ-tlse3.fr/device/credentials?mac="
   #define SENSO_GET_CONFIG_URL            "https://sensocampus.univ-tlse3.fr/device/config"
-#endif /* DISABLED_SSL */
+#endif /* DISABLE_SSL */
 #define SENSO_HTTP_URL_MAXSIZE          128   // maximum size of a URL sent to sensOCampus
 #define SENSO_HTTP_MAX_RESPONSE_SIZE    1024  // maximum size of a response sent from sensOCampus
 #define SENSO_JSON_SIZE                 (JSON_OBJECT_SIZE(128))   // no more than 128 objects in any sensOCampus JSON response
@@ -56,7 +56,7 @@ class senso {
     
     bool isValid( void );               // tell parameters have been initialized at least once
     bool loadConfigFile( void );
-    bool saveConfigFile( void );
+    bool saveConfigFile( void );        // only related to sensOCampus credentials
 
     boolean begin( const char * );
     bool http_getCredentials( const char * );

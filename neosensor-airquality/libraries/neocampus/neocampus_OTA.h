@@ -32,11 +32,11 @@
  * OTA URL is something like
  * http://neocampus.univ-tlse3.fr/images/${hardware}/${board_name}/default.json
  */
-#ifdef DISABLED_SSL
+#ifdef DISABLE_SSL
   #define OTA_BASE_URL        "http://neocampus.univ-tlse3.fr/images"
 #else
   #define OTA_BASE_URL        "https://neocampus.univ-tlse3.fr/images"
-#endif /* DISABLED_SSL */
+#endif /* DISABLE_SSL */
 #define OTA_JSON_FILE         "default.json"    // name of file to look after @ neocampus server
 #define OTA_URL_LENGTH        128               // maximum length of OTA's url
 #define OTA_JSON_LENGTH       512               // maximum size of json file retrieved from server

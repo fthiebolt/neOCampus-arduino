@@ -800,10 +800,6 @@ void setup() {
 
 
 
-#if 0
-
-TO BE CONTINUED ...
-
   /*
    * Manage WiFi parameters options
    */
@@ -816,6 +812,22 @@ TO BE CONTINUED ...
    */
   yield();
 
+
+
+
+
+  // TESTS TESTS TESTS
+  // retrieve airquality JSON configuration
+  JsonObject airqualityJson;
+  if( sensocampus.getModuleConf("airquality", &airqualityJson ) ) {
+    log_debug(F("\n[airquality] FOUND JSON configuration !")); log_flush();
+    serializeJsonPretty( airqualityJson, Serial );
+  }
+
+#if 0
+
+
+TO BE CONTINUED ...
 
 
   /*

@@ -540,7 +540,7 @@ bool senso::_parseConfig( char *json ) {
     log_error(F("\n[senso] unable to allocated modules JSON whose size is: ")); log_error(SENSO_JSON_SIZE,DEC); log_flush();
     return false;
   }
-  log_debug(F("\n[senso] cleared JSON modules whose capacity is: ")); log_debug(_modulesJSON.capacity()); log_flush();
+  log_debug(F("\n[senso] cleared JSON modules capacity (bytes): ")); log_debug(_modulesJSON.capacity()); log_flush();
 
   // deserialize
   auto err = deserializeJson( _modulesJSON, json );
@@ -548,6 +548,9 @@ bool senso::_parseConfig( char *json ) {
     log_error(F("\n[senso] ERROR parsing JSON config: "));log_error(err.c_str()); log_flush();
     return false;
   }
+  log_info(F("\n[senso] JSON modules configuration use ")); log_info(_modulesJSON.memoryUsage());
+  log_info(F(" / ")); log_info(_modulesJSON.capacity()); log_info(F(" bytes available.\n"));
+  log_flush();
 #if (LOG_LEVEL >= LOG_LVL_DEBUG)
   serializeJsonPretty( _modulesJSON, Serial );
 #endif
@@ -570,6 +573,58 @@ bool senso::_parseConfig( char *json ) {
    */
 
   return true;
+}
+
+
+/*
+ * Enable various modules to fetch thei configuration that may have been
+ * retrieved from sensOCampus server
+ */
+bool senso::getModuleConf( const char* name, JsonObject* obj ) {
+
+  if( !name ) return false;
+  if( _modulesJSON.isNull() or (_modulesJSON.containsKey(F("zones"))==false) ) return false;
+
+  log_debug(F("\n[senso] start to search JSON config for module ")); log_debug(name); log_flush();
+
+  /* 
+   * [aug.20] we'll only considering ONE topic hence leading to a single ZONE
+   * that may contain setup for multiple MODULES
+   * {
+      "topics": [
+        "irit2/366"
+      ],
+      "zones": [
+        {
+          "topic": "irit2/366",
+          "modules": [                  <-- JsonArray (i.e a list of values)
+            {                           <-- JsonObject
+              "module": "Airquality",
+              "unit": "lcc_sensor",
+              .........
+   */
+  // try to find array of "modules" inside zone ...
+  JsonArray modulesArray = _modulesJSON["zones"][0]["modules"];
+  if( modulesArray.isNull() ) return false;
+
+  //log_debug(F("\n[senso] modulesArray was found :)")); log_flush();
+  //serializeJsonPretty( modulesArray, Serial );
+
+  for( JsonVariant item : modulesArray ) {
+    if( not item.is<JsonObject>() ) continue;
+    if( not item.containsKey(F("module")) ) continue;
+    
+    //log_debug(F("\n[senso] inside iterator: ")); log_flush();
+    //serializeJsonPretty( item, Serial );
+    if( strcmp( name, item["module"])==0 ) {
+      //log_debug(F("\n[senso] found JSON configuration for module: ")); log_debug(name); log_flush();
+      *obj = item;
+      return true;
+    }
+  }
+
+  // nop :|
+  return false;
 }
 
 

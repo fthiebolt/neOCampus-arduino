@@ -1,0 +1,164 @@
+[senso] cleared JSON modules capacity (bytes): 2048
+[senso] JSON modules configuration use 976 bytes over 2048 available.
+{
+  "topics": [
+    "irit2/366"
+  ],
+  "zones": [
+    {
+      "topic": "irit2/366",
+      "modules": [
+        {
+          "module": "fake",
+          "unit": "bonzo",
+          "params": [
+            {
+              "param": "frequency",
+              "value": 42
+            }
+          ]
+        },
+        {
+          "module": "airquality",
+          "unit": "lcc_sensor",
+          "params": [
+            {
+              "param": "frequency",
+              "value": 0
+            },
+            {
+              "param": "subIDs",
+              "value": [
+                "NO2",
+                "CO",
+                "CH20",
+                "NO2_alt"
+              ]
+            },
+            {
+              "param": "inputs",
+              "value": [
+                [
+                  16,
+                  17,
+                  5,
+                  18,
+                  35
+                ],
+                [
+                  19,
+                  21,
+                  22,
+                  23,
+                  34
+                ],
+                [
+                  13,
+                  12,
+                  14,
+                  27,
+                  33
+                ],
+                [
+                  15,
+                  2,
+                  0,
+                  4,
+                  32
+                ]
+              ]
+            },
+            {
+              "param": "outputs",
+              "value": [
+                -1,
+                -1,
+                25,
+                26
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+[senso] found 'topic' = irit2/366
+[senso] WARNING: only 1st topic taken into account!
+[wifiParams] start to process options ... 
+[senso] start to search JSON config for module airquality
+[senso] modulesArray was found :)
+[
+  {
+    "module": "fake",
+    "unit": "bonzo",
+    "params": [
+      {
+        "param": "frequency",
+        "value": 42
+      }
+    ]
+  },
+  {
+    "module": "airquality",
+    "unit": "lcc_sensor",
+    "params": [
+      {
+        "param": "frequency",
+        "value": 0
+      },
+      {
+        "param": "subIDs",
+        "value": [
+          "NO2",
+          "CO",
+          "CH20",
+          "NO2_alt"
+        ]
+      },
+      {
+        "param": "inputs",
+        "value": [
+          [
+            16,
+            17,
+            5,
+            18,
+            35
+          ],
+          [
+            19,
+            21,
+            22,
+            23,
+            34
+          ],
+          [
+            13,
+            12,
+            14,
+            27,
+            33
+          ],
+          [
+            15,
+            2,
+            0,
+            4,
+            32
+          ]
+        ]
+      },
+      {
+        "0\b": "\b⸮⸮⸮?",
+        "": [
+          -1,
+          -1,
+          25,
+          26
+        ]
+      }
+    ]
+  }
+]
+

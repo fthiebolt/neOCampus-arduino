@@ -19,6 +19,7 @@
  * - check SYS_LED is working (add -DSYS_LED=2)
  * - remove DISABLE_SSL compilation flag
  * - AutoConnect lib vs WiFiManager --> have a look to https://github.com/Hieromon/AutoConnect
+ * - MQTT client --> have a look to https://github.com/xluthi/pulse_counter_esp8266
  * - test OTA feature
  * 
  * ---
@@ -41,13 +42,6 @@
  * 
  * ############################################################################# */
 
-
-
-/*
- * TESTS TESTS TESTS TESTS
- */
-#define DISABLE_MODULES
-/* --- END OF TESTS ------ */
 
 
 /*
@@ -97,11 +91,8 @@
 #include "neocampus_i2c.h"
 #include "sensocampus.h"
 #include "neocampus_OTA.h"
+//#include "neocampus_comm.h"               // future MQTT(s) comm module: a single MQTTclient shared with multiple subscribers featuring different callbacks
 
-
-
-
-#if 0
 // neOCampus modules
 #include "device.h"
 #include "temperature.h"
@@ -112,7 +103,6 @@
 
 // modules management
 #include "modulesMgt.h"
-#endif /* 0 */
 
 // WiFi parameters management
 #include "wifiParametersMgt.h"
@@ -166,7 +156,6 @@ wifiParametersMgt wifiParameters = wifiParametersMgt();
 // sensOCampus statically allocated instance with link to global wifi parameters (to check against sandbox mode)
 senso sensocampus = senso( &wifiParameters );
 
-#if 0
 // modules management statically allocated instance
 modulesMgt modulesList = modulesMgt();
 
@@ -191,7 +180,7 @@ void ICACHE_RAM_ATTR noiseDetectISR() {             /* https://community.particl
 
 // neoclock class module
 neoclock *clockModule               = NULL;
-#endif /* 0 */
+
 
 // time server related
 bool cbtime_set = false;
@@ -504,18 +493,18 @@ bool setupNTP( void ) {
 
   log_debug(F("\n[NTP] start setup of (S)NTP ..."));
 
-  #ifdef ESP8266
-    // register ntp sync callback
-    settimeofday_cb( syncNTP_cb );
-    // [may.20] as default, NTP server is provided by the DHCP server
-    configTime( MYTZ, NTP_DEFAULT_SERVER1, NTP_DEFAULT_SERVER2, NTP_DEFAULT_SERVER3 );
-  #else /* ESP32 */
-    // register ntp sync callback
-    #warning "no sntp callback in ESP32 ?!?!"
-    // set_time_sync_notification_cb()
-    // is it possible to retrive the one from the DHCP server ??
-    configTime(gmtOffset_sec, daylightOffset_sec, NTP_DEFAULT_SERVER1, NTP_DEFAULT_SERVER2, NTP_DEFAULT_SERVER3 );
-  #endif    
+#ifdef ESP8266
+  // register ntp sync callback
+  settimeofday_cb( syncNTP_cb );
+  // [may.20] as default, NTP server is provided by the DHCP server
+  configTime( MYTZ, NTP_DEFAULT_SERVER1, NTP_DEFAULT_SERVER2, NTP_DEFAULT_SERVER3 );
+#else /* ESP32 */
+  // register ntp sync callback
+  #warning "no sntp callback in ESP32 ?!?!"
+  // set_time_sync_notification_cb()
+  // is it possible to retrive the one from the DHCP server ??
+  configTime(gmtOffset_sec, daylightOffset_sec, NTP_DEFAULT_SERVER1, NTP_DEFAULT_SERVER2, NTP_DEFAULT_SERVER3 );
+#endif    
 
   log_flush();
   // the end ...
@@ -543,7 +532,6 @@ void processWIFIparameters( wifiParametersMgt *wp=nullptr ) {
     return;
   }
 
-/* TESTS TESTS TESTS
   //
   // TM1637 display
   if( wp->isEnabled7segTM1637() and !clockModule ) {
@@ -565,7 +553,6 @@ void processWIFIparameters( wifiParametersMgt *wp=nullptr ) {
     free( clockModule );
     clockModule = nullptr;
   }
- --- END OF TESTS */
  
   //
   // PIR sensor
@@ -701,19 +688,14 @@ void setup() {
    */
   wifiParameters.loadConfigFile();
   processWIFIparameters( &wifiParameters );
-#if 0
   if( clockModule ) {
     clockModule->animate();
   }
   else {
-#ifdef NOISE_LED
-    setupLed( NOISE_LED, (enum_ledmode_t)WIFI );
+#ifdef LED
+    setupLed( LED, (enum_ledmode_t)WIFI );
 #endif
   }
-#else
-  // TODO: add a ifdef LED
-  setupLed( LED, (enum_ledmode_t)WIFI );
-#endif /* 0 */
 
 
   /*
@@ -734,19 +716,15 @@ void setup() {
   /*
    * Disable led blinking for WiFI setup mode since we're already connected
    */
-#if 0
   if( clockModule ) {
     clockModule->animate( false );
   }
   else {
-#ifdef NOISE_LED
-    setupLed( NOISE_LED, (enum_ledmode_t)DISABLE );
+#ifdef LED
+    setupLed( LED, (enum_ledmode_t)DISABLE );
 #endif
   }
-#else
-  // TODO: add a ifdef LED
-  setupLed( LED, (enum_ledmode_t)DISABLE );
-#endif /* 0 */
+
   
   /*
    * Allocate time for ESP's firmware ...
@@ -818,8 +796,7 @@ void setup() {
 
 
 
-
-
+/*
   // TESTS TESTS TESTS
   // retrieve airquality JSON configuration
   JsonObject airqualityJson;
@@ -827,11 +804,8 @@ void setup() {
     log_debug(F("\n[airquality] FOUND JSON configuration !\n")); log_flush();
     serializeJsonPretty( airqualityJson, Serial );
   }
+*/
 
-#if 0
-
-
-TO BE CONTINUED ...
 
 
   /*
@@ -848,7 +822,7 @@ TO BE CONTINUED ...
     humidityModule      = new humidity();
     luminosityModule    = new luminosity();
     #ifndef NOISE_DETECT
-      noiseModule       = null; // means no noise sensor
+      noiseModule       = nullptr; // means no noise sensor
     #elif NOISE_LED    // with or without led signaling noise
       noiseModule       = new noise( NOISE_DETECT, &noiseDetectISR, NOISE_LED );
     #else
@@ -992,10 +966,8 @@ TO BE CONTINUED ...
   /*
    * start all modules ...
    */
-  #ifndef DISABLE_MODULES
   modulesList.startAll( &sensocampus );
-  #endif /* DISABLE_MODULES */
-#endif /* 0 */
+
 
   /*
    * Very end of setup() :)
@@ -1007,12 +979,11 @@ TO BE CONTINUED ...
 // --- LOOP --------------------------------------------------------------------
 void loop() {
 
-#if 0
   /*
    * Process device, module sensors ...
    */
   modulesList.processAll();
-#endif /* 0 */
+
 
   /* 
    * end of main loop

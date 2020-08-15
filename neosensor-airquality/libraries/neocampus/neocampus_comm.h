@@ -79,7 +79,6 @@ class comm {
      */
 
 
-
   private:
     /*
      * private methods

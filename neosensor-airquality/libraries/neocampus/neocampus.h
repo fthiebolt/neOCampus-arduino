@@ -41,7 +41,7 @@ typedef uint32_t firmwareRev_t;
 /*
  * Simultaneous TCP connexions
  */
-#ifndef MAX_TCP_CONNECTIONS
+#if defined(ESP8266) && !defined(MAX_TCP_CONNECTIONS)
 #define MAX_TCP_CONNECTIONS              8       // maximum number of simultaneous TCP connexions (5 as default)
 #endif
 

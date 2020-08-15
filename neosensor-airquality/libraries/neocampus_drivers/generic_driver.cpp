@@ -29,6 +29,16 @@ generic_driver::generic_driver() {
 }
 
 /******************************************
+ * Detection
+ */
+boolean generic_driver::begin( uint8_t adr ) {
+  return false;
+}
+boolean generic_driver::begin( JsonObject obj ) {
+  return false;
+}
+
+/******************************************
  * Power modes
  */
 void generic_driver::powerON( void ) {

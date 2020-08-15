@@ -93,7 +93,6 @@ class noise : public base {
 
 
     bool loadConfig( void );          // load an eventual module'specific config file
-    bool _loadConfig( JsonObject );
 
     /*
      * public attributes
@@ -122,6 +121,7 @@ class noise : public base {
      */
     void inline _ledON( void );
     void inline _ledOFF( void );
+    bool _loadConfig( JsonObject );
     bool _processOrder( const char *, int * );      // an order to process with optional value
 
 };

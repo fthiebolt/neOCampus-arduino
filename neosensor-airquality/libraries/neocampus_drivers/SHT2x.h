@@ -39,7 +39,9 @@
 /* enable UUID's CRC check
  * WARNING: some fakes devices does not support it!
  */
+#ifndef SHT2X_CRC_UUID_DISABLED
 #define SHT2X_CRC_UUID_DISABLED   1
+#endif
 
 // sht2x commands
 enum class sht2xCmd_t : uint8_t {

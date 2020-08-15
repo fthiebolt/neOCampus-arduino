@@ -21,6 +21,7 @@
 
 
 #include <Arduino.h>
+#include <ArduinoJson.h>
 
 
 
@@ -38,9 +39,13 @@ class generic_driver {
     generic_driver( void );
     
     // Power Modes
-    virtual void powerON( void );       // switch ON
-    virtual void powerOFF( void );      // switch OFF
+    virtual void powerON( void );         // switch ON
+    virtual void powerOFF( void );        // switch OFF
     
+    // Detection
+    virtual boolean begin( uint8_t );     // i2c detected
+    virtual boolean begin( JsonObject );  // JsonConfig file (if any)
+
     // Data
     virtual float acquire( void )=0;    // pure virtual, acquire sensor value
     virtual const char *sensorUnits( void )=0;  // pure virtual, retrieve units of actual sensors (e.g celsius, %r.H, lux ...)

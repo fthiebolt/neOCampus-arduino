@@ -112,6 +112,9 @@ typedef uint32_t firmwareRev_t;
 #define SENSO_MQTT_LOGIN_LENGTH         32    // max length of sensOCampus MQTT login
 #define SENSO_MQTT_PASSWD_LENGTH        64    // max length of sensOCampus MQTT password
 
+// UnitID & subID
+#define INVALID_I2CADDR                 (uint8_t)(-1)     // used to send back an invalid i2c addr as subID
+
 // defaults values for testing purposes
 #define DEFL_MQTT_SERVER                "neocampus.univ-tlse3.fr"
 #ifdef DISABLE_SSL

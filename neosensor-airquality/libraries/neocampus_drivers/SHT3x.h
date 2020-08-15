@@ -38,7 +38,9 @@
 #define SHT3X_SENSOR_CACHE_MS       5000  // ms caches values validity
 
 // Enable CRC lookup table (regular computation otherwise)
+#ifndef SHT3X_CRC_LOOKUP_TABLE
 #define SHT3X_CRC_LOOKUP_TABLE    1
+#endif
 
 /* sht3x commands
  * Note:

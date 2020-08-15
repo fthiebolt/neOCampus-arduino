@@ -665,7 +665,7 @@ const char *senso::getPassword( void ) const {
       "topic": "irit2/366",
       "modules": [
         {
-          "module": "Airquality",
+          "module": "airquality",
           "unit": "lcc_sensor",
           "params": [
             {

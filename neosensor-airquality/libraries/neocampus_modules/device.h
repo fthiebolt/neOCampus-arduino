@@ -51,17 +51,14 @@ class device : public base {
 
     // Module's config file
     bool saveConfig( void );
-
-
-
     bool loadConfig( void );          // load an eventual module'specific config file
-    bool _loadConfig( JsonObject );
 
   private:
     
     /*
      * private membre functions
      */
+    bool _loadConfig( JsonObject );
     bool _processOrder( const char *, int *, const char * );   // an order to process with optional value
 
 };

@@ -63,7 +63,6 @@ class temperature : public base {
     // Module's config file
     bool saveConfig( void );
     bool loadConfig( void );          // load an eventual module'specific config file
-    bool _loadConfig( JsonObject );
     
   private:
     // supported devices (only one of one kind at this time :(
@@ -72,6 +71,7 @@ class temperature : public base {
     /*
      * private membre functions
      */
+    bool _loadConfig( JsonObject );
     bool _processOrder( const char *, int * );  // an order to process with optional value
     boolean _sendValues( void );                // send all sensors' values
 };

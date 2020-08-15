@@ -13,6 +13,7 @@
 
 	@section  HISTORY
 
+    2017  - adapter for neOCampus
 	  v1.2  - Add support for low power operations
     v1.1  - Added list of possible I2C address
     v1.0  - First release

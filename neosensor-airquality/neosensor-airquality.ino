@@ -7,11 +7,12 @@
  * 
  * ---
  * NOTES:
- * - you need to 'deploy' our boards definitions
+ * - you need to 'deploy' our boards definitions (run the deploy.sh script)
  * - select 'neOSensor AirQuality' board from menu (located end of list)
  * - NO MORE NEED TO PATCH standard libs ... we now have our own defines !!! :)
  * - a compilation flag tells which bord it is (i.e NEOSENSOR_AIRQUALITY)
  * - as of aug.20, CONFIG_LWIP_MAX_ACTIVE_TCP=16
+ * 
  * ---
  * TODO:
  * - add sntp_cb once available for ESP32
@@ -100,6 +101,7 @@
 #include "luminosity.h"
 #include "noise.h"
 #include "neoclock.h"
+#include "airquality.h"
 
 // modules management
 #include "modulesMgt.h"
@@ -842,8 +844,8 @@ void setup() {
   log_debug(F("\nStart I2C scanning ..."));
 
   /* i2c scanner loop ...
-   * [may.20] since some sensors are both kinds (e.g SHTXX --> temperature AND hygro)
-   * ==> each i2c addr ought ot get tested against all kinds of modules 
+   * [may.20] since some sensors are of both kinds (e.g SHTXX --> temperature AND hygro)
+   * ==> each i2c addr ought to get tested against all kinds of modules 
    */
   do {
     if( _need2reboot ) break;

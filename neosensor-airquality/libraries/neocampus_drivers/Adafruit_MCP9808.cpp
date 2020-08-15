@@ -16,6 +16,7 @@
 	@section  HISTORY
 
     dec.18  F.Thiebolt  added I2C addr range for 0x48->4F
+                        adapted for neOCampus
     v1.0 - First release
 */
 /**************************************************************************/

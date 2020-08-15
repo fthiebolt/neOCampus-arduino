@@ -11,7 +11,7 @@
  * - select 'neOSensor AirQuality' board from menu (located end of list)
  * - NO MORE NEED TO PATCH standard libs ... we now have our own defines !!! :)
  * - a compilation flag tells which bord it is (i.e NEOSENSOR_AIRQUALITY)
- * 
+ * - as of aug.20, CONFIG_LWIP_MAX_ACTIVE_TCP=16
  * ---
  * TODO:
  * - add sntp_cb once available for ESP32
@@ -19,6 +19,7 @@
  * - check SYS_LED is working (add -DSYS_LED=2)
  * - remove DISABLE_SSL compilation flag
  * - AutoConnect lib vs WiFiManager --> have a look to https://github.com/Hieromon/AutoConnect
+ * - test OTA feature
  * 
  * ---
  * F.DeMiguel
@@ -61,14 +62,15 @@
 #include <Wire.h>
 #include <Ticker.h>
 #include <WiFi.h>
+#include <lwipopts.h>                     // for ESP32 max tcp connections CONFIG_LWIP_MAX_ACTIVE_TCP
 
 /* As of esp8266 arduino lib >=2.4.0, time is managed via local or sntp along with TZ support :) */ 
-#include <time.h>                       // time() ctime()
+#include <time.h>                         // time() ctime()
 #ifdef ESP8266
   #include <coredecls.h>                  // settimeofday_cb(), tune_timeshift64()
 
   #include <sntp.h>
-  //#include <lwipopts.h>                   // for SNTP_UPDATE_DELAY (1 hour default, it's ok :) )
+  //#include <lwipopts.h>                 // for SNTP_UPDATE_DELAY (1 hour default, it's ok :) )
 #elif defined(ESP32)
   #include "lwip/apps/sntp.h"
 #endif
@@ -645,6 +647,8 @@ void lateSetup( void ) {
 
 #if defined(MAX_TCP_CONNECTIONS) && defined(ESP8266)
   log_info(F("\n# max TCP concurrent sockets = ")); log_info(MAX_TCP_CONNECTIONS, DEC); log_flush();
+#elif defined(ESP32)
+  log_info(F("\n# max TCP concurrent sockets = ")); log_info(CONFIG_LWIP_MAX_ACTIVE_TCP, DEC); log_flush();
 #endif /* MAX_TCP_CONNECTIONS */
 
   log_info(F("\n# --- --- ---")); log_flush();
@@ -820,7 +824,7 @@ void setup() {
   // retrieve airquality JSON configuration
   JsonObject airqualityJson;
   if( sensocampus.getModuleConf("airquality", &airqualityJson ) ) {
-    log_debug(F("\n[airquality] FOUND JSON configuration !")); log_flush();
+    log_debug(F("\n[airquality] FOUND JSON configuration !\n")); log_flush();
     serializeJsonPretty( airqualityJson, Serial );
   }
 

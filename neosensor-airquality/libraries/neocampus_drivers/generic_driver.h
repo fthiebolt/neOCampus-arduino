@@ -51,7 +51,7 @@ class generic_driver {
     virtual const char *sensorUnits( void )=0;  // pure virtual, retrieve units of actual sensors (e.g celsius, %r.H, lux ...)
 
     // Identity (i.e i2c addr)
-    virtual uint8_t subID( void )=0;    // pure virtual, retrieve subID (i.e i2c addr)
+    virtual String subID( void )=0;    // pure virtual, retrieve subID (i.e i2c addr)
 
   // --- protected methods / attributes ---------------------
   // --- i.e subclass have direct access to

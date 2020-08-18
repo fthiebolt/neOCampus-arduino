@@ -98,7 +98,7 @@ boolean TSL2561::is_device( uint8_t a ) {
  * Constructor
  */
 TSL2561::TSL2561( void ) : generic_driver() {
-  _i2caddr = -1;
+  _i2caddr = INVALID_I2CADDR;
   _initialized = false;
   _integration = TSL2561_DEFL_INTEGR_TIME;
   _gain = TSL2561_DEFL_GAIN;
@@ -107,7 +107,7 @@ TSL2561::TSL2561( void ) : generic_driver() {
 
 
 
-boolean TSL2561::begin( uint8_t addr=-1 ) {
+boolean TSL2561::begin( uint8_t addr=INVALID_I2CADDR ) {
   // get i2caddr
   if( (addr < (uint8_t)(I2C_ADDR_START)) or (addr > (uint8_t)(I2C_ADDR_STOP)) ) return false;
   _i2caddr = addr;

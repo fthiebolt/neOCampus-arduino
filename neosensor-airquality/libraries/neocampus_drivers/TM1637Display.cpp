@@ -350,10 +350,11 @@ uint8_t TM1637Display::dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds
 
 
 // ---
-// Send back identity
+/* Send back identity
 uint8_t TM1637Display::subID( void ) {
   return -1;
 }
+*/
 
 
 // ---

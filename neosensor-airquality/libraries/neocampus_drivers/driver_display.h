@@ -51,7 +51,7 @@ class driver_display {
     virtual uint8_t dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds=0 ); // display time
     
     // Identity (e.g i2c addr)
-    virtual uint8_t subID( void )=0;    // pure virtual, retrieve subID (e.g i2c addr)
+    virtual String subID( void )=0;    // pure virtual, retrieve subID (e.g i2c addr)
 
     // animation
     virtual bool animate( bool activate=true, uint8_t mode=1 );

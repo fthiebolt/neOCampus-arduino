@@ -162,7 +162,7 @@ class TM1637Display : public driver_display {
     uint8_t dispMsg( const char * );    // display a text message
     uint8_t dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds=0 ); // display time
       
-    uint8_t subID( void );              // retrieve identity
+    String subID(void) { return String(""); }             // retrieve identity (no subID available)
 
     bool animate( bool activate=true, uint8_t mode=1 );   // display some animations :)
 

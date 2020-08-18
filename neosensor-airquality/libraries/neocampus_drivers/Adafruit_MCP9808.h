@@ -95,7 +95,7 @@ class Adafruit_MCP9808 : public generic_driver {
     // send back sensor's value and units (e.g "32,5" "°C", <i2c_addr> )
     float acquire( void );
     const char *sensorUnits( void ) { return units; };
-    uint8_t subID( void ) { return _i2caddr; };
+    String subID( void ) { return String(_i2caddr); };
     
     // --- static methods / constants -----------------------
     

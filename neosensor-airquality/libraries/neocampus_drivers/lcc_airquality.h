@@ -55,9 +55,9 @@ class lcc_airquality : public generic_driver {
     // send back sensor's value, units and subID
     float acquire( void );
     const char *sensorUnits( void );
-    // TODO: find a way to send back a string !
-    uint8_t subID( void ) { return INVALID_I2CADDR; };
-    const char* strSubID( void ) { return nullptr; };
+
+    // TO BE CONTINUED !
+    String subID( void ) { return String(""); };
 
 
 

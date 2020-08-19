@@ -73,7 +73,7 @@ private:
      */
     void _applyDefaults( void );
     bool _parseCredentials( char * );
-    bool _parseConfig( char * );
+    bool _parseConfig( const char * );
     bool _loadConfig( JsonObject );       // interprets JSON buffer from config file
     bool _saveConfig( JsonObject );       // fill JSON buffer with things to save to config file
 
@@ -86,7 +86,7 @@ private:
     
     wifiParametersMgt *_wp;               // global wifiParametersMgt
 
-    DynamicJsonDocument _modulesJSON;     // modules configuration
+    DynamicJsonDocument _modulesJSON = DynamicJsonDocument(SENSO_JSON_SIZE);    // modules configuration
 
     // grabbed from sensocampus sever
     char _mqtt_server[MQTT_SERVER_NAME_LENGTH];

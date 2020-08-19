@@ -63,7 +63,11 @@ class base {
     void callback(char* topic, byte* payload, unsigned int length);
     virtual void handle_msg( JsonObject )=0;
 
+    // module saves its config file
     bool saveConfig( const char*, JsonObject );
+
+    // module load its sensOCampus config (if any)
+    virtual boolean loadSensoConfig( senso * ) { return false; };
 
     /* 
      * public attributes

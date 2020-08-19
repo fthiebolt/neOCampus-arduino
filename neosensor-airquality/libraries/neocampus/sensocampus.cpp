@@ -42,7 +42,7 @@
 /*
  * Class constructor
  */
-senso::senso( void ) : _modulesJSON(SENSO_JSON_SIZE) {
+senso::senso( void ) {
   _initialized = false;
   // set default values
   _applyDefaults();
@@ -50,7 +50,7 @@ senso::senso( void ) : _modulesJSON(SENSO_JSON_SIZE) {
   _wp = nullptr;
 }
 
-senso::senso( wifiParametersMgt *p ) : _modulesJSON(SENSO_JSON_SIZE) {
+senso::senso( wifiParametersMgt *p ) {
   _initialized = false;
   // set default values
   _applyDefaults();
@@ -278,7 +278,10 @@ bool senso::http_getCredentials( const char *mac ) {
 }
 
 
-// obtain CONFIG from sensOCampus server
+/* obtain CONFIG from sensOCampus server
+ * WARNING: we're about to store the JSON structure ...
+ * remember of the 'zero-copy' mode of JSON deserialization
+ */
 bool senso::http_getConfig( void ) {
   log_debug(F("\n[senso] start http getConfig ... ")); log_flush();
 
@@ -292,8 +295,7 @@ bool senso::http_getConfig( void ) {
   log_debug(F("\n[senso] GET response <"));log_debug(buf);log_debug(F(">"));log_flush();
 
   // [JSON] deserialize config
-  if( !_parseConfig(buf) )
-    return false;
+  if( !_parseConfig(buf) ) return false;
 
   return true;
 }
@@ -532,8 +534,10 @@ bool senso::_parseCredentials( char *json ) {
  * parse JSON buffer that contains MODULES config:
  * - https://arduinojson.org/v6/assistant/
  * see sensOCampus JSON config file sample at the end of this file.
+ * WARNING: very important that json input parameter is of const. type
+ * because we don"t want the 'zero-copy' mode of ArduinoJSON here
  */
-bool senso::_parseConfig( char *json ) {
+bool senso::_parseConfig( const char *json ) {
   log_debug(F("\n[senso] start parsing JSON config ..."));
 
   if( !_modulesJSON.capacity() ) {
@@ -582,7 +586,7 @@ bool senso::_parseConfig( char *json ) {
  */
 bool senso::getModuleConf( const char* name, JsonObject* obj ) {
 
-  if( !name ) return false;
+  if( !name or !obj ) return false;
   if( _modulesJSON.isNull() or (_modulesJSON.containsKey(F("zones"))==false) ) return false;
 
   log_debug(F("\n[senso] start to search JSON config for module ")); log_debug(name); log_flush();

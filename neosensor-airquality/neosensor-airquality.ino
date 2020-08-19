@@ -22,6 +22,7 @@
  * - AutoConnect lib vs WiFiManager --> have a look to https://github.com/Hieromon/AutoConnect
  * - MQTT client --> have a look to https://github.com/xluthi/pulse_counter_esp8266
  * - test OTA feature
+ * - as the number of modules is increasing, implement a list of modules in the setup()
  * 
  * ---
  * F.DeMiguel
@@ -182,6 +183,9 @@ void ICACHE_RAM_ATTR noiseDetectISR() {             /* https://community.particl
 
 // neoclock class module
 neoclock *clockModule               = NULL;
+
+// airquality class module
+airquality *airqualityModule        = NULL;
 
 
 // time server related
@@ -702,7 +706,7 @@ void setup() {
 
   /*
    * WiFiManager to activate the network :)
-   * - we added a 'sensOCampus' check box
+   * - we added a 'sensOCampus' check box to enable/disable sensOCampus sandbox mode
    */
   setupWiFi( &wifiParameters );
 
@@ -761,7 +765,7 @@ void setup() {
    * - MQTT password (first time only)
    */
   uint8_t _retry=SENSO_MAX_RETRIES;
-  // now FS is initialized, load our config file
+  // now FS is initialized, load our config file (may contain the previsously saved mqtt_passwd)
   sensocampus.loadConfigFile();
 
   while( not _need2reboot and sensocampus.begin(getMacAddress()) != true ) {
@@ -798,26 +802,8 @@ void setup() {
 
 
 
-/*
-  // TESTS TESTS TESTS
-  // retrieve airquality JSON configuration
-  JsonObject airqualityJson;
-  if( sensocampus.getModuleConf("airquality", &airqualityJson ) ) {
-    log_debug(F("\n[airquality] FOUND JSON configuration !\n")); log_flush();
-    serializeJsonPretty( airqualityJson, Serial );
-  }
-*/
-
-
-
   /*
-   * I2C bus initialization, set pins & frequency
-   */
-  setupI2C();
-
-
-  /*
-   * Allocate neOCampus sensors/actuators Modules
+   * neOCampus' modules instanciation
    */
   if( not _need2reboot ) {
     temperatureModule   = new temperature();
@@ -830,8 +816,17 @@ void setup() {
     #else
       noiseModule       = new noise( NOISE_DETECT, &noiseDetectISR );
     #endif
+    airqualityModule    = new airquality();
     // add additional modules initialization here
   }
+
+
+
+  /*
+   * I2C bus initialization, set pins & frequency
+   */
+  setupI2C();
+
 
   /* 
    *  neOCampus modules instanciation
@@ -902,6 +897,9 @@ void setup() {
 
   // check devices count in temperature module
   if( temperatureModule ) {
+    // [aug.20] load an eventual sensOCampus configuration
+    temperatureModule->loadSensoConfig( &sensocampus );
+
     if( temperatureModule->is_empty()==true or not modulesList.add(temperatureModule) ) {
       log_debug(F("\n# either temperature module does not have any sensor or we've not been able to add it to the list of modules ... removing instance ..."));log_flush();
       free(temperatureModule);
@@ -918,6 +916,9 @@ void setup() {
 
   // check devices count in humidity module
   if( humidityModule ) {
+    // [aug.20] load an eventual sensOCampus configuration
+    humidityModule->loadSensoConfig( &sensocampus );
+
     if( humidityModule->is_empty()==true or not modulesList.add(humidityModule) ) {
       log_debug(F("\n# either humidity module does not have any sensor or we've not been able to add it to the list of modules ... removing instance ..."));log_flush();
       free(humidityModule);
@@ -928,6 +929,9 @@ void setup() {
   
   // check devices count in luminosity module
   if( luminosityModule ) {
+    // [aug.20] load an eventual sensOCampus configuration
+    luminosityModule->loadSensoConfig( &sensocampus );
+
     if( luminosityModule->is_empty()==true or not modulesList.add(luminosityModule) ) {
       log_debug(F("\n# either luminosity module does not have any sensor or we've not been able to add it to the list of modules ... removing instance ..."));log_flush();
       free(luminosityModule);
@@ -938,6 +942,9 @@ void setup() {
 
   // check if noise module is ok
   if( noiseModule ) {
+    // [aug.20] load an eventual sensOCampus configuration
+    noiseModule->loadSensoConfig( &sensocampus );
+
     if( noiseModule->is_empty()==true or not modulesList.add(noiseModule) ) {
       log_debug(F("\n# either noise module didn't detected any dac or we've not been able to add it to the list of modules ... removing instance ..."));log_flush();
       free(noiseModule);
@@ -948,6 +955,9 @@ void setup() {
 
   // check if neoclock module is ok
   if( clockModule ) {
+    // [aug.20] load an eventual sensOCampus configuration
+    clockModule->loadSensoConfig( &sensocampus );
+
     if( clockModule->is_empty()==true or not modulesList.add(clockModule) ) {
       log_debug(F("\n# either neoclock module is empty or we've not been able to add it to the list of modules ... removing instance ..."));log_flush();
       free(clockModule);
@@ -955,6 +965,18 @@ void setup() {
     }
   }
 
+
+  // check if airquality module is ok
+  if( airqualityModule ) {
+    // [aug.20] load an eventual sensOCampus configuration
+    airqualityModule->loadSensoConfig( &sensocampus );
+
+    if( airqualityModule->is_empty()==true or not modulesList.add(airqualityModule) ) {
+      log_debug(F("\n# either airquality module is empty or we've not been able to add it to the list of modules ... removing instance ..."));log_flush();
+      free(airqualityModule);
+      airqualityModule = NULL;
+    }
+  }
 
   // add check for additional neOCampus sensors/actuators modules
 

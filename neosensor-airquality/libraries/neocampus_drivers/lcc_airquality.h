@@ -23,8 +23,6 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 
-#include "neocampus.h"      // for INVALID_I2CADDR
-
 // generic sensor driver
 #include "generic_driver.h"
 

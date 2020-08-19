@@ -200,6 +200,89 @@ void airquality::status( JsonObject root ) {
 }
 
 
+/*
+ * load an eventual module'specific config file
+ */
+bool airquality::loadConfig( void ) {
+  
+  if( ! SPIFFS.exists( MODULE_CONFIG_FILE(MQTT_MODULE_NAME) ) ) return false;
+
+  File configFile = SPIFFS.open( MODULE_CONFIG_FILE(MQTT_MODULE_NAME), "r");
+  if( !configFile ) return false;
+
+  log_info(F("\n[airquality] load JSON config file")); log_flush();
+  size_t size = configFile.size();
+  // Allocate a buffer to store contents of the file.
+  std::unique_ptr<char[]> buf(new char[size]);
+  configFile.readBytes(buf.get(), size);
+  configFile.close();
+
+  // allocate JSON static buffer for module's config file
+  StaticJsonDocument<CONFIG_JSON_SIZE> root;
+
+  auto err = deserializeJson( root, buf.get() );
+  if( err ) {
+    log_error(F("\n[airquality] ERROR parsing module JSON config file!"));
+    log_error(F("\n[device] ERROR msg: ")); log_error(err.c_str()); log_flush();
+    SPIFFS.remove( MODULE_CONFIG_FILE(MQTT_MODULE_NAME) );
+    return false;
+  }
+#if (LOG_LEVEL >= LOG_LVL_DEBUG)
+  serializeJsonPretty( root, Serial );
+#endif
+
+  // parse and apply JSON config
+  return _loadConfig( root.as<JsonObject>() );
+}
+
+
+/*
+ * save module'specific config file
+ */
+bool airquality::saveConfig( void ) {
+  
+  // static JSON buffer
+  StaticJsonDocument<CONFIG_JSON_SIZE> _doc;
+  JsonObject root = _doc.to<JsonObject>();
+
+  // frequency
+  if( _freq != (uint16_t)DEFL_AIRQUALITY_FREQUENCY )
+    root[F("frequency")] = _freq;
+
+  // add additional parameters to save here
+  
+  
+  // call parent save
+  return base::saveConfig( MODULE_CONFIG_FILE(MQTT_MODULE_NAME), root );
+}
+
+
+/*
+ * Module's sensOCampus config to load (if any)
+ */
+boolean airquality::loadSensoConfig( senso *sp ) {
+
+  // log_debug(F("\n[airquality] loading sensOCampus config is NOT YET IMPLEMENTED!")); log_flush();
+
+  JsonObject _obj;
+  if( ! sp->getModuleConf( MQTT_MODULE_NAME, &_obj ) ) {
+    log_debug(F("\n[airquality] no sensOCampus config found")); log_flush();
+    return false;
+  }
+
+  log_debug(F("\n[airquality] FOUND JSON configuration !\n")); log_flush();
+
+
+
+
+// TO BE CONTINUED
+
+
+
+
+  return false;
+}
+
 
 /* ------------------------------------------------------------------------------
  * Private methods 
@@ -241,7 +324,6 @@ boolean airquality::_sendValues( void ) {
   // ok, everything is sent
   return true;
 }
-
 
 
 /*
@@ -287,40 +369,6 @@ bool airquality::_processOrder( const char *order, int *value ) {
   return false;
 }
 
-/*
- * load an eventual module'specific config file
- */
-bool airquality::loadConfig( void ) {
-  
-  if( ! SPIFFS.exists( MODULE_CONFIG_FILE(MQTT_MODULE_NAME) ) ) return false;
-
-  File configFile = SPIFFS.open( MODULE_CONFIG_FILE(MQTT_MODULE_NAME), "r");
-  if( !configFile ) return false;
-
-  log_info(F("\n[airquality] load JSON config file")); log_flush();
-  size_t size = configFile.size();
-  // Allocate a buffer to store contents of the file.
-  std::unique_ptr<char[]> buf(new char[size]);
-  configFile.readBytes(buf.get(), size);
-  configFile.close();
-
-  // allocate JSON static buffer for module's config file
-  StaticJsonDocument<CONFIG_JSON_SIZE> root;
-
-  auto err = deserializeJson( root, buf.get() );
-  if( err ) {
-    log_error(F("\n[airquality] ERROR parsing module JSON config file!"));
-    log_error(F("\n[device] ERROR msg: ")); log_error(err.c_str()); log_flush();
-    SPIFFS.remove( MODULE_CONFIG_FILE(MQTT_MODULE_NAME) );
-    return false;
-  }
-#if (LOG_LEVEL >= LOG_LVL_DEBUG)
-  serializeJsonPretty( root, Serial );
-#endif
-
-  // parse and apply JSON config
-  return _loadConfig( root.as<JsonObject>() );
-}
 
 /*
  * low-level load JSON config
@@ -338,25 +386,4 @@ boolean airquality::_loadConfig( JsonObject root ) {
   
   return true;
 }
-
-/*
- * save module'specific config file
- */
-bool airquality::saveConfig( void ) {
-  
-  // static JSON buffer
-  StaticJsonDocument<CONFIG_JSON_SIZE> _doc;
-  JsonObject root = _doc.to<JsonObject>();
-
-  // frequency
-  if( _freq != (uint16_t)DEFL_AIRQUALITY_FREQUENCY )
-    root[F("frequency")] = _freq;
-
-  // add additional parameters to save here
-  
-  
-  // call parent save
-  return base::saveConfig( MODULE_CONFIG_FILE(MQTT_MODULE_NAME), root );
-}
-
 

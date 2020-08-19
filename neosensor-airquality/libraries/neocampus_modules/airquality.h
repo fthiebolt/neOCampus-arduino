@@ -58,10 +58,11 @@ class airquality : public base {
 
     void status( JsonObject );
     
-    // Module's config file
+    // Module's config
     bool saveConfig( void );
-    bool loadConfig( void );          // load an eventual module'specific config file
-    
+    bool loadConfig( void );            // load an eventual module'specific config file
+    boolean loadSensoConfig( senso * ); // sensOCampus config to load (if any)
+
   private:
     // supported devices (only one of one kind at this time :(
     generic_driver *_sensor[_MAX_SENSORS];

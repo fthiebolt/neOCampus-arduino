@@ -210,6 +210,34 @@ void humidity::status( JsonObject root ) {
 }
 
 
+/*
+ * Module's sensOCampus config to load (if any)
+ */
+boolean humidity::loadSensoConfig( senso *sp ) {
+
+  JsonObject _obj;
+  if( ! sp->getModuleConf( MQTT_MODULE_NAME, &_obj ) ) {
+    log_debug(F("\n[humidity] no sensOCampus config found")); log_flush();
+    return false;
+  }
+
+  log_debug(F("\n[humidity] loading sensOCampus config is NOT YET IMPLEMENTED!")); log_flush();
+  return false;
+
+
+
+// TO BE CONTINUED
+
+
+
+  // (re)load the local config file (to override default parameters values from sensOCampus)
+  log_debug(F("\n[humidity] (re)loading config file (if any)")); log_flush();
+  loadConfig();
+
+  return true;
+}
+
+
 
 /* ------------------------------------------------------------------------------
  * Private methods 

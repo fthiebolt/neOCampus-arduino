@@ -42,7 +42,7 @@ airquality::airquality(): base()
     _sensor[i] = NULL;
   
   // load json config file (if any)
-  loadConfig( );
+  loadConfig();
 }
 
 
@@ -279,8 +279,11 @@ boolean airquality::loadSensoConfig( senso *sp ) {
 
 
 
+  // (re)load the local config file (to override default parameters values from sensOCampus)
+  log_debug(F("\n[airquality] (re)loading config file (if any)")); log_flush();
+  loadConfig();
 
-  return false;
+  return true;
 }
 
 

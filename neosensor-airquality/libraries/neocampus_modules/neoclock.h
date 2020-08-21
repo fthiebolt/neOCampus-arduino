@@ -60,10 +60,11 @@ class neoclock : public base {
 /*
     void status( JsonObject );
     
-    // Module's config file
+    // Module's config
     bool saveConfig( void );
-    bool loadConfig( void );          // load an eventual module'specific config file
-    bool _loadConfig( JsonObject );
+    bool loadConfig( void );            // load an eventual module'specific config file
+    bool _loadConfig( JsonObject );     // move to private methods
+    boolean loadSensoConfig( senso * ); // sensOCampus config to load (if any)
 */
     // Clock source
     // bool setClockSource( uint8_t );  // local, RTC, SNTP

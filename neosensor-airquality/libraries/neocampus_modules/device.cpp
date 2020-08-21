@@ -41,7 +41,7 @@ device::device(): base( getMacAddress() )
   _freq = DEFL_DEVICE_FREQUENCY;
 
   // load json config file (if any)
-  loadConfig( );
+  loadConfig();
 }
 
 
@@ -180,6 +180,35 @@ void device::status( JsonObject root ) {
   root[F("board_rev")] = BOARD_REVISION;
   
 }
+
+
+/*
+ * Module's sensOCampus config to load (if any)
+ */
+boolean device::loadSensoConfig( senso *sp ) {
+
+  JsonObject _obj;
+  if( ! sp->getModuleConf( MQTT_MODULE_NAME, &_obj ) ) {
+    log_debug(F("\n[device] no sensOCampus config found")); log_flush();
+    return false;
+  }
+
+  log_debug(F("\n[device] loading sensOCampus config is NOT YET IMPLEMENTED!")); log_flush();
+  return false;
+
+
+
+// TO BE CONTINUED
+
+
+
+  // (re)load the local config file (to override default parameters values from sensOCampus)
+  log_debug(F("\n[device] (re)loading config file (if any)")); log_flush();
+  loadConfig();
+
+  return true;
+}
+
 
 
 /* ------------------------------------------------------------------------------

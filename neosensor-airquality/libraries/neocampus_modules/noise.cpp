@@ -416,9 +416,9 @@ void noise::status( JsonObject root ) {
  */
 boolean noise::loadSensoConfig( senso *sp ) {
 
-  JsonObject _obj;
-  if( ! sp->getModuleConf( MQTT_MODULE_NAME, &_obj ) ) {
-    log_debug(F("\n[noise] no sensOCampus config found")); log_flush();
+  JsonArray _array;
+  if( ! sp->getModuleConf( MQTT_MODULE_NAME, &_array ) ) {
+    //log_debug(F("\n[noise] no sensOCampus config found")); log_flush();
     return false;
   }
 

@@ -581,12 +581,16 @@ bool senso::_parseConfig( const char *json ) {
 
 
 /*
- * Enable various modules to fetch thei configuration that may have been
+ * Enable various modules to fetch their configuration that may have been
  * retrieved from sensOCampus server
+ * We'll return a JsonArray that will contain at least ONE 'module_name' configuration
+ * but you can have several time the same module. However, since array is filtered, you
+ * won't have configuration related to modules others than 'module_name'.
+ * Note: JsonArray is only a set of pointers
  */
-bool senso::getModuleConf( const char* name, JsonObject* obj ) {
+boolean senso::getModuleConf( const char* name, JsonArray* array ) {
 
-  if( !name or !obj ) return false;
+  if( !name or !array ) return false;
   if( _modulesJSON.isNull() or (_modulesJSON.containsKey(F("zones"))==false) ) return false;
 
   log_debug(F("\n[senso] start to search JSON config for module ")); log_debug(name); log_flush();
@@ -607,6 +611,9 @@ bool senso::getModuleConf( const char* name, JsonObject* obj ) {
               "unit": "lcc_sensor",
               .........
    */
+
+  boolean _found = false;
+
   // try to find array of "modules" inside zone ...
   JsonArray modulesArray = _modulesJSON["zones"][0]["modules"];
   if( modulesArray.isNull() ) return false;
@@ -622,13 +629,14 @@ bool senso::getModuleConf( const char* name, JsonObject* obj ) {
     //serializeJsonPretty( item, Serial );
     if( strcmp( name, item["module"])==0 ) {
       //log_debug(F("\n[senso] found JSON configuration for module: ")); log_debug(name); log_flush();
-      *obj = item;
-      return true;
+      _found = true;
+      array->add( item );
+      // *array = modulesArray;
+      // *obj = item;
     }
   }
 
-  // nop :|
-  return false;
+  return _found;
 }
 
 

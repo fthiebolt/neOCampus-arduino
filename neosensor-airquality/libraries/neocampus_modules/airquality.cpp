@@ -262,16 +262,19 @@ bool airquality::saveConfig( void ) {
  */
 boolean airquality::loadSensoConfig( senso *sp ) {
 
-  // log_debug(F("\n[airquality] loading sensOCampus config is NOT YET IMPLEMENTED!")); log_flush();
-
-  JsonObject _obj;
-  if( ! sp->getModuleConf( MQTT_MODULE_NAME, &_obj ) ) {
-    log_debug(F("\n[airquality] no sensOCampus config found")); log_flush();
+  JsonArray _array;
+  if( !sp->getModuleConf(MQTT_MODULE_NAME, &_array) or _array.isNull() ) {
+    //log_debug(F("\n[airquality] no sensOCampus config found")); log_flush();
     return false;
   }
 
-  log_debug(F("\n[airquality] FOUND JSON configuration !\n")); log_flush();
-
+  // now parse items from array
+  for( JsonVariant item : _array ) {
+    if( not item.is<JsonObject>() or not item.containsKey(F("module")) or
+        strcmp( MQTT_MODULE_NAME, item["module"])!=0 ) {
+      log_warning(F("\n[airquality] strange ... we found a sensOCampus config that does not match our module ?!?! ... continuing")); log_flush();
+      //log_debug(F("\n[senso] found JSON configuration for module: ")); log_debug(name); log_flush();
+    }
 
 
 

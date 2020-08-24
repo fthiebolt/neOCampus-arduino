@@ -459,6 +459,8 @@ void inline noise::_ledOFF( void ) {
  */
 bool noise::_processOrder( const char *order, int *value ) {
 
+  if( !order ) return false;
+  
   {
     const char *_order = PSTR("status");
     if( strncmp_P(order, _order, strlen_P(_order))==0 ) {

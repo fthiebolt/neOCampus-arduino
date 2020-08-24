@@ -286,6 +286,8 @@ boolean humidity::_sendValues( void ) {
  */
 bool humidity::_processOrder( const char *order, int *value ) {
 
+  if( !order ) return false;
+  
   {
     const char *_order = PSTR("status");
     if( strncmp_P(order, _order, strlen_P(_order))==0 ) {

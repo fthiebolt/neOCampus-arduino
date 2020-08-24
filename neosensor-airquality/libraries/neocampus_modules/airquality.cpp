@@ -59,7 +59,8 @@ boolean airquality::add_sensor( uint8_t adr ) {
    * check for XXXX
    * TODO: add auto-detect for some sensor !
    *
-   * the following was left as an example
+   * The following was left as an example:
+   * 
   if( TSL2561::is_device( adr ) == true ) {
     TSL2561 *cur_sensor = new TSL2561();
     if( cur_sensor->begin( adr ) != true ) {
@@ -270,10 +271,18 @@ boolean airquality::loadSensoConfig( senso *sp ) {
 
   // now parse items from array
   for( JsonVariant item : _array ) {
+    // check things ...
     if( not item.is<JsonObject>() or not item.containsKey(F("module")) or
-        strcmp( MQTT_MODULE_NAME, item["module"])!=0 ) {
+        strcmp( MQTT_MODULE_NAME, item[F("module")])!=0 ) {
       log_warning(F("\n[airquality] strange ... we found a sensOCampus config that does not match our module ?!?! ... continuing")); log_flush();
-      //log_debug(F("\n[senso] found JSON configuration for module: ")); log_debug(name); log_flush();
+    }
+
+    // now we'll parse the various 'unit' (i.e driver) available
+    {
+      const char *_unit = PSTR("lcc_sensor");
+      if( strncmp_P(item[F("unit")], _unit, strlen_P(_unit))==0 ) {
+        //log_debug(F("\n[airquality] detected lcc_sensor with subID: "));log_debug(item["subID"]);log_flush();
+      }
     }
 
 
@@ -281,6 +290,16 @@ boolean airquality::loadSensoConfig( senso *sp ) {
 // TO BE CONTINUED
 
 
+    // we'll now search for 'module' common parameters like 'frequency' or ...
+    {
+      if( item.containsKey(F("frequency")) ) {
+        setFrequency( item[F("frequency")].as<unsigned int>(), AIRQUALITY_MIN_FREQUENCY, AIRQUALITY_MAX_FREQUENCY );
+        // no need to saveConfig() since these parameters are grabbed every reboot
+        //saveConfig();
+      }
+    }
+
+  }
 
   // (re)load the local config file (to override default parameters values from sensOCampus)
   log_debug(F("\n[airquality] (re)loading config file (if any)")); log_flush();
@@ -336,6 +355,8 @@ boolean airquality::_sendValues( void ) {
  * orders processing ...
  */
 bool airquality::_processOrder( const char *order, int *value ) {
+
+  if( !order ) return false;
 
   {
     const char *_order = PSTR("status");
@@ -393,3 +414,68 @@ boolean airquality::_loadConfig( JsonObject root ) {
   return true;
 }
 
+/*
+ * sensOCampus sample module config (see end of file sensocampus.cpp for full config)
+ *
+{
+  "module": "airquality",
+  "unit": "lcc_sensor",
+  "params": [
+    {
+      "param": "frequency",
+      "value": 0
+    },
+    {
+      "param": "subIDs",
+      "value": [
+        "NO2",
+        "CO",
+        "CH20",
+        "NO2_alt"
+      ]
+    },
+    {
+      "param": "inputs",
+      "value": [
+        [
+          16,
+          17,
+          5,
+          18,
+          35
+        ],
+        [
+          19,
+          21,
+          22,
+          23,
+          34
+        ],
+        [
+          13,
+          12,
+          14,
+          27,
+          33
+        ],
+        [
+          15,
+          2,
+          0,
+          4,
+          32
+        ]
+      ]
+    },
+    {
+      "param": "outputs",
+      "value": [
+        -1,
+        -1,
+        25,
+        26
+      ]
+    }
+  ]
+}
+*/

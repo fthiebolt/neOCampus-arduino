@@ -38,6 +38,7 @@
   #define SENSO_GET_CONFIG_URL            "https://sensocampus.univ-tlse3.fr/device/config"
 #endif /* DISABLE_SSL */
 #define SENSO_UNITID_MAXSIZE            24    // unitID field maxsize (mac addr is 17 bytes)
+#define SENSO_SUBID_MAXSIZE             16    // subID field maxsize (mac addr is 17 bytes)
 #define SENSO_HTTP_URL_MAXSIZE          128   // maximum size of a URL sent to sensOCampus
 #define SENSO_HTTP_MAX_RESPONSE_SIZE    1024  // maximum size of a response sent from sensOCampus
 #define SENSO_JSON_SIZE                 (JSON_OBJECT_SIZE(256))   // max number of objects in any sensOCampus JSON response

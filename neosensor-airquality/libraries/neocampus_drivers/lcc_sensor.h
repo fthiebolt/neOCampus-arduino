@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*! 
-    @file     lcc_airquality.h
+    @file     lcc_sensor.h
     @author   F. Thiebolt
 	  @license
 	
@@ -16,12 +16,14 @@
 */
 /**************************************************************************/
 
-#ifndef _LCC_AIRQUALITY_H_
-#define _LCC_AIRQUALITY_H_
+#ifndef _LCC_SENSOR_H_
+#define _LCC_SENSOR_H_
 
 
 #include <Arduino.h>
 #include <ArduinoJson.h>
+
+#include "sensocampus.h"
 
 // generic sensor driver
 #include "generic_driver.h"
@@ -37,9 +39,11 @@
 /*
  * Class
  */
-class lcc_airquality : public generic_driver {
+class lcc_sensor : public generic_driver {
   public:
-    lcc_airquality( void );
+
+    // constructor
+    lcc_sensor( void );
     
     /* Power Modes
      * [aug.20] the board does feature any way to switch power
@@ -47,22 +51,25 @@ class lcc_airquality : public generic_driver {
     void powerOFF( void );      // switch OFF
      */
 
-    // detection JsonConfig
-    boolean begin( JsonObject );
+    // sensor creation via sensOCampus JSON array 'params'
+    boolean begin( JsonVariant );
 
     // send back sensor's value, units and subID
     float acquire( void );
-    const char *sensorUnits( void );
-
-    // TO BE CONTINUED !
-    String subID( void ) { return String(""); };
-
+    const char *sensorUnits( void ) { return units; };
+    String subID( void ) { return _subID; };
 
 
   // --- protected methods / attributes ---------------------
   // --- i.e subclass have direct access to
   protected:
+    // -- private/protected methods
 
+    // --- private/protected attributes
+    char _subID[SENSO_SUBID_MAXSIZE];
+
+    static const char *units;
+    // uint8_t _integrationTime; // ms time to integrate a measure
 };
 
-#endif /* _LCC_AIRQUALITY_H_ */
+#endif /* _LCC_SENSOR_H_ */

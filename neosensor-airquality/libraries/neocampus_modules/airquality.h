@@ -23,7 +23,7 @@
 
 // chips drivers
 #include "generic_driver.h"
-#include "lcc_airquality.h"
+#include "lcc_sensor.h"
 
 
 

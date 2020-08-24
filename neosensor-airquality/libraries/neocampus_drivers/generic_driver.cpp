@@ -34,7 +34,7 @@ generic_driver::generic_driver() {
 boolean generic_driver::begin( uint8_t adr ) {
   return false;
 }
-boolean generic_driver::begin( JsonObject obj ) {
+boolean generic_driver::begin( JsonVariant root ) {
   return false;
 }
 

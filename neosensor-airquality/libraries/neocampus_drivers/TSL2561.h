@@ -222,7 +222,7 @@ class TSL2561 : public generic_driver {
 
     // methods
     static bool _check_identity( uint8_t );   // check device is what we expect!
-    void _getData (uint16_t *broadband, uint16_t *ir);
+    void _getData( uint16_t *broadband, uint16_t *ir );
 };
 
 #endif /* _TSL2561_H_ */

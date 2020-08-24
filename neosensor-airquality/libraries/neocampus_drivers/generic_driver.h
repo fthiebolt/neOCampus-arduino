@@ -44,7 +44,7 @@ class generic_driver {
     
     // Detection
     virtual boolean begin( uint8_t );     // i2c detected
-    virtual boolean begin( JsonObject );  // JsonConfig file (if any)
+    virtual boolean begin( JsonVariant );   // Json senso config
 
     // Data
     virtual float acquire( void )=0;    // pure virtual, acquire sensor value

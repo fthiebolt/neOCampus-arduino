@@ -57,7 +57,7 @@ boolean airquality::add_sensor( uint8_t adr ) {
   bool _sensor_added=false;
   /*
    * check for XXXX
-   * TODO: add auto-detect for some sensor !
+   * TODO: add auto-detect for some air quality sensors !
    *
    * The following was left as an example:
    * 
@@ -263,6 +263,8 @@ bool airquality::saveConfig( void ) {
  */
 boolean airquality::loadSensoConfig( senso *sp ) {
 
+  boolean _sensor_added = false;
+
   // [aug.20] ought to be >= of senso config Json ?!?!
   StaticJsonDocument<SENSO_JSON_SIZE> _doc;
   JsonArray root = _doc.to<JsonArray>();
@@ -287,21 +289,36 @@ boolean airquality::loadSensoConfig( senso *sp ) {
       log_warning(F("\n[airquality] strange ... we found a sensOCampus config that does not match our module ?!?! ... continuing")); log_flush();
     }
 
-    // now we'll parse the various 'unit' (i.e driver) available
+    // already reached MAX_SENSORS ?
+    if( _sensors_count>=_MAX_SENSORS ) {
+      log_warning(F("\n[airquality] already reached maximum number of sensors: ")); log_debug(_sensors_count); log_flush();
+      continue;
+    }
+
+    // LCC_SENSOR
     {
       const char *_unit = PSTR("lcc_sensor");
       if( (item[F("driver")] and strncmp_P(item[F("driver")], _unit, strlen_P(_unit))==0) or
            strncmp_P(item[F("unit")], _unit, strlen_P(_unit))==0 ) {
-        log_debug(F("\n[airquality] detected lcc_sensor ..."));log_flush();
-
-// TO BE CONTINUED: grab all parameters and instantate driver
-
+        // instantiate sensor
+        lcc_sensor *cur_sensor = new lcc_sensor();
+        if( cur_sensor->begin( item[F("params")] ) != true ) {
+          log_debug(F("\n[airquality] ###ERROR at lcc_sensor startup ... removing instance ..."));log_flush();
+          free(cur_sensor);
+          cur_sensor = NULL;
+        }
+        else {
+          // TODO: set auto_gain ?
+          cur_sensor->powerOFF();
+          _sensor[_sensors_count++] = cur_sensor;
+          _sensor_added = true;
+        }
       }
     }
 
 
-
-// TO BE CONTINUED
+    // add additional sensors here
+    
 
 
     /* we'll now search for 'module' common parameters like 'unit' or 'frequency' or ...
@@ -322,10 +339,10 @@ boolean airquality::loadSensoConfig( senso *sp ) {
   }
 
   // (re)load the local config file (to override default parameters values from sensOCampus)
-  log_debug(F("\n[airquality] (re)loading config file (if any)")); log_flush();
+  log_debug(F("\n[airquality] (re)loading locale config file (if any)")); log_flush();
   loadConfig();
 
-  return true;
+  return _sensor_added;
 }
 
 

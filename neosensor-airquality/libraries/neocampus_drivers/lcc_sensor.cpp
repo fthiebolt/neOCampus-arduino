@@ -35,6 +35,10 @@ const char *lcc_sensor::units = "ppm";
 /**************************************************************************/
 lcc_sensor::lcc_sensor( void ) : generic_driver() {
   _subID[0] = '\0';
+  _heater = INVALID_GPIO;
+  for( uint8_t i=0; i < sizeof(_inputs); i++ ) {
+    _inputs[i] = INVALID_GPIO;
+  }
 }
 
 /**************************************************************************/
@@ -85,20 +89,48 @@ boolean lcc_sensor::begin( JsonVariant root ) {
     }
 
     // SUBID
-    const char *_param = PSTR("subID");
-    if( strncmp_P(item[F("param")], _param, strlen_P(_param))==0 ) {
-      snprintf( _subID, sizeof(_subID), item[F("value")]);
+    {
+      const char *_param = PSTR("subID");
+      if( strncmp_P(item[F("param")], _param, strlen_P(_param))==0 ) {
+        snprintf( _subID, sizeof(_subID), item[F("value")]);
+        _param_subID = true;
+      }
     }
 
-
-    // TO BE CONTINUED
-
-
     // INPUT(S)
-
+    {
+      const char *_param = PSTR("input");
+      if( strncmp_P(item[F("param")], _param, strlen_P(_param))==0 ) {
+        if( ! item[F("value")].is<JsonArray>() ) {
+          log_error(F("\n[lcc_sensor] expecting inputs as a JSON array (of int) ?!")); log_flush();
+          continue;
+        }
+        JsonArray gpio_root = item[F("value")];
+        for( uint8_t i=0; i < min(sizeof(_inputs),gpio_root.size()); i++ ) {
+          _inputs[i] = gpio_root[i].as<unsigned int>();
+        }
+        _param_input = true;
+      }
+    }
 
     // OUTPUT(S)
+    {
+      const char *_param = PSTR("output");
+      if( strncmp_P(item[F("param")], _param, strlen_P(_param))==0 ) {
+        _heater = item[F("value")];
+        _param_output = true;
+      }
+    }
 
+  }
+
+
+  // DEBUG DEBUG DEBUG
+  log_debug(F("\n[lcc_sensor] driver created with subID: ")); log_debug(_subID);
+  log_debug(F("\n[lcc_sensor] heater: ")); log_debug(_heater,DEC);
+  log_debug(F("\n[lcc_sensor] inputs: "));
+  for( uint8_t i=0; i < sizeof(_inputs); i++ ) {
+    log_debug(_inputs[i],DEC);
   }
 
 

@@ -33,6 +33,17 @@
 /*
  * Definitions
  */
+// define GPIO INPUTS' roles associated with _inputs[]
+enum {
+  LCC_SENSOR_10K = 0,
+  LCC_SENSOR_100K,
+  LCC_SENSOR_1M,
+  LCC_SENSOR_10M,
+  LCC_SENSOR_ANALOG,
+  LCC_SENSOR_LAST_INPUT
+};
+
+// output field corresponds to GPIO activating the heater
 
 
 
@@ -67,6 +78,8 @@ class lcc_sensor : public generic_driver {
 
     // --- private/protected attributes
     char _subID[SENSO_SUBID_MAXSIZE];
+    uint8_t _inputs[LCC_SENSOR_LAST_INPUT];
+    uint8_t _heater;      // GPIO PIN to start heating the sensor
 
     static const char *units;
     // uint8_t _integrationTime; // ms time to integrate a measure

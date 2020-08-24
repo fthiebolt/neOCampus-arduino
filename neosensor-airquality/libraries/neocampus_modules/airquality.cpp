@@ -318,7 +318,7 @@ boolean airquality::loadSensoConfig( senso *sp ) {
 
 
     // add additional sensors here
-    
+
 
 
     /* we'll now search for 'module' common parameters like 'unit' or 'frequency' or ...
@@ -467,14 +467,12 @@ boolean airquality::_loadConfig( JsonObject root ) {
     {
       "param": "inputs",
       "value": [
-        [
           16,
           17,
           5,
           18,
           35
         ]
-      ]
     },
     {
       "param": "outputs",
@@ -494,14 +492,12 @@ boolean airquality::_loadConfig( JsonObject root ) {
     {
       "param": "inputs",
       "value": [
-        [
           19,
           21,
           22,
           23,
           34
         ]
-      ]
     },
     {
       "param": "outputs",
@@ -521,14 +517,12 @@ boolean airquality::_loadConfig( JsonObject root ) {
     {
       "param": "inputs",
       "value": [
-        [
           13,
           12,
           14,
           27,
           33
         ]
-      ]
     },
     {
       "param": "outputs",
@@ -548,14 +542,12 @@ boolean airquality::_loadConfig( JsonObject root ) {
     {
       "param": "inputs",
       "value": [
-        [
           15,
           2,
           0,
           4,
           32
         ]
-      ]
     },
     {
       "param": "outputs",

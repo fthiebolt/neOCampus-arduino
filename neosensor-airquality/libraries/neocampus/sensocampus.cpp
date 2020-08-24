@@ -693,14 +693,12 @@ const char *senso::getPassword( void ) const {
             {
               "param": "inputs",
               "value": [
-                [
                   16,
                   17,
                   5,
                   18,
                   35
                 ]
-              ]
             },
             {
               "param": "outputs",
@@ -720,14 +718,12 @@ const char *senso::getPassword( void ) const {
             {
               "param": "inputs",
               "value": [
-                [
                   19,
                   21,
                   22,
                   23,
                   34
                 ]
-              ]
             },
             {
               "param": "outputs",
@@ -747,14 +743,12 @@ const char *senso::getPassword( void ) const {
             {
               "param": "inputs",
               "value": [
-                [
                   13,
                   12,
                   14,
                   27,
                   33
                 ]
-              ]
             },
             {
               "param": "outputs",
@@ -774,14 +768,12 @@ const char *senso::getPassword( void ) const {
             {
               "param": "inputs",
               "value": [
-                [
                   15,
                   2,
                   0,
                   4,
                   32
                 ]
-              ]
             },
             {
               "param": "outputs",

@@ -607,7 +607,7 @@ boolean senso::getModuleConf( const char* name, JsonArray* array ) {
           "topic": "irit2/366",
           "modules": [                  <-- JsonArray (i.e a list of values)
             {                           <-- JsonObject
-              "module": "Airquality",
+              "module": "airquality",
               "unit": "lcc_sensor",
               .........
    */
@@ -668,6 +668,128 @@ const char *senso::getPassword( void ) const {
 /*
  * [aug.20] sample config from sensOCampus server
 
+{
+  "topics": [
+    "irit2/366"
+  ],
+  "zones": [
+    {
+      "topic": "irit2/366",
+      "modules": [
+        {
+          "module": "airquality",
+          "unit": "lcc_sensor",
+          "frequency": 60,
+          "params": [
+            {
+              "param": "subIDs",
+              "value": "NO2"
+            },
+            {
+              "param": "inputs",
+              "value": [
+                [
+                  16,
+                  17,
+                  5,
+                  18,
+                  35
+                ]
+              ]
+            },
+            {
+              "param": "outputs",
+              "value": -1
+            }
+          ]
+        },
+        {
+          "module": "airquality",
+          "unit": "lcc_sensor",
+          "frequency": 60,
+          "params": [
+            {
+              "param": "subIDs",
+              "value": "CO"
+            },
+            {
+              "param": "inputs",
+              "value": [
+                [
+                  19,
+                  21,
+                  22,
+                  23,
+                  34
+                ]
+              ]
+            },
+            {
+              "param": "outputs",
+              "value": -1
+            }
+          ]
+        },
+        {
+          "module": "airquality",
+          "unit": "lcc_sensor",
+          "frequency": 60,
+          "params": [
+            {
+              "param": "subIDs",
+              "value": "CH20"
+            },
+            {
+              "param": "inputs",
+              "value": [
+                [
+                  13,
+                  12,
+                  14,
+                  27,
+                  33
+                ]
+              ]
+            },
+            {
+              "param": "outputs",
+              "value": 25
+            }
+          ]
+        },
+        {
+          "module": "airquality",
+          "unit": "lcc_sensor",
+          "frequency": 60,
+          "params": [
+            {
+              "param": "subIDs",
+              "value": "NO2_alt"
+            },
+            {
+              "param": "inputs",
+              "value": [
+                [
+                  15,
+                  2,
+                  0,
+                  4,
+                  32
+                ]
+              ]
+            },
+            {
+              "param": "outputs",
+              "value": 26
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+=== alternative (more compact) ===
 {
   "topics": [
     "irit2/366"

@@ -56,7 +56,9 @@ class base {
     bool reConnect( void );
     bool isTXtime( void );
     bool setFrequency( uint16_t, uint16_t, uint16_t );
-    
+    boolean setIdentity( const char *identity=nullptr );  // set UnitID base field (from senso config for example)
+                                            // ... will get added mac addr 2 last digits
+                                            // e.g <identity>_<mac[5]mac[6]>
     bool sendmsg( JsonObject );
     virtual void status( JsonObject );
 

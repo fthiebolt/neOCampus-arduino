@@ -42,9 +42,7 @@ extern "C" modulesMgt modulesList;
 // constructor
 base::base( void ) {
   // unitID: generate 'auto_xxxx' identity
-  const char *mac=getMacAddress();
-  uint8_t mac_len=strlen(mac);
-  snprintf( unitID, sizeof(unitID), "%s_%c%c%c%c", "auto", mac[mac_len-5],mac[mac_len-4],mac[mac_len-2],mac[mac_len-1]);
+  setIdentity();
 
   // call low-level base constructor
   _base();
@@ -52,8 +50,9 @@ base::base( void ) {
 
 // constructor
 base::base( const char *identity ) {
-  // copy identity
-  snprintf( unitID, sizeof(unitID), identity );
+
+  setIdentity( identity );
+  //snprintf( unitID, sizeof(unitID), identity );
     
   // call low-level base constructor
   _base();
@@ -128,7 +127,7 @@ bool base::stop( void ) {
 void base::callback(char* topic, byte* payload, unsigned int length) {
   // verify that topic matches the subscribed one
   if( strncmp(topic, subTopic, strlen(subTopic)) ) {
-    log_error(F("\n[base][callback] unknwown topic: ")); log_debug(topic); log_flush();
+    log_error(F("\n\t[base][callback] unknwown topic: ")); log_debug(topic); log_flush();
     return;
   }
 
@@ -137,13 +136,13 @@ void base::callback(char* topic, byte* payload, unsigned int length) {
   
   auto err = deserializeJson( root, payload );
   if( err ) {
-    log_error(F("\n[base][callback] ERROR parsing JSON payload @ callback: "));log_error(err.c_str()); log_flush();
+    log_error(F("\n\t[base][callback] ERROR parsing JSON payload @ callback: "));log_error(err.c_str()); log_flush();
     return;
   }
 
   // check for destID field
   if( (root.containsKey(F("dest"))==false) ) {
-    log_error(F("\n[base][callback] ERROR no 'dest' field' in JSON payload @ callback ?!?!"));
+    log_error(F("\n\t[base][callback] ERROR no 'dest' field' in JSON payload @ callback ?!?!"));
     return;
   }
   /* ok, there's a dest, does it matches us 
@@ -250,7 +249,7 @@ bool base::process( void ) {
   _ret = mqttClient.loop();
   
   if( !_ret ) {
-    log_error(F("\n[base] ERROR process() with rcState = ")); log_error(mqttClient.state(),DEC);log_flush();
+    log_error(F("\n\t[base] ERROR process() with rcState = ")); log_error(mqttClient.state(),DEC);log_flush();
   }
   
   return _ret;
@@ -285,11 +284,26 @@ bool base::setFrequency( uint16_t freq, uint16_t min_freq, uint16_t max_freq ) {
 
   _freq = freq;
 
-  log_debug(F("\n[base] set module's data acquisition frequency to ")); log_debug(_freq,DEC); log_flush();
+  log_debug(F("\n\t[base] set module's data acquisition frequency to ")); log_debug(_freq,DEC); log_flush();
   
   // reset _lastTX value (so we restart a whole new cycle
   _lastTX = millis();
 
+  return true;
+}
+
+
+/*
+ * set data module's data acquisition frequency
+ */
+boolean base::setIdentity( const char *identity ) {
+
+  const char *mac=getMacAddress();
+  uint8_t mac_len=strlen(mac);
+  snprintf( unitID, sizeof(unitID), "%s_%c%c%c%c", (identity ? identity : "auto"), mac[mac_len-5],mac[mac_len-4],mac[mac_len-2],mac[mac_len-1]);
+
+  //log_debug(F("\n\t[base] set module's identity to ")); log_debug(unitID); log_flush();
+  
   return true;
 }
 

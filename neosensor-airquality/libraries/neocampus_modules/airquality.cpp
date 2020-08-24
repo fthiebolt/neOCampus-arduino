@@ -263,14 +263,19 @@ bool airquality::saveConfig( void ) {
  */
 boolean airquality::loadSensoConfig( senso *sp ) {
 
-  JsonArray _array;
-  if( !sp->getModuleConf(MQTT_MODULE_NAME, &_array) or _array.isNull() ) {
+  StaticJsonDocument<DATA_JSON_SIZE> _doc;
+  JsonArray root = _doc.to<JsonArray>();
+  if( !sp->getModuleConf(MQTT_MODULE_NAME, &root) ) {
     //log_debug(F("\n[airquality] no sensOCampus config found")); log_flush();
+    return false;
+  }
+  if( root.isNull() ) {
+    log_error(F("\n[airquality] error JsonArray is null while it ought to be non empty ?!?!")); log_flush();
     return false;
   }
 
   // now parse items from array
-  for( JsonVariant item : _array ) {
+  for( JsonVariant item : root ) {
     // check things ...
     if( not item.is<JsonObject>() or not item.containsKey(F("module")) or
         strcmp( MQTT_MODULE_NAME, item[F("module")])!=0 ) {
@@ -290,12 +295,21 @@ boolean airquality::loadSensoConfig( senso *sp ) {
 // TO BE CONTINUED
 
 
-    // we'll now search for 'module' common parameters like 'frequency' or ...
+    /* we'll now search for 'module' common parameters like 'unit' or 'frequency' or ...
+     * no need to apply for a saveConfig() because these parameters are grabbed every reboot
+     */
+    {
+      if( item.containsKey(F("unit")) ) {
+        setIdentity( item[F("unit")] );
+      }
+      else if( item.containsKey(F("unitID")) ) {
+        setIdentity( item[F("unitID")] );
+      }
+    }
+
     {
       if( item.containsKey(F("frequency")) ) {
         setFrequency( item[F("frequency")].as<unsigned int>(), AIRQUALITY_MIN_FREQUENCY, AIRQUALITY_MAX_FREQUENCY );
-        // no need to saveConfig() since these parameters are grabbed every reboot
-        //saveConfig();
       }
     }
 

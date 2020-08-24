@@ -27,8 +27,8 @@
  * Definitons
  */
 #define MQTT_MODULE_NAME        "airquality"  // used to build module's base topic
-#define DATA_JSON_SIZE          (JSON_OBJECT_SIZE(20))
-#define CONFIG_JSON_SIZE        (JSON_OBJECT_SIZE(3))   // config file contains: frequency
+#define DATA_JSON_SIZE          (JSON_OBJECT_SIZE(20))  // for MQTT data sending
+#define CONFIG_JSON_SIZE        (JSON_OBJECT_SIZE(3))   // for config FILE that contains: frequency
                                                         // note: others parameters are sent from sensOCampus
                                                         // hence not saved ;)
 
@@ -263,8 +263,10 @@ bool airquality::saveConfig( void ) {
  */
 boolean airquality::loadSensoConfig( senso *sp ) {
 
-  StaticJsonDocument<DATA_JSON_SIZE> _doc;
+  // [aug.20] ought to be >= of senso config Json ?!?!
+  StaticJsonDocument<SENSO_JSON_SIZE> _doc;
   JsonArray root = _doc.to<JsonArray>();
+
   if( !sp->getModuleConf(MQTT_MODULE_NAME, &root) ) {
     //log_debug(F("\n[airquality] no sensOCampus config found")); log_flush();
     return false;
@@ -273,6 +275,9 @@ boolean airquality::loadSensoConfig( senso *sp ) {
     log_error(F("\n[airquality] error JsonArray is null while it ought to be non empty ?!?!")); log_flush();
     return false;
   }
+
+  //log_debug(F("\n[airquality] modulesArray was found :)\n")); log_flush();
+  //serializeJsonPretty( root, Serial );
 
   // now parse items from array
   for( JsonVariant item : root ) {
@@ -285,8 +290,12 @@ boolean airquality::loadSensoConfig( senso *sp ) {
     // now we'll parse the various 'unit' (i.e driver) available
     {
       const char *_unit = PSTR("lcc_sensor");
-      if( strncmp_P(item[F("unit")], _unit, strlen_P(_unit))==0 ) {
-        //log_debug(F("\n[airquality] detected lcc_sensor with subID: "));log_debug(item["subID"]);log_flush();
+      if( (item[F("driver")] and strncmp_P(item[F("driver")], _unit, strlen_P(_unit))==0) or
+           strncmp_P(item[F("unit")], _unit, strlen_P(_unit))==0 ) {
+        log_debug(F("\n[airquality] detected lcc_sensor ..."));log_flush();
+
+// TO BE CONTINUED: grab all parameters and instantate driver
+
       }
     }
 
@@ -301,9 +310,6 @@ boolean airquality::loadSensoConfig( senso *sp ) {
     {
       if( item.containsKey(F("unit")) ) {
         setIdentity( item[F("unit")] );
-      }
-      else if( item.containsKey(F("unitID")) ) {
-        setIdentity( item[F("unitID")] );
       }
     }
 
@@ -431,6 +437,117 @@ boolean airquality::_loadConfig( JsonObject root ) {
 /*
  * sensOCampus sample module config (see end of file sensocampus.cpp for full config)
  *
+
+{
+  "module": "airquality",
+  "unit": "lcc_sensor",
+  "frequency": 60,
+  "params": [
+    {
+      "param": "subIDs",
+      "value": "NO2"
+    },
+    {
+      "param": "inputs",
+      "value": [
+        [
+          16,
+          17,
+          5,
+          18,
+          35
+        ]
+      ]
+    },
+    {
+      "param": "outputs",
+      "value": -1
+    }
+  ]
+},
+{
+  "module": "airquality",
+  "unit": "lcc_sensor",
+  "frequency": 60,
+  "params": [
+    {
+      "param": "subIDs",
+      "value": "CO"
+    },
+    {
+      "param": "inputs",
+      "value": [
+        [
+          19,
+          21,
+          22,
+          23,
+          34
+        ]
+      ]
+    },
+    {
+      "param": "outputs",
+      "value": -1
+    }
+  ]
+},
+{
+  "module": "airquality",
+  "unit": "lcc_sensor",
+  "frequency": 60,
+  "params": [
+    {
+      "param": "subIDs",
+      "value": "CH20"
+    },
+    {
+      "param": "inputs",
+      "value": [
+        [
+          13,
+          12,
+          14,
+          27,
+          33
+        ]
+      ]
+    },
+    {
+      "param": "outputs",
+      "value": 25
+    }
+  ]
+},
+{
+  "module": "airquality",
+  "unit": "lcc_sensor",
+  "frequency": 60,
+  "params": [
+    {
+      "param": "subIDs",
+      "value": "NO2_alt"
+    },
+    {
+      "param": "inputs",
+      "value": [
+        [
+          15,
+          2,
+          0,
+          4,
+          32
+        ]
+      ]
+    },
+    {
+      "param": "outputs",
+      "value": 26
+    }
+  ]
+}
+
+=== alternative (more compact) ===
 {
   "module": "airquality",
   "unit": "lcc_sensor",

@@ -618,10 +618,14 @@ boolean senso::getModuleConf( const char* name, JsonArray* array ) {
   JsonArray modulesArray = _modulesJSON["zones"][0]["modules"];
   if( modulesArray.isNull() ) return false;
 
-  //log_debug(F("\n[senso] modulesArray was found :)")); log_flush();
+  //log_debug(F("\n[senso] modulesArray was found :)\n")); log_flush();
   //serializeJsonPretty( modulesArray, Serial );
 
   for( JsonVariant item : modulesArray ) {
+
+    //log_debug(F("\n[senso] an array item was found :)\n")); log_flush();
+    //serializeJsonPretty( item, Serial );
+
     if( not item.is<JsonObject>() ) continue;
     if( not item.containsKey(F("module")) ) continue;
     
@@ -630,9 +634,10 @@ boolean senso::getModuleConf( const char* name, JsonArray* array ) {
     if( strcmp( name, item["module"])==0 ) {
       //log_debug(F("\n[senso] found JSON configuration for module: ")); log_debug(name); log_flush();
       _found = true;
-      array->add( item );
-      // *array = modulesArray;
-      // *obj = item;
+      if( ! array->add(item) ) {
+        log_error(F("\n[senso] failed to add item ?!?! ... cancel whole operation!")); log_flush();
+        return false;
+      }
     }
   }
 

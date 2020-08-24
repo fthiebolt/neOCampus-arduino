@@ -54,6 +54,9 @@ boolean lcc_sensor::begin( JsonVariant root ) {
     return false;
   }
 
+  //log_debug(F("\n[lcc_sensor] params found :)\n")); log_flush();
+  //serializeJsonPretty( root, Serial );
+
   boolean _param_subID = false;
   boolean _param_input = false;
   boolean _param_output = false;
@@ -81,7 +84,7 @@ boolean lcc_sensor::begin( JsonVariant root ) {
     }
   ]
   */
-  for( JsonVariant item : root.to<JsonArray>() ) {
+  for( JsonVariant item : root.as<JsonArray>() ) {
 
     if( item.isNull() or not item.is<JsonObject>() ) {
       log_warning(F("\n[lcc_sensor] format error while parsing parameters !")); log_flush();
@@ -107,7 +110,7 @@ boolean lcc_sensor::begin( JsonVariant root ) {
         }
         JsonArray gpio_root = item[F("value")];
         for( uint8_t i=0; i < min(sizeof(_inputs),gpio_root.size()); i++ ) {
-          _inputs[i] = gpio_root[i].as<unsigned int>();
+          _inputs[i] = (uint8_t)gpio_root[i].as<int>();   // to force -1 to get converted to (uint8_t)255
         }
         _param_input = true;
       }
@@ -117,7 +120,7 @@ boolean lcc_sensor::begin( JsonVariant root ) {
     {
       const char *_param = PSTR("output");
       if( strncmp_P(item[F("param")], _param, strlen_P(_param))==0 ) {
-        _heater = item[F("value")];
+        _heater = (uint8_t)item[F("value")].as<int>();    // to force -1 to get converted to (uint8_t)255
         _param_output = true;
       }
     }
@@ -125,18 +128,15 @@ boolean lcc_sensor::begin( JsonVariant root ) {
   }
 
 
-  // DEBUG DEBUG DEBUG
+  /* DEBUG DEBUG DEBUG
   log_debug(F("\n[lcc_sensor] driver created with subID: ")); log_debug(_subID);
   log_debug(F("\n[lcc_sensor] heater: ")); log_debug(_heater,DEC);
   log_debug(F("\n[lcc_sensor] inputs: "));
   for( uint8_t i=0; i < sizeof(_inputs); i++ ) {
-    log_debug(_inputs[i],DEC);
+    log_debug(_inputs[i],DEC);log_debug(F(" "));
   }
-
-
-
-  // TO BE CONTINUED
-
+  log_flush();
+  */
 
 
   /* set config:

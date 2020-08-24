@@ -36,7 +36,7 @@
  */
 #define BOARD_NAME          "neOSensor"
 #define BOARD_REVISION      1.1
-#define BOARD_FWREV         200608          // Firmware revision <year><month><day> in 2 digits each
+#define BOARD_FWREV         200901          // Firmware revision <year><month><day> in 2 digits each
 
 
 /* #############################################################################
@@ -60,12 +60,20 @@
  */
 //#define SYS_LED           LED_BUILTIN   // GPIO2 (ESP8266 embedded led)
 #ifndef SYS_LED
-#define SYS_LED             2             // GPIO2 (ESP8266 embedded led)
+  #ifdef ESP8266
+    #define SYS_LED         2             // GPIO2 (ESP8266 embedded led)
+  #elif defined(ESP32)
+    #define SYS_LED         INVALID_GPIO  // no system led on ESP32
+  #endif
 #endif
 
 // main output led
 #ifndef LED
-#define LED                 5   // GPIO5 (our main led)
+  #ifdef ESP8266
+    #define LED             5   // GPIO5 (our main led)
+  #elif defined(ESP32)
+    #define LED             INVALID_GPIO
+  #endif
 #endif
 
 // main output led PWM settings (ESP32 ONLY)
@@ -85,16 +93,39 @@
  * ... probably glitches that may get corrected with PCB v4
  * In the meanwhile, we slowdown the i2c clock.
  */
-//#define I2C_FREQ            50000   // default is 100KHz
-#define SDA                 14      // GPIO14  
-#define SCL                 12      // GPIO12
+#ifdef DISABLE_I2C
+  #error "I2C bus cannot be disabled on this board, check your compilation flags!"
+#elif defined(ESP8266)
+  //#define I2C_FREQ          50000   // default is 100KHz
+  #define SDA               14      // GPIO14  
+  #define SCL               12      // GPIO12
+#elif defined(ESP32)
+  #define SDA               21
+  #define SCL               22
+#endif
 
 // noise related definitions
+#ifndef NOISE_LED
 #define NOISE_LED           LED     // led that will notify if noise has been detected (same as main led)
-#define NOISE_DETECT        13      // pin associated to the noise detection subsystem
+#endif
+#ifndef NOISE_DETECT
+  #ifdef ESP8266
+    #define NOISE_DETECT    13      // pin associated to the noise detection subsystem
+  #elif defined(ESP32)
+    #define NOISE_DETECT    INVALID_GPIO
+  #endif
+#endif
 
-// PIR sensor
-#define PIR_SENSOR          4       // infrared detector
+/* PIR sensor
+ * [aug.20] TODO: configure PIR sensor through sensOCampus JSON config
+ */
+#ifndef PIR_SENSOR
+  #ifdef ESP8266
+    #define PIR_SENSOR      4       // infrared detector
+  #elif defined(ESP32)
+    #define PIR_SENSOR      INVALID_GPIO
+  #endif
+#endif
 
 
 /* #############################################################################
@@ -106,10 +137,13 @@
  * 
  * ############################################################################# */
 
-// TM1637 based neOClock
-#define NEOCLOCK_TM1637_DIO     2
-#define NEOCLOCK_TM1637_CLK     SCL
-
+/* TM1637 based neOClock
+ * [aug.20] TODO: remove such hard defs and set config through sensOCampus JSON
+ */
+#ifdef ESP8266
+  #define NEOCLOCK_TM1637_DIO   2
+  #define NEOCLOCK_TM1637_CLK   SCL
+#endif
 
 #endif /* _NEOSENSOR_H_ */
 

@@ -1,5 +1,47 @@
 # neOCampus / ESP32 additional boards
 
+#
+# NEOSENSOR
+neOSensor.name=neOSensor
+
+neOSensor.upload.tool=esptool_py
+neOSensor.upload.maximum_size=1310720
+neOSensor.upload.maximum_data_size=327680
+neOSensor.upload.wait_for_upload_port=true
+
+neOSensor.serial.disableDTR=true
+neOSensor.serial.disableRTS=true
+
+neOSensor.build.mcu=esp32
+neOSensor.build.core=esp32
+# [aug.20] we keep node32s variant
+neOSensor.build.variant=node32s
+neOSensor.build.board=node32s
+
+# [aug.20] seems to have some startup problems at 160MHz ... thus switching to 240MHz
+neOSensor.build.f_cpu=240000000L
+#neOSensor.build.f_cpu=160000000L
+neOSensor.build.flash_mode=dio
+neOSensor.build.flash_size=4MB
+neOSensor.build.flash_freq=80m
+neOSensor.build.boot=dio
+neOSensor.build.partitions=default
+# [aug.20] for tests, we enable LED2 and we disable SSL
+neOSensor.build.defines=-DNEOSENSOR_BOARD -DMQTT_KEEPALIVE=60 -DMQTT_SOCKET_TIMEOUT=60 -DMQTT_MAX_PACKET_SIZE=256 -DLED=2 -DDISABLE_SSL -DDISABLE_AP_PASSWD
+#neOSensor.build.defines=-DNEOSENSOR_BOARD -DMQTT_KEEPALIVE=60 -DMQTT_SOCKET_TIMEOUT=60 -DMQTT_MAX_PACKET_SIZE=256
+
+neOSensor.menu.UploadSpeed.921600=921600
+neOSensor.menu.UploadSpeed.921600.upload.speed=921600
+neOSensor.menu.UploadSpeed.115200=115200
+neOSensor.menu.UploadSpeed.115200.upload.speed=115200
+
+# FLASH partitioning
+neOSensor.menu.PartitionScheme.default=Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)
+neOSensor.menu.PartitionScheme.default.build.partitions=default
+
+
+#
+# NEOSENSOR-AIRQUALITY
 neOSensor-airquality.name=neOSensor-airquality
 
 neOSensor-airquality.upload.tool=esptool_py
@@ -25,7 +67,8 @@ neOSensor-airquality.build.flash_freq=80m
 neOSensor-airquality.build.boot=dio
 neOSensor-airquality.build.partitions=default
 # [aug.20] for tests, we enable LED2 and we disable SSL
-neOSensor-airquality.build.defines=-DNEOSENSOR_AIRQUALITY_BOARD -DMQTT_KEEPALIVE=60 -DMQTT_SOCKET_TIMEOUT=60 -DMQTT_MAX_PACKET_SIZE=256 -DLED=2 -DDISABLE_SSL -DDISABLE_AP_PASSWD
+#neOSensor-airquality.build.defines=-DNEOSENSOR_AIRQUALITY_BOARD -DMQTT_KEEPALIVE=60 -DMQTT_SOCKET_TIMEOUT=60 -DMQTT_MAX_PACKET_SIZE=256 -DLED=2 -DDISABLE_SSL -DDISABLE_AP_PASSWD
+neOSensor-airquality.build.defines=-DNEOSENSOR_AIRQUALITY_BOARD -DMQTT_KEEPALIVE=60 -DMQTT_SOCKET_TIMEOUT=60 -DMQTT_MAX_PACKET_SIZE=256 -DDISABLE_I2C -DDISABLE_SSL -DDISABLE_AP_PASSWD
 #neOSensor-airquality.build.defines=-DNEOSENSOR_AIRQUALITY_BOARD -DMQTT_KEEPALIVE=60 -DMQTT_SOCKET_TIMEOUT=60 -DMQTT_MAX_PACKET_SIZE=256 -DDISABLE_I2C
 
 neOSensor-airquality.menu.UploadSpeed.921600=921600

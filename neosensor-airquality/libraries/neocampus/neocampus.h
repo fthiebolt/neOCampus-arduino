@@ -55,15 +55,9 @@ typedef uint32_t firmwareRev_t;
  * Select proper board definition to include
  */
 #ifdef NEOSENSOR_BOARD
-  #ifdef ESP8266
-    #include "neosensor.h"
-  #elif defined(ESP32)
-    #include "neosensor_esp32.h"
-  #else
-    #error "Unknow neOSensor board architecture"
-  #endif
+    #include "neosensor.h"  // for BOTH esp8266, esp32
 #elif defined(NEOSENSOR_AIRQUALITY_BOARD)
-  #include "neosensor_airquality.h"
+  #include "neosensor_airquality.h" // only for esp32
 #else
   #error "unknown specified board ?!?!"
 #endif /* NEOSENSOR_BOARD */

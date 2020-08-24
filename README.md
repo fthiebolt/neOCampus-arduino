@@ -6,9 +6,11 @@ neOCampus IoT support library for Arduino. This library will provides support fo
 
 ## NEWS ##
  * **[Aug.20]** new definition board for neOSensor-AirQuality board :)
+                added definition board for (future) neOSensor esp32 based board.
+                added suppport for boards configuration via sensOCampus JSON config.
 
 ## neOSensor AirQuality board ##
-This board comes from CNRS LCC lab, it's a PhD work undertalen by Aymen Sendhi (sendhi@laas.fr).
+This board comes from CNRS LCC lab, it's a PhD work undertaken by Aymen Sendhi (sendhi@laas.fr).
 The board features four specific sensors able to measure NO2, CO, CH20, NO2 alternate.
 We added support to our neOCampus IoT management infrastructure named [sensOCampus](https://neocampus.univ-tlse3.fr "neOCampus's Wiki Home") which enables this sensor to publish data and to have those data stored in our databases.
 

@@ -15,6 +15,9 @@
 /**************************************************************************/
 
 
+/*
+ * Includes
+ */
 #include <Arduino.h>
 
 #include "neocampus.h"
@@ -23,9 +26,17 @@
 #include "lcc_sensor.h"
 
 
+/* 
+ * Definitions
+ */
+#define VOLTAGE                 (float)3.3    // used for ADC conversion (really needed) ?
+
+
+
 
 /* declare kind of units (value_units) */
 const char *lcc_sensor::units = "ppm";
+//const char *lcc_sensor::units = "ohm";  better to avoid this, we really need to give a ppm value
 
 
 /**************************************************************************/
@@ -34,6 +45,7 @@ const char *lcc_sensor::units = "ppm";
 */
 /**************************************************************************/
 lcc_sensor::lcc_sensor( void ) : generic_driver() {
+  _initialized = false;
   _subID[0] = '\0';
   _heater = INVALID_GPIO;
   for( uint8_t i=0; i < sizeof(_inputs); i++ ) {
@@ -41,9 +53,10 @@ lcc_sensor::lcc_sensor( void ) : generic_driver() {
   }
 }
 
+
 /**************************************************************************/
 /*! 
-    @brief  Setups the HW
+    @brief  Extract JSON config parameters to initialize the HW
 */
 /**************************************************************************/
 boolean lcc_sensor::begin( JsonVariant root ) {
@@ -138,17 +151,14 @@ boolean lcc_sensor::begin( JsonVariant root ) {
   log_flush();
   */
 
+  // check whether all parameters are set ...
+  if( _param_subID and _param_input and _param_output ) return false;
 
-  /* set config:
-   * - disable all alerts, hysteresis, critical threshold and so on
-   * - set continuous conversions
+  /*
+   * sensor HW initialisation
    */
-
-  // define defaults parameters like resolution
-
-  return (_param_subID and _param_input and _param_output);
+  return _init();
 }
-
 
 
 /**************************************************************************/
@@ -164,8 +174,78 @@ float lcc_sensor::acquire( void )
 }
 
 
+/**************************************************************************/
+/*! 
+    @brief  set heater mode (i.e ON/OFF) if GPIO pin specicifed
+            second parameter pulse: 0 ==> toggle, otherwise ms impulse width
+*/
+/**************************************************************************/
+void lcc_sensor::setHeater( lccSensorHeater_t mode, uint8_t pulse_ms=0 ) {
+
+  if( _heater==INVALID_GPIO ) return;
+
+  if( mode==lccSensorHeater_t::heater_pulse and pulse_ms ) {
+    digitalWrite( _heater, !digitalRead(_heater) );
+    delay( pulse_ms );   // max 255ms
+    digitalWrite( _heater, !digitalRead(_heater) );
+  }
+  else if( mode<lccSensorHeater_t::heater_pulse ) {
+    digitalWrite( _heater, (mode==lccSensorHeater_t::heater_off ? LOW : HIGH) );
+  }
+  else {
+    log_warning(F("\n[lcc_sensor] inconsistent pulse mode & value!")); log_flush();
+    return;
+  }
+}
+
+
 
 /* ------------------------------------------------------------------------------
  * Private methods 
  */
+
+/**************************************************************************/
+/*! 
+    @brief  Low-level HW initialization
+*/
+/**************************************************************************/
+boolean lcc_sensor::_init( void ) {
+
+  // configure gpio
+  _reset_gpio();
+
+  // powerON module
+  powerON();  // as of [aug.20] there's no power settings
+/*
+  set state machine
+  setGain();
+  setTiming();
+*/
+  // powerOFF module
+  powerOFF();  // as of [aug.20] there's no power settings
+
+  _initialized = true;
+
+  return _initialized;
+}
+
+
+/**************************************************************************/
+/*! 
+    @brief  Reset GPIO to their initial state
+*/
+/**************************************************************************/
+void lcc_sensor::_reset_gpio( void ) {
+
+  // configure gpio inputs
+  for( uint8_t pin : _inputs ) {
+    pinMode( pin, INPUT );
+  }
+
+  // configure gpio output
+  if( _heater != INVALID_GPIO ) {
+    pinMode( _heater, OUTPUT );
+    setHeater( LCC_SENSOR_HEATER_DEFL );
+  }
+}
 

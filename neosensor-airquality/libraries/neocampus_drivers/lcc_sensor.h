@@ -35,15 +35,24 @@
  */
 // define GPIO INPUTS' roles associated with _inputs[]
 enum {
-  LCC_SENSOR_10K = 0,
+  LCC_SENSOR_10K = 0,      // minimum GAIN
   LCC_SENSOR_100K,
   LCC_SENSOR_1M,
-  LCC_SENSOR_10M,
+  LCC_SENSOR_10M,          // maximum GAIN
   LCC_SENSOR_ANALOG,
   LCC_SENSOR_LAST_INPUT
 };
+#define LCC_SENSOR_GAIN_MIN       (uint8_t)LCC_SENSOR_10K
+#define LCC_SENSOR_GAIN_MAX       (uint8_t)LCC_SENSOR_10M
+
 
 // output field corresponds to GPIO activating the heater
+enum class lccSensorHeater_t : uint8_t {
+  heater_off      = 0,
+  heater_on       = 1,
+  heater_pulse    = 2   // pulse mode ==> toggle output for a specified duration
+};
+#define LCC_SENSOR_HEATER_DEFL    lccSensorHeater_t::heater_off
 
 
 
@@ -75,12 +84,16 @@ class lcc_sensor : public generic_driver {
   // --- i.e subclass have direct access to
   protected:
     // -- private/protected methods
+    void setHeater( lccSensorHeater_t, uint8_t );
+    boolean _init( void );      // low-level init
+    void _reset_gpio( void );   // set GPIOs at initial state
 
     // --- private/protected attributes
     char _subID[SENSO_SUBID_MAXSIZE];
     uint8_t _inputs[LCC_SENSOR_LAST_INPUT];
-    uint8_t _heater;      // GPIO PIN to start heating the sensor
+    uint8_t _heater;            // GPIO PIN to start heating the sensor
 
+    boolean _initialized;
     static const char *units;
     // uint8_t _integrationTime; // ms time to integrate a measure
 };

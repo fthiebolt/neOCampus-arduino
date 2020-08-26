@@ -178,14 +178,28 @@ boolean lcc_sensor::begin( JsonVariant root ) {
 
 /**************************************************************************/
 /*! 
+    @brief  data retrieval and conversion from sensor
+*/
+/**************************************************************************/
+float lcc_sensor::getSensorData( void )
+{
+  /*
+   * Sensor data acquisition overall process
+   * - select highest amplification that produce a measured voltage < ADC_MEASURE_THRESHOLD
+   */
+  
+  return (float)0.0;
+}
+
+
+/**************************************************************************/
+/*! 
     @brief  return sensor value read from pins
 */
 /**************************************************************************/
 float lcc_sensor::acquire( void )
 {
-  float val = 0.0;
-
-  return val;
+  return getSensorData();
 }
 
 
@@ -254,12 +268,14 @@ void lcc_sensor::_reset_gpio( void ) {
 
   // configure gpio inputs
   for( uint8_t pin : _inputs ) {
+    if( pin==INVALID_GPIO ) continue;
     pinMode( pin, INPUT );
   }
 
   // configure analog_input
 #if ESP32
   if( _inputs[LCC_SENSOR_ANALOG]!=INVALID_GPIO ) {
+    // the default 11db attenuation enables analog input full range
     adc1_config_channel_atten( (adc1_channel_t)digitalPinToAnalogChannel(_inputs[LCC_SENSOR_ANALOG]), ADC_ATTEN_DB_11 );
   }
 #endif /* ESP32 */

@@ -45,6 +45,14 @@ enum {
 #define LCC_SENSOR_GAIN_MIN       (uint8_t)LCC_SENSOR_10K
 #define LCC_SENSOR_GAIN_MAX       (uint8_t)LCC_SENSOR_10M
 
+/* Note about ESP32 ADC linearity: we'll activate various gains from
+ * LCC_SENSOR_GAIN_MAX downto LCC_SENSOR_GAIN_MIN till the retrieved value
+ * is below the voltage threshold.
+ */
+#ifndef LCC_SENSOR_VTH
+#define LCC_SENSOR_VTH            3.0 // ADC voltage threshold
+#endif /* LCC_SENSOR_VTH */
+
 
 // output field corresponds to GPIO activating the heater
 enum class lccSensorHeater_t : uint8_t {
@@ -65,14 +73,12 @@ class lcc_sensor : public generic_driver {
     // constructor
     lcc_sensor( void );
     
-    /* Power Modes
-     * [aug.20] the board does feature any way to switch power
-    void powerON( void );       // switch ON
-    void powerOFF( void );      // switch OFF
-     */
-
     // sensor creation via sensOCampus JSON array 'params'
     boolean begin( JsonVariant );
+    //void powerON( void );       // [aug.20] the board does feature any way to switch power
+    //void powerOFF( void );      // [aug.20] the board does feature any way to switch power
+
+    float getSensorData( void );
 
     // send back sensor's value, units and subID
     float acquire( void );

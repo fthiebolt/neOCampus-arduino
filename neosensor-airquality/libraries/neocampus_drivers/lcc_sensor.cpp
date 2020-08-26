@@ -19,6 +19,10 @@
  * Includes
  */
 #include <Arduino.h>
+#if ESP32
+  #include <esp_adc_cal.h>
+  extern esp_adc_cal_characteristics_t *adc_chars;
+#endif /* ESP32 */
 
 #include "neocampus.h"
 #include "neocampus_debug.h"
@@ -29,10 +33,21 @@
 /* 
  * Definitions
  */
-#define VOLTAGE                 (float)3.3    // used for ADC conversion (really needed) ?
 
 
-
+/* Notes about ADC on esp32:
+ * Arduino's defaults are: 12bits resolution, 8 samples, non-linearity above 2.5v
+ *    ADC sar vref is 1.1v but may shift in the 1.0 to 1.2v range (ability to read this
+ *    through ADC2 ---no WiFi use, to implement specific corrections).
+ *  11DB attenuation (1/3.6 means 3.3v input --> 0.916v near the 1.1 ref voltage)
+ * https://www.esp32.com/viewtopic.php?f=12&t=1045
+ * https://forum.arduino.cc/index.php?topic=580984.0
+ * 
+ * Finally, new ESP32 are factory calibrated 
+ * https://github.com/espressif/arduino-esp32/issues/1804#issuecomment-475281577
+ * https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/adc.html#adc-calibration
+ * 
+ */
 
 /* declare kind of units (value_units) */
 const char *lcc_sensor::units = "ppm";
@@ -241,6 +256,13 @@ void lcc_sensor::_reset_gpio( void ) {
   for( uint8_t pin : _inputs ) {
     pinMode( pin, INPUT );
   }
+
+  // configure analog_input
+#if ESP32
+  if( _inputs[LCC_SENSOR_ANALOG]!=INVALID_GPIO ) {
+    adc1_config_channel_atten( (adc1_channel_t)digitalPinToAnalogChannel(_inputs[LCC_SENSOR_ANALOG]), ADC_ATTEN_DB_11 );
+  }
+#endif /* ESP32 */
 
   // configure gpio output
   if( _heater != INVALID_GPIO ) {

@@ -173,6 +173,7 @@ bool airquality::process( void ) {
    * and call handler for MQTT received messages
    */
   _ret = base::process();
+
   // reached time to transmit ?
   if( !isTXtime() ) return _ret;
 
@@ -363,7 +364,7 @@ boolean airquality::_sendValues( void ) {
     JsonObject root = _doc.to<JsonObject>();
 
     // retrieve data from current sensor
-    root[F("value")] = (int)( _sensor[cur_sensor]->acquire() );   // [may.20] force value as INT
+    root[F("value")] = (float)( _sensor[cur_sensor]->acquire() );   // [aug.20] force value as FLOAT
     root[F("value_units")] = _sensor[cur_sensor]->sensorUnits();
     root[F("subID")] = _sensor[cur_sensor]->subID();
 

@@ -27,6 +27,7 @@ neOSensor.build.flash_freq=80m
 neOSensor.build.boot=dio
 neOSensor.build.partitions=default
 # [aug.20] for tests, we enable LED2 and we disable SSL
+# DISABLE_ADC_CAL: flag to disable esp32 ADC advanced calibration
 neOSensor.build.defines=-DNEOSENSOR_BOARD -DMQTT_KEEPALIVE=60 -DMQTT_SOCKET_TIMEOUT=60 -DMQTT_MAX_PACKET_SIZE=256 -DLED=2 -DDISABLE_SSL -DDISABLE_AP_PASSWD
 #neOSensor.build.defines=-DNEOSENSOR_BOARD -DMQTT_KEEPALIVE=60 -DMQTT_SOCKET_TIMEOUT=60 -DMQTT_MAX_PACKET_SIZE=256
 
@@ -67,6 +68,7 @@ neOSensor-airquality.build.flash_freq=80m
 neOSensor-airquality.build.boot=dio
 neOSensor-airquality.build.partitions=default
 # [aug.20] for tests, we enable LED2 and we disable SSL
+# DISABLE_ADC_CAL: flag to disable esp32 ADC advanced calibration
 #neOSensor-airquality.build.defines=-DNEOSENSOR_AIRQUALITY_BOARD -DMQTT_KEEPALIVE=60 -DMQTT_SOCKET_TIMEOUT=60 -DMQTT_MAX_PACKET_SIZE=256 -DLED=2 -DDISABLE_SSL -DDISABLE_AP_PASSWD
 neOSensor-airquality.build.defines=-DNEOSENSOR_AIRQUALITY_BOARD -DMQTT_KEEPALIVE=60 -DMQTT_SOCKET_TIMEOUT=60 -DMQTT_MAX_PACKET_SIZE=256 -DDISABLE_I2C -DDISABLE_SSL -DDISABLE_AP_PASSWD
 #neOSensor-airquality.build.defines=-DNEOSENSOR_AIRQUALITY_BOARD -DMQTT_KEEPALIVE=60 -DMQTT_SOCKET_TIMEOUT=60 -DMQTT_MAX_PACKET_SIZE=256 -DDISABLE_I2C

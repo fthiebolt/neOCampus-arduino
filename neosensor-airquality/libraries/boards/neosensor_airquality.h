@@ -72,5 +72,17 @@
   #define SCL                 22
 #endif
 
+/* ADC resolution:
+ * noisy ADC on ESP32 thus downgrading to 11 bits
+ */
+#ifndef ADC_RESOLUTION
+#if ESP32
+  #define ADC_RESOLUTION      ADC_WIDTH_BIT_11
+#elif ESP8266
+  #define ADC_RESOLUTION      10  // default on esp8266
+#endif
+#endif /* ADC_RESOLUTION */
+
+
 #endif /* _NEOSENSOR_AIRQUALITY_H_ */
 

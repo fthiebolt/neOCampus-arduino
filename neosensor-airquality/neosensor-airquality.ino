@@ -87,17 +87,14 @@
 
 /*
  * ESP32 advanced ops:
- * - ADC calibration
+ * - enhanced ADC (calibration)
  */
-#if ESP32
+#if defined(ESP32) && !defined(DISABLE_ADC_CAL)
   #include <esp_adc_cal.h>
   #define DEFL_ESP32_ADC_VREF       1100  // default 1100mv thay will get used ONLY if efuse vref is not set (i.e uncalibrated esp32 ---before Q1-18)
-  #ifndef ESP32_ADC_RESOLUTION
-  #define ESP32_ADC_RESOLUTION      ADC_WIDTH_BIT_11
-  #endif /* ADC_RES_BITS */
   esp_adc_cal_value_t esp_adc_cal_src       = (esp_adc_cal_value_t)(-1);
   esp_adc_cal_characteristics_t *adc_chars  = new esp_adc_cal_characteristics_t;
-#endif
+#endif /* ESP32 adcanced ADC */
 
 
 /* neOCampus related includes */
@@ -616,13 +613,13 @@ void earlySetup( void ) {
   esp_sleep_pd_config(ESP_PD_DOMAIN_MAX,ESP_PD_OPTION_ON);
 #endif
 
-#if ESP32
+#if defined(ESP32) && !defined(DISABLE_ADC_CAL)
   // retrieve esp32 adc calibration
-  adc1_config_width( ESP32_ADC_RESOLUTION );
+  adc1_config_width( ADC_RESOLUTION );
   // adc1_config_channel_atten(ADC1_CHANNEL_5,ADC_ATTEN_DB_11); sensor dependent !
   esp_adc_cal_src = 
-           esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_11, ESP32_ADC_RESOLUTION, DEFL_ESP32_ADC_VREF, adc_chars);
-#endif /* ESP32 */
+           esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_11, ADC_RESOLUTION, DEFL_ESP32_ADC_VREF, adc_chars);
+#endif /* ESP32 adcanced ADC */
 }
 
 
@@ -654,11 +651,14 @@ void lateSetup( void ) {
   // for the (future) loop mode ...
   WiFi.setAutoConnect(true);
 
-#ifdef ESP32
+#if ESP32
   // switch back POWER MODES to auto
   if( esp_sleep_pd_config(ESP_PD_DOMAIN_MAX,ESP_PD_OPTION_AUTO) != ESP_OK ) {
     log_warning(F("\nerror while restoring ESP32 power modes ?!?! ... continuing")); log_flush();
   }
+#endif /* ESP32 */
+
+#if defined(ESP32) && !defined(DISABLE_ADC_CAL)
   // display ADC calibration method
   if( esp_adc_cal_src != (esp_adc_cal_value_t)(-1) ) {
     log_info(F("\n# ESP32 ADC calibration source: "));
@@ -674,7 +674,7 @@ void lateSetup( void ) {
     }
     log_flush();
   }
-#endif /* ESP32 */
+#endif /* ESP32 adcanced ADC */
 
 #if defined(MAX_TCP_CONNECTIONS) && defined(ESP8266)
   log_info(F("\n# max TCP concurrent sockets = ")); log_info(MAX_TCP_CONNECTIONS, DEC); log_flush();

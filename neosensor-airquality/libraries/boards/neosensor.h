@@ -13,6 +13,7 @@
  * ---
  *
  * F.Thiebolt   Aug.20  added definitions for future ESP32 version (e.g LED PWM channel)
+ *                      set default ADC resolution according to architecture
  * F.Thiebolt   Jun.18  merged neOClock as options to neOSensor
  * F.Thiebolt   May.18  set GPIO2 for embedded led
  * F.Thiebolt   Sep.17  added microswitch on NOISE_LED output to read at startup if a config reset is required
@@ -50,8 +51,10 @@
  * ############################################################################# */
 #define TEMPERATURE_CORRECTION_LASTI2C  (float)(-0.875)
 
+
 // define what is an invalid gpio
 #define INVALID_GPIO        (uint8_t)(-1)
+
 
 /* system led (on ESP8266 module)
  * - LED_BUILTIN is GPIO16 on nodeMCU boards
@@ -126,6 +129,17 @@
     #define PIR_SENSOR      INVALID_GPIO
   #endif
 #endif
+
+/* ADC resolution:
+ * noisy ADC on ESP32 thus downgrading to 11 bits
+ */
+#ifndef ADC_RESOLUTION
+#if ESP32
+  #define ADC_RESOLUTION      ADC_WIDTH_BIT_11
+#elif ESP8266
+  #define ADC_RESOLUTION      10  // default on esp8266
+#endif
+#endif /* ADC_RESOLUTION */
 
 
 /* #############################################################################

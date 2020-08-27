@@ -364,7 +364,7 @@ boolean airquality::_sendValues( void ) {
     JsonObject root = _doc.to<JsonObject>();
 
     // retrieve data from current sensor
-    root[F("value")] = _sensor[cur_sensor]->acquire() );   // default is FLOAT type
+    root[F("value")] = _sensor[cur_sensor]->acquire();   // default is FLOAT type
     root[F("value_units")] = _sensor[cur_sensor]->sensorUnits();
     root[F("subID")] = _sensor[cur_sensor]->subID();
 

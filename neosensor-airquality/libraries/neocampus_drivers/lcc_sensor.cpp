@@ -19,10 +19,10 @@
  * Includes
  */
 #include <Arduino.h>
-#if ESP32
+#if defined(ESP32) && !defined(DISABLE_ADC_CAL)
   #include <esp_adc_cal.h>
   extern esp_adc_cal_characteristics_t *adc_chars;
-#endif /* ESP32 */
+#endif /* ESP32 adcanced ADC */
 
 #include "neocampus.h"
 #include "neocampus_debug.h"
@@ -273,12 +273,29 @@ void lcc_sensor::_reset_gpio( void ) {
   }
 
   // configure analog_input
-#if ESP32
+#if defined(ESP32)
+  #if !defined(DISABLE_ADC_CAL)
   if( _inputs[LCC_SENSOR_ANALOG]!=INVALID_GPIO ) {
-    // the default 11db attenuation enables analog input full range
+    /* the default 11db attenuation enables analog input full range
+     * Note: unsure if it's not already done somewhere ...
+     */
     adc1_config_channel_atten( (adc1_channel_t)digitalPinToAnalogChannel(_inputs[LCC_SENSOR_ANALOG]), ADC_ATTEN_DB_11 );
   }
-#endif /* ESP32 */
+  #else
+  /*
+   * regular ADC configuration, defaults are:
+   * - 8 times sampling
+   * - 11dB attenuation
+   * - 12 bits resolution
+   */
+  switch(ADC_RESOLUTION) {
+    case ADC_WIDTH_BIT_11:
+      analogSetWidth( 11 );
+    case ADC_WIDTH_BIT_10:
+      analogSetWidth( 10 );
+  }
+  #endif
+#endif /* ESP32 adcanced ADC */
 
   // configure gpio output
   if( _heater != INVALID_GPIO ) {

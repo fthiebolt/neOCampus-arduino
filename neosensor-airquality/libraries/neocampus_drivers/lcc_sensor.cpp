@@ -62,10 +62,11 @@ const char *lcc_sensor::units = "ppm";
 lcc_sensor::lcc_sensor( void ) : generic_driver() {
   _initialized = false;
   _subID[0] = '\0';
-  _heater = INVALID_GPIO;
+  _heater_gpio = INVALID_GPIO;
   for( uint8_t i=0; i < sizeof(_inputs); i++ ) {
     _inputs[i] = INVALID_GPIO;
   }
+  _cur_gain = LCC_SENSOR_GAIN_NONE;
 }
 
 
@@ -148,7 +149,7 @@ boolean lcc_sensor::begin( JsonVariant root ) {
     {
       const char *_param = PSTR("output");
       if( strncmp_P(item[F("param")], _param, strlen_P(_param))==0 ) {
-        _heater = (uint8_t)item[F("value")].as<int>();    // to force -1 to get converted to (uint8_t)255
+        _heater_gpio = (uint8_t)item[F("value")].as<int>();    // to force -1 to get converted to (uint8_t)255
         _param_output = true;
       }
     }
@@ -158,7 +159,7 @@ boolean lcc_sensor::begin( JsonVariant root ) {
 
   /* DEBUG DEBUG DEBUG
   log_debug(F("\n[lcc_sensor] driver created with subID: ")); log_debug(_subID);
-  log_debug(F("\n[lcc_sensor] heater: ")); log_debug(_heater,DEC);
+  log_debug(F("\n[lcc_sensor] heater: ")); log_debug(_heater_gpio,DEC);
   log_debug(F("\n[lcc_sensor] inputs: "));
   for( uint8_t i=0; i < sizeof(_inputs); i++ ) {
     log_debug(_inputs[i],DEC);log_debug(F(" "));
@@ -185,9 +186,31 @@ float lcc_sensor::getSensorData( void )
 {
   /*
    * Sensor data acquisition overall process
-   * - select highest amplification that produce a measured voltage < ADC_MEASURE_THRESHOLD
+   * - select highest amplification that produce a measured voltage < LCC_SENSOR_VTH
    */
-  
+  if( setGain(LCC_SENSOR_GAIN_MAX)==LCC_SENSOR_GAIN_NONE ) {
+    // no gain available ?!?!
+    return (float)0.0;
+  }
+  yield();  // ADC requires < 1ms integration time (6kHz)
+
+#if defined(ESP32) && !defined(DISABLE_ADC_CAL)
+  uint32_t adc_val;
+  esp_err_t res;
+we need to retry 3 times at least if error
+  res = esp_adc_cal_get_voltage( (adc1_channel_t)digitalPinToAnalogChannel(_inputs[LCC_SENSOR_ANALOG]),
+                                adc_chars, &adc_val );
+
+#endif /* ESP32 advanced ADC */
+
+to be continued
+
+  do {
+
+  } while( _cur_gain>=LCC_SENSOR_GAIN_MIN )
+
+check if below gain_min
+
   return (float)0.0;
 }
 
@@ -195,12 +218,28 @@ float lcc_sensor::getSensorData( void )
 /**************************************************************************/
 /*! 
     @brief  return sensor value read from pins
+    We'll implement continuous integration because
 */
 /**************************************************************************/
 float lcc_sensor::acquire( void )
 {
+  /* it's not possible to generate the data on the fly because there are
+   * some huge delays (especially with pulse mode) before reading a data.
   return getSensorData();
+   */
+
+
+  // TODO: implement finite state machine
+
+
+  return (float)0.0;
 }
+
+
+
+/* ------------------------------------------------------------------------------
+ * Private'n Protected methods 
+ */
 
 
 /**************************************************************************/
@@ -211,15 +250,22 @@ float lcc_sensor::acquire( void )
 /**************************************************************************/
 void lcc_sensor::setHeater( lccSensorHeater_t mode, uint8_t pulse_ms=0 ) {
 
-  if( _heater==INVALID_GPIO ) return;
+  if( !_initialized ) {
+    log_error(F("\n[lcc_sensor] uninitialized sensor ?!?!")); log_flush();
+    return;
+  }
+
+  if( _heater_gpio==INVALID_GPIO ) return;
 
   if( mode==lccSensorHeater_t::heater_pulse and pulse_ms ) {
-    digitalWrite( _heater, !digitalRead(_heater) );
+    // we don't change _heater_status as it won't change after the toogle operation
+    digitalWrite( _heater_gpio, !digitalRead(_heater_gpio) );
     delay( pulse_ms );   // max 255ms
-    digitalWrite( _heater, !digitalRead(_heater) );
+    digitalWrite( _heater_gpio, !digitalRead(_heater_gpio) );
   }
   else if( mode<lccSensorHeater_t::heater_pulse ) {
-    digitalWrite( _heater, (mode==lccSensorHeater_t::heater_off ? LOW : HIGH) );
+    digitalWrite( _heater_gpio, (mode==lccSensorHeater_t::heater_off ? LOW : HIGH) );
+    _heater_status = mode;
   }
   else {
     log_warning(F("\n[lcc_sensor] inconsistent pulse mode & value!")); log_flush();
@@ -228,10 +274,55 @@ void lcc_sensor::setHeater( lccSensorHeater_t mode, uint8_t pulse_ms=0 ) {
 }
 
 
-
-/* ------------------------------------------------------------------------------
- * Private methods 
+/**************************************************************************/
+/*! 
+    @brief  set gain to our AOP
+            return value may be LOWER than requested gain if the corresponding
+            gpio does not exists. In case we're not able to event set a lower
+            gain, we disable it and send back GAIN_NONE.
  */
+/**************************************************************************/
+uint8_t lcc_sensor::setGain( uint8_t gain ) {
+
+  if( !_initialized ) {
+    log_error(F("\n[lcc_sensor] uninitialized sensor ?!?!")); log_flush();
+    return LCC_SENSOR_GAIN_NONE;
+  }
+
+  // if current gain is the same ...
+  if( gain==_cur_gain ) return _cur_gain;
+
+  // cancel current gain
+  _reset_gpio();  // _cur_gain is set to GAIN_NONE
+  if( gain==_cur_gain ) return _cur_gain;   // GAIN_NONE case
+
+  // out-of [min..max] check
+  if( gain > LCC_SENSOR_GAIN_MAX ) {
+    log_warning(F("\n[lcc_sensor] requested gain is over maximum possible, set it to max.")); log_flush();
+    gain = LCC_SENSOR_GAIN_MAX;
+  }
+  else if( gain < LCC_SENSOR_GAIN_MIN ) {
+    log_warning(F("\n[lcc_sensor] requested gain is under minimum possible, set it to min.")); log_flush();
+    gain = LCC_SENSOR_GAIN_MIN;
+  }
+
+  /* asked gain is not of NONE type ...
+   * ... but we need to check the nearest-down available gpio
+   */
+  for( uint8_t g=LCC_SENSOR_GAIN_MAX; g>=LCC_SENSOR_GAIN_MIN; g-- ) {
+    if( g > gain ) continue;
+    if( _inputs[g]==INVALID_GPIO ) continue;
+    // ok we found it and it has a valid GPIO
+    pinMode( _inputs[g], OUTPUT );
+    digitalWrite( _inputs[g], LOW );
+    _cur_gain = g;
+    return g;
+  }
+
+  log_warning(F("\n[lcc_sensor] unable to find a matching gpio ?!?! ... set to GAIN_NONE")); log_flush();
+  return _cur_gain;
+}
+
 
 /**************************************************************************/
 /*! 
@@ -271,6 +362,7 @@ void lcc_sensor::_reset_gpio( void ) {
     if( pin==INVALID_GPIO ) continue;
     pinMode( pin, INPUT );
   }
+  _cur_gain = LCC_SENSOR_GAIN_NONE;
 
   // configure analog_input
 #if defined(ESP32)
@@ -281,7 +373,7 @@ void lcc_sensor::_reset_gpio( void ) {
      */
     adc1_config_channel_atten( (adc1_channel_t)digitalPinToAnalogChannel(_inputs[LCC_SENSOR_ANALOG]), ADC_ATTEN_DB_11 );
   }
-  #else
+  #else /* DISABLE_ADC_CAL */
   /*
    * regular ADC configuration, defaults are:
    * - 8 times sampling
@@ -294,12 +386,12 @@ void lcc_sensor::_reset_gpio( void ) {
     case ADC_WIDTH_BIT_10:
       analogSetWidth( 10 );
   }
-  #endif
+  #endif /* DISABLE_ADC_CAL */
 #endif /* ESP32 adcanced ADC */
 
   // configure gpio output
-  if( _heater != INVALID_GPIO ) {
-    pinMode( _heater, OUTPUT );
+  if( _heater_gpio != INVALID_GPIO ) {
+    pinMode( _heater_gpio, OUTPUT );
     setHeater( LCC_SENSOR_HEATER_DEFL );
   }
 }

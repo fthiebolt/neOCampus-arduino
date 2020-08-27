@@ -127,6 +127,11 @@
 /*
  * Definitions
 */
+// main loop delay
+#ifndef MAIN_LOOP_DELAY
+#define MAIN_LOOP_DELAY         250   // ms
+#endif /* MAIN_LOOP_DELAY */
+
 // Debug related definitions
 #define SERIAL_BAUDRATE   115200
 #ifdef ESP8266
@@ -619,7 +624,7 @@ void earlySetup( void ) {
   // adc1_config_channel_atten(ADC1_CHANNEL_5,ADC_ATTEN_DB_11); sensor dependent !
   esp_adc_cal_src = 
            esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_11, ADC_RESOLUTION, DEFL_ESP32_ADC_VREF, adc_chars);
-#endif /* ESP32 adcanced ADC */
+#endif /* ESP32 advanced ADC */
 }
 
 
@@ -1054,5 +1059,5 @@ void loop() {
   endLoop();
   
   // waiting a bit
-  delay(250);
+  delay( MAIN_LOOP_DELAY );
 }

@@ -29,11 +29,32 @@
 #include "generic_driver.h"
 
 
+/*
+ * LCC_SENSOR general principle:
+ * - an AOP provides an analog value to enable retrieval of the data
+ * - the value from the micro-electronic sensor needs to get amplified: 4 possibles gains
+ *    through 4 resistors activated by 4 outputs will allow us to reach a correct voltage
+ *    read.
+ * - we'll iterate over the 4 possibles gains to maximize the relevance of the data while
+ *    avoiding at the same time to go further a voltage threshold to avoid non-linearity.
+ * - each time you change the amplification, you need to wait for a delay (e.g 1000ms);
+ *    such delay is not acceptable regarding the others sensors that will get stuck so we
+ *    need to set a FSM.
+ * - 2 sensors feature a 'pulse' mode measurement: through a dedicated output driving a
+ *    MOS transistor, we'll heat the activa surface of the sensor for 30 to 60 seconds!!
+ *    then we also need another FSM.
+ * 
+ * Regarding the huge delays between each operation, we need to implement a continuous
+ *  measurement system driven the loop delay itself.
+ */
 
 /*
  * Definitions
  */
-// define GPIO INPUTS' roles associated with _inputs[]
+/* define GPIO INPUTS' roles associated with _inputs[]
+ * inputs[0-3] gpio to drive the resistors to select the proper gain to the AOP
+ * inputs[4] is the AOP to read
+ */
 enum {
   LCC_SENSOR_10K = 0,      // minimum GAIN
   LCC_SENSOR_100K,
@@ -42,6 +63,7 @@ enum {
   LCC_SENSOR_ANALOG,
   LCC_SENSOR_LAST_INPUT
 };
+#define LCC_SENSOR_GAIN_NONE      (uint8_t)(-1)
 #define LCC_SENSOR_GAIN_MIN       (uint8_t)LCC_SENSOR_10K
 #define LCC_SENSOR_GAIN_MAX       (uint8_t)LCC_SENSOR_10M
 
@@ -53,7 +75,6 @@ enum {
 #define LCC_SENSOR_VTH            3.0 // ADC voltage threshold
 #endif /* LCC_SENSOR_VTH */
 
-
 // output field corresponds to GPIO activating the heater
 enum class lccSensorHeater_t : uint8_t {
   heater_off      = 0,
@@ -61,6 +82,16 @@ enum class lccSensorHeater_t : uint8_t {
   heater_pulse    = 2   // pulse mode ==> toggle output for a specified duration
 };
 #define LCC_SENSOR_HEATER_DEFL    lccSensorHeater_t::heater_off
+
+// Finite state machine
+enum class lccSensorState_t : uint8_t {
+  idle            = 0,
+  heating,              // only if heater_gpio available
+  amplifying,           // selecting proper resistor for AOP amplification
+  measuring             // adc reading
+};
+#define LCC_SENSOR_STATE_DEFL     lccSensorState_t::idle
+
 
 
 
@@ -91,14 +122,17 @@ class lcc_sensor : public generic_driver {
   protected:
     // -- private/protected methods
     void setHeater( lccSensorHeater_t, uint8_t );
+    uint8_t setGain( uint8_t );
     boolean _init( void );      // low-level init
     void _reset_gpio( void );   // set GPIOs at initial state
 
     // --- private/protected attributes
     char _subID[SENSO_SUBID_MAXSIZE];
     uint8_t _inputs[LCC_SENSOR_LAST_INPUT];
-    uint8_t _heater;            // GPIO PIN to start heating the sensor
-
+    uint8_t _heater_gpio;       // GPIO PIN to start heating the sensor
+    uint8_t _cur_gain;          // currently selected Resistor to AOP input
+    lccSensorState_t _status;
+    
     boolean _initialized;
     static const char *units;
     // uint8_t _integrationTime; // ms time to integrate a measure

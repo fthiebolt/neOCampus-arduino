@@ -47,3 +47,11 @@ void generic_driver::powerON( void ) {
 void generic_driver::powerOFF( void ) {
   // switch OFF
 }
+
+/******************************************
+ * Sensors internal processing
+ * used for continuous integration for example
+ */
+void generic_driver::process( void ) {
+}
+

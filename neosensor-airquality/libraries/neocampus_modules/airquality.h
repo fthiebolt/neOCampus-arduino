@@ -73,6 +73,7 @@ class airquality : public base {
     boolean _loadConfig( JsonObject );
     boolean _processOrder( const char *, int * );   // an order to process with optional value
     boolean _sendValues( void );                    // send all sensors' values
+    void _process_sensors( void );                  // sensors internal processing (optional)
 };
 
 

@@ -687,6 +687,9 @@ void lateSetup( void ) {
   log_info(F("\n# max TCP concurrent sockets = ")); log_info(CONFIG_LWIP_MAX_ACTIVE_TCP, DEC); log_flush();
 #endif /* MAX_TCP_CONNECTIONS */
 
+  // display loop() delay
+  log_info(F("\n# lopp() delay(ms): ")); log_info(MAIN_LOOP_DELAY,DEC); log_flush();
+
   log_info(F("\n# --- --- ---")); log_flush();
 }
 

@@ -108,13 +108,15 @@ class lcc_sensor : public generic_driver {
     boolean begin( JsonVariant );
     //void powerON( void );       // [aug.20] the board does feature any way to switch power
     //void powerOFF( void );      // [aug.20] the board does feature any way to switch power
-
-    float getSensorData( void );
+    void process( void );         // sensor internal processing
 
     // send back sensor's value, units and subID
     float acquire( void );
     const char *sensorUnits( void ) { return units; };
     String subID( void ) { return _subID; };
+
+    // internal data management
+    float getSensorData( void );
 
 
   // --- protected methods / attributes ---------------------
@@ -131,7 +133,7 @@ class lcc_sensor : public generic_driver {
     uint8_t _inputs[LCC_SENSOR_LAST_INPUT];
     uint8_t _heater_gpio;       // GPIO PIN to start heating the sensor
     uint8_t _cur_gain;          // currently selected Resistor to AOP input
-    lccSensorState_t _status;
+    lccSensorState_t _status;   // FSM
     
     boolean _initialized;
     static const char *units;

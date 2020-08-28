@@ -182,6 +182,9 @@ bool humidity::process( void ) {
    */
   _ret = base::process();
 
+  /* sensors internal processing */
+  _process_sensors();
+
   // reached time to transmit ?
   if( !isTXtime() ) return _ret;
 
@@ -242,6 +245,19 @@ boolean humidity::loadSensoConfig( senso *sp ) {
 /* ------------------------------------------------------------------------------
  * Private methods 
  */
+
+/*
+ * sensors internal processing
+ * this function is called every lopp() call and leverages
+ * the needs for (e.g) continuous integration.
+ */
+void humidity::_process_sensors( void ) {
+  // process all valid sensors
+  for( uint8_t cur_sensor=0; cur_sensor<_sensors_count; cur_sensor++ ) {
+    _sensor[cur_sensor]->process();
+  }
+}
+
 
 /*
  * send all sensors' values

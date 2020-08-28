@@ -174,6 +174,9 @@ bool airquality::process( void ) {
    */
   _ret = base::process();
 
+  /* sensors internal processing */
+  _process_sensors();
+
   // reached time to transmit ?
   if( !isTXtime() ) return _ret;
 
@@ -352,6 +355,19 @@ boolean airquality::loadSensoConfig( senso *sp ) {
  */
 
 /*
+ * sensors internal processing
+ * this function is called every lopp() call and leverages
+ * the needs for (e.g) continuous integration.
+ */
+void airquality::_process_sensors( void ) {
+  // process all valid sensors
+  for( uint8_t cur_sensor=0; cur_sensor<_sensors_count; cur_sensor++ ) {
+    _sensor[cur_sensor]->process();
+  }
+}
+
+
+/*
  * send all sensors' values
  */
 boolean airquality::_sendValues( void ) {
@@ -364,7 +380,7 @@ boolean airquality::_sendValues( void ) {
     JsonObject root = _doc.to<JsonObject>();
 
     // retrieve data from current sensor
-    root[F("value")] = _sensor[cur_sensor]->acquire();   // default is FLOAT type
+    root[F("value")] = (float)_sensor[cur_sensor]->acquire();     // [may.20] force data as float (e.g ArduinoJson converts 20.0 to INT)
     root[F("value_units")] = _sensor[cur_sensor]->sensorUnits();
     root[F("subID")] = _sensor[cur_sensor]->subID();
 

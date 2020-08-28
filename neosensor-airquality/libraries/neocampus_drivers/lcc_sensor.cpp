@@ -88,7 +88,7 @@ boolean lcc_sensor::begin( JsonVariant root ) {
 
   boolean _param_subID = false;
   boolean _param_input = false;
-  boolean _param_output = false;
+
   /* parse all parameters of  our sensor:
   [
     {
@@ -150,7 +150,6 @@ boolean lcc_sensor::begin( JsonVariant root ) {
       const char *_param = PSTR("output");
       if( strncmp_P(item[F("param")], _param, strlen_P(_param))==0 ) {
         _heater_gpio = (uint8_t)item[F("value")].as<int>();    // to force -1 to get converted to (uint8_t)255
-        _param_output = true;
       }
     }
 
@@ -167,13 +166,31 @@ boolean lcc_sensor::begin( JsonVariant root ) {
   log_flush();
   */
 
-  // check whether all parameters are set ...
-  if( _param_subID and _param_input and _param_output ) return false;
+  /* check whether all parameters are set ...
+   * note: param_output is optional
+   */
+  if( !_param_subID or !_param_input ) return false;
 
   /*
    * sensor HW initialisation
    */
   return _init();
+}
+
+
+/**************************************************************************/
+/*! 
+    @brief  sensor internal processing
+*/
+/**************************************************************************/
+void lcc_sensor::process( void )
+{
+  if( !_initialized ) return;
+
+  // process according to our FSM
+
+  // TO BE CONTINUED
+
 }
 
 
@@ -194,6 +211,10 @@ float lcc_sensor::getSensorData( void )
   }
   yield();  // ADC requires < 1ms integration time (6kHz)
 
+#if 0
+
+TO BE CONTINUED
+
 #if defined(ESP32) && !defined(DISABLE_ADC_CAL)
   uint32_t adc_val;
   esp_err_t res;
@@ -203,7 +224,10 @@ we need to retry 3 times at least if error
 
 #endif /* ESP32 advanced ADC */
 
-to be continued
+
+to be continued:
+- implement FSM
+- implement continuous integration through process method
 
   do {
 
@@ -211,14 +235,15 @@ to be continued
 
 check if below gain_min
 
+#endif /* 0 */
+
   return (float)0.0;
 }
 
 
 /**************************************************************************/
 /*! 
-    @brief  return sensor value read from pins
-    We'll implement continuous integration because
+    @brief  return sensor value
 */
 /**************************************************************************/
 float lcc_sensor::acquire( void )
@@ -229,7 +254,8 @@ float lcc_sensor::acquire( void )
    */
 
 
-  // TODO: implement finite state machine
+  // TODO: create finite state machine that will implement continuous integration
+  // that will send back latest value when it's time to transmit data
 
 
   return (float)0.0;
@@ -265,7 +291,6 @@ void lcc_sensor::setHeater( lccSensorHeater_t mode, uint8_t pulse_ms=0 ) {
   }
   else if( mode<lccSensorHeater_t::heater_pulse ) {
     digitalWrite( _heater_gpio, (mode==lccSensorHeater_t::heater_off ? LOW : HIGH) );
-    _heater_status = mode;
   }
   else {
     log_warning(F("\n[lcc_sensor] inconsistent pulse mode & value!")); log_flush();
@@ -331,6 +356,8 @@ uint8_t lcc_sensor::setGain( uint8_t gain ) {
 /**************************************************************************/
 boolean lcc_sensor::_init( void ) {
 
+  _initialized = true;  // will turn to false if any of the methods fail
+
   // configure gpio
   _reset_gpio();
 
@@ -343,8 +370,6 @@ boolean lcc_sensor::_init( void ) {
 */
   // powerOFF module
   powerOFF();  // as of [aug.20] there's no power settings
-
-  _initialized = true;
 
   return _initialized;
 }

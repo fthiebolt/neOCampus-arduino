@@ -43,11 +43,12 @@ class generic_driver {
     virtual void powerOFF( void );        // switch OFF
     
     // Detection
-    virtual boolean begin( uint8_t );     // i2c detected
+    virtual boolean begin( uint8_t );       // i2c detected
     virtual boolean begin( JsonVariant );   // Json senso config
 
     // Data
-    virtual float acquire( void )=0;    // pure virtual, acquire sensor value
+    virtual void process( void );           // sensors internal processing (e.g for continuous integration)
+    virtual float acquire( void )=0;        // pure virtual, acquire sensor value
     virtual const char *sensorUnits( void )=0;  // pure virtual, retrieve units of actual sensors (e.g celsius, %r.H, lux ...)
 
     // Identity (i.e i2c addr)

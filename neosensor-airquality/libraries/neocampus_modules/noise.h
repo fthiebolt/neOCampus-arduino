@@ -122,7 +122,6 @@ class noise : public base {
     void inline _ledOFF( void );
     bool _loadConfig( JsonObject );
     bool _processOrder( const char *, int * );      // an order to process with optional value
-
 };
 
 

@@ -378,7 +378,7 @@ void hex_dump( const char *buf, size_t bufsize, bool ascii ) {
     }
     log_flush();
   }
-  for( uint8_t i; i < (uint8_t)bufsize and ascii; i++ ) {
+  for( uint8_t i=0; i < (uint8_t)bufsize and ascii; i++ ) {
     char _line[32];
     snprintf(_line,sizeof(_line),"\nbuf[%u] = 0x%02x '%c'", i, buf[i], buf[i]);
     log_debug(_line); delay(20); log_flush();

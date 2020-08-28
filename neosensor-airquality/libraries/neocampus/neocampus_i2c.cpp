@@ -225,7 +225,7 @@ uint8_t writeList( uint8_t adr, uint8_t reg, uint8_t *tab, uint8_t tabsize ){
 }
 
 
-/* --- low level i2c functions (i.e specific use)
+// --- low level i2c functions (i.e specific use)
 
 /*
  * I2C low-level bulk transfers

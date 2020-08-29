@@ -188,6 +188,33 @@ void lcc_sensor::process( void )
   if( !_initialized ) return;
 
   // process according to our FSM
+  switch( _FSMstatus ) {
+
+    // IDLE
+    case lccSensorState_t::idle:
+      // TO BE CONTINUED
+      break;
+
+    // HEATING
+    case lccSensorState_t::heating:
+      // TO BE CONTINUED
+      break;
+
+    // AMPLIFYING (selecting proper GAIN)
+    case lccSensorState_t::amplifying:
+      // TO BE CONTINUED
+      break;
+
+    // MEASURING
+    case lccSensorState_t::measuring:
+      // TO BE CONTINUED
+      break;
+
+    // default
+    default:
+      log_error(F("\n[lcc_sensor] unknown FSM state ?!?! ... resetting !")); log_flush();
+      _FSMstatus = LCC_SENSOR_STATE_DEFL;
+  }
 
   // TO BE CONTINUED
 
@@ -253,9 +280,10 @@ boolean lcc_sensor::acquire( float *pval )
   return getSensorData();
    */
 
-
   // TODO: create finite state machine that will implement continuous integration
   // that will send back latest value when it's time to transmit data
+
+  // if new data available
 
   *pval = (float)0.0;
   return false;
@@ -363,8 +391,11 @@ boolean lcc_sensor::_init( void ) {
 
   // powerON module
   powerON();  // as of [aug.20] there's no power settings
+
+  // set FSM initial state
+  _FSMstatus = LCC_SENSOR_STATE_DEFL;
+
 /*
-  set state machine
   setGain();
   setTiming();
 */

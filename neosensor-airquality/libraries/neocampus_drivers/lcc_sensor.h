@@ -67,6 +67,12 @@ enum {
 #define LCC_SENSOR_GAIN_MIN       (uint8_t)LCC_SENSOR_10K
 #define LCC_SENSOR_GAIN_MAX       (uint8_t)LCC_SENSOR_10M
 
+/* integration time:
+ * Whenever GAIN is changing, there's 'integration delay' to be taken
+ * into account.
+ */
+#define LCC_SENSOR_INTEGRATION_MS 1000  // ms
+
 /* Note about ESP32 ADC linearity: we'll activate various gains from
  * LCC_SENSOR_GAIN_MAX downto LCC_SENSOR_GAIN_MIN till the retrieved value
  * is below the voltage threshold.
@@ -79,7 +85,7 @@ enum {
 enum class lccSensorHeater_t : uint8_t {
   heater_off      = 0,
   heater_on       = 1,
-  heater_pulse    = 2   // pulse mode ==> toggle output for a specified duration
+  heater_pulse    = 2   // pulse mode ==> toggle output up to 255ms
 };
 #define LCC_SENSOR_HEATER_DEFL    lccSensorHeater_t::heater_off
 
@@ -131,9 +137,9 @@ class lcc_sensor : public generic_driver {
     // --- private/protected attributes
     char _subID[SENSO_SUBID_MAXSIZE];
     uint8_t _inputs[LCC_SENSOR_LAST_INPUT];
-    uint8_t _heater_gpio;       // GPIO PIN to start heating the sensor
-    uint8_t _cur_gain;          // currently selected Resistor to AOP input
-    lccSensorState_t _status;   // FSM
+    uint8_t _heater_gpio;         // GPIO PIN to start heating the sensor
+    uint8_t _cur_gain;            // currently selected Resistor to AOP input
+    lccSensorState_t _FSMstatus;  // FSM
     
     boolean _initialized;
     static const char *units;

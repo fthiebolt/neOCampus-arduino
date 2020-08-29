@@ -93,7 +93,7 @@ class Adafruit_MCP9808 : public generic_driver {
     void powerOFF( void );      // switch OFF
 
     // send back sensor's value and units (e.g "32,5" "°C", <i2c_addr> )
-    float acquire( void );
+    boolean acquire( float* );
     const char *sensorUnits( void ) { return units; };
     String subID( void ) { return String(_i2caddr); };
     

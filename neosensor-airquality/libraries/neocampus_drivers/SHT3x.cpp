@@ -187,7 +187,7 @@ bool SHT3x::setResolution( sht3xResolution_t res ) {
 
 */
 /**************************************************************************/
-float SHT3x::acquire( void )
+boolean SHT3x::acquire( float *pval )
 {
   // HUMIDITY
   if( _measureType == sht3xMeasureType_t::humidity ) {
@@ -216,7 +216,8 @@ float SHT3x::acquire( void )
   }
 #endif
 
-  return Ta;
+  *pval = Ta;
+  return true;
 }
 
 

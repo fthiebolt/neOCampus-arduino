@@ -286,7 +286,13 @@ boolean temperature::_sendValues( void ) {
     JsonObject root = _doc.to<JsonObject>();
 
     // retrieve data from current sensor
-    root[F("value")] = (float)( _sensor[cur_sensor]->acquire() );   // [may.20] force data as float (e.g ArduinoJson converts 20.0 to INT)
+    float value;
+    if( !_sensor[cur_sensor]->acquire(&value) ) {
+      log_warning(F("\n[temperature] unable to retrieve data from sensor "));
+      log_warning(_sensor[cur_sensor]->subID()); log_flush();
+      continue;
+    }
+    root[F("value")] = (float)( value );   // [may.20] force data as float (e.g ArduinoJson converts 20.0 to INT)
     root[F("value_units")] = _sensor[cur_sensor]->sensorUnits();
     root[F("subID")] = _sensor[cur_sensor]->subID();
 
@@ -306,7 +312,6 @@ boolean temperature::_sendValues( void ) {
     delay(20); 
   }
 
-  // ok, everything is sent
   return true;
 }
 

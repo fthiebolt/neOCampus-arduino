@@ -315,7 +315,6 @@ void TSL2561::getLuminosity( uint16_t *broadband, uint16_t *ir ) {
       default:
         _hi = TSL2561_AGC_THI_402MS;
         _lo = TSL2561_AGC_TLO_402MS;
-        break;
     }
 
     _getData(&_b, &_ir);
@@ -390,7 +389,6 @@ uint32_t TSL2561::calculateLux(uint16_t ch0, uint16_t ch1)
       break;
     default: // No scaling ... integration time = 402ms
       chScale = (1 << TSL2561_LUX_CHSCALE);
-      break;
   }
 
   // Scaling only if gain is 1X
@@ -467,13 +465,15 @@ uint32_t TSL2561::calculateLux(uint16_t ch0, uint16_t ch1)
  * Simple wrapper to retrieve lux value from sensor :)
  * - return Lux value :)
  */
-float TSL2561::acquire( void ) {
+boolean TSL2561::acquire( float *pval ) {
+
   uint16_t ch0, ch1;
 
   // get channels luminosity
   getLuminosity( &ch0, & ch1 );
 
   // ... and return computed lux value :)
-  return (float)calculateLux( ch0, ch1 );
+  *pval = (float)calculateLux( ch0, ch1 );
+  return true;
 }
 

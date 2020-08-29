@@ -164,8 +164,10 @@ bool Adafruit_MCP9808::setResolution( mcp9808Resolution_t res ) {
 
 */
 /**************************************************************************/
-float Adafruit_MCP9808::acquire( void )
+boolean Adafruit_MCP9808::acquire( float *pval )
 {
+  if( !pval ) return false;
+
   // read configuration register ...
   uint16_t conf_register = read16(_i2caddr, MCP9808_REG_CONFIG);
   
@@ -205,7 +207,9 @@ float Adafruit_MCP9808::acquire( void )
   }
 #endif
 
-  return Ta;
+  // ok, send back value
+  *pval = Ta;
+  return true;
 }
 
 

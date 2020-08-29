@@ -197,7 +197,7 @@ class TSL2561 : public generic_driver {
     uint32_t calculateLux(uint16_t ch0, uint16_t ch1);
 
     // send back sensor's value and units
-    float acquire( void );
+    boolean acquire( float* );
     const char *sensorUnits( void ) { return units; };
     String subID( void ) { return String(_i2caddr); };
 

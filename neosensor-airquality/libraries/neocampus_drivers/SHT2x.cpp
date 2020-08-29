@@ -215,7 +215,7 @@ bool SHT2x::setResolution( sht2xResolution_t res ) {
 
 */
 /**************************************************************************/
-float SHT2x::acquire( void )
+boolean SHT2x::acquire( float *pval )
 {
   // HUMIDITY
   if( _measureType == sht2xMeasureType_t::humidity ) {
@@ -237,7 +237,8 @@ float SHT2x::acquire( void )
   log_debug(F("\n[SHT2x] corrected temperature for i2c=0x"));log_debug(_i2caddr,HEX);log_flush();
 #endif
 
-  return Ta;
+  *pval = Ta;
+  return true;
 }
 
 

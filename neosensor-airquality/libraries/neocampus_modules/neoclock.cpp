@@ -57,11 +57,10 @@ bool neoclock::add_display( uint8_t id ) {
       _display = new TM1637Display( NEOCLOCK_TM1637_CLK, NEOCLOCK_TM1637_DIO );   // default bitdelay=25µs
       _display->powerOFF();
 #endif
-      break;;
+      break;
     default:
       log_error(F("\n[neoclock] unknown display id ")); log_error(id,DEC); log_flush();
       return false;
-      break;;
   };
 
   log_info(F("\n[neoclock] successfully added display_id ")); log_info(id,DEC); log_flush();

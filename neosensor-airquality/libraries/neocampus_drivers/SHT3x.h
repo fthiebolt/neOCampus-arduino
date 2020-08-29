@@ -110,7 +110,7 @@ class SHT3x : public generic_driver {
     void powerOFF( void );      // switch OFF
 
     // send back sensor's value, units and I2C addr
-    float acquire( void );
+    boolean acquire( float* );
     const char *sensorUnits( void );
     String subID( void ) { return String(_i2caddr); };
     

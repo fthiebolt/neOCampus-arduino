@@ -246,7 +246,7 @@ check if below gain_min
     @brief  return sensor value
 */
 /**************************************************************************/
-float lcc_sensor::acquire( void )
+boolean lcc_sensor::acquire( float *pval )
 {
   /* it's not possible to generate the data on the fly because there are
    * some huge delays (especially with pulse mode) before reading a data.
@@ -257,8 +257,8 @@ float lcc_sensor::acquire( void )
   // TODO: create finite state machine that will implement continuous integration
   // that will send back latest value when it's time to transmit data
 
-
-  return (float)0.0;
+  *pval = (float)0.0;
+  return false;
 }
 
 
@@ -406,10 +406,17 @@ void lcc_sensor::_reset_gpio( void ) {
    * - 12 bits resolution
    */
   switch(ADC_RESOLUTION) {
+    case ADC_WIDTH_BIT_12:
+      // this is default, nothing todo
+      break;
     case ADC_WIDTH_BIT_11:
       analogSetWidth( 11 );
+      break;
     case ADC_WIDTH_BIT_10:
       analogSetWidth( 10 );
+      break;
+    default:
+      log_error(F("\n[lcc_sensor] unknown ADC resolution ?!?!")); log_flush();
   }
   #endif /* DISABLE_ADC_CAL */
 #endif /* ESP32 adcanced ADC */

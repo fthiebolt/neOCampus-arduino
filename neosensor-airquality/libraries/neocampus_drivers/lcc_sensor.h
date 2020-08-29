@@ -111,7 +111,7 @@ class lcc_sensor : public generic_driver {
     void process( void );         // sensor internal processing
 
     // send back sensor's value, units and subID
-    float acquire( void );
+    boolean acquire( float* );
     const char *sensorUnits( void ) { return units; };
     String subID( void ) { return _subID; };
 

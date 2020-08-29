@@ -36,11 +36,11 @@
 
 /* #############################################################################
  * ###                                                                       ###
- * ###                       BOARD HARDWARE SELECTION                        ###
+ * ###             ARDUINO'S IDE BOARD HARDWARE SELECTION                    ###
  * ###                                                                       ###
  * 
- *      Proper board will be selected and included in >>> 'neocampus.h' <<<
- *      according to the selection you made within Arduino's board selector
+ *      Proper board will be selected according to the selection you made 
+ *      within the Arduino board selector
  * 
  * >>>     Don't forget to update BOARD_FWREV from your 'board/neOXxx.h'     <<<
  * 
@@ -669,11 +669,11 @@ void lateSetup( void ) {
     log_info(F("\n# ESP32 ADC calibration source: "));
     switch(esp_adc_cal_src) {
       case ESP_ADC_CAL_VAL_EFUSE_VREF:
-        log_info(F("eFuse vRef"));
+        log_info(F("eFuse vRef")); break;
       case ESP_ADC_CAL_VAL_EFUSE_TP:
-        log_info(F("eFuse two points"));
+        log_info(F("eFuse two points")); break;
       case ESP_ADC_CAL_VAL_DEFAULT_VREF:
-        log_info(F("default Vref :("));
+        log_info(F("default Vref :(")); break;
       default:
         log_error(F("unknown ?!?!"));
     }

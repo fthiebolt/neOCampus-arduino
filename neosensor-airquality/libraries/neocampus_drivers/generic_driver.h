@@ -11,6 +11,9 @@
 
 	@section  HISTORY
 
+    aug.20  F.Thiebolt  added support for sensors' internal processing
+                        used in continuous integration for example.
+                        nowadays, only valid data will get sent
     2020-May    - First release, F. Thiebolt
     
 */
@@ -47,8 +50,8 @@ class generic_driver {
     virtual boolean begin( JsonVariant );   // Json senso config
 
     // Data
-    virtual void process( void );           // sensors internal processing (e.g for continuous integration)
-    virtual float acquire( void )=0;        // pure virtual, acquire sensor value
+    virtual void process( void );               // sensors internal processing (e.g for continuous integration)
+    virtual boolean acquire( float* )=0;        // pure virtual, acquire sensor value
     virtual const char *sensorUnits( void )=0;  // pure virtual, retrieve units of actual sensors (e.g celsius, %r.H, lux ...)
 
     // Identity (i.e i2c addr)

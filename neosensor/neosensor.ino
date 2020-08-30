@@ -2,15 +2,16 @@
  *
  * neOCampus operation
  * 
- * neOSensor-AirQuality
- * is an ESP32 based board from CNRS LCC lab able to monitor air quality.
+ * neOSensor firmware for various ESP8266 and ESP32 based boards:
+ * - neoSensor boards based on either esp32 or esp8266
+ * - neOSensor-Airquality board based on esp32
  * 
  * (c) F.Thiebolt / neOCampus operation - Université Toulouse 3
  * 
  * ---
  * NOTES:
  * - you need to 'deploy' our boards definitions (run the deploy.sh script)
- * - select 'neOSensor AirQuality' board from menu (located end of list)
+ * - select your board from the Arduino IDE boards menu (located end of list)
  * - NO MORE NEED TO PATCH standard libs ... we now have our own defines !!! :)
  * - a compilation flag tells which bord it is (i.e NEOSENSOR_AIRQUALITY)
  * - as of aug.20, CONFIG_LWIP_MAX_ACTIVE_TCP=16

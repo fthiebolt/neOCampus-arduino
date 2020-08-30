@@ -195,6 +195,7 @@ void lcc_sensor::process( void )
       log_debug(F("\n\t[lcc_sensor] Idle")); log_flush();
       // activate heating ...
       heaterStart( (uint16_t)LCC_SENSOR_HEATER_MS );
+      log_debug(F("\n\t[lcc_sensor] start heating ...")); log_flush();
       // ... and continue with next step ...
       _FSMstatus = lccSensorState_t::heating;
       //break;
@@ -202,31 +203,41 @@ void lcc_sensor::process( void )
     // HEATING
     case lccSensorState_t::heating:
       // still in heating process ?
-      if( heaterBusy() ) {
-        log_debug(F("\n\t[lcc_sensor] heating ...")); log_flush();
-        break;
-      }
-      // ok continue with next step
-      _FSMstatus = lccSensorState_t::amplifying;
+      if( heaterBusy() ) break;
+      log_debug(F("\n\t[lcc_sensor] heating is over ...")); log_flush();
 
-    // AMPLIFYING (selecting proper GAIN)
-    case lccSensorState_t::amplifying:
-      // TO BE CONTINUED
-      break;
+      // ok continue with next step: auto gain
+      log_debug(F("\n\t[lcc_sensor] sensor auto-gain activation ...")); log_flush();
+      autoGainStart();
+      _FSMstatus = lccSensorState_t::auto_gain;
+
+    // AUTO-GAIN
+    case lccSensorState_t::auto_gain:
+      // still in the autoGain process ?
+      if( autoGainBusy() ) break;
+      log_debug(F("\n\t[lcc_sensor] auto-gain ends ...")); log_flush();
+      // switch to latest step: measure
+      _FSMstatus = lccSensorState_t::measuring;
 
     // MEASURING
     case lccSensorState_t::measuring:
+      // we'll make an average measure over the specified number of samples
+      log_debug(F("\n\t[lcc_sensor] start measuring ...")); log_flush();
+
+
+
       // TO BE CONTINUED
+
+
+      // full measurement cycle is over, let's restart on next loop()
+      _FSMstatus = lccSensorState_t::idle;
       break;
 
     // default
     default:
       log_error(F("\n[lcc_sensor] unknown FSM state ?!?! ... resetting !")); log_flush();
-      _FSMstatus = LCC_SENSOR_STATE_DEFL;
+      _init();
   }
-
-  // TO BE CONTINUED
-
 }
 
 
@@ -358,7 +369,6 @@ boolean lcc_sensor::heaterBusy( void ) {
    * look at https://arduino.stackexchange.com/questions/33572/arduino-countdown-without-using-delay/33577#33577
    * for an explanation about millis() that wrap around!
    */
-
   if( (millis() - _heater_start) >= (unsigned long)LCC_SENSOR_HEATER_MS ) {
     // end of heating period
     digitalWrite( _heater_gpio, LOW );
@@ -372,13 +382,15 @@ boolean lcc_sensor::heaterBusy( void ) {
 
 /**************************************************************************/
 /*! 
-    @brief  set gain to our AOP
-            return value may be LOWER than requested gain if the corresponding
-            gpio does not exists. In case we're not able to event set a lower
-            gain, we disable it and send back GAIN_NONE.
+    @brief  automatic selection of best gain for our AOP
+            if integration_ms is lower than loop() delay, we act in a
+            blocking way, otherwise non blocking API.
  */
 /**************************************************************************/
-uint8_t lcc_sensor::setGain( uint8_t gain ) {
+uint8_t lcc_sensor::autoGainStart( uint8_t gain=LCC_SENSOR_GAIN_MAX, uint8_t integration_ms=LCC_SENSOR_INTEGRATION_MS ) {
+
+
+  to be continued
 
   if( !_initialized ) {
     log_error(F("\n[lcc_sensor] uninitialized sensor ?!?!")); log_flush();

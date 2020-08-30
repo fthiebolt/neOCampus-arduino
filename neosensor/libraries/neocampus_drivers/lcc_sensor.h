@@ -92,7 +92,7 @@ enum {
 enum class lccSensorState_t : uint8_t {
   idle            = 0,
   heating,              // only if heater_gpio available
-  amplifying,           // selecting proper resistor for AOP amplification
+  auto_gain,            // auto select proper AOP amplification
   measuring             // adc reading
 };
 #define LCC_SENSOR_STATE_DEFL     lccSensorState_t::idle
@@ -130,7 +130,8 @@ class lcc_sensor : public generic_driver {
     // -- private/protected methods
     boolean heaterStart( uint16_t );
     boolean heaterBusy( void );
-    uint8_t setGain( uint8_t );
+    boolean autoGainStart( uint8_t );
+    boolean autoGainBusy( void );
     boolean _init( void );      // low-level init
     void _reset_gpio( void );   // set GPIOs at initial state
 

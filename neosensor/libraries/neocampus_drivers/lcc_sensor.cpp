@@ -387,15 +387,17 @@ boolean lcc_sensor::heaterBusy( void ) {
             blocking way, otherwise non blocking API.
  */
 /**************************************************************************/
-uint8_t lcc_sensor::autoGainStart( uint8_t gain=LCC_SENSOR_GAIN_MAX, uint8_t integration_ms=LCC_SENSOR_INTEGRATION_MS ) {
-
-
-  to be continued
+boolean lcc_sensor::autoGainStart( uint8_t gain=LCC_SENSOR_GAIN_NONE, uint8_t integration_ms=LCC_SENSOR_INTEGRATION_MS ) {
 
   if( !_initialized ) {
     log_error(F("\n[lcc_sensor] uninitialized sensor ?!?!")); log_flush();
     return LCC_SENSOR_GAIN_NONE;
   }
+
+  // select start gain
+  if( gain==LCC_SENSOR_GAIN_NONE ) gain=LCC_SENSOR_GAIN_MAX;
+
+to be continued
 
   // if current gain is the same ...
   if( gain==_cur_gain ) return _cur_gain;
@@ -450,10 +452,6 @@ boolean lcc_sensor::_init( void ) {
   // set FSM initial state
   _FSMstatus = LCC_SENSOR_STATE_DEFL;
 
-/*
-  setGain();
-  setTiming();
-*/
   // powerOFF module
   powerOFF();  // as of [aug.20] there's no power settings
 
@@ -468,7 +466,7 @@ boolean lcc_sensor::_init( void ) {
 /**************************************************************************/
 void lcc_sensor::_reset_gpio( void ) {
 
-  // configure gpio inputs
+  // configure GAIN gpio(s)
   for( uint8_t pin : _inputs ) {
     if( pin==INVALID_GPIO ) continue;
     pinMode( pin, INPUT );

@@ -192,13 +192,22 @@ void lcc_sensor::process( void )
 
     // IDLE
     case lccSensorState_t::idle:
-      // TO BE CONTINUED
-      break;
+      log_debug(F("\n\t[lcc_sensor] Idle")); log_flush();
+      // activate heating ...
+      heaterStart( (uint16_t)LCC_SENSOR_HEATER_MS );
+      // ... and continue with next step ...
+      _FSMstatus = lccSensorState_t::heating;
+      //break;
 
     // HEATING
     case lccSensorState_t::heating:
-      // TO BE CONTINUED
-      break;
+      // still in heating process ?
+      if( heaterBusy() ) {
+        log_debug(F("\n\t[lcc_sensor] heating ...")); log_flush();
+        break;
+      }
+      // ok continue with next step
+      _FSMstatus = lccSensorState_t::amplifying;
 
     // AMPLIFYING (selecting proper GAIN)
     case lccSensorState_t::amplifying:
@@ -298,32 +307,66 @@ boolean lcc_sensor::acquire( float *pval )
 
 /**************************************************************************/
 /*! 
-    @brief  set heater mode (i.e ON/OFF) if GPIO pin specicifed
-            second parameter pulse: 0 ==> toggle, otherwise ms impulse width
+    @brief  start heater for a specified duration up to 65535ms
+            for short pulse duration (< MAIN_DELAY_LOOP ---i.e 250ms), we
+            wait for the specified delay, hence blocking behaviour,
+            otherwise this is a non blocking API.
 */
 /**************************************************************************/
-void lcc_sensor::setHeater( lccSensorHeater_t mode, uint8_t pulse_ms=0 ) {
+boolean lcc_sensor::heaterStart( uint16_t pulse_ms ) {
 
   if( !_initialized ) {
     log_error(F("\n[lcc_sensor] uninitialized sensor ?!?!")); log_flush();
-    return;
+    return false;
   }
 
-  if( _heater_gpio==INVALID_GPIO ) return;
+  if( _heater_gpio==INVALID_GPIO or pulse_ms==0 ) return false;
 
-  if( mode==lccSensorHeater_t::heater_pulse and pulse_ms ) {
-    // we don't change _heater_status as it won't change after the toogle operation
-    digitalWrite( _heater_gpio, !digitalRead(_heater_gpio) );
-    delay( pulse_ms );   // max 255ms
-    digitalWrite( _heater_gpio, !digitalRead(_heater_gpio) );
+  // ok, we start heating the sensor
+  digitalWrite( _heater_gpio, HIGH );
+
+  // short pulse ?
+  if( pulse_ms < MAIN_LOOP_DELAY ) {
+    delay( pulse_ms );
+    digitalWrite( _heater_gpio, LOW );
+    return false; // no delay activated
   }
-  else if( mode<lccSensorHeater_t::heater_pulse ) {
-    digitalWrite( _heater_gpio, (mode==lccSensorHeater_t::heater_off ? LOW : HIGH) );
+
+  // long pulse, activating heating delay
+  _heater_start = millis();
+  return true;
+}
+
+
+/**************************************************************************/
+/*! 
+    @brief  non blocking API requesting about heating status
+            return false: heating is over
+            return true: heating is currently active
+*/
+/**************************************************************************/
+boolean lcc_sensor::heaterBusy( void ) {
+
+  if( !_initialized ) {
+    log_error(F("\n[lcc_sensor] uninitialized sensor ?!?!")); log_flush();
+    return false;
   }
-  else {
-    log_warning(F("\n[lcc_sensor] inconsistent pulse mode & value!")); log_flush();
-    return;
+
+  if( _heater_gpio==INVALID_GPIO ) return false;
+
+  /* reached the delay ?
+   * look at https://arduino.stackexchange.com/questions/33572/arduino-countdown-without-using-delay/33577#33577
+   * for an explanation about millis() that wrap around!
+   */
+
+  if( (millis() - _heater_start) >= (unsigned long)LCC_SENSOR_HEATER_MS ) {
+    // end of heating period
+    digitalWrite( _heater_gpio, LOW );
+    return false;
   }
+
+  // heating still on way
+  return true;
 }
 
 
@@ -455,7 +498,7 @@ void lcc_sensor::_reset_gpio( void ) {
   // configure gpio output
   if( _heater_gpio != INVALID_GPIO ) {
     pinMode( _heater_gpio, OUTPUT );
-    setHeater( LCC_SENSOR_HEATER_DEFL );
+    pinMode( _heater_gpio, LOW );
   }
 }
 

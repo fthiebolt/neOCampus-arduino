@@ -71,7 +71,9 @@ enum {
  * Whenever GAIN is changing, there's 'integration delay' to be taken
  * into account.
  */
+#ifndef LCC_SENSOR_INTEGRATION_MS
 #define LCC_SENSOR_INTEGRATION_MS 1000  // ms
+#endif /* LCC_SENSOR_INTEGRATION_MS */
 
 /* Note about ESP32 ADC linearity: we'll activate various gains from
  * LCC_SENSOR_GAIN_MAX downto LCC_SENSOR_GAIN_MIN till the retrieved value
@@ -81,13 +83,10 @@ enum {
 #define LCC_SENSOR_VTH            3.0 // ADC voltage threshold
 #endif /* LCC_SENSOR_VTH */
 
-// output field corresponds to GPIO activating the heater
-enum class lccSensorHeater_t : uint8_t {
-  heater_off      = 0,
-  heater_on       = 1,
-  heater_pulse    = 2   // pulse mode ==> toggle output up to 255ms
-};
-#define LCC_SENSOR_HEATER_DEFL    lccSensorHeater_t::heater_off
+/* heater delay */
+#ifndef LCC_SENSOR_HEATER_MS
+#define LCC_SENSOR_HEATER_MS      30000   // ms. max is 65535
+#endif /* LCC_SENSOR_HEATER_MS */
 
 // Finite state machine
 enum class lccSensorState_t : uint8_t {
@@ -129,7 +128,8 @@ class lcc_sensor : public generic_driver {
   // --- i.e subclass have direct access to
   protected:
     // -- private/protected methods
-    void setHeater( lccSensorHeater_t, uint8_t );
+    boolean heaterStart( uint16_t );
+    boolean heaterBusy( void );
     uint8_t setGain( uint8_t );
     boolean _init( void );      // low-level init
     void _reset_gpio( void );   // set GPIOs at initial state
@@ -138,6 +138,7 @@ class lcc_sensor : public generic_driver {
     char _subID[SENSO_SUBID_MAXSIZE];
     uint8_t _inputs[LCC_SENSOR_LAST_INPUT];
     uint8_t _heater_gpio;         // GPIO PIN to start heating the sensor
+    unsigned long _heater_start;  // ms system time heater started
     uint8_t _cur_gain;            // currently selected Resistor to AOP input
     lccSensorState_t _FSMstatus;  // FSM
     

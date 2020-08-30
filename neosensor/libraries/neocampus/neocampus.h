@@ -42,9 +42,17 @@ typedef uint32_t firmwareRev_t;
  * Simultaneous TCP connexions
  */
 #if defined(ESP8266) && !defined(MAX_TCP_CONNECTIONS)
-#define MAX_TCP_CONNECTIONS              8       // maximum number of simultaneous TCP connexions (5 as default)
+#define MAX_TCP_CONNECTIONS       8     // maximum number of simultaneous TCP connexions (5 as default)
 #endif
 
+
+/*
+ * Main loop() delay:
+ * each loop() iteration is delayed for such value
+ */
+#ifndef MAIN_LOOP_DELAY
+#define MAIN_LOOP_DELAY           250   // ms
+#endif /* MAIN_LOOP_DELAY */
 
 
 /*

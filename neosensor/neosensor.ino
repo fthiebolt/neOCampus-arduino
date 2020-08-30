@@ -128,10 +128,6 @@
 /*
  * Definitions
 */
-// main loop delay
-#ifndef MAIN_LOOP_DELAY
-#define MAIN_LOOP_DELAY         250   // ms
-#endif /* MAIN_LOOP_DELAY */
 
 // Debug related definitions
 #define SERIAL_BAUDRATE   115200

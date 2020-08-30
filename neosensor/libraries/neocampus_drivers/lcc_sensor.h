@@ -130,7 +130,7 @@ class lcc_sensor : public generic_driver {
     // -- private/protected methods
     boolean heaterStart( uint16_t );
     boolean heaterBusy( void );
-    boolean autoGainStart( uint8_t );
+    boolean autoGainStart( uint8_t, uint8_t );
     boolean autoGainBusy( void );
     boolean _init( void );      // low-level init
     void _reset_gpio( void );   // set GPIOs at initial state

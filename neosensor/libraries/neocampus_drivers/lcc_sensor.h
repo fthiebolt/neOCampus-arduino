@@ -130,8 +130,12 @@ class lcc_sensor : public generic_driver {
     // -- private/protected methods
     boolean heaterStart( uint16_t );
     boolean heaterBusy( void );
-    boolean autoGainStart( uint8_t, uint8_t );
-    boolean autoGainBusy( void );
+
+    boolean autoGainStart( uint16_t );
+    boolean autoGainBusy( uint16_t );
+
+    boolean readSensor_mv( uint32_t* );   // internal ADC read; sends back voltage_mv
+  
     boolean _init( void );      // low-level init
     void _reset_gpio( void );   // set GPIOs at initial state
 
@@ -139,13 +143,15 @@ class lcc_sensor : public generic_driver {
     char _subID[SENSO_SUBID_MAXSIZE];
     uint8_t _inputs[LCC_SENSOR_LAST_INPUT];
     uint8_t _heater_gpio;         // GPIO PIN to start heating the sensor
-    unsigned long _heater_start;  // ms system time heater started
     uint8_t _cur_gain;            // currently selected Resistor to AOP input
+
     lccSensorState_t _FSMstatus;  // FSM
+    unsigned long _FSMtimerStart; // ms system time start of current state;
+                                  // Only relevant when timerDelay is not null
+    uint16_t _FSMtimerDelay;      // ms delay to cur state timeout
     
     boolean _initialized;
     static const char *units;
-    // uint8_t _integrationTime; // ms time to integrate a measure
 };
 
 #endif /* _LCC_SENSOR_H_ */

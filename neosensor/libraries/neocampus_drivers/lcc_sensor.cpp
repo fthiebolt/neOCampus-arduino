@@ -2,7 +2,7 @@
 /*! 
   @file     lcc_sensor.cpp
   @author   F.Thiebolt (neOCampus / Univ.Tlse3)
-  @license  
+  @license
 	
 	LCC's Airquality sensors driver for neOCampus
 
@@ -193,31 +193,34 @@ void lcc_sensor::process( void )
     // IDLE
     case lccSensorState_t::idle:
       log_debug(F("\n\t[lcc_sensor] Idle")); log_flush();
+      _FSMtimerDelay = 0;
+
       // activate heating ...
-      heaterStart( (uint16_t)LCC_SENSOR_HEATER_MS );
-      log_debug(F("\n\t[lcc_sensor] start heating ...")); log_flush();
-      // ... and continue with next step ...
       _FSMstatus = lccSensorState_t::heating;
+      log_debug(F("\n\t[lcc_sensor] start heating ...")); log_flush();
+      heaterStart();
+      // ... and continue with next step ...
       //break;
 
     // HEATING
     case lccSensorState_t::heating:
       // still in heating process ?
-      if( heaterBusy() ) break;
+      if( heaterBusy() break;
       log_debug(F("\n\t[lcc_sensor] heating is over ...")); log_flush();
 
       // ok continue with next step: auto gain
-      log_debug(F("\n\t[lcc_sensor] sensor auto-gain activation ...")); log_flush();
-      autoGainStart();
       _FSMstatus = lccSensorState_t::auto_gain;
+      autoGainStart();
+      log_debug(F("\n\t[lcc_sensor] sensor auto-gain activation ...")); log_flush();
 
     // AUTO-GAIN
     case lccSensorState_t::auto_gain:
       // still in the autoGain process ?
       if( autoGainBusy() ) break;
       log_debug(F("\n\t[lcc_sensor] auto-gain ends ...")); log_flush();
-      // switch to latest step: measure
+      // continue with next step: measure
       _FSMstatus = lccSensorState_t::measuring;
+      //break;
 
     // MEASURING
     case lccSensorState_t::measuring:
@@ -324,12 +327,7 @@ boolean lcc_sensor::acquire( float *pval )
             otherwise this is a non blocking API.
 */
 /**************************************************************************/
-boolean lcc_sensor::heaterStart( uint16_t pulse_ms ) {
-
-  if( !_initialized ) {
-    log_error(F("\n[lcc_sensor] uninitialized sensor ?!?!")); log_flush();
-    return false;
-  }
+boolean lcc_sensor::heaterStart( uint16_t pulse_ms=LCC_SENSOR_HEATER_MS ) {
 
   if( _heater_gpio==INVALID_GPIO or pulse_ms==0 ) return false;
 
@@ -340,11 +338,14 @@ boolean lcc_sensor::heaterStart( uint16_t pulse_ms ) {
   if( pulse_ms < MAIN_LOOP_DELAY ) {
     delay( pulse_ms );
     digitalWrite( _heater_gpio, LOW );
+    _FSMtimerDelay = 0;
     return false; // no delay activated
   }
 
-  // long pulse, activating heating delay
-  _heater_start = millis();
+  // set FSM timer ...
+  _FSMtimerStart = millis()
+  _FSMtimerDelay = pulse_ms;
+
   return true;
 }
 
@@ -354,24 +355,20 @@ boolean lcc_sensor::heaterStart( uint16_t pulse_ms ) {
     @brief  non blocking API requesting about heating status
             return false: heating is over
             return true: heating is currently active
-*/
+ */
 /**************************************************************************/
 boolean lcc_sensor::heaterBusy( void ) {
 
-  if( !_initialized ) {
-    log_error(F("\n[lcc_sensor] uninitialized sensor ?!?!")); log_flush();
-    return false;
-  }
-
-  if( _heater_gpio==INVALID_GPIO ) return false;
+  if( _heater_gpio==INVALID_GPIO or _FSMtimerDelay==0 ) return false;
 
   /* reached the delay ?
    * look at https://arduino.stackexchange.com/questions/33572/arduino-countdown-without-using-delay/33577#33577
    * for an explanation about millis() that wrap around!
    */
-  if( (millis() - _heater_start) >= (unsigned long)LCC_SENSOR_HEATER_MS ) {
+  if( (millis() - _FSMtimerStart) >= (unsigned long)_FSMtimerDelay ) {
     // end of heating period
     digitalWrite( _heater_gpio, LOW );
+    _FSMtimerDelay = 0;
     return false;
   }
 
@@ -382,22 +379,94 @@ boolean lcc_sensor::heaterBusy( void ) {
 
 /**************************************************************************/
 /*! 
-    @brief  automatic selection of best gain for our AOP
-            if integration_ms is lower than loop() delay, we act in a
-            blocking way, otherwise non blocking API.
+    @brief  automatic selection of highest available gain for our AOP
  */
 /**************************************************************************/
-boolean lcc_sensor::autoGainStart( uint8_t gain=LCC_SENSOR_GAIN_NONE, uint8_t integration_ms=LCC_SENSOR_INTEGRATION_MS ) {
+boolean lcc_sensor::autoGainStart( uint16_t integration_ms=LCC_SENSOR_INTEGRATION_MS ) {
 
-  if( !_initialized ) {
-    log_error(F("\n[lcc_sensor] uninitialized sensor ?!?!")); log_flush();
-    return LCC_SENSOR_GAIN_NONE;
+  // activate highest possible (and available) gain
+  boolean _gainSet = false;
+  for( uint8_t g=LCC_SENSOR_GAIN_MAX; g>=LCC_SENSOR_GAIN_MIN; g-- ) {
+    if( _inputs[g]==INVALID_GPIO ) continue;
+    // ok we found a valid GPIO
+    if( _gainSet ) {
+      // since gain is already selected, set others as input
+      pinMode( _inputs[g], INPUT );
+      continue;
+    }
+    // ok found highest gain gpio available
+    pinMode( _inputs[g], OUTPUT );
+    digitalWrite( _inputs[g], LOW );
+    _gainSet = true;
+    // if current gain is already the selected one ... don't have to wait !
+    if( g == _cur_gain ) {
+      _FSMtimerDelay = 0;
+      continue;
+    }
+    _cur_gain = g;
+    if( integration_ms < MAIN_LOOP_DELAY ) {
+      delay( integration_ms );
+      _FSMtimerDelay = 0;
+    }
+    _FSMtimerStart = millis();
+    _FSMtimerDelay = integration_ms;
   }
 
-  // select start gain
-  if( gain==LCC_SENSOR_GAIN_NONE ) gain=LCC_SENSOR_GAIN_MAX;
+  if( !_gainSet ) {
+    log_error(F("\n[lcc_sensor] no gpio available to set proper gain ... continuing")); log_flush();
+    _cur_gain = LCC_SENSOR_GAIN_NONE;
+    return false;
+  }
 
-to be continued
+  return true;
+}
+
+
+/**************************************************************************/
+/*! 
+    @brief  automatic selection of highest available gain for our AOP
+ */
+/**************************************************************************/
+boolean lcc_sensor::autoGainBusy( uint16_t integration_ms=LCC_SENSOR_INTEGRATION_MS ) {
+
+  // no gain set means no gpio available
+  if( _cur_gain == LCC_SENSOR_GAIN_NONE ) return false;
+
+  boolean _found = false;
+
+  do {
+
+    // do we need to wait (i.e are we busy) ?
+    if( _FSMtimerDelay!=0 and 
+        (millis() - _FSMtimerStart) < (unsigned long)_FSMtimerDelay ) return true;
+
+    // read adc
+    uint32_t _adc_val;
+    if( !readSensor_mv( &_adc_val ) ) {
+      log_error(F("[lcc_sensor] unable to read our ADC ?!?! ... aborting")); log_flush();
+      break;
+    }
+    float adc_mv = (float)_adc_val;
+
+    // check value < LCC_SENSOR_VTH
+    if( adc_mv <= (float)LCC_SENSOR_VTH*(float)1000.0 ) {
+      _found = true;
+      break;
+    }
+
+    // decrease gain
+
+
+    // wait delay (short pulse)
+
+  } while( (_cur_gain >= LCC_SENSOR_GAIN_MIN) and _found==false );
+
+  if( !_found ) {
+
+  }
+
+  to be continued
+
 
   // if current gain is the same ...
   if( gain==_cur_gain ) return _cur_gain;
@@ -451,7 +520,12 @@ boolean lcc_sensor::_init( void ) {
 
   // set FSM initial state
   _FSMstatus = LCC_SENSOR_STATE_DEFL;
+  _FSMtimerDelay = 0;
 
+/*
+  setGain();
+  setTiming();
+*/
   // powerOFF module
   powerOFF();  // as of [aug.20] there's no power settings
 
@@ -466,7 +540,7 @@ boolean lcc_sensor::_init( void ) {
 /**************************************************************************/
 void lcc_sensor::_reset_gpio( void ) {
 
-  // configure GAIN gpio(s)
+  // configure gpio inputs
   for( uint8_t pin : _inputs ) {
     if( pin==INVALID_GPIO ) continue;
     pinMode( pin, INPUT );
@@ -482,7 +556,7 @@ void lcc_sensor::_reset_gpio( void ) {
      */
     adc1_config_channel_atten( (adc1_channel_t)digitalPinToAnalogChannel(_inputs[LCC_SENSOR_ANALOG]), ADC_ATTEN_DB_11 );
   }
-  #else /* DISABLE_ADC_CAL */
+  #else /* ADC_CAL is disabled */
   /*
    * regular ADC configuration, defaults are:
    * - 8 times sampling

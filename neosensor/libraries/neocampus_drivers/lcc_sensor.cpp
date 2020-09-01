@@ -386,6 +386,7 @@ boolean lcc_sensor::autoGainStart( uint16_t integration_ms=LCC_SENSOR_INTEGRATIO
 
   // activate highest possible (and available) gain
   boolean _gainSet = false;
+
   for( uint8_t g=LCC_SENSOR_GAIN_MAX; g>=LCC_SENSOR_GAIN_MIN; g-- ) {
     if( _inputs[g]==INVALID_GPIO ) continue;
     // ok we found a valid GPIO
@@ -407,6 +408,7 @@ boolean lcc_sensor::autoGainStart( uint16_t integration_ms=LCC_SENSOR_INTEGRATIO
     if( integration_ms < MAIN_LOOP_DELAY ) {
       delay( integration_ms );
       _FSMtimerDelay = 0;
+      continue;
     }
     _FSMtimerStart = millis();
     _FSMtimerDelay = integration_ms;
@@ -417,6 +419,8 @@ boolean lcc_sensor::autoGainStart( uint16_t integration_ms=LCC_SENSOR_INTEGRATIO
     _cur_gain = LCC_SENSOR_GAIN_NONE;
     return false;
   }
+
+  log_debug(F("\n[lcc_sensor][autoGainStart] _cur_gain = ")); log_debug(_cur_gain); log_flush();
 
   return true;
 }
@@ -449,57 +453,37 @@ boolean lcc_sensor::autoGainBusy( uint16_t integration_ms=LCC_SENSOR_INTEGRATION
     float adc_mv = (float)_adc_val;
 
     // check value < LCC_SENSOR_VTH
-    if( adc_mv <= (float)LCC_SENSOR_VTH*(float)1000.0 ) {
+    if( adc_mv <= LCC_SENSOR_MVTH ) {
       _found = true;
       break;
     }
 
     // decrease gain
-
+    if( !_decreaseGain() ) {
+      // unable to decrease gain ... thus this is our best value
+      _found = true;
+      break;
+    }
 
     // wait delay (short pulse)
+    if( integration_ms < MAIN_LOOP_DELAY ) {
+      delay( integration_ms );
+      _FSMtimerDelay = 0;
+      continue; // restart ADC acquire
+    }
+    _FSMtimerStart = millis();
+    _FSMtimerDelay = integration_ms;
+    return true; // we're busy so check on next loop() iteration
 
-  } while( (_cur_gain >= LCC_SENSOR_GAIN_MIN) and _found==false );
+  } while( _found==false );
+
 
   if( !_found ) {
-
+    log_warning(F("\n[lcc_sensor] ADC failure ?!?! ... continuing")); log_flush();
   }
 
-  to be continued
-
-
-  // if current gain is the same ...
-  if( gain==_cur_gain ) return _cur_gain;
-
-  // cancel current gain
-  _reset_gpio();  // _cur_gain is set to GAIN_NONE
-  if( gain==_cur_gain ) return _cur_gain;   // GAIN_NONE case
-
-  // out-of [min..max] check
-  if( gain > LCC_SENSOR_GAIN_MAX ) {
-    log_warning(F("\n[lcc_sensor] requested gain is over maximum possible, set it to max.")); log_flush();
-    gain = LCC_SENSOR_GAIN_MAX;
-  }
-  else if( gain < LCC_SENSOR_GAIN_MIN ) {
-    log_warning(F("\n[lcc_sensor] requested gain is under minimum possible, set it to min.")); log_flush();
-    gain = LCC_SENSOR_GAIN_MIN;
-  }
-
-  /* asked gain is not of NONE type ...
-   * ... but we need to check the nearest-down available gpio
-   */
-  for( uint8_t g=LCC_SENSOR_GAIN_MAX; g>=LCC_SENSOR_GAIN_MIN; g-- ) {
-    if( g > gain ) continue;
-    if( _inputs[g]==INVALID_GPIO ) continue;
-    // ok we found it and it has a valid GPIO
-    pinMode( _inputs[g], OUTPUT );
-    digitalWrite( _inputs[g], LOW );
-    _cur_gain = g;
-    return g;
-  }
-
-  log_warning(F("\n[lcc_sensor] unable to find a matching gpio ?!?! ... set to GAIN_NONE")); log_flush();
-  return _cur_gain;
+  // whatever happened, we're not busy anymore
+  return false;
 }
 
 
@@ -522,10 +506,6 @@ boolean lcc_sensor::_init( void ) {
   _FSMstatus = LCC_SENSOR_STATE_DEFL;
   _FSMtimerDelay = 0;
 
-/*
-  setGain();
-  setTiming();
-*/
   // powerOFF module
   powerOFF();  // as of [aug.20] there's no power settings
 
@@ -584,5 +564,41 @@ void lcc_sensor::_reset_gpio( void ) {
     pinMode( _heater_gpio, OUTPUT );
     pinMode( _heater_gpio, LOW );
   }
+}
+
+
+/**************************************************************************/
+/*! 
+    @brief  Decrease current gain (if possible)
+*/
+/**************************************************************************/
+boolean lcc_sensor::_decreaseGain( void ) {
+
+  if( _cur_gain == LCC_SENSOR_GAIN_MIN ) return false;
+
+  // we need to find if there exists a gpio for a lower gain
+  boolean _found = false;
+  uint8_t g = LCC_SENSOR_GAIN_NONE;
+  for( g=_cur_gain-1; g>=LCC_SENSOR_GAIN_MIN; g--) {
+    if( _inputs[g]==INVALID_GPIO ) continue;
+    _found = true;
+    break;
+  }
+
+  if( !_found or g==LCC_SENSOR_GAIN_NONE ) return false;
+
+  /* we found a lower gain ==>
+   * - disable _cur_gain gpio
+   * - enable lower gain gpio and update _cur_gaine
+   */
+  pinMode( _inputs[_cur_gain]), INPUT );
+
+  pinMode( _inputs[g], OUTPUT );
+  digitalWrite( _inputs[g], LOW );
+  _cur_gain = g;
+
+  log_debug(F("\n[lcc_sensor] _cur_gain = ")); log_debug(_cur_gain); log_flush();
+
+  return true;
 }
 

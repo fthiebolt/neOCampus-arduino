@@ -63,29 +63,29 @@ enum {
   LCC_SENSOR_ANALOG,
   LCC_SENSOR_LAST_INPUT
 };
-#define LCC_SENSOR_GAIN_NONE      (uint8_t)(-1)
-#define LCC_SENSOR_GAIN_MIN       (uint8_t)LCC_SENSOR_10K
-#define LCC_SENSOR_GAIN_MAX       (uint8_t)LCC_SENSOR_10M
+#define LCC_SENSOR_GAIN_NONE        (uint8_t)(-1)
+#define LCC_SENSOR_GAIN_MIN         (uint8_t)LCC_SENSOR_10K
+#define LCC_SENSOR_GAIN_MAX         (uint8_t)LCC_SENSOR_10M
 
 /* integration time:
  * Whenever GAIN is changing, there's 'integration delay' to be taken
  * into account.
  */
 #ifndef LCC_SENSOR_INTEGRATION_MS
-#define LCC_SENSOR_INTEGRATION_MS 1000  // ms
+#define LCC_SENSOR_INTEGRATION_MS   1000  // ms
 #endif /* LCC_SENSOR_INTEGRATION_MS */
 
 /* Note about ESP32 ADC linearity: we'll activate various gains from
  * LCC_SENSOR_GAIN_MAX downto LCC_SENSOR_GAIN_MIN till the retrieved value
  * is below the voltage threshold.
  */
-#ifndef LCC_SENSOR_VTH
-#define LCC_SENSOR_VTH            3.0 // ADC voltage threshold
-#endif /* LCC_SENSOR_VTH */
+#ifndef LCC_SENSOR_MVTH
+#define LCC_SENSOR_MVTH             (uint32_t)3000  // ADC mv threshold
+#endif /* LCC_SENSOR_MVTH */
 
 /* heater delay */
 #ifndef LCC_SENSOR_HEATER_MS
-#define LCC_SENSOR_HEATER_MS      30000   // ms. max is 65535
+#define LCC_SENSOR_HEATER_MS        30000   // ms. max is 65535
 #endif /* LCC_SENSOR_HEATER_MS */
 
 // Finite state machine
@@ -95,7 +95,7 @@ enum class lccSensorState_t : uint8_t {
   auto_gain,            // auto select proper AOP amplification
   measuring             // adc reading
 };
-#define LCC_SENSOR_STATE_DEFL     lccSensorState_t::idle
+#define LCC_SENSOR_STATE_DEFL       lccSensorState_t::idle
 
 
 
@@ -136,8 +136,9 @@ class lcc_sensor : public generic_driver {
 
     boolean readSensor_mv( uint32_t* );   // internal ADC read; sends back voltage_mv
   
-    boolean _init( void );      // low-level init
-    void _reset_gpio( void );   // set GPIOs at initial state
+    boolean _init( void );          // low-level init
+    void _reset_gpio( void );       // set GPIOs at initial state
+    boolean _decreaseGain( void );  // decrease current gain
 
     // --- private/protected attributes
     char _subID[SENSO_SUBID_MAXSIZE];

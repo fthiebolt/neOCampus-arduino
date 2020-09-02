@@ -98,6 +98,12 @@ enum class lccSensorState_t : uint8_t {
 #define LCC_SENSOR_STATE_DEFL       lccSensorState_t::idle
 
 
+/* define maximum number of measures
+ * over a single campaign.
+ */
+#define _MAX_MEASURES               (uint8_t)5    // max. is 255
+#define _MEASURES_INTERLEAVE_MS     450           // delay between two measures in the 'measuring' state
+
 
 
 /*
@@ -146,6 +152,9 @@ class lcc_sensor : public generic_driver {
     uint8_t _inputs[LCC_SENSOR_LAST_INPUT];
     uint8_t _heater_gpio;         // GPIO PIN to start heating the sensor
     uint8_t _cur_gain;            // currently selected Resistor to AOP input
+
+    uint8_t _nb_measures;               // current number of measures
+    uint32_t _measures[_MAX_MEASURES];  // currently measured mv
 
     lccSensorState_t _FSMstatus;  // FSM
     unsigned long _FSMtimerStart; // ms system time start of current state;

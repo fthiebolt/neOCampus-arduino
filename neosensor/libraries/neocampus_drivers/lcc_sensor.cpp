@@ -67,6 +67,7 @@ lcc_sensor::lcc_sensor( void ) : generic_driver() {
     _inputs[i] = INVALID_GPIO;
   }
   _cur_gain = LCC_SENSOR_GAIN_NONE;
+  _nb_measures = 0;
 }
 
 
@@ -460,6 +461,7 @@ boolean lcc_sensor::readSensor_mv( uint32_t *pval ) {
   do {
     res = esp_adc_cal_get_voltage( (adc_channel_t)digitalPinToAnalogChannel(_inputs[LCC_SENSOR_ANALOG]),
                                   adc_chars, pval );
+    if( res!=ESP_OK ) delay(20);
   } while( res!=ESP_OK and _retry-- );
   return res;
 
@@ -489,11 +491,10 @@ boolean lcc_sensor::readSensor_mv( uint32_t *pval ) {
 /**************************************************************************/
 boolean lcc_sensor::measureStart( void ) {
 
+  // reset count of measures
+  _nb_measures = 0;
 
-  // TO BE CONTINUED
-
-
-  return false;
+  return true;
 }
 
 
@@ -504,11 +505,34 @@ boolean lcc_sensor::measureStart( void ) {
 /**************************************************************************/
 boolean lcc_sensor::measureBusy( void ) {
 
+  boolean res;
+  while( _nb_measures < _MAX_MEASURES ) {
+    
+    // do we need to wait (i.e are we busy) ?
+    if( _FSMtimerDelay!=0 and 
+        (millis() - _FSMtimerStart) < (unsigned long)_FSMtimerDelay ) return true;
 
-  // TO BE CONTINUED
+    // acquire data
+    res = readSensor_mv( &_measures[_nb_measures] );
+    if( !res ) {
+      log_debug(F("\n[lcc_sensor] read failure ?!?! ... next iteration :|")); log_flush();
+      return true;
+    }
+    _nb_measures++;
 
+    // delay between two measures
+    if( _MEASURES_INTERLEAVE_MS < MAIN_LOOP_DELAY ) {
+      delay( _MEASURES_INTERLEAVE_MS );
+      continue;
+    }
 
-  return false;
+    // long delay between measures
+    _FSMtimerStart = millis();
+    _FSMtimerDelay = _MEASURES_INTERLEAVE_MS;
+    return true; // we're busy so check on next loop() iteration
+  }
+
+  return false; // not busy anymore
 }
 
 
@@ -526,6 +550,9 @@ boolean lcc_sensor::_init( void ) {
 
   // powerON module
   powerON();  // as of [aug.20] there's no power settings
+
+  // reset measures
+  _nb_measures = 0;
 
   // set FSM initial state
   _FSMstatus = LCC_SENSOR_STATE_DEFL;

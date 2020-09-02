@@ -263,9 +263,25 @@ boolean lcc_sensor::acquire( float *pval )
    * (i.e process()) we'll be sent back now.
    */
 
-  // if new data available
+  // data available ?
+  if( _nb_measures < _MAX_MEASURES ) return false;
 
-  *pval = (float)0.0;
+#if 0
+  // we'll now parse our raw measures array to produce an average
+  uint32_t mv_avg = 0;
+  for( uint8_t _mv : _measures ) {
+    mv_avg += _mv
+  }
+
+  to be continued
+
+
+  // then we convert the mv average value to a ppm one
+
+
+  return true;
+#endif /* 0 */
+
   return false;
 }
 
@@ -519,6 +535,9 @@ boolean lcc_sensor::measureBusy( void ) {
       return true;
     }
     _nb_measures++;
+
+    // last data written ?
+    if( _nb_measures == _MAX_MEASURES ) return false;
 
     // delay between two measures
     if( _MEASURES_INTERLEAVE_MS < MAIN_LOOP_DELAY ) {

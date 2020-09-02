@@ -218,18 +218,21 @@ void lcc_sensor::process( void )
       // still in the autoGain process ?
       if( autoGainBusy() ) break;
       log_debug(F("\n\t[lcc_sensor] auto-gain ends ...")); log_flush();
-      // continue with next step: measure
+
+      // ok continue with next step: measure
       _FSMstatus = lccSensorState_t::measuring;
-      //break;
+      measureStart();
+      log_debug(F("\n\t[lcc_sensor] start measuring ...")); log_flush();
 
     // MEASURING
     case lccSensorState_t::measuring:
-      // we'll make an average measure over the specified number of samples
-      log_debug(F("\n\t[lcc_sensor] start measuring ...")); log_flush();
+      // still in the measuring process ?
+      if( measureBusy() ) break;
+      log_debug(F("\n\t[lcc_sensor] end of measures :)")); log_flush();
 
 
-
-      // TO BE CONTINUED
+      // TO BE CONTINUED:
+      // delay between two measures campaign ?
 
 
       // full measurement cycle is over, let's restart on next loop()
@@ -293,18 +296,18 @@ check if below gain_min
 
 /**************************************************************************/
 /*! 
-    @brief  return sensor value
+    @brief  return sensor value.
+            Note that we send back values collected during the internal
+            sensor processing.
 */
 /**************************************************************************/
 boolean lcc_sensor::acquire( float *pval )
 {
   /* it's not possible to generate the data on the fly because there are
    * some huge delays (especially with pulse mode) before reading a data.
-  return getSensorData();
+   * Hence, average data collected during the sensor internal processing
+   * (i.e process()) we'll be sent back now.
    */
-
-  // TODO: create finite state machine that will implement continuous integration
-  // that will send back latest value when it's time to transmit data
 
   // if new data available
 
@@ -489,6 +492,43 @@ boolean lcc_sensor::autoGainBusy( uint16_t integration_ms=LCC_SENSOR_INTEGRATION
 
 /**************************************************************************/
 /*! 
+    @brief  internal ADC read; sends back voltage_mv
+*/
+/**************************************************************************/
+boolean lcc_sensor::readSensor_mv( uint32_t *pval ) {
+
+  if( pval==nullptr ) return false;
+
+#if defined(ESP32)
+  #if !defined(DISABLE_ADC_CAL)
+
+  esp_err_t res;
+  uint8_t _retry = 3;
+  do {
+    res = esp_adc_cal_get_voltage( (adc1_channel_t)digitalPinToAnalogChannel(_inputs[LCC_SENSOR_ANALOG]),
+                                  adc_chars, pval );
+  } while( res!=ESP_OK or _retry-- >= 0 );
+
+  #else /* ADC_CAL is disabled */
+  // regular ADC reading:
+
+
+
+
+  #endif /* DISABLE_ADC_CAL */
+#endif /* ESP32 advanced ADC */
+
+
+
+
+
+
+  return true;
+}
+
+
+/**************************************************************************/
+/*! 
     @brief  Low-level HW initialization
 */
 /**************************************************************************/
@@ -557,7 +597,7 @@ void lcc_sensor::_reset_gpio( void ) {
       log_error(F("\n[lcc_sensor] unknown ADC resolution ?!?!")); log_flush();
   }
   #endif /* DISABLE_ADC_CAL */
-#endif /* ESP32 adcanced ADC */
+#endif /* ESP32 advanced ADC */
 
   // configure gpio output
   if( _heater_gpio != INVALID_GPIO ) {
@@ -579,7 +619,7 @@ boolean lcc_sensor::_decreaseGain( void ) {
   // we need to find if there exists a gpio for a lower gain
   boolean _found = false;
   uint8_t g = LCC_SENSOR_GAIN_NONE;
-  for( g=_cur_gain-1; g>=LCC_SENSOR_GAIN_MIN; g--) {
+  for( g=_cur_gain-1; g>=LCC_SENSOR_GAIN_MIN; g-- ) {
     if( _inputs[g]==INVALID_GPIO ) continue;
     _found = true;
     break;
@@ -591,7 +631,7 @@ boolean lcc_sensor::_decreaseGain( void ) {
    * - disable _cur_gain gpio
    * - enable lower gain gpio and update _cur_gaine
    */
-  pinMode( _inputs[_cur_gain]), INPUT );
+  pinMode( _inputs[_cur_gain], INPUT );
 
   pinMode( _inputs[g], OUTPUT );
   digitalWrite( _inputs[g], LOW );

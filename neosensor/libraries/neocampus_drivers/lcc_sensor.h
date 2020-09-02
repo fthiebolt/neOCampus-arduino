@@ -66,6 +66,9 @@ enum {
 #define LCC_SENSOR_GAIN_NONE        (uint8_t)(-1)
 #define LCC_SENSOR_GAIN_MIN         (uint8_t)LCC_SENSOR_10K
 #define LCC_SENSOR_GAIN_MAX         (uint8_t)LCC_SENSOR_10M
+/* to compute Resistor associated to current gain */
+#define LCC_SENSOR_RBASE            10000
+#define LCC_SENSOR_RFACTOR          10
 
 /* integration time:
  * Whenever GAIN is changing, there's 'integration delay' to be taken
@@ -93,7 +96,8 @@ enum class lccSensorState_t : uint8_t {
   idle            = 0,
   heating,              // only if heater_gpio available
   auto_gain,            // auto select proper AOP amplification
-  measuring             // adc reading
+  measuring,            // adc reading
+  wait4read             // waiting for data to get sent to neOCampus
 };
 #define LCC_SENSOR_STATE_DEFL       lccSensorState_t::idle
 
@@ -140,6 +144,7 @@ class lcc_sensor : public generic_driver {
     boolean measureBusy( void );
 
     boolean readSensor_mv( uint32_t* );   // internal ADC read; sends back voltage_mv
+    float calculatePPM( uint32_t );       // convert mv voltage to PPM concentration
   
     boolean _init( void );          // low-level init
     void _reset_gpio( void );       // set GPIOs at initial state

@@ -49,9 +49,11 @@
  * 
  */
 
+
 /* declare kind of units (value_units) */
-const char *lcc_sensor::units = "ppm";
-//const char *lcc_sensor::units = "ohm";  better to avoid this, we really need to give a ppm value
+//const char *lcc_sensor::units = "ppm";
+const char *lcc_sensor::units = "ohm";  // better to avoid this, we really need to give a ppm value
+#warning "better to send ppm value instead of ohm!"
 
 
 /**************************************************************************/
@@ -193,13 +195,14 @@ void lcc_sensor::process( void )
 
     // IDLE
     case lccSensorState_t::idle:
-      log_debug(F("\n\t[lcc_sensor] Idle")); log_flush();
+      log_debug(F("\n\t[lcc_sensor] about to start a new acquisition cycle ...")); log_flush();
       _FSMtimerDelay = 0;
 
       // activate heating ...
       _FSMstatus = lccSensorState_t::heating;
-      log_debug(F("\n\t[lcc_sensor] start heating ...")); log_flush();
-      heaterStart();
+      if( heaterStart() ) {
+        log_debug(F("\n\t[lcc_sensor] start heating ...")); log_flush();
+      }
       // ... and continue with next step ...
       //break;
 
@@ -211,8 +214,9 @@ void lcc_sensor::process( void )
 
       // ok continue with next step: auto gain
       _FSMstatus = lccSensorState_t::auto_gain;
-      autoGainStart();
-      log_debug(F("\n\t[lcc_sensor] sensor auto-gain activation ...")); log_flush();
+      if( autoGainStart() ) {
+        log_debug(F("\n\t[lcc_sensor] sensor auto-gain activation ...")); log_flush();
+      }
 
     // AUTO-GAIN
     case lccSensorState_t::auto_gain:
@@ -222,8 +226,9 @@ void lcc_sensor::process( void )
 
       // ok continue with next step: measure
       _FSMstatus = lccSensorState_t::measuring;
-      measureStart();
-      log_debug(F("\n\t[lcc_sensor] start measuring ...")); log_flush();
+      if( measureStart() ) {
+        log_debug(F("\n\t[lcc_sensor] start measuring ...")); log_flush();
+      }
 
     // MEASURING
     case lccSensorState_t::measuring:
@@ -231,12 +236,18 @@ void lcc_sensor::process( void )
       if( measureBusy() ) break;
       log_debug(F("\n\t[lcc_sensor] end of measures :)")); log_flush();
 
+      // ok continue with next step: wait4read
+      _FSMstatus = lccSensorState_t::wait4read;
+      if( _nb_measures ) {
+        log_debug(F("\n\t[lcc_sensor] IDLE --> now waiting for data to get read ...")); log_flush();
+      }
 
-      // TO BE CONTINUED:
-      // delay between two measures campaign ?
+    // WAIT4READ
+    case lccSensorState_t::wait4read:
+      // waiting for data to get read before acquiring new ones
+      if( _nb_measures ) break;
 
-
-      // full measurement cycle is over, let's restart on next loop()
+      // let's restart on next loop()
       _FSMstatus = lccSensorState_t::idle;
       break;
 
@@ -265,26 +276,22 @@ boolean lcc_sensor::acquire( float *pval )
 
   // data available ?
   if( _nb_measures < _MAX_MEASURES ) return false;
+  if( _cur_gain == LCC_SENSOR_GAIN_NONE ) return false; // because it is needed to compute Rgain
 
-#if 0
   // we'll now parse our raw measures array to produce an average
-  uint32_t mv_avg = 0;
-  for( uint8_t _mv : _measures ) {
-    mv_avg += _mv
+  uint32_t mv_sum = 0;
+  for( uint8_t i=0; i<_nb_measures; i++ ) {
+    mv_sum += _measures[i];
   }
 
-  to be continued
+  // we then convert the mv average value to a ppm one
+  *pval = calculatePPM( (float)mv_sum / (float)_nb_measures );
 
-
-  // then we convert the mv average value to a ppm one
-
+  // reset measures counter (to avoid sending the same values)
+  _nb_measures = 0;
 
   return true;
-#endif /* 0 */
-
-  return false;
 }
-
 
 
 /* ------------------------------------------------------------------------------
@@ -483,14 +490,14 @@ boolean lcc_sensor::readSensor_mv( uint32_t *pval ) {
 
   #else /* ADC_CAL is disabled */
   // regular ADC reading
-  *pval = ((uint32_t)(analogRead(_inputs[LCC_SENSOR_ANALOG]))*_adc_voltageRef) / (uint32_t)pow(2,_adc_resolution)
+  *pval = ((uint32_t)(analogRead(_inputs[LCC_SENSOR_ANALOG]))*_adc_voltageRef) / ((uint32_t)(pow(2,_adc_resolution))-1);
   return true;
 
   #endif /* DISABLE_ADC_CAL */
 
 #elif defined(ESP8266)
   // 10bits resolution with 1.1 ref. voltage
-  *pval = ((uint32_t)(analogRead(_inputs[LCC_SENSOR_ANALOG]))*_adc_voltageRef) / (uint32_t)pow(2,_adc_resolution)
+  *pval = ((uint32_t)(analogRead(_inputs[LCC_SENSOR_ANALOG]))*_adc_voltageRef) / ((uint32_t)(pow(2,_adc_resolution))-1);
   return true;
 #endif
 
@@ -537,11 +544,12 @@ boolean lcc_sensor::measureBusy( void ) {
     _nb_measures++;
 
     // last data written ?
-    if( _nb_measures == _MAX_MEASURES ) return false;
+    if( _nb_measures == _MAX_MEASURES ) return false; // not busy anymore
 
     // delay between two measures
     if( _MEASURES_INTERLEAVE_MS < MAIN_LOOP_DELAY ) {
       delay( _MEASURES_INTERLEAVE_MS );
+      _FSMtimerDelay = 0;
       continue;
     }
 
@@ -552,6 +560,37 @@ boolean lcc_sensor::measureBusy( void ) {
   }
 
   return false; // not busy anymore
+}
+
+
+/**************************************************************************/
+/*! 
+    @brief  convert mv voltage to PPM concentration
+*/
+/**************************************************************************/
+float lcc_sensor::calculatePPM( uint32_t mv ) {
+
+  /* sep.20: this computation is based on Aymen algorithm.
+   * It does not produce a 'ppm' value but instead it 
+   * provides a R-ohm of the sensor itself.
+   */
+  // Gain resistor
+  uint32_t Rgain = 0;
+  switch(_cur_gain) {
+    case LCC_SENSOR_10K:
+      Rgain = 10000; break;
+    case LCC_SENSOR_100K:
+      Rgain = 100000; break;
+    case LCC_SENSOR_1M:
+      Rgain = 1000000; break;
+    case LCC_SENSOR_10M:
+      Rgain = 10000000; break;
+    default:
+      Rgain = 0;
+  }
+
+  // TO BE CONFIRMED
+  return (float)Rgain*3300/mv-Rgain;
 }
 
 

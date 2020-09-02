@@ -142,6 +142,8 @@ class lcc_sensor : public generic_driver {
 
     // --- private/protected attributes
     char _subID[SENSO_SUBID_MAXSIZE];
+    uint8_t _adc_resolution;      // nb bits current ADC resolution
+    uint16_t _adc_voltageRef;
     uint8_t _inputs[LCC_SENSOR_LAST_INPUT];
     uint8_t _heater_gpio;         // GPIO PIN to start heating the sensor
     uint8_t _cur_gain;            // currently selected Resistor to AOP input

@@ -501,29 +501,30 @@ boolean lcc_sensor::readSensor_mv( uint32_t *pval ) {
 
 #if defined(ESP32)
   #if !defined(DISABLE_ADC_CAL)
-
+  // advanced ADC reading
   esp_err_t res;
   uint8_t _retry = 3;
   do {
     res = esp_adc_cal_get_voltage( (adc1_channel_t)digitalPinToAnalogChannel(_inputs[LCC_SENSOR_ANALOG]),
                                   adc_chars, pval );
-  } while( res!=ESP_OK or _retry-- >= 0 );
+  } while( res!=ESP_OK and _retry-- >= 0 );
+  return res;
 
   #else /* ADC_CAL is disabled */
-  // regular ADC reading:
-
-
-
+  // regular ADC reading
+  *pval = ((uint32_t)(analogRead(_inputs[LCC_SENSOR_ANALOG]))*(uint32_t)3300) / (uint32_t)pow(2,_adc_resolution)
+  return true;
 
   #endif /* DISABLE_ADC_CAL */
-#endif /* ESP32 advanced ADC */
 
-
-
-
-
-
+#elif defined(ESP8266)
+  // 10bits resolution with 1.1 ref. voltage
+  *pval = ((uint32_t)(analogRead(_inputs[LCC_SENSOR_ANALOG]))*(uint32_t)1100) / (uint32_t)pow(2,_adc_resolution)
   return true;
+#endif
+
+  // error as default
+  return false;
 }
 
 
@@ -578,26 +579,40 @@ void lcc_sensor::_reset_gpio( void ) {
   }
   #else /* ADC_CAL is disabled */
   /*
-   * regular ADC configuration, defaults are:
+   * regular ADC configuration, DEFAULTS are:
    * - 8 times sampling
-   * - 11dB attenuation
+   * - 11dB attenuation ==> voltage ref is 3300mv
    * - 12 bits resolution
    */
+  // adc voltage ref
+  _adc_voltageRef  = ...
+  // adc resolution
   switch(ADC_RESOLUTION) {
     case ADC_WIDTH_BIT_12:
       // this is default, nothing todo
+      _adc_resolution = 12;
       break;
     case ADC_WIDTH_BIT_11:
-      analogSetWidth( 11 );
+      _adc_resolution = 11;
       break;
     case ADC_WIDTH_BIT_10:
-      analogSetWidth( 10 );
+      _adc_resolution = 10;
       break;
     default:
-      log_error(F("\n[lcc_sensor] unknown ADC resolution ?!?!")); log_flush();
+      _adc_resolution = 12;
+      log_error(F("\n[lcc_sensor] unknown ADC resolution ?!?! ... continuing with defaults ...")); log_flush();
   }
+  analogSetWidth( _adc_resolution );
+
   #endif /* DISABLE_ADC_CAL */
-#endif /* ESP32 advanced ADC */
+#elif defined(ESP8266)
+  /* ESP8266 defaults:
+   * - 10 bits resolution
+   * - 1100mv voltage ref
+   */
+  _adc_resolution = ADC_RESOLUTION;
+  _adc_voltageRef = 1100;
+#endif
 
   // configure gpio output
   if( _heater_gpio != INVALID_GPIO ) {

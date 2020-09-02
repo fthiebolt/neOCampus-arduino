@@ -205,7 +205,7 @@ void lcc_sensor::process( void )
     // HEATING
     case lccSensorState_t::heating:
       // still in heating process ?
-      if( heaterBusy() break;
+      if( heaterBusy() ) break;
       log_debug(F("\n\t[lcc_sensor] heating is over ...")); log_flush();
 
       // ok continue with next step: auto gain
@@ -249,53 +249,6 @@ void lcc_sensor::process( void )
 
 /**************************************************************************/
 /*! 
-    @brief  data retrieval and conversion from sensor
-*/
-/**************************************************************************/
-float lcc_sensor::getSensorData( void )
-{
-  /*
-   * Sensor data acquisition overall process
-   * - select highest amplification that produce a measured voltage < LCC_SENSOR_VTH
-   */
-  if( setGain(LCC_SENSOR_GAIN_MAX)==LCC_SENSOR_GAIN_NONE ) {
-    // no gain available ?!?!
-    return (float)0.0;
-  }
-  yield();  // ADC requires < 1ms integration time (6kHz)
-
-#if 0
-
-TO BE CONTINUED
-
-#if defined(ESP32) && !defined(DISABLE_ADC_CAL)
-  uint32_t adc_val;
-  esp_err_t res;
-we need to retry 3 times at least if error
-  res = esp_adc_cal_get_voltage( (adc1_channel_t)digitalPinToAnalogChannel(_inputs[LCC_SENSOR_ANALOG]),
-                                adc_chars, &adc_val );
-
-#endif /* ESP32 advanced ADC */
-
-
-to be continued:
-- implement FSM
-- implement continuous integration through process method
-
-  do {
-
-  } while( _cur_gain>=LCC_SENSOR_GAIN_MIN )
-
-check if below gain_min
-
-#endif /* 0 */
-
-  return (float)0.0;
-}
-
-
-/**************************************************************************/
-/*! 
     @brief  return sensor value.
             Note that we send back values collected during the internal
             sensor processing.
@@ -330,7 +283,7 @@ boolean lcc_sensor::acquire( float *pval )
             otherwise this is a non blocking API.
 */
 /**************************************************************************/
-boolean lcc_sensor::heaterStart( uint16_t pulse_ms=LCC_SENSOR_HEATER_MS ) {
+boolean lcc_sensor::heaterStart( uint16_t pulse_ms ) {
 
   if( _heater_gpio==INVALID_GPIO or pulse_ms==0 ) return false;
 
@@ -346,7 +299,7 @@ boolean lcc_sensor::heaterStart( uint16_t pulse_ms=LCC_SENSOR_HEATER_MS ) {
   }
 
   // set FSM timer ...
-  _FSMtimerStart = millis()
+  _FSMtimerStart = millis();
   _FSMtimerDelay = pulse_ms;
 
   return true;
@@ -385,7 +338,7 @@ boolean lcc_sensor::heaterBusy( void ) {
     @brief  automatic selection of highest available gain for our AOP
  */
 /**************************************************************************/
-boolean lcc_sensor::autoGainStart( uint16_t integration_ms=LCC_SENSOR_INTEGRATION_MS ) {
+boolean lcc_sensor::autoGainStart( uint16_t integration_ms ) {
 
   // activate highest possible (and available) gain
   boolean _gainSet = false;
@@ -434,7 +387,7 @@ boolean lcc_sensor::autoGainStart( uint16_t integration_ms=LCC_SENSOR_INTEGRATIO
     @brief  automatic selection of highest available gain for our AOP
  */
 /**************************************************************************/
-boolean lcc_sensor::autoGainBusy( uint16_t integration_ms=LCC_SENSOR_INTEGRATION_MS ) {
+boolean lcc_sensor::autoGainBusy( uint16_t integration_ms ) {
 
   // no gain set means no gpio available
   if( _cur_gain == LCC_SENSOR_GAIN_NONE ) return false;
@@ -505,25 +458,56 @@ boolean lcc_sensor::readSensor_mv( uint32_t *pval ) {
   esp_err_t res;
   uint8_t _retry = 3;
   do {
-    res = esp_adc_cal_get_voltage( (adc1_channel_t)digitalPinToAnalogChannel(_inputs[LCC_SENSOR_ANALOG]),
+    res = esp_adc_cal_get_voltage( (adc_channel_t)digitalPinToAnalogChannel(_inputs[LCC_SENSOR_ANALOG]),
                                   adc_chars, pval );
-  } while( res!=ESP_OK and _retry-- >= 0 );
+  } while( res!=ESP_OK and _retry-- );
   return res;
 
   #else /* ADC_CAL is disabled */
   // regular ADC reading
-  *pval = ((uint32_t)(analogRead(_inputs[LCC_SENSOR_ANALOG]))*(uint32_t)3300) / (uint32_t)pow(2,_adc_resolution)
+  *pval = ((uint32_t)(analogRead(_inputs[LCC_SENSOR_ANALOG]))*_adc_voltageRef) / (uint32_t)pow(2,_adc_resolution)
   return true;
 
   #endif /* DISABLE_ADC_CAL */
 
 #elif defined(ESP8266)
   // 10bits resolution with 1.1 ref. voltage
-  *pval = ((uint32_t)(analogRead(_inputs[LCC_SENSOR_ANALOG]))*(uint32_t)1100) / (uint32_t)pow(2,_adc_resolution)
+  *pval = ((uint32_t)(analogRead(_inputs[LCC_SENSOR_ANALOG]))*_adc_voltageRef) / (uint32_t)pow(2,_adc_resolution)
   return true;
 #endif
 
   // error as default
+  return false;
+}
+
+
+/**************************************************************************/
+/*! 
+    @brief  start measurment process now every previous steps have been
+            undertaken
+*/
+/**************************************************************************/
+boolean lcc_sensor::measureStart( void ) {
+
+
+  // TO BE CONTINUED
+
+
+  return false;
+}
+
+
+/**************************************************************************/
+/*! 
+    @brief  check about undergoing measuremt process
+*/
+/**************************************************************************/
+boolean lcc_sensor::measureBusy( void ) {
+
+
+  // TO BE CONTINUED
+
+
   return false;
 }
 
@@ -584,8 +568,11 @@ void lcc_sensor::_reset_gpio( void ) {
    * - 11dB attenuation ==> voltage ref is 3300mv
    * - 12 bits resolution
    */
-  // adc voltage ref
-  _adc_voltageRef  = ...
+  /* adc voltage ref
+   * TODO: CHANGE ME if default attenuation is not 11dB
+   */
+  _adc_voltageRef  = 3300;    // full range ADC resolution reach this voltage for a DEFAULT 11db attenuation
+
   // adc resolution
   switch(ADC_RESOLUTION) {
     case ADC_WIDTH_BIT_12:

@@ -120,19 +120,18 @@ class lcc_sensor : public generic_driver {
     const char *sensorUnits( void ) { return units; };
     String subID( void ) { return _subID; };
 
-    // internal data management
-    float getSensorData( void );
-
-
   // --- protected methods / attributes ---------------------
   // --- i.e subclass have direct access to
   protected:
     // -- private/protected methods
-    boolean heaterStart( uint16_t );
+    boolean heaterStart( uint16_t=LCC_SENSOR_HEATER_MS );
     boolean heaterBusy( void );
 
-    boolean autoGainStart( uint16_t );
-    boolean autoGainBusy( uint16_t );
+    boolean autoGainStart( uint16_t=LCC_SENSOR_INTEGRATION_MS );
+    boolean autoGainBusy( uint16_t=LCC_SENSOR_INTEGRATION_MS );
+
+    boolean measureStart( void );
+    boolean measureBusy( void );
 
     boolean readSensor_mv( uint32_t* );   // internal ADC read; sends back voltage_mv
   

@@ -27,6 +27,16 @@ First of all, you ought to install esp32 or esp8266  support in your Arduino IDE
 
 Then, run script './deploy.sh' and boards will get added to your Arduino boards list :)
 
+If not already installed, you'll need python-serial package; thus either you install it at the system level
+```
+dnf -y install python-serial
+apt-get -y install python-serial
+```
+or using the python library installation tool
+```
+pip3 install pyserial
+```
+
 Once you've launched the Arduino IDE, before compiling and uploading sketches to your board, you need to undertake the following steps:
   - @preferences --> set your Arduino sketchbook to `~/neOCampus-arduino/neosensor' ... this will lead to proper libraries
   - either select boards 'ESP32 arduino' --> 'neOSensor' or 'neOSensor-AirQuality' or select board 'ESP8266 arduino' --> 'neOSensor'

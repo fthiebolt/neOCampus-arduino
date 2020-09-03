@@ -217,27 +217,27 @@ bool SHT2x::setResolution( sht2xResolution_t res ) {
 /**************************************************************************/
 boolean SHT2x::acquire( float *pval )
 {
+  if( pval==nullptr ) return false;
+
   // HUMIDITY
   if( _measureType == sht2xMeasureType_t::humidity ) {
-    return getRH();
+    return getRH( pval );
   }
 
   // TEMPERATURE
-  float Ta = getTemp();
-  if( Ta == (float)(-1) ) {
+  if( !getTemp(pval) ) {
     // error reading value ... too bad
-    return Ta;
+    return false;
   }
 
   // [Mar.18] temperature correction for last i2c sensor ... the one
   // supposed to get tied to the main board.
 #ifdef TEMPERATURE_CORRECTION_LASTI2C
   // SHT2x only feature ONE i2c address ... so the last one as default
-  Ta += TEMPERATURE_CORRECTION_LASTI2C;
+  *pval += TEMPERATURE_CORRECTION_LASTI2C;
   log_debug(F("\n[SHT2x] corrected temperature for i2c=0x"));log_debug(_i2caddr,HEX);log_flush();
 #endif
 
-  *pval = Ta;
   return true;
 }
 
@@ -245,7 +245,10 @@ boolean SHT2x::acquire( float *pval )
 /*
  * READ sensor's HUMIDITY
  */
-float SHT2x::getRH( void ) {
+boolean SHT2x::getRH( float *pval ) {
+
+  if( pval==nullptr ) return false;
+
   uint16_t val;
   bool res = false;
   uint8_t retry = 3;
@@ -259,7 +262,7 @@ float SHT2x::getRH( void ) {
   if( res==false ) {
     // error ...
     log_error(F("\n[SHT2x] unable to read value ?!?!"));log_flush();
-    return (float)(-1);
+    return false;
   }
 
 
@@ -267,19 +270,22 @@ float SHT2x::getRH( void ) {
   // status bit(1) = 1 for RH, 0 for T
   if( not ((val >> 1) & 0x01) ) {
     log_error(F("\n[SHT2x] wrong sensor read (ought to be RH) ?!?!")); log_flush();
-    return (float)(-1);
+    return false;
   }
 
   val &= ~0x0003;	// clear status bits
-  return (-6.0 + 125.0/65536 * (float)val);
+  *pval = (-6.0 + 125.0/65536 * (float)val);
+  return true;
 }
 
 
 /*
  * READ sensor's TEMPERATURE
  */
-float SHT2x::getTemp( void )
+boolean SHT2x::getTemp( float *pval )
 {
+  if( pval==nullptr ) return false;
+
   uint16_t val;
   bool res = false;
   uint8_t retry = 3;
@@ -293,18 +299,19 @@ float SHT2x::getTemp( void )
   if( res==false ) {
     // error ...
     log_error(F("\n[SHT2x] unable to read value ?!?!"));log_flush();
-    return (float)(-1);
+    return false;
   }
 
   // check that we read proper sensor
   // status bit(1) = 1 for RH, 0 for T
   if( ((val >> 1) & 0x01) ) {
     log_error(F("\n[SHT2x] wrong sensor read (ought to be T) ?!?!")); log_flush();
-    return (float)(-1);
+    return false;
   }
 
   val &= ~0x0003;	// clear status bits
-  return (-46.85 + 175.72/65536 * (float)val);
+  *pval = (-46.85 + 175.72/65536 * (float)val);
+  return true;
 }
 
 

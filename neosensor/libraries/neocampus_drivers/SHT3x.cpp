@@ -189,16 +189,17 @@ bool SHT3x::setResolution( sht3xResolution_t res ) {
 /**************************************************************************/
 boolean SHT3x::acquire( float *pval )
 {
+  if( pval==nullptr ) return false;
+
   // HUMIDITY
   if( _measureType == sht3xMeasureType_t::humidity ) {
-    return getRH();
+    return getRH( pval );
   }
 
   // TEMPERATURE
-  float Ta = getTemp();
-  if( Ta == (float)(-1) ) {
+  if( !getTemp(pval) ) {
     // error reading value ... too bad
-    return Ta;
+    return false;
   }
 
   // [Mar.18] temperature correction for last i2c sensor ... the one
@@ -211,12 +212,11 @@ boolean SHT3x::acquire( float *pval )
   }
   // is last sensor ?
   if ( _i2caddr == _last_i2c ) {
-    Ta += TEMPERATURE_CORRECTION_LASTI2C;
+    *pval += TEMPERATURE_CORRECTION_LASTI2C;
     log_debug(F("\n[SHT3x] corrected temperature for i2c=0x"));log_debug(_i2caddr,HEX);log_flush();
   }
 #endif
 
-  *pval = Ta;
   return true;
 }
 
@@ -224,7 +224,9 @@ boolean SHT3x::acquire( float *pval )
 /*
  * READ sensor's HUMIDITY
  */
-float SHT3x::getRH( void ) {
+boolean SHT3x::getRH( float *pval ) {
+
+  if( pval==nullptr ) return false;
 
   bool res = false;
   uint8_t retry = 3;
@@ -239,7 +241,7 @@ float SHT3x::getRH( void ) {
   if( res==false ) {
     // error ...
     log_error(F("\n[SHT3x] unable to read value ?!?!"));log_flush();
-    return (float)(-1);
+    return false;
   }
 
   uint32_t _tmp = (uint32_t)val;
@@ -248,15 +250,18 @@ float SHT3x::getRH( void ) {
   // humidity = (shum * 100.0f) / 65535.0f;
   // 100.0 x _rh = val x 100 x 100 / ( 4096 x 16 )
   _tmp = (625 * _tmp) >> 12;
-  return (float)_tmp / 100.0f;
+  *pval = (float)_tmp / 100.0f;
+  return true;
 }
 
 
 /*
  * READ sensor's TEMPERATURE
  */
-float SHT3x::getTemp( void )
+boolean SHT3x::getTemp( float *pval )
 {
+  if( pval==nullptr ) return false;
+
   bool res = false;
   uint8_t retry = 3;
   uint16_t val;
@@ -270,7 +275,7 @@ float SHT3x::getTemp( void )
   if( res==false ) {
     // error ...
     log_error(F("\n[SHT3x] unable to read value ?!?!"));log_flush();
-    return (float)(-1);
+    return false;
   }
 
   int32_t _tmp = (int32_t)val;
@@ -279,7 +284,8 @@ float SHT3x::getTemp( void )
   // temp = (stemp * 175.0f) / 65535.0f - 45.0f;
   // 100.0 x _tmp = (17500 x _tmp) / (16384 x 4) - 4500
   _tmp = ((4375 * _tmp) >> 14) - 4500;
-  return (float)_tmp / 100.0f;
+  *pval = (float)_tmp / 100.0f;
+  return true;
 }
 
 
@@ -369,7 +375,7 @@ bool SHT3x::_readSensor( uint16_t *pval ) {
   }
   else {
     log_debug(F("\n[SHT3x] using cached value for "));
-    if( _measureType == sht3xMeasureType_t::humidity ) {
+    if( _measureType == sht3xMeasureType_t::temperature ) {
       log_debug(F("TEMP sensor!"));
     }
     else {

@@ -108,8 +108,8 @@ class SHT2x : public generic_driver {
     String subID( void ) { return String(_i2caddr); };
     
     // read sensor's values
-    float getRH( void );    // retrieve humidity
-    float getTemp( void );  // retrieve temperature
+    boolean getRH( float* );    // retrieve humidity
+    boolean getTemp( float* );  // retrieve temperature
 
     // --- static methods / constants -----------------------
     

@@ -204,19 +204,22 @@ void lcc_sensor::process( void )
         log_debug(F("\n\t[lcc_sensor] start heating ...")); log_flush();
       }
       // ... and continue with next step ...
+      //yield();
       //break;
 
     // HEATING
     case lccSensorState_t::heating:
       // still in heating process ?
       if( heaterBusy() ) break;
-      log_debug(F("\n\t[lcc_sensor] heating is over ...")); log_flush();
+      log_debug(F("\n\t[lcc_sensor] heating is over (or not available) ...")); log_flush();
 
       // ok continue with next step: auto gain
       _FSMstatus = lccSensorState_t::auto_gain;
       if( autoGainStart() ) {
         log_debug(F("\n\t[lcc_sensor] sensor auto-gain activation ...")); log_flush();
       }
+      //yield();
+      //break;
 
     // AUTO-GAIN
     case lccSensorState_t::auto_gain:
@@ -229,6 +232,8 @@ void lcc_sensor::process( void )
       if( measureStart() ) {
         log_debug(F("\n\t[lcc_sensor] start measuring ...")); log_flush();
       }
+      //yield();
+      //break;
 
     // MEASURING
     case lccSensorState_t::measuring:
@@ -241,6 +246,8 @@ void lcc_sensor::process( void )
       if( _nb_measures ) {
         log_debug(F("\n\t[lcc_sensor] IDLE --> now waiting for data to get read ...")); log_flush();
       }
+      //yield();
+      //break;
 
     // WAIT4READ
     case lccSensorState_t::wait4read:
@@ -367,7 +374,9 @@ boolean lcc_sensor::autoGainStart( uint16_t integration_ms ) {
   // activate highest possible (and available) gain
   boolean _gainSet = false;
 
-  for( uint8_t g=LCC_SENSOR_GAIN_MAX; g>=LCC_SENSOR_GAIN_MIN; g-- ) {
+  // WARNING: int8_t for g ... not Uint8_t ;)
+  for( int8_t g=LCC_SENSOR_GAIN_MAX; g>=LCC_SENSOR_GAIN_MIN; g-- ) {
+
     if( _inputs[g]==INVALID_GPIO ) continue;
     // ok we found a valid GPIO
     if( _gainSet ) {
@@ -422,7 +431,9 @@ boolean lcc_sensor::autoGainBusy( uint16_t integration_ms ) {
 
     // do we need to wait (i.e are we busy) ?
     if( _FSMtimerDelay!=0 and 
-        (millis() - _FSMtimerStart) < (unsigned long)_FSMtimerDelay ) return true;
+        (millis() - _FSMtimerStart) < (unsigned long)_FSMtimerDelay ) {
+      return true;
+    }
 
     // read adc
     uint32_t _adc_val;

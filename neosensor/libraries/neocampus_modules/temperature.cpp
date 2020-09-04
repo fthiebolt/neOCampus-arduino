@@ -280,6 +280,8 @@ boolean temperature::_sendValues( void ) {
   /* grab and send values from all sensors
    * each sensor will result in a MQTT message
    */
+  boolean _TXoccured = false;
+
   for( uint8_t cur_sensor=0; cur_sensor<_sensors_count; cur_sensor++ ) {
 
     StaticJsonDocument<DATA_JSON_SIZE> _doc;
@@ -301,6 +303,7 @@ boolean temperature::_sendValues( void ) {
     */
     if( sendmsg( root ) ) {
       log_info(F("\n[temperature] successfully published msg :)")); log_flush();
+      _TXoccured = true;
     }
     else {
       // we stop as soon as we've not been able to successfully send one message
@@ -311,6 +314,11 @@ boolean temperature::_sendValues( void ) {
     // delay between two successives values to send
     delay(20); 
   }
+
+  /* do we need to postpone to next TX slot:
+   * required when no data at all have been published
+   */
+  if( !_TXoccured ) cancelTXslot();
 
   return true;
 }

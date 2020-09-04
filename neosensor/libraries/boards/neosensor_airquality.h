@@ -77,7 +77,11 @@
  */
 #ifndef ADC_RESOLUTION
 #if ESP32
+ #ifndef DISABLE_ADC_CAL
   #define ADC_RESOLUTION      ADC_WIDTH_BIT_11
+ #else
+  #define ADC_RESOLUTION      11
+ #endif /* DISABLE_ADC_CAL */
 #elif ESP8266
   #define ADC_RESOLUTION      10  // default on esp8266
 #endif

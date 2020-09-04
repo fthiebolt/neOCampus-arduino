@@ -195,13 +195,13 @@ void lcc_sensor::process( void )
 
     // IDLE
     case lccSensorState_t::idle:
-      log_debug(F("\n\t[lcc_sensor] about to start a new acquisition cycle ...")); log_flush();
+      log_debug(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] about to start a new acquisition cycle ...")); log_flush();
       _FSMtimerDelay = 0;
 
       // activate heating ...
       _FSMstatus = lccSensorState_t::heating;
       if( heaterStart() ) {
-        log_debug(F("\n\t[lcc_sensor] start heating ...")); log_flush();
+        log_debug(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] start heating ...")); log_flush();
       }
       // ... and continue with next step ...
       //yield();
@@ -211,12 +211,12 @@ void lcc_sensor::process( void )
     case lccSensorState_t::heating:
       // still in heating process ?
       if( heaterBusy() ) break;
-      log_debug(F("\n\t[lcc_sensor] heating is over (or not available) ...")); log_flush();
+      log_debug(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] heating is over (or not available) ...")); log_flush();
 
       // ok continue with next step: auto gain
       _FSMstatus = lccSensorState_t::auto_gain;
       if( autoGainStart() ) {
-        log_debug(F("\n\t[lcc_sensor] sensor auto-gain activation ...")); log_flush();
+        log_debug(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] sensor auto-gain activation ...")); log_flush();
       }
       //yield();
       //break;
@@ -225,12 +225,12 @@ void lcc_sensor::process( void )
     case lccSensorState_t::auto_gain:
       // still in the autoGain process ?
       if( autoGainBusy() ) break;
-      log_debug(F("\n\t[lcc_sensor] auto-gain ends ...")); log_flush();
+      log_debug(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] auto-gain ends ...")); log_flush();
 
       // ok continue with next step: measure
       _FSMstatus = lccSensorState_t::measuring;
       if( measureStart() ) {
-        log_debug(F("\n\t[lcc_sensor] start measuring ...")); log_flush();
+        log_debug(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] start measuring ...")); log_flush();
       }
       //yield();
       //break;
@@ -239,12 +239,12 @@ void lcc_sensor::process( void )
     case lccSensorState_t::measuring:
       // still in the measuring process ?
       if( measureBusy() ) break;
-      log_debug(F("\n\t[lcc_sensor] end of measures :)")); log_flush();
+      log_debug(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] end of measures :)")); log_flush();
 
       // ok continue with next step: wait4read
       _FSMstatus = lccSensorState_t::wait4read;
       if( _nb_measures ) {
-        log_debug(F("\n\t[lcc_sensor] IDLE --> now waiting for data to get read ...")); log_flush();
+        log_debug(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] IDLE --> now waiting for data to get read ...")); log_flush();
       }
       //yield();
       //break;
@@ -260,7 +260,7 @@ void lcc_sensor::process( void )
 
     // default
     default:
-      log_error(F("\n[lcc_sensor] unknown FSM state ?!?! ... resetting !")); log_flush();
+      log_error(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] unknown FSM state ?!?! ... resetting !")); log_flush();
       _init();
   }
 }
@@ -390,26 +390,29 @@ boolean lcc_sensor::autoGainStart( uint16_t integration_ms ) {
     _gainSet = true;
     // if current gain is already the selected one ... don't have to wait !
     if( g == _cur_gain ) {
-      _FSMtimerDelay = 0;
+      integration_ms = 0; // warning, overwriting input parameter !
       continue;
     }
     _cur_gain = g;
-    if( integration_ms < MAIN_LOOP_DELAY ) {
-      delay( integration_ms );
-      _FSMtimerDelay = 0;
-      continue;
-    }
-    _FSMtimerStart = millis();
-    _FSMtimerDelay = integration_ms;
   }
 
   if( !_gainSet ) {
-    log_error(F("\n[lcc_sensor] no gpio available to set proper gain ... continuing")); log_flush();
+    log_error(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] no gpio available to set proper gain ... continuing")); log_flush();
     _cur_gain = LCC_SENSOR_GAIN_NONE;
     return false;
   }
 
-  log_debug(F("\n[lcc_sensor][autoGainStart] _cur_gain = ")); log_debug(_cur_gain); log_flush();
+  // integration delay
+  _FSMtimerDelay = 0;
+  if( integration_ms >= MAIN_LOOP_DELAY ) {
+    _FSMtimerDelay = integration_ms;
+    _FSMtimerStart = millis();
+  }
+  else if( integration_ms!=0 ) {
+    delay( integration_ms );
+  }
+
+  log_debug(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("][autoGainStart] _cur_gain = ")); log_debug(_cur_gain); log_flush();
 
   return true;
 }
@@ -438,10 +441,12 @@ boolean lcc_sensor::autoGainBusy( uint16_t integration_ms ) {
     // read adc
     uint32_t _adc_val;
     if( !readSensor_mv( &_adc_val ) ) {
-      log_error(F("[lcc_sensor] unable to read our ADC ?!?! ... aborting")); log_flush();
+      log_error(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] unable to read our ADC ?!?! ... aborting")); log_flush();
       break;
     }
     float adc_mv = (float)_adc_val;
+
+    // log_debug(F("\n[lcc_sensor] _adc_val(mv) = ")); log_debug(_adc_val); log_flush();
 
     // check value < LCC_SENSOR_VTH
     if( adc_mv <= LCC_SENSOR_MVTH ) {
@@ -470,7 +475,10 @@ boolean lcc_sensor::autoGainBusy( uint16_t integration_ms ) {
 
 
   if( !_found ) {
-    log_warning(F("\n[lcc_sensor] ADC failure ?!?! ... continuing")); log_flush();
+    log_warning(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] ADC failure ?!?! ... continuing")); log_flush();
+  }
+  else {
+    log_debug(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] selected _cur_gain = ")); log_debug(_cur_gain); log_flush();
   }
 
   // whatever happened, we're not busy anymore
@@ -497,7 +505,7 @@ boolean lcc_sensor::readSensor_mv( uint32_t *pval ) {
                                   adc_chars, pval );
     if( res!=ESP_OK ) delay(20);
   } while( res!=ESP_OK and _retry-- );
-  return res;
+  return (res==ESP_OK ? true : false);
 
   #else /* ADC_CAL is disabled */
   // regular ADC reading
@@ -549,13 +557,13 @@ boolean lcc_sensor::measureBusy( void ) {
     // acquire data
     res = readSensor_mv( &_measures[_nb_measures] );
     if( !res ) {
-      log_debug(F("\n[lcc_sensor] read failure ?!?! ... next iteration :|")); log_flush();
+      log_debug(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] read failure ?!?! ... next iteration :|")); log_flush();
       return true;
     }
     _nb_measures++;
 
     // last data written ?
-    if( _nb_measures == _MAX_MEASURES ) return false; // not busy anymore
+    if( _nb_measures == _MAX_MEASURES ) break; // not busy anymore
 
     // delay between two measures
     if( _MEASURES_INTERLEAVE_MS < MAIN_LOOP_DELAY ) {
@@ -568,6 +576,12 @@ boolean lcc_sensor::measureBusy( void ) {
     _FSMtimerStart = millis();
     _FSMtimerDelay = _MEASURES_INTERLEAVE_MS;
     return true; // we're busy so check on next loop() iteration
+  }
+
+  /* DEBUG DEBUG DEBUG */
+  log_debug(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] raw DATA read:")); log_flush();
+  for( uint32_t _val : _measures ) {
+    log_debug(F("\n\t")); log_debug(_val);log_debug(F("mv"));
   }
 
   return false; // not busy anymore
@@ -585,6 +599,9 @@ float lcc_sensor::calculatePPM( uint32_t mv ) {
    * It does not produce a 'ppm' value but instead it 
    * provides a R-ohm of the sensor itself.
    */
+
+  log_debug(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("][calculatePPM] avg adc input(mv): ")); log_debug(mv); log_flush();
+
   // Gain resistor
   uint32_t Rgain = 0;
   switch(_cur_gain) {
@@ -670,21 +687,7 @@ void lcc_sensor::_reset_gpio( void ) {
   _adc_voltageRef  = 3300;    // full range ADC resolution reach this voltage for a DEFAULT 11db attenuation
 
   // adc resolution
-  switch(ADC_RESOLUTION) {
-    case ADC_WIDTH_BIT_12:
-      // this is default, nothing todo
-      _adc_resolution = 12;
-      break;
-    case ADC_WIDTH_BIT_11:
-      _adc_resolution = 11;
-      break;
-    case ADC_WIDTH_BIT_10:
-      _adc_resolution = 10;
-      break;
-    default:
-      _adc_resolution = 12;
-      log_error(F("\n[lcc_sensor] unknown ADC resolution ?!?! ... continuing with defaults ...")); log_flush();
-  }
+  _adc_resolution = ADC_RESOLUTION;
   analogSetWidth( _adc_resolution );
 
   #endif /* DISABLE_ADC_CAL */
@@ -735,7 +738,7 @@ boolean lcc_sensor::_decreaseGain( void ) {
   digitalWrite( _inputs[g], LOW );
   _cur_gain = g;
 
-  log_debug(F("\n[lcc_sensor] _cur_gain = ")); log_debug(_cur_gain); log_flush();
+  log_debug(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] _cur_gain = ")); log_debug(_cur_gain); log_flush();
 
   return true;
 }

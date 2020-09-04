@@ -374,6 +374,8 @@ boolean airquality::_sendValues( void ) {
   /* grab and send values from all sensors
    * each sensor will result in a MQTT message
    */
+  boolean _TXoccured = false;
+
   for( uint8_t cur_sensor=0; cur_sensor<_sensors_count; cur_sensor++ ) {
 
     StaticJsonDocument<DATA_JSON_SIZE> _doc;
@@ -382,7 +384,7 @@ boolean airquality::_sendValues( void ) {
     // retrieve data from current sensor
     float value;
     if( !_sensor[cur_sensor]->acquire(&value) ) {
-      log_warning(F("\n[airquality] unable to retrieve data from sensor "));
+      log_warning(F("\n[airquality] unable to retrieve data from sensor: "));
       log_warning(_sensor[cur_sensor]->subID()); log_flush();
       continue;
     }
@@ -395,6 +397,7 @@ boolean airquality::_sendValues( void ) {
     */
     if( sendmsg(root) ) {
       log_info(F("\n[airquality] successfully published msg :)")); log_flush();
+      _TXoccured = true;
     }
     else {
       // we stop as soon as we've not been able to successfully send one message
@@ -404,6 +407,18 @@ boolean airquality::_sendValues( void ) {
     
     // delay between two successives values to send
     delay(20); 
+  }
+
+  /* do we need to postpone to next TX slot:
+   * required when no data at all have been published
+   */
+  if( !_TXoccured ) {
+    /* DEBUG DEBUG DEBUG
+    log_debug(F("\n[airquality] postponed to next TX slot ...")); log_flush();
+    delay(100);
+    #warning "remove me !!!"
+    */
+    cancelTXslot();
   }
 
   return true;

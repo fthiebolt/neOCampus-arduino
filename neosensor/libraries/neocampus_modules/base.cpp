@@ -270,6 +270,15 @@ bool base::isTXtime( void ) {
 
 
 /*
+ * Postpone TX to next slot
+ */
+void base::cancelTXslot( void ) {
+  // reset _lastTX value (so we'll postpone to next TX slot)
+  _lastTX = millis();
+}
+
+
+/*
  * set data module's data acquisition frequency
  */
 bool base::setFrequency( uint16_t freq, uint16_t min_freq, uint16_t max_freq ) {

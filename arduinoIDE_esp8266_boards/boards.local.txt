@@ -1,0 +1,76 @@
+# neOCampus / ESP8266 additional boards
+
+#
+# NEOSENSOR
+neOSensor.name=neOSensor (ESP-12E based)
+
+neOSensor.upload.tool=esptool_py
+neOSensor.upload.maximum_data_size=81920
+neOSensor.upload.wait_for_upload_port=true
+neOSensor.upload.erase_cmd=
+
+neOSensor.serial.disableDTR=true
+neOSensor.serial.disableRTS=true
+
+neOSensor.build.board=ESP8266_GENERIC
+neOSensor.build.mcu=esp8266
+neOSensor.build.core=esp8266
+neOSensor.build.variant=generic
+neOSensor.build.spiffs_pagesize=256
+neOSensor.build.led=-DLED_BUILTIN=2
+# [sep.20] let's use the delfault SDK !
+#neOSensor.build.sdk=<better is to let defaults>
+
+neOSensor.build.f_cpu=80000000L
+neOSensor.build.vtable_flags=-DVTABLES_IN_FLASH
+neOSensor.build.exception_flags=-fno-exceptions
+neOSensor.build.stdcpp_lib=-lstdc++
+neOSensor.build.sslflags=
+neOSensor.build.debug_port=
+neOSensor.build.debug_level=
+
+neOSensor.build.flash_mode=qio
+neOSensor.build.flash_flags=-DFLASHMODE_QIO
+neOSensor.build.flash_freq=40
+
+# [sep.20] additional compilation flags
+# DISABLE_AP_PASSWD: flag to disable access point password (i.e free to connect to)
+neOsensor.build.extra_flags=-DESP8266 -DNEOSENSOR_BOARD -DMQTT_KEEPALIVE=60 -DMQTT_SOCKET_TIMEOUT=60 -DMQTT_MAX_PACKET_SIZE=256 -DDISABLE_SSL -DDISABLE_AP_PASSWD
+#neOsensor.build.extra_flags=-DESP8266 -DNEOSENSOR_BOARD -DMQTT_KEEPALIVE=60 -DMQTT_SOCKET_TIMEOUT=60 -DMQTT_MAX_PACKET_SIZE=256 -DDISABLE_SSL
+#neOsensor.build.extra_flags=-DESP8266 -DNEOSENSOR_BOARD -DMQTT_KEEPALIVE=60 -DMQTT_SOCKET_TIMEOUT=60 -DMQTT_MAX_PACKET_SIZE=256
+
+neOSensor.menu.ip.lm2f=v2 Lower Memory
+neOSensor.menu.ip.lm2f.build.lwip_include=lwip2/include
+neOSensor.menu.ip.lm2f.build.lwip_lib=-llwip2-536-feat
+neOSensor.menu.ip.lm2f.build.lwip_flags=-DLWIP_OPEN_SRC -DTCP_MSS=536 -DLWIP_FEATURES=1 -DLWIP_IPV6=0
+
+neOSensor.menu.wipe.none=Only Sketch
+neOSensor.menu.wipe.none.upload.erase_cmd=
+neOSensor.menu.wipe.sdk=Sketch + WiFi Settings
+neOSensor.menu.wipe.sdk.upload.erase_cmd=erase_region "{build.rfcal_addr}" 0x4000
+neOSensor.menu.wipe.all=All Flash Contents
+neOSensor.menu.wipe.all.upload.erase_cmd=erase_flash
+
+neOSensor.menu.ResetMethod.ck=no dtr (aka ck)
+neOSensor.menu.ResetMethod.ck.upload.resetmethod=--before no_reset --after soft_reset
+
+neOSensor.menu.baud.921600=921600
+neOSensor.menu.baud.921600.upload.speed=921600
+neOSensor.menu.baud.115200=115200
+neOSensor.menu.baud.115200.upload.speed=115200
+
+# FLASH partitioning
+# [aug.20] kept 4M1M for compatibility reasons: all existing boards
+# have a 1M SPIFFS set ... that could break OTA is this partitionning change!
+neOSensor.menu.eesz.4M1M=4MB (FS:1MB OTA:~1019KB)
+neOSensor.menu.eesz.4M1M.build.flash_size=4M
+neOSensor.menu.eesz.4M1M.build.flash_size_bytes=0x400000
+neOSensor.menu.eesz.4M1M.build.flash_ld=eagle.flash.4m1m.ld
+neOSensor.menu.eesz.4M1M.build.spiffs_pagesize=256
+neOSensor.menu.eesz.4M1M.upload.maximum_size=1044464
+neOSensor.menu.eesz.4M1M.build.rfcal_addr=0x3FC000
+neOSensor.menu.eesz.4M1M.build.spiffs_start=0x300000
+neOSensor.menu.eesz.4M1M.build.spiffs_end=0x3FA000
+neOSensor.menu.eesz.4M1M.build.spiffs_blocksize=8192
+
+

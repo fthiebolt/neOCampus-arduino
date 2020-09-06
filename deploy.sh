@@ -10,11 +10,28 @@
 ESP32_REV=${ESP32_REV:-"1.0.4"}
 ESP32_DIR=${ESP32_DIR:-"~/.arduino15/packages/esp32/hardware/esp32/${ESP32_REV}"}
 eval ESP32_DIR=${ESP32_DIR}
+ESP32_SRCDIR="arduinoIDE_esp32_boards"
+
+ESP8266_REV=${ESP32_REV:-"2.7.4"}
+ESP8266_DIR=${ESP32_DIR:-"~/.arduino15/packages/esp8266/hardware/esp8266/${ESP8266_REV}"}
+eval ESP8266_DIR=${ESP32_DIR}
+ESP8266_SRCDIR="arduinoIDE_esp8266_boards"
+
+#
+# function install
+# $1: ARCH (e.g ESP8266 or ESP32)
+# $2: SDK_REV (e.g "2.7.4" for esp8266 "1.0.4" for esp32)
+function boards_install() {
+    [ $# -ne 2 ] && { return 1; }
+    
+}
+
+TO BE CONTINUED
 
 # usage
 echo -e "\n############################################################"
 echo -e   "#                                                          #"
-echo -e   "#            neOCampus ESP32 boards installer              #"
+echo -e   "#        neOCampus ESP8266/ESP32 boards installer          #"
 echo -e   "#                                                          #"
 echo -e   "# -------------------------------------------------------- #"
 

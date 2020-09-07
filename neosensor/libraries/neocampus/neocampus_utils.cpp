@@ -554,6 +554,7 @@ bool neOSensor_reset( void ) {
   const char *_prefix = PSTR(MCFG_FILE_PREFIX);
   const char *_suffix = PSTR(MCFG_FILE_SUFFIX);
 #if defined(ESP8266)
+#warning "code not tested!"
   Dir dir = SPIFFS.openDir("/");
   while( dir.next() ) {
     log_debug(F("\n[reset] found file: "));log_debug(dir.fileName());log_flush();

@@ -22,7 +22,7 @@ function boards_install() {
 
     SDK_DIR="~/.arduino15/packages/${ARCH,,}/hardware/${ARCH,,}/${SDK_REV}"
     eval SDK_DIR=${SDK_DIR}
-    [ -d ${SDK_DIR} ] || { echo -e "unable to find dir '${SDK_DIR}' ... aborting" >&2; return 1; }
+    [ -d ${SDK_DIR} ] || { echo -e "unable to find ${ARCH,,} SDK dir '${SDK_DIR}' ... wrong revision ??" >&2; return 1; }
 
     echo -e   "# Detected ${ARCH,,} SDK dir:"
     printf    "%-80s\n" "${SDK_DIR}"

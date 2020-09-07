@@ -60,7 +60,11 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include <Ticker.h>
-#include <WiFi.h>
+#if defined(ESP8266)
+  #include <ESP8266WiFi.h>
+#elif defined(ESP32)
+  #include <WiFi.h>
+#endif
 #include <lwipopts.h>                     // for ESP32 max tcp connections CONFIG_LWIP_MAX_ACTIVE_TCP
 
 /* As of esp8266 arduino lib >=2.4.0, time is managed via local or sntp along with TZ support :) */ 
@@ -69,7 +73,6 @@
   #include <coredecls.h>                  // settimeofday_cb(), tune_timeshift64()
 
   #include <sntp.h>
-  //#include <lwipopts.h>                 // for SNTP_UPDATE_DELAY (1 hour default, it's ok :) )
 #elif defined(ESP32)
   #include "lwip/apps/sntp.h"
 #endif
@@ -606,7 +609,7 @@ void earlySetup( void ) {
 #endif /* MAX_TCP_CONNECTIONS */
 
   // WiFi.disconnect(true); // to erase default credentials
-  WiFi.setAutoConnect(false);
+  WiFi.setAutoReconnect(false);
 
   // Disable sleep modes
 #ifdef ESP8266
@@ -650,8 +653,7 @@ void lateSetup( void ) {
     log_info(F("\n# current time is ")); log_info(getCurTime());
   }
 
-  // for the (future) loop mode ...
-  WiFi.setAutoConnect(true);
+  WiFi.setAutoReconnect(true);
 
 #if ESP32
   // switch back POWER MODES to auto

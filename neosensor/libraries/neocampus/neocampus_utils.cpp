@@ -553,8 +553,7 @@ bool neOSensor_reset( void ) {
    */
   const char *_prefix = PSTR(MCFG_FILE_PREFIX);
   const char *_suffix = PSTR(MCFG_FILE_SUFFIX);
-#ifdef ESP8266
-#warning "code not tested!"
+#if defined(ESP8266)
   Dir dir = SPIFFS.openDir("/");
   while( dir.next() ) {
     log_debug(F("\n[reset] found file: "));log_debug(dir.fileName());log_flush();
@@ -562,7 +561,7 @@ bool neOSensor_reset( void ) {
     if( not strstr_P( dir.fileName().c_str(), _suffix ) ) continue;
     // delete matching file
     log_debug(F("\n[reset] deleting file : "));log_debug(dir.fileName());log_flush();
-    if( !SPIFFS.remove(dir.filename()) ) {
+    if( !SPIFFS.remove(dir.fileName()) ) {
       log_warning(F("\n[reset] failed to delete file: "));log_warning(dir.fileName());log_flush();
     }
   }

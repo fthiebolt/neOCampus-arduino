@@ -20,13 +20,14 @@
 /*
  * ESP8266 advanced ops
  */
-#ifdef ESP8266
+#if defined(ESP8266)
   extern "C" {
     #include "user_interface.h"           // wifi_station_dhcpc_start, ...
   }
+  #include <ESP8266WiFi.h>
+#elif defined(ESP32)
+  #include <WiFi.h>
 #endif /* ESP8266 */
-
-#include "WiFi.h"
 
 #include "neocampus.h"
 
@@ -204,7 +205,10 @@ bool wifiParametersMgt::saveConfigFile( void ) {
  */
 bool wifiParametersMgt::_getWIFIsettings( void ) {
   // grab WIFI station connexion parameters from current connexion ...
-#ifdef ESP8266
+
+  /*
+   * [sep.20] ESP8266 DEPRECATED CODE
+   *
   struct station_config _conf;
   if( wifi_station_get_config(&_conf) and strlen(reinterpret_cast<const char*>(_conf.ssid)) ) {
   
@@ -225,7 +229,8 @@ bool wifiParametersMgt::_getWIFIsettings( void ) {
     log_debug(F("\n[wifiParams] no SSID / PASS found neither in config file nor struct station ... probably first time connect ...")); log_flush();
     return false;
   }
-#elif defined(ESP32)
+   */
+
   log_debug(F("\n[wifiParams] retrieved current ssid = ")); log_debug(WiFi.SSID());
   log_debug(F("\n[wifiParams] retrieved current pass = ")); log_debug(WiFi.psk());
   log_flush();
@@ -241,7 +246,6 @@ bool wifiParametersMgt::_getWIFIsettings( void ) {
   else {
     log_debug(F("\n[wifiParams] already matching wifi credentials thus nothing todo !")); log_flush();
   }
-#endif
 
   return true;
 }

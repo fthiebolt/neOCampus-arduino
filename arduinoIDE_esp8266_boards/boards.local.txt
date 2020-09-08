@@ -29,8 +29,8 @@ neOSensor.build.sslflags=
 neOSensor.build.debug_port=
 neOSensor.build.debug_level=
 
-neOSensor.build.flash_mode=qio
-neOSensor.build.flash_flags=-DFLASHMODE_QIO
+neOSensor.build.flash_mode=dio
+neOSensor.build.flash_flags=-DFLASHMODE_DIO
 neOSensor.build.flash_freq=40
 
 # [sep.20] additional compilation flags

@@ -643,7 +643,7 @@ void lateSetup( void ) {
   }
   
   char tmp[64];
-  snprintf(tmp,sizeof(tmp),"\n#\n# %s firmware rev %d for neOCampus started :)",getBoardName(),getFirmwareRev());
+  snprintf(tmp,sizeof(tmp),"\n\n\n#\n# %s firmware rev %d for neOCampus started :)",getBoardName(),getFirmwareRev());
   log_info(tmp);
 
   if( not cbtime_set ) {

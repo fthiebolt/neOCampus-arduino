@@ -53,8 +53,7 @@ So you'll have to search with your smartphone for this peucliar AP, and then con
 **Changing WiFi setup**\
 Once WiFi has been set, on each reboot, the neOSensor AP will get available for 50s in order for you to tweak some parameters ... or to change the WiFi it connects to.
 
-**Reset whole configuration**
-
+**Reset whole configuration**\
 To erase all of the previously set parameters (including WiFi settings), press the RST button for 10s when powering the device.
 
 

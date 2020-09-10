@@ -48,10 +48,19 @@ base::base( void ) {
   _base();
 }
 
-// constructor
+// constructor with unitID field provided and optional (default to yes)
+// mac addess append to this identity
 base::base( const char *identity ) {
 
-  setIdentity( identity );
+  // if identity is our MAC address ==> do not append mac_addr to unitID
+  if( strlen(identity)==strlen(getMacAddress()) and
+    strncmp(identity,getMacAddress(),strlen(identity))==0 ) {
+    // unitID IS MAC ADDR (i.e device module)
+    setIdentity( identity, false );
+  }
+  else {
+    setIdentity( identity );
+  }
   //snprintf( unitID, sizeof(unitID), identity );
     
   // call low-level base constructor
@@ -305,11 +314,16 @@ bool base::setFrequency( uint16_t freq, uint16_t min_freq, uint16_t max_freq ) {
 /*
  * set data module's data acquisition frequency
  */
-boolean base::setIdentity( const char *identity ) {
+boolean base::setIdentity( const char *identity, boolean append_mac ) {
 
-  const char *mac=getMacAddress();
-  uint8_t mac_len=strlen(mac);
-  snprintf( unitID, sizeof(unitID), "%s_%c%c%c%c", (identity ? identity : "auto"), mac[mac_len-5],mac[mac_len-4],mac[mac_len-2],mac[mac_len-1]);
+  if( !append_mac and identity!=nullptr ) {
+    snprintf( unitID, sizeof(unitID), "%s", identity );
+  }
+  else {
+    const char *mac=getMacAddress();
+    uint8_t mac_len=strlen(mac);
+    snprintf( unitID, sizeof(unitID), "%s_%c%c%c%c", (identity ? identity : "auto"), mac[mac_len-5],mac[mac_len-4],mac[mac_len-2],mac[mac_len-1]);
+  }
 
   //log_debug(F("\n\t[base] set module's identity to ")); log_debug(unitID); log_flush();
   

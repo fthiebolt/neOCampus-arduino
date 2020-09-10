@@ -61,7 +61,7 @@ class base {
     bool isTXtime( void );
     void cancelTXslot( void );    // postpone TX to next slot
     bool setFrequency( uint16_t, uint16_t, uint16_t );
-    boolean setIdentity( const char *identity=nullptr );  // set UnitID base field (from senso config for example)
+    boolean setIdentity( const char *identity=nullptr, boolean append_mac=true );  // set UnitID base field (from senso config for example)
                                             // ... will get added mac addr 2 last digits
                                             // e.g <identity>_<mac[5]mac[6]>
     bool sendmsg( JsonObject );

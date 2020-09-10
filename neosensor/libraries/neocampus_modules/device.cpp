@@ -36,7 +36,7 @@
 
 
 // constructor
-device::device(): base( getMacAddress() ) 
+device::device(): base( getMacAddress() )
 {
   _freq = DEFL_DEVICE_FREQUENCY;
 

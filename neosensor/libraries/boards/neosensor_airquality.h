@@ -30,7 +30,7 @@
  */
 #define BOARD_NAME          "AirQuality"    // no more than 10 chars
 #define BOARD_REVISION      1.0
-#define BOARD_FWREV         201002          // Firmware revision <year><month><day> in 2 digits each
+#define BOARD_FWREV         200910          // Firmware revision <year><month><day> in 2 digits each
 
 
 // define what is an invalid gpio

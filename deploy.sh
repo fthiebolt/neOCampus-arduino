@@ -2,13 +2,15 @@
 #
 # Deployment script for neOCampus / neOSensor ESP32 based boards
 #
+# F.Thiebolt    sep.20  force SDK 2.7.1 for esp8266 (2.7.4 exhibits WiFi failures
+#                       in higly degraded WiFi environment).
 # F.Thiebolt    aug.20  initial release
 #
 
 #
 # Global defs
 ESP32_REV=${ESP32_REV:-"1.0.4"}
-ESP8266_REV=${ESP8266_REV:-"2.7.4"}
+ESP8266_REV=${ESP8266_REV:-"2.7.1"}
 
 
 #

@@ -10,6 +10,7 @@
 
     aug.20  F.Thiebolt  neOCampus integration
                         adapted for neOCampus
+                        added new CalculatePPM computation proposal
     2020  Aymen Sendhi  sensor low-level functions
 */
 /**************************************************************************/
@@ -617,8 +618,12 @@ float lcc_sensor::calculatePPM( uint32_t mv ) {
       Rgain = 0;
   }
 
-  // TO BE CONFIRMED
-  return (float)Rgain*3300/mv-Rgain;
+  // Original Rsensor computation (Aymen)
+  //return (float)Rgain*3300/mv-Rgain;
+
+  // [aug.20] Francois Rsensor computation proposal,
+  // ... best will be to evalute a PPM concentration ;)
+  return (float)Rgain*(5000-mv)/mv;
 }
 
 

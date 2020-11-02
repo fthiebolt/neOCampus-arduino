@@ -4,6 +4,9 @@
  * AirQuality module to manage all kind of air quality sensors that does not
  * fit within the existing sensOCampus classes.
  * 
+ * Thiebolt.F nov.20  previous 'force data as float' didn't work! we need to
+ *                    use serialized(String(1.0,6)); // 1.000000
+ * https://arduinojson.org/v6/how-to/configure-the-serialization-of-floats/
  * F.Thiebolt   Aug.20  initial release
  * 
  */
@@ -31,6 +34,8 @@
 #define CONFIG_JSON_SIZE        (JSON_OBJECT_SIZE(3))   // for config FILE that contains: frequency
                                                         // note: others parameters are sent from sensOCampus
                                                         // hence not saved ;)
+// [nov.20] set FLOAT resolution data to send over MQTT
+#define FLOAT_RESOLUTION        3
 
 
 
@@ -388,7 +393,9 @@ boolean airquality::_sendValues( void ) {
       log_warning(_sensor[cur_sensor]->subID()); log_flush();
       continue;
     }
-    root[F("value")] = (float)( value );   // [may.20] force data as float (e.g ArduinoJson converts 20.0 to INT)
+    root[F("value")] = serialized(String(value,FLOAT_RESOLUTION));   // [nov.20] force float encoding
+    //root[F("value")] = (float)( value );   // [may.20] force data as float (e.g ArduinoJson converts 20.0 to INT)
+                                                // this doesn't work since ArduinoJson converts to STRING withiout decimal!
     root[F("value_units")] = _sensor[cur_sensor]->sensorUnits();
     root[F("subID")] = _sensor[cur_sensor]->subID();
 

@@ -3,7 +3,10 @@
  * 
  * Temperature module to manage all temperature sensors
  * 
- * Thiebolt.F may.20  force data as float 
+ * Thiebolt.F nov.20  previous 'force data as float' didn't work! we need to
+ *                    use serialized(String(1.0,6)); // 1.000000
+ * https://arduinojson.org/v6/how-to/configure-the-serialization-of-floats/
+ * Thiebolt.F may.20  force data as float
  * Thiebolt.F may.18  send back status upon any change settings received order 
  * Thiebolt.F jul.17  initial release
  * 
@@ -30,7 +33,8 @@
 #define MQTT_MODULE_NAME        "temperature"  // used to build module's base topic
 #define DATA_JSON_SIZE          (JSON_OBJECT_SIZE(20))
 #define CONFIG_JSON_SIZE        (JSON_OBJECT_SIZE(3))   // config file contains: frequency
-
+// [nov.20] set FLOAT resolution data to send over MQTT
+#define FLOAT_RESOLUTION        3
 
 
 // constructor
@@ -294,6 +298,9 @@ boolean temperature::_sendValues( void ) {
       log_warning(_sensor[cur_sensor]->subID()); log_flush();
       continue;
     }
+    root[F("value")] = serialized(String(value,FLOAT_RESOLUTION));   // [nov.20] force float encoding
+    //root[F("value")] = (float)( value );   // [may.20] force data as float (e.g ArduinoJson converts 20.0 to INT)
+                                            // this doesn't work since ArduinoJson converts to STRING withiout decimal!
     root[F("value")] = (float)( value );   // [may.20] force data as float (e.g ArduinoJson converts 20.0 to INT)
     root[F("value_units")] = _sensor[cur_sensor]->sensorUnits();
     root[F("subID")] = _sensor[cur_sensor]->subID();

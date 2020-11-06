@@ -42,31 +42,6 @@ const char *MAX44009::units = "lux";
 
 
 
-WARNING: repeated start required to read I2C
-
-TO BE CONTINUED
-
-
-
-/*
- * Definitions
- */
-#define MAX44009_DELAY_INTTIME_800MS (900)
-#define MAX44009_DELAY_INTTIME_400MS (450)
-#define MAX44009_DELAY_INTTIME_200MS (225)
-#define MAX44009_DELAY_INTTIME_100MS (112)
-#define MAX44009_DELAY_INTTIME_50MS  (56)
-#define MAX44009_DELAY_INTTIME_25MS  (28)
-#define MAX44009_DELAY_INTTIME_12MS  (14)
-#define MAX44009_DELAY_INTTIME_6MS   (8)
-/*#define MAX44009_DELAY_INTTIME_13MS    (15)
-#define MAX44009_DELAY_INTTIME_101MS   (120)
-#define MAX44009_DELAY_INTTIME_402MS   (450)
-*/
-
-
-
-
 /**************************************************************************/
 /*! 
     @brief  Test if device at 'adr' is really a MAX44009
@@ -76,16 +51,14 @@ boolean MAX44009::is_device( uint8_t a ) {
   
   // First step, parse all addresses
   boolean found = false;
-  log_debug(F("\nStarting MAX adress test...")); log_debug(a); log_flush();
   for( uint8_t i=0; i < sizeof(MAX44009::i2c_addrs); i++ ) {
     if( MAX44009::i2c_addrs[i] == a) {
-      log_debug(F("\n Comparing")); log_debug(MAX44009::i2c_addrs[i]); log_debug(a); log_flush();
       found = true;
       break;
     }
   }
   if( found == false ) return false;
-
+  
   // check device identity
   if( !_check_identity(a) ) return false;
 
@@ -94,19 +67,41 @@ boolean MAX44009::is_device( uint8_t a ) {
 }
 
 
-
 /*
  * Constructor
  */
 MAX44009::MAX44009( void ) : generic_driver() {
   _i2caddr = INVALID_I2CADDR;
   _initialized = false;
-  _integration = MAX44009_DEFL_INTEGR_TIME;
 }
 
 
-
+/**************************************************************************/
+/*! 
+    @brief  Setups the HW
+*/
+/**************************************************************************/
 boolean MAX44009::begin( uint8_t addr=INVALID_I2CADDR ) {
+  // get i2caddr
+  if( (addr < (uint8_t)(I2C_ADDR_START)) or (addr > (uint8_t)(I2C_ADDR_STOP)) ) return false;
+  _i2caddr = addr;
+
+  // check device identity
+  if( !_check_identity(_i2caddr) ) return false;
+
+  /* set config:
+   * - nothing to configure
+   * - reset ?
+   */
+
+  // define defaults parameters
+  setResolution( _resolution );
+
+  return true;
+
+
+continued
+
   // get i2caddr
   if( (addr < (uint8_t)(I2C_ADDR_START)) or (addr > (uint8_t)(I2C_ADDR_STOP)) ) return false;
   _i2caddr = addr;
@@ -125,11 +120,10 @@ boolean MAX44009::begin( uint8_t addr=INVALID_I2CADDR ) {
   return true;
 }
 
-void MAX44009::setTiming(MAX44009IntegrationTime_t integration) {
-  if (!_initialized) begin();
-  _integration = integration;
-  write8(_i2caddr, MAX44009_REGISTER_CONFIG, _integration); //has to be checked
-}
+
+WARNING: repeated start required to read I2C --> readList
+
+TO BE CONTINUED
 
 
 /* ------------------------------------------------------------------------------
@@ -140,14 +134,16 @@ void MAX44009::setTiming(MAX44009IntegrationTime_t integration) {
  * Check that device identity is what we expect!
  */
 bool MAX44009::_check_identity( uint8_t a ) {
-  uint8_t _res;
-  //_res = read8(a, MAX44009_REGISTER_THRESHHOLDH_LOW);
-  //if( _res != 0 ) return false;
-  // log_debug(F("\n_res = ")); log_debug(_res);log_flush();
-  _res = read8(a, MAX44009_REGISTER_CONFIG);
-  // log_debug(F("\n_res = ")); log_debug(_res);log_flush();
-  return (_res == (uint8_t)0x03);
-  // check Register ID
+  
+  // read control register
+  uint8_t _res = read8(a, MAX44009_REG_CONFIG);
+  if( _res != (uint8_t)MAX44009_REG_CONFIG_DEFL) return false;
+
+  // read threshold register
+  uint16_t _res = read16(a, MAX44009_REG_THRESHOLD_UPPER);  
+  if( _res != (uint16_t)MAX44009_REG_THRESHOLD_DEFL) return false;
+
+  return true;
 }
 
 

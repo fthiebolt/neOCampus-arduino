@@ -74,7 +74,7 @@ boolean Adafruit_MCP9808::is_device( uint8_t a ) {
 */
 /**************************************************************************/
 Adafruit_MCP9808::Adafruit_MCP9808( void ) : generic_driver() {
-  _i2caddr = -1;
+  _i2caddr = INVALID_I2CADDR;
   _resolution = MCP9808_DEFL_RESOLUTION;
 }
 
@@ -83,7 +83,7 @@ Adafruit_MCP9808::Adafruit_MCP9808( void ) : generic_driver() {
     @brief  Setups the HW
 */
 /**************************************************************************/
-boolean Adafruit_MCP9808::begin( uint8_t addr=-1) {
+boolean Adafruit_MCP9808::begin( uint8_t addr=INVALID_I2CADDR) {
   // get i2caddr
   if( (addr < (uint8_t)(I2C_ADDR_START)) or (addr > (uint8_t)(I2C_ADDR_STOP)) ) return false;
   _i2caddr = addr;
@@ -190,9 +190,9 @@ boolean Adafruit_MCP9808::acquire( float *pval )
   /* [Mar.18] temperature correction for last i2c sensor ... the one
    * supposed to get tied to the main board. */
 #ifdef TEMPERATURE_CORRECTION_LASTI2C
-  static uint8_t _last_i2c = (uint8_t)-1;
+  static uint8_t _last_i2c = INVALID_I2CADDR;
   // determine last i2c addr
-  if( _last_i2c == (uint8_t)-1 ) {
+  if( _last_i2c == INVALID_I2CADDR ) {
     _last_i2c=i2c_addrs[0];
     for(uint8_t i=0; i<sizeof(i2c_addrs)/sizeof(i2c_addrs[0]); i++) {
       // same i2c addr range (e.g 0x1? or 0x4?) ?

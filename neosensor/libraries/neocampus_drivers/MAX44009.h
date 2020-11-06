@@ -55,6 +55,7 @@ enum
  * Note: when using automatic ranging mode (prefered), no hassle about integration
  * time BUT to properly read LUX high and low bytes BOTH at the SAME TIME, we need
  * i2c with Repeated START command (i.e NO STOP in between) to avoid inconsistency
+ * ==> i2c readList( ... ) function
  */
 #define MAX44009_AUTO_RANGING     0x03    // automatic mode for ranging and integration :)
 
@@ -71,6 +72,11 @@ typedef enum {
 #define MAX44009_INTEGRATION_TIME_MASK  0x07  //bits [2:0] of config register
 
 
+// typical registers values after Power On Reset
+#define MAX44009_REG_CONFIG_DEFL      0x03  // [POR] control register default value
+#define MAX44009_REG_THRESHOLD_DEFL   0xFF00  // [POR] threshold upper register default value
+
+
 
 /*
  * Class
@@ -78,15 +84,14 @@ typedef enum {
 class MAX44009 : public generic_driver {
   public:
     MAX44009( void );
-    
-    boolean begin( uint8_t );       // start with an i2c addr
-    void setTiming(MAX44009IntegrationTime_t integration);
-    void getLuminosity (uint8_t* value);
-    float calculateLux(uint8_t lowByte, uint8_t highByte);
-    void calculateExponent(uint8_t* exponent);
-    void calculateMantissa(uint8_t* mantissa);
 
-    // send back sensor's value and units
+    boolean begin( uint8_t );       // start with an i2c address
+    // no need to set resolution as it is automated as default
+
+    void powerON( void );       // switch ON
+    void powerOFF( void );      // switch OFF
+
+    // send back sensor's value and units (e.g "32,5" "°C", <i2c_addr> )
     boolean acquire( float* );
     const char *sensorUnits( void ) { return units; };
     String subID( void ) { return String(_i2caddr); };
@@ -100,15 +105,13 @@ class MAX44009 : public generic_driver {
     static boolean is_device( uint8_t );
 
   private:
-    // attributes
-    uint8_t _i2caddr;
-    MAX44009IntegrationTime_t _integration;
-    bool _initialized;
-    static const char *units;
-
-    // methods
+    // --- private methods
+    float _calculateLux( uint8_t, uint8_t );  // low byte, high byte
     static bool _check_identity( uint8_t );   // check device is what we expect!
-    void _getData( uint8_t* value );
+
+    // --- private attributes
+    uint8_t _i2caddr;
+    static const char *units;
 };
 
 #endif /* _MAX44009_H_ */

@@ -112,7 +112,7 @@ const char * SHT2x::sensorUnits( void ) {
     @brief  Setups the HW
 */
 /**************************************************************************/
-boolean SHT2x::begin( uint8_t addr=-1) {
+boolean SHT2x::begin( uint8_t addr=INVALID_I2CADDR ) {
   // get i2caddr
   if( (addr < (uint8_t)(I2C_ADDR_START)) or (addr > (uint8_t)(I2C_ADDR_STOP)) ) return false;
   _i2caddr = addr;

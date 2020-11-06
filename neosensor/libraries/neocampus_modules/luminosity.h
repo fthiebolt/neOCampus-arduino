@@ -26,6 +26,7 @@
 // chips drivers
 #include "generic_driver.h"
 #include "TSL2561.h"
+#include "MAX44009.h"
 
 
 

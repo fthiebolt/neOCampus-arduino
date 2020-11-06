@@ -70,6 +70,20 @@ boolean luminosity::add_sensor( uint8_t adr ) {
       _sensor_added = true;
     }
   }
+  else if( MAX44009::is_device( adr ) == true ) {
+    MAX44009 *cur_sensor = new MAX44009();
+    if( cur_sensor->begin( adr ) != true ) {
+      log_debug(F("\n[luminosity] ###ERROR at MAX44009 startup ... removing instance ..."));log_flush();
+      free(cur_sensor);
+      cur_sensor = NULL;
+    }
+    else {
+      // TODO: set auto_gain ?
+      cur_sensor->powerOFF();
+      _sensor[_sensors_count++] = cur_sensor;
+      _sensor_added = true;
+    }
+  }
   // add check for additional device here
 
   // summary

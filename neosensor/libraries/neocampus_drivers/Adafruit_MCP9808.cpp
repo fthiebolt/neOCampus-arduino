@@ -35,7 +35,7 @@
 /**************************************************************************/
 /*! 
     @brief  Declare list of possible I2C addrs
-    Note: two MCP9808 i2c addr exists: 0x18->1F and 0x48->4f
+    Note: two MCP9808 i2c addr ranges exists: 0x18->1F and 0x48->4f
 */
 /**************************************************************************/
 const uint8_t Adafruit_MCP9808::i2c_addrs[16] = { 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f, \

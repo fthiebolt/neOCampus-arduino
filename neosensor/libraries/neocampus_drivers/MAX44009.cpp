@@ -72,7 +72,6 @@ boolean MAX44009::is_device( uint8_t a ) {
  */
 MAX44009::MAX44009( void ) : generic_driver() {
   _i2caddr = INVALID_I2CADDR;
-  _initialized = false;
 }
 
 
@@ -89,13 +88,8 @@ boolean MAX44009::begin( uint8_t addr=INVALID_I2CADDR ) {
   // check device identity
   if( !_check_identity(_i2caddr) ) return false;
 
-  /* set config:
-   * - nothing to configure
-   * - reset ?
-   */
-
-  // define defaults parameters
-  setResolution( _resolution );
+  // set defaults gain / integration ...
+  setResolution( max44009Auto );
 
   return true;
 

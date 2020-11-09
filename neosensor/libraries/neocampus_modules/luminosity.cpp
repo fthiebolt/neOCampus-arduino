@@ -78,7 +78,7 @@ boolean luminosity::add_sensor( uint8_t adr ) {
       cur_sensor = NULL;
     }
     else {
-      // TODO: set auto_gain ?
+      // TODO: set manual mode ?
       cur_sensor->powerOFF();
       _sensor[_sensors_count++] = cur_sensor;
       _sensor_added = true;

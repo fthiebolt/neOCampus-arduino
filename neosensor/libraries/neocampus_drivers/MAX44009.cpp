@@ -72,6 +72,21 @@ boolean MAX44009::is_device( uint8_t a ) {
  */
 MAX44009::MAX44009( void ) : generic_driver() {
   _i2caddr = INVALID_I2CADDR;
+  _integrationTime = max44009IntegrationT_t::ms_integrate_auto;
+}
+
+
+/*
+ * Power modes: ON or powerOFF
+ */
+void MAX44009::powerOFF( void )
+{
+  // TODO: stop continuous integration
+}
+
+void MAX44009::powerON( void )
+{
+  // TODO: start continuous integration
 }
 
 
@@ -85,39 +100,53 @@ boolean MAX44009::begin( uint8_t addr=INVALID_I2CADDR ) {
   if( (addr < (uint8_t)(I2C_ADDR_START)) or (addr > (uint8_t)(I2C_ADDR_STOP)) ) return false;
   _i2caddr = addr;
 
+  // power ON chip ...
+  powerON();
+
   // check device identity
   if( !_check_identity(_i2caddr) ) return false;
 
-  // set defaults gain / integration ...
-  setResolution( max44009Auto );
+  // setup things ...
+  setMode( _mode );
 
-  return true;
+  // power OFF chip ...
+  powerOFF();
 
-
-continued
-
-  // get i2caddr
-  if( (addr < (uint8_t)(I2C_ADDR_START)) or (addr > (uint8_t)(I2C_ADDR_STOP)) ) return false;
-  _i2caddr = addr;
-  // check device identity
-  if( !_check_identity(_i2caddr) ) return false;
-
-  // Set default integration time and gain
-  setTiming(_integration);
-  //enable interrupt Register
-  write8(_i2caddr, MAX44009_REGISTER_INTERRUPT_ENABLE, 0x01);
-  log_debug(F("\n[MAX44000]Register 0x01 writen with value : "));log_debug(read8(_i2caddr, 0x01)) log_flush();
-  write8(_i2caddr, MAX44009_REGISTER_CONFIG, MAX44009_DEFAULT_INTEGRATION_MODE | MAX44009_DEFAULT_CONFIG);
-  log_debug(F("\n[MAX44000]Register 0x02 writen with value : "));log_debug(read8(_i2caddr, 0x02)); log_flush();
-  // chip is now initialized
-  _initialized = true;
   return true;
 }
 
 
-WARNING: repeated start required to read I2C --> readList
+/**************************************************************************/
+/*! 
+    @brief  set Mode (auto or manual)
+*/
+/**************************************************************************/
+boolean MAX44009::setMode( max44009IntegrationT_t ms=max44009IntegrationT_t::ms_integrate_auto ) {
 
-TO BE CONTINUED
+  // [nov.20] only auto mode suported
+  if( ms != max44009IntegrationT_t::ms_integrate_auto ) {
+    log_warning(F("\n[MAX44009] only support for AUTO mode right now!")); log_flush();
+    return false;
+  }
+
+  // set auto mode
+  write8( _i2caddr, static_cast<uint8_t>(max44009Regs_t::config), MAX44009_AUTO_RANGING );
+
+  return true;
+}
+
+
+/**************************************************************************/
+/*! 
+    @brief  Read registers and convert returned lux value to float
+*/
+/**************************************************************************/
+boolean MAX44009::acquire( float *pval )
+{
+  // retrieve LUMINOSITY
+  return _getLux( pval );
+}
+
 
 
 /* ------------------------------------------------------------------------------
@@ -130,16 +159,66 @@ TO BE CONTINUED
 bool MAX44009::_check_identity( uint8_t a ) {
   
   // read control register
-  uint8_t _res = read8(a, MAX44009_REG_CONFIG);
+  uint8_t _res = read8(a, max44009Regs_t::config);
   if( _res != (uint8_t)MAX44009_REG_CONFIG_DEFL) return false;
 
   // read threshold register
-  uint16_t _res = read16(a, MAX44009_REG_THRESHOLD_UPPER);  
+  uint16_t _res = read16(a, max44009Regs_t::threshold_upper);  
   if( _res != (uint16_t)MAX44009_REG_THRESHOLD_DEFL) return false;
 
   return true;
 }
 
+
+/**************************************************************************/
+/*! 
+    @brief  Read registers and convert returned lux value to float
+*/
+/**************************************************************************/
+boolean MAX44009::_getLux( float *pval )
+{
+  if( pval==nullptr ) return false;
+
+  // switvh ON device
+  powerON();
+
+  // check for auto mode with continuous integration
+  // [nov.20] only auto mode suported
+  if( ms != max44009IntegrationT_t::ms_integrate_auto ) {
+    log_warning(F("\n[MAX44009] only support for AUTO mode right now!")); log_flush();
+    return false;
+  }
+
+
+  // retrieve HIGH and LOW bytes in a SINGLE I2C transaction (repeated START)
+  uint8_t buf[2]; // 16bits data
+
+  /*
+   * read sensor's values register
+   * Note: using I2C repeated start --> single i2c transaction hence coherency for both bytes
+   * Note: since auto mode with continuous integration, no need to wait
+   */
+  if( readList( _i2caddr, static_cast<uint8_t>(max44009Regs_t::lux_upper), buf, sizeof(buf) ) != sizeof(buf) ) {
+    log_error(F("\n[MAX44009] insufficient bytes answered"));log_flush();
+    return false;
+  }
+
+  /*
+   * LUX = 2^exp*mantissa*0.72
+   */
+
+
+
+TO BE CONTINUED
+
+  *pval = ...
+
+
+  // switvh OFF device
+  powerOFF();
+
+  return true;
+}
 
 
 /* ----------------------------------------------------------
@@ -231,20 +310,4 @@ void MAX44009::calculateMantissa(uint8_t* mantissa){
   highByteRegister = read8(_i2caddr, MAX44009_REGISTER_LUX_HIGH);
   lowByteRegister = read8(_i2caddr, MAX44009_REGISTER_LUX_LOW);
   *mantissa = (highByteRegister&0xf0 * 16) + (lowByteRegister&0xf0);
-}
-
-
-/*
- * Simple wrapper to retrieve lux value from sensor :)
- * - return Lux value :)
- */
-boolean MAX44009::acquire( float *pval ) {
-
-  uint8_t value;
-
-  // get channels luminosity
-  getLuminosity( &value );
-  //*pval = 2^exp*mantissa*0.72
-  *pval = 0;
-  return true;
 }

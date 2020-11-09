@@ -35,21 +35,21 @@
  * Definitions
  */
 // Registers definition
-enum
-{
-  MAX44009_REG_INTERRUPT_STATUS = 0x00,
-  MAX44009_REG_INTERRUPT_ENABLE = 0x01,
-  MAX44009_REG_CONFIG           = 0x02,
-  MAX44009_REG_LUX_UPPER        = 0x03,
-  MAX44009_REG_LUX_LOWER        = 0x04,
-  MAX44009_REG_THRESHOLD_UPPER  = 0x05,
-  MAX44009_REG_THRESHOLD_LOWER  = 0x06,
-  MAX44009_REG_THRESHOLD_TIMER  = 0x07
+enum class max44009Regs_t : uint8_t {
+  interrupt_status                = 0x00,
+  interrupt_enable                = 0x01,
+  config                          = 0x02,
+  lux_upper                       = 0x03,
+  lux_lower                       = 0x04,
+  threshold_upper                 = 0x05,
+  threshold_lower                 = 0x06,
+  threshold_timer                 = 0x07
 };
 
 // Register: MAX44009_REG_INTERRUPT_ENABLE
-#define MAX44009_ENABLE_INTR      0x01
-#define MAX44009_DISABLEINTR      0x00
+#define MAX44009_INTR_ENABLE        0x01
+#define MAX44009_INTR_DISABLE       0x00
+#define MAX44008_INTR_MASK          0x01
 
 /* Register: MAX44009_REG_CONFIG
  * Note: when using automatic ranging mode (prefered), no hassle about integration
@@ -57,24 +57,30 @@ enum
  * i2c with Repeated START command (i.e NO STOP in between) to avoid inconsistency
  * ==> i2c readList( ... ) function
  */
-#define MAX44009_AUTO_RANGING     0x03    // automatic mode for ranging and integration :)
+#define MAX44009_AUTO_RANGING       0x03    // automatic mode for ranging and integration :)
+#define MAX44009_MANUAL_RANGING     0x43    // manual mode --> requires additional setup (integration time, divider)
 
-typedef enum {
-  MAX44009_INTEGRATIONTIME_800MS = 0x00, // 800ms (default) (Lowest power usage)
-  MAX44009_INTEGRATIONTIME_400MS = 0x01, // 400ms
-  MAX44009_INTEGRATIONTIME_200MS = 0x02, // 200ms
-  MAX44009_INTEGRATIONTIME_100MS = 0x03, // 100ms
-  MAX44009_INTEGRATIONTIME_50MS  = 0x04, // 50ms
-  MAX44009_INTEGRATIONTIME_25MS  = 0x05, // 25ms
-  MAX44009_INTEGRATIONTIME_12MS  = 0x06, // 12.5ms
-  MAX44009_INTEGRATIONTIME_6MS   = 0x07  // 6.25ms
-} MAX44009IntegrationTime_t;
-#define MAX44009_INTEGRATION_TIME_MASK  0x07  //bits [2:0] of config register
+enum class max44009IntegrationT_t : uint8_t {
+  ms_integrate_800                = 0x00, // 800ms (default) (Lowest power usage)
+  ms_integrate_400                = 0x01, // 400ms
+  ms_integrate_200                = 0x02, // 200ms
+  ms_integrate_100                = 0x03, // 100ms
+  ms_integrate_50                 = 0x04, // 50ms
+  ms_integrate_25                 = 0x05, // 25ms
+  ms_integrate_12                 = 0x06, // 12.5ms
+  ms_integrate_6                  = 0x07, // 6.25ms
+
+  ms_integrate_auto               = 0xff
+};
+#define MAX44009_INTEGRATION_MASK   0x07  //bits [2:0] of config register
 
 
-// typical registers values after Power On Reset
-#define MAX44009_REG_CONFIG_DEFL      0x03  // [POR] control register default value
-#define MAX44009_REG_THRESHOLD_DEFL   0xFF00  // [POR] threshold upper register default value
+/*
+ * Remarquable values used in detection mode:
+ * typical registers values after Power On Reset
+ */
+#define MAX44009_REG_CONFIG_DEFL    0x03  // [POR] control register default value
+#define MAX44009_REG_THRESHOLD_DEFL 0xFF00  // [POR] threshold upper register default value
 
 
 
@@ -96,6 +102,9 @@ class MAX44009 : public generic_driver {
     const char *sensorUnits( void ) { return units; };
     String subID( void ) { return String(_i2caddr); };
 
+    // MAX44009 specific methods
+    boolean setMode( max44009IntegrationT_t );
+
     // --- static methods / constants -----------------------
     
     // list of possibles I2C addrs
@@ -106,12 +115,13 @@ class MAX44009 : public generic_driver {
 
   private:
     // --- private methods
-    float _calculateLux( uint8_t, uint8_t );  // low byte, high byte
+    boolean _getLux( float* );
     static bool _check_identity( uint8_t );   // check device is what we expect!
 
     // --- private attributes
     uint8_t _i2caddr;
     static const char *units;
+    max44009IntegrationT_t _integrationTime;
 };
 
 #endif /* _MAX44009_H_ */

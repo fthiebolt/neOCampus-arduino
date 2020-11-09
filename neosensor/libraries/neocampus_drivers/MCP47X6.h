@@ -96,7 +96,7 @@ class MCP47X6 : public driver_dac {
     // --- static methods / constants -----------------------
     
     // list of possibles I2C addrs
-    static const uint8_t i2c_addrs[8];
+    static const uint8_t i2c_addrs[];
 
     // device detection
     static boolean is_device( uint8_t );

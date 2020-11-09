@@ -79,8 +79,10 @@ enum class max44009IntegrationT_t : uint8_t {
  * Remarquable values used in detection mode:
  * typical registers values after Power On Reset
  */
-#define MAX44009_REG_CONFIG_DEFL    0x03  // [POR] control register default value
-#define MAX44009_REG_THRESHOLD_DEFL 0xFF00  // [POR] threshold upper register default value
+#define MAX44009_REG_CONFIG_DEFL        0x03  // [POR] control register default value
+#define MAX44009_REG_CONFIG_DEFL_ALT    0x01  // [POR] control register default alternate value (fakes ??)
+#define MAX44009_REG_THRESHOLD_DEFL     0xFF00  // [POR] threshold register default value
+#define MAX44009_REG_THRESHOLD_DEFL_ALT 0xEFEF  // [POR] threshold  register default alternate value (fakes ??)
 
 
 
@@ -103,12 +105,12 @@ class MAX44009 : public generic_driver {
     String subID( void ) { return String(_i2caddr); };
 
     // MAX44009 specific methods
-    boolean setMode( max44009IntegrationT_t );
+    boolean setIntegration( max44009IntegrationT_t );
 
     // --- static methods / constants -----------------------
     
     // list of possibles I2C addrs
-    static const uint8_t i2c_addrs[2];
+    static const uint8_t i2c_addrs[];
 
     // device detection
     static boolean is_device( uint8_t );

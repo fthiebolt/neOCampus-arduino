@@ -316,9 +316,11 @@ inline void blinkSysLed( void ) {
    */
   uint8_t _led = SYS_LED;
   if( _led==INVALID_GPIO && LED!=INVALID_GPIO && noiseModule==nullptr ) _led = LED;
-  digitalWrite( _led, HIGH);
-  delay(50);
-  digitalWrite( _led, LOW);
+  if( _led != INVALID_GPIO ) {
+    digitalWrite( _led, HIGH);
+    delay(50);
+    digitalWrite( _led, LOW);
+  }
 #endif
 }
 

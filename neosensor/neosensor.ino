@@ -184,26 +184,26 @@ modulesMgt modulesList = modulesMgt();
 device deviceModule = device();
 
 // temperature class module
-temperature *temperatureModule      = NULL;
+temperature *temperatureModule      = nullptr;
 
 // humidity class module
-humidity *humidityModule            = NULL;
+humidity *humidityModule            = nullptr;
 
 // luminosity class module
-luminosity *luminosityModule        = NULL;
+luminosity *luminosityModule        = nullptr;
 
 // noise class module
-noise *noiseModule                  = NULL;
+noise *noiseModule                  = nullptr;
 // noise module ISR :(
 void ICACHE_RAM_ATTR noiseDetectISR() {             /* https://community.particle.io/t/cpp-attachinterrupt-to-class-function-help-solved/5147/2 */
   if( noiseModule ) noiseModule->noiseDetectISR();
 }
 
 // neoclock class module
-neoclock *clockModule               = NULL;
+neoclock *clockModule               = nullptr;
 
 // airquality class module
-airquality *airqualityModule        = NULL;
+airquality *airqualityModule        = nullptr;
 
 
 // time server related
@@ -304,20 +304,22 @@ bool setupI2C( void ) {
 // ---
 // Blink system led
 inline void blinkSysLed( void ) {
-#ifdef SYS_LED
-  #ifdef ESP8266
-    /* ESP8266's onboard blue led (GPIO2) is tied to Serial1:
-     * send zero(s) to blink the led
-     */
-    byte _msg[] = {0x00, 0x00, 0x00, 0x00 };
-    Serial1.write(_msg, sizeof(_msg));Serial1.flush();
-  #elif defined(ESP32)
-    /* ESP32 does not feature the blue led like in ESP12E/F modules */
-    digitalWrite( SYS_LED, HIGH);
-    delay(50);
-    digitalWrite( SYS_LED, LOW);
-  #endif
-#endif /* SYS_LED */  
+#ifdef ESP8266
+  /* ESP8266's onboard blue led (GPIO2) is tied to Serial1:
+    * send zero(s) to blink the led
+    */
+  byte _msg[] = {0x00, 0x00, 0x00, 0x00 };
+  Serial1.write(_msg, sizeof(_msg));Serial1.flush();
+#elif defined(ESP32)
+  /* ESP32 does not feature the blue led like in ESP12E/F modules
+   * ==> SYS_LED not defined ==> use LED (if defined and if no NoiseModule)
+   */
+  uint8_t _led = SYS_LED;
+  if( _led==INVALID_GPIO && LED!=INVALID_GPIO && noiseModule==nullptr ) _led = LED;
+  digitalWrite( _led, HIGH);
+  delay(50);
+  digitalWrite( _led, LOW);
+#endif
 }
 
 

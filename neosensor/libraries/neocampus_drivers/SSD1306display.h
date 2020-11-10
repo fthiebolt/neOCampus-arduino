@@ -36,6 +36,7 @@
 #if 0
 
 TO BE CONTINUED
+const uint8_t SSD1306display::i2c_addrs[2] = { 0x3c, 0x3d };
 
 /*
  * Class

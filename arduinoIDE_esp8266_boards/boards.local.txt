@@ -53,6 +53,8 @@ neOSensor.menu.wipe.all.upload.erase_cmd=erase_flash
 
 neOSensor.menu.ResetMethod.ck=no dtr (aka ck)
 neOSensor.menu.ResetMethod.ck.upload.resetmethod=--before no_reset --after soft_reset
+neOSensor.menu.ResetMethod.nodemcu=dtr (aka nodemcu)
+neOSensor.menu.ResetMethod.nodemcu.upload.resetmethod=--before default_reset --after hard_reset
 
 neOSensor.menu.baud.921600=921600
 neOSensor.menu.baud.921600.upload.speed=921600

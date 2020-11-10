@@ -1,4 +1,3 @@
-
 /* -----------------------------------------------------------------------------
  *
  * neOCampus operation
@@ -150,9 +149,10 @@
   const long  gmtOffset_sec = 3600;
   const int   daylightOffset_sec = 3600;
 #endif
-#define NTP_DEFAULT_SERVER1       "0.fr.pool.ntp.org" // DNS location aware
-//#define NTP_DEFAULT_SERVER2       "time.nist.gov"     // DNS location aware
-#define NTP_DEFAULT_SERVER2       "pool.ntp.org"      // DNS location aware
+#define NTP_DEFAULT_SERVER1       "pool.ntp.org"      // DNS location aware
+//#define NTP_DEFAULT_SERVER1       "time.nist.gov"     // DNS location aware
+//#define NTP_DEFAULT_SERVER2       "0.fr.pool.ntp.org" // DNS location aware
+#define NTP_DEFAULT_SERVER2       "ntp.irit.fr"       // UT3-IRIT specific
 #define NTP_DEFAULT_SERVER3       "ntp.univ-tlse3.fr" // UT3 specific
 
 

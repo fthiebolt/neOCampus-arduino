@@ -1,0 +1,48 @@
+Added Component: Designator=C1(3216-18)
+Added Component: Designator=CN1(INCH_1x4_droit)
+Added Component: Designator=Cx1(0603)
+Added Component: Designator=Cx2(0603)
+Added Component: Designator=Cx3(0603)
+Added Component: Designator=R1(0805)
+Added Component: Designator=R2(0805)
+Added Component: Designator=R3(0805)
+Added Component: Designator=R13(0805)
+Added Component: Designator=U4(MSOP-08)
+Added Pin To Net: NetName=3V3 Pin=C1-1
+Added Pin To Net: NetName=3V3 Pin=CN1-1
+Added Pin To Net: NetName=3V3 Pin=R1-2
+Added Pin To Net: NetName=3V3 Pin=R2-2
+Added Pin To Net: NetName=3V3 Pin=R3-2
+Added Pin To Net: NetName=3V3 Pin=R13-2
+Added Pin To Net: NetName=3V3 Pin=U4-8
+Added Net: Name=3V3
+Added Pin To Net: NetName=GND Pin=C1-2
+Added Pin To Net: NetName=GND Pin=CN1-2
+Added Pin To Net: NetName=GND Pin=Cx1-2
+Added Pin To Net: NetName=GND Pin=Cx2-2
+Added Pin To Net: NetName=GND Pin=Cx3-2
+Added Pin To Net: NetName=GND Pin=U4-4
+Added Net: Name=GND
+Added Pin To Net: NetName=NetCN1_3 Pin=CN1-3
+Added Pin To Net: NetName=NetCN1_3 Pin=U4-2
+Added Net: Name=NetCN1_3
+Added Pin To Net: NetName=NetCN1_4 Pin=CN1-4
+Added Pin To Net: NetName=NetCN1_4 Pin=U4-1
+Added Net: Name=NetCN1_4
+Added Pin To Net: NetName=NetCx1_1 Pin=Cx1-1
+Added Pin To Net: NetName=NetCx1_1 Pin=R1-1
+Added Pin To Net: NetName=NetCx1_1 Pin=U4-7
+Added Net: Name=NetCx1_1
+Added Pin To Net: NetName=NetCx2_1 Pin=Cx2-1
+Added Pin To Net: NetName=NetCx2_1 Pin=R2-1
+Added Pin To Net: NetName=NetCx2_1 Pin=U4-6
+Added Net: Name=NetCx2_1
+Added Pin To Net: NetName=NetCx3_1 Pin=Cx3-1
+Added Pin To Net: NetName=NetCx3_1 Pin=R3-1
+Added Pin To Net: NetName=NetCx3_1 Pin=U4-5
+Added Net: Name=NetCx3_1
+Added Pin To Net: NetName=NetR13_1 Pin=R13-1
+Added Pin To Net: NetName=NetR13_1 Pin=U4-3
+Added Net: Name=NetR13_1
+Added Class: Name=Cpt_Temp
+Added Room: Name=Cpt_Temp

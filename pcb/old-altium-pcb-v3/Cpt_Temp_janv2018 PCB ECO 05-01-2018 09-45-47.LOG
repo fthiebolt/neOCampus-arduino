@@ -1,0 +1,4 @@
+Added Component: Designator=Cx1(0603)
+Added Pin To Net: NetName=A0 Pin=Cx1-1
+Added Pin To Net: NetName=GND Pin=Cx1-2
+Added Member To Class: ClassName=Cpt_Temp Member=Component Cx1 PONT

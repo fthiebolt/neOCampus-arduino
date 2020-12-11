@@ -1,0 +1,8 @@
+Added Component: Designator=Reg1(SOT-223 thermo1)
+Added Pin To Net: NetName=GND Pin=Reg1-1
+Added Pin To Net: NetName=3V3 Pin=Reg1-2
+Added Pin To Net: NetName=3V3 Pin=Reg1-2
+Added Pin To Net: NetName=3V3 Pin=Reg1-2
+Added Pin To Net: NetName=3V3 Pin=Reg1-2
+Added Pin To Net: NetName=NetC1_1 Pin=Reg1-3
+Added Member To Class: ClassName=Version_2018_01 Member=Component Reg1 LM1117/33

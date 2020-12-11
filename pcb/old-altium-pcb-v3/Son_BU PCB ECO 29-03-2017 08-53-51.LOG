@@ -1,0 +1,8 @@
+Removed Pin From Net: NetName=GND Pin=Microphone-0
+Removed Pin From Net: NetName=NetC15_1 Pin=Microphone-1
+Removed Member From Class: ClassName=Son_BU Member=Microphone
+Removed Member From Class: ClassName=Son_BU Member=Microphone
+Added Component: Designator=Micro1(Micro_electret coudé)
+Added Pin To Net: NetName=GND Pin=Micro1-0
+Added Pin To Net: NetName=NetC15_1 Pin=Micro1-1
+Added Member To Class: ClassName=Son_BU Member=Component Micro1 Electret

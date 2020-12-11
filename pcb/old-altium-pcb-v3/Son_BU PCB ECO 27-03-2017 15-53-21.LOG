@@ -1,0 +1,4 @@
+Added Component: Designator=C15(3216-18)
+Added Pin To Net: NetName=NetC15_1 Pin=C15-1
+Added Pin To Net: NetName=NetC15_2 Pin=C15-2
+Added Member To Class: ClassName=Son_BU Member=Component C15 1µF/16V

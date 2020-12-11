@@ -1,0 +1,26 @@
+Field=Comment~String~Comment~100|Field=Description~String~Description~100|Field=Designator~String~Designator~100|Field=Footprint~String~Footprint~100|Field=LibRef~String~LibRef~100|Field=Quantity~Integer~Quantity~100|ReportField=Currency~<none>|ReportField=ProductionQuantity~1|ReportField=ProjectFileName~Son_BU.PrjPCB|ReportField=ProjectFullPath~H:\Mes documents\DEV\ALTIUM\Altium conceptions\Son_BU\Son_BU.PrjPCB|ReportField=Title~Bill of Materials For Project [Son_BU.PrjPCB] (No PCB Document Selected)|ReportField=TotalQuantity~36|ReportField=ReportTime~09:28:08|ReportField=ReportDate~27/03/2017|ReportField=ReportDateTime~27/03/2017 09:28:08|ReportField=OutputName~Bill of Materials|ReportField=OutputType~BOM_PartType|ReportField=GeneratorName~BOM|ReportField=GeneratorDescription~Bill of Materials|ReportField=VariantName~None|ReportField=Address1~|ReportField=Address2~|ReportField=Address3~|ReportField=Address4~|ReportField=ApprovedBy~|ReportField=Author~|ReportField=CheckedBy~|ReportField=CompanyName~|ReportField=CurrentDate~27/03/2017|ReportField=CurrentTime~09:28:06|ReportField=Date~|ReportField=DocumentFullPathAndName~H:\Mes documents\DEV\ALTIUM\Altium conceptions\Son_BU\Son_BU.SchDoc|ReportField=DocumentName~Son_BU.SchDoc|ReportField=DocumentNumber~|ReportField=DrawnBy~|ReportField=Engineer~|ReportField=ImagePath~|ReportField=ModifiedDate~27/03/2017|ReportField=Organization~|ReportField=ProjectName~Son_BU.PrjPCB|ReportField=Revision~|ReportField=Rule~|ReportField=SheetNumber~|ReportField=SheetTotal~|ReportField=Time~|ReportField=Title~|ReportField=DataSourceFileName~Son_BU.PrjPCB|ReportField=DataSourceFullPath~H:\Mes documents\DEV\ALTIUM\Altium conceptions\Son_BU\Son_BU.PrjPCB
+220µF/16V tantale|253-5290|C1|7343-31|tantale 220µF/16V|1
+100n|CMS 0805|C2, C4, C8, C9, C12|0805|Cap_CMS_0805|5
+10µF/35V|électrochimique CMS 185-0112|C3|Condo CMS POL diam.5|10µF/35V|1
+10µF/6V3 tantale|175-4041 ou 145-7412 case 3216-18|C5|Tantale 10µF/6V3|tantale 10µF/6V3|1
+10n|CMS 0805|C6|0805|Cap_CMS_0805|1
+47µF/10V tantale|175-4168|C7|tantale 47µF/10V|tantale 47µF/10V|1
+Cap Pol1|Polarized Capacitor (Radial)|C15|RB7.6-15|Cap Pol1|1
+inch_ligne 1x4|Inch_1x4_droit|CN3, CN4|INCH_1x4_droit|Inch_1x4_droit|2
+70µH CD74R series|SMT CD74R Aliexpress|L1|SELF CD74R|Self CD74R|1
+LTW5AM|LED Golden Dragon Plus|Led1|LTW5AM|LTW5AM LED|1
+LM1117/33|Régulateur SOT-223|LM1117|SOT-223 thermo1|LM1117MPX-3.3|1
+NTR4501N|MOSFET canal N|M1|SOT23 (NTR4501)|NTR4501N|1
+Microphone_01||Microphone|Micro_electret|Microphone_01|1
++ Alim|pointe de test CI 133-6225|PT1|Pointe de test|PTEST|1
+- Alim|pointe de test CI 133-6225|PT2|Pointe de test|PTEST|1
+100K|CMS 0805|R4|0805|Res CMS 0805|1
+10K|CMS 0805|R5, R6, R8, R9, R11, R13, R16|0805|Res CMS 0805|7
+1K|CMS 0805|R7|0805|Res CMS 0805|1
+0R33|CMS 1210|R10|1210|Res CMS 1210 ERJ14B|1
+68|CMS 0805|R14|0805|Res CMS 0805|1
+2K|CMS 0805|R18|0805|Res CMS 0805|1
+AD8052|AOP|U1|SOIC08|AD8052|1
+MCP4706|DAC I2C (RS : 738-7111)|U2|SOT23-6|MCP4706_1|1
+MCP9808|Digital temperature Sensor|U4|MSOP-08|MCP9808|1
+ESP-12E|ESP-12E module Wi-Fi|Wi-Fi1|ESP-12E|ESP-12E|1

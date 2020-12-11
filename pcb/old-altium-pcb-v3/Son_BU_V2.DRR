@@ -1,0 +1,20 @@
+---------------------------------------------------------------------------
+NCDrill File Report For: Son_BU_V2.PcbDoc   05/04/2017  15:29:56
+---------------------------------------------------------------------------
+
+Layer Pair : Top Layer to Bottom Layer
+ASCII RoundHoles File : Son_BU_V2.TXT
+EIA File   : Son_BU_V2.DRL
+
+Tool         Hole Size           Hole Type     Hole Count Plated       Tool Travel
+---------------------------------------------------------------------------
+T1        18mil (0.4572mm)         Round          26               5.90 Inch (149.80 mm)
+T2        20mil (0.508mm)          Round          2                0.09 Inch (2.17 mm)
+T3        28mil (0.7112mm)         Round          5                2.46 Inch (62.43 mm)
+T4        31.5mil (0.8001mm)       Round          11               2.47 Inch (62.83 mm)
+T5        40mil (1.016mm)          Round          2                0.16 Inch (3.96 mm)
+T6        102.36mil (2.59994mm)    Round          2                2.06 Inch (52.44 mm)
+---------------------------------------------------------------------------
+Totals                                            48               13.14 Inch (333.64 mm)
+
+Total Processing Time (hh:mm:ss) : 00:00:00

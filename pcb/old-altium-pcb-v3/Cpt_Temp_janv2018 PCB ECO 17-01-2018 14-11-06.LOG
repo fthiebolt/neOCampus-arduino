@@ -1,0 +1,5 @@
+Change Component Footprint: Designator=CN1 Old Footprint=INCH_1x5_ver2_droit New Footprint=INCH_1x5_droit
+Added Component: Designator=C2(0805)
+Added Pin To Net: NetName=3V3 Pin=C2-1
+Added Pin To Net: NetName=GND Pin=C2-2
+Added Member To Class: ClassName=Cpt_Temp Member=Component C2 47n

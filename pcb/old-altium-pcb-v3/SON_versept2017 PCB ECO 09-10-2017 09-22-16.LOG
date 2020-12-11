@@ -1,0 +1,8 @@
+Added Component: Designator=CN1(USB Micro 714-2347)
+Added Pin To Net: NetName=+5V Pin=CN1-1
+Added Pin To Net: NetName=GND Pin=CN1-5
+Added Pin To Net: NetName=EARTH Pin=CN1-6
+Added Pin To Net: NetName=EARTH Pin=CN1-7
+Added Pin To Net: NetName=EARTH Pin=CN1-8
+Added Pin To Net: NetName=EARTH Pin=CN1-9
+Added Member To Class: ClassName=SON_versept2017 Member=Component CN1 USB Micro B

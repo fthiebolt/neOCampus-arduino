@@ -1,0 +1,5 @@
+Removed Pin From Net: NetName=GND Pin=CN1-10
+Removed Pin From Net: NetName=GND Pin=CN1-11
+Change Net Name : Old Net Name=NetCN4_1 New Net Name=TXD
+Change Net Name : Old Net Name=NetCN4_2 New Net Name=RXD
+Change Net Name : Old Net Name=NetCN4_4 New Net Name=GPIO0

@@ -1,0 +1,8 @@
+Removed Pin From Net: NetName=GND Pin=Wi-Fi1-16
+Added Component: Designator=R19(0805)
+Added Pin To Net: NetName=GND Pin=R19-1
+Added Pin To Net: NetName=NetR19_2 Pin=R19-2
+Added Pin To Net: NetName=NetR19_2 Pin=Wi-Fi1-16
+Added Net: Name=NetR19_2
+Added Member To Class: ClassName=Son_BU_V2 Member=Component R19 2K2
+Added Room: Name=Son_BU_V2

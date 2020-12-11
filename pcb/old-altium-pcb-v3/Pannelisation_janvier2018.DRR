@@ -1,0 +1,25 @@
+---------------------------------------------------------------------------
+NCDrill File Report For: Pannelisation_janvier2018.PcbDoc   18/01/2018  15:27:21
+---------------------------------------------------------------------------
+
+Layer Pair : Top Layer to Bottom Layer
+ASCII RoundHoles File : Pannelisation_janvier2018-RoundHoles.TXT
+ASCII SlotHoles File : Pannelisation_janvier2018-SlotHoles.TXT
+EIA File   : Pannelisation_janvier2018.DRL
+
+Tool         Hole Size           Hole Type     Hole Count Plated       Tool Travel
+---------------------------------------------------------------------------
+T1        15.75mil (0.40005mm)     Round          48               14.36 Inch (364.71 mm)
+T2        18mil (0.4572mm)         Round          167              63.50 Inch (1612.87 mm)
+T3        24mil (0.6096mm)         Round          107              58.08 Inch (1475.14 mm)
+T4        25.59mil (0.64999mm)     Round          6                4.59 Inch (116.63 mm)
+T5        31.5mil (0.8001mm)       Round          151              38.16 Inch (969.39 mm)
+T6        31.5mil (0.8001mm)       Slot           12               298.00 Inch (7569.25 mm)
+T7        32mil (0.8128mm)         Round          18               18.67 Inch (474.19 mm)
+T8        39.37mil (1mm)           Slot           12               297.94 Inch (7567.55 mm)
+T9        43.31mil (1.10007mm)     Round          36               33.13 Inch (841.53 mm)
+T10       122mil (3.0988mm)        Round          18               29.35 Inch (745.37 mm)
+---------------------------------------------------------------------------
+Totals                                            575              855.77 Inch (21736.63 mm)
+
+Total Processing Time (hh:mm:ss) : 00:00:00

@@ -1,0 +1,12 @@
+Removed Pin From Net: NetName=GND Pin=LM1117-1
+Removed Pin From Net: NetName=3V3 Pin=LM1117-2
+Removed Pin From Net: NetName=3V3 Pin=LM1117-2
+Removed Pin From Net: NetName=NetC1_1 Pin=LM1117-3
+Removed Member From Class: ClassName=Son_BU Member=LM1117
+Removed Member From Class: ClassName=Son_BU Member=LM1117
+Added Component: Designator=Reg1(SOT223)
+Added Pin To Net: NetName=GND Pin=Reg1-1
+Added Pin To Net: NetName=3V3 Pin=Reg1-2
+Added Pin To Net: NetName=3V3 Pin=Reg1-2
+Added Pin To Net: NetName=NetC1_1 Pin=Reg1-3
+Added Member To Class: ClassName=Son_BU Member=Component Reg1 LM1117

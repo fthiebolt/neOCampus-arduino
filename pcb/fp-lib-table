@@ -1,0 +1,3 @@
+(fp_lib_table
+  (lib (name neosensor_addon)(type KiCad)(uri ${KIPRJMOD}/neosensor_addon.pretty)(options "")(descr ""))
+)

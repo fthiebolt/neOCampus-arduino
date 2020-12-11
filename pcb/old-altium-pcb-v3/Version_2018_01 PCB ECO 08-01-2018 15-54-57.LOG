@@ -1,0 +1,16 @@
+Change Component DesignItemId : Designator=C3 Old DesignItemId=47µF/25V New DesignItemId=47µF/16V
+Change Component DesignItemId : Designator=C7 Old DesignItemId=tantale 47µF/10V New DesignItemId=tantale 10µF/6V3
+Change Component Footprint: Designator=C3 Old Footprint=CONDO CMS POL DIAM. 6.5 New Footprint=47µF/16V
+Change Component Footprint: Designator=CN4 Old Footprint=INCH_1x4_ver2_droit New Footprint=INCH_1x4_droit
+Change Component Footprint: Designator=CN3 Old Footprint=INCH_1x5_ver2_droit New Footprint=INCH_1x5_droit
+Change Component Footprint: Designator=C7 Old Footprint=tantale 47µF/10V New Footprint=Tantale 10µF/6V3
+Change Component Comment : Designator=C6 Old Comment=10n New Comment=100n
+Change Component Comment : Designator=C7 Old Comment=47µF/10V tantale New Comment=10µF/6V3 tantale
+Change Component Comment : Designator=C3 Old Comment=47µF/25V New Comment=47µF/16V
+Added Component: Designator=CN5(INCH_1x5_droit)
+Added Pin To Net: NetName=3V3 Pin=CN5-1
+Added Pin To Net: NetName=GND Pin=CN5-2
+Added Pin To Net: NetName=SCL Pin=CN5-3
+Added Pin To Net: NetName=SDA Pin=CN5-4
+Added Pin To Net: NetName=INT Pin=CN5-5
+Added Member To Class: ClassName=Version_2018_01 Member=Component CN5 inch_ligne 1x5

@@ -1,0 +1,4 @@
+Added Component: Designator=Led1(LTW5AM)
+Added Pin To Net: NetName=3V3 Pin=Led1-1
+Added Pin To Net: NetName=NetLed1_2 Pin=Led1-2
+Added Member To Class: ClassName=Son_BU Member=Component Led1 LTW5AM

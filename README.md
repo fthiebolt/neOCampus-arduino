@@ -5,6 +5,7 @@ neOCampus IoT support library for Arduino. This library will provides support fo
   * neOSensor-AirQuality board (ESP32) from CNRS' LCC lab.
 
 ## NEWS ##
+ * **[Dec.20]** added PCB from ESP8266 version 4 (KiCad) :)\
  * **[Aug.20]** new definition board for neOSensor-AirQuality board :)\
 added definition board for (future) neOSensor esp32 based board\
 added suppport for boards configuration via sensOCampus JSON config\

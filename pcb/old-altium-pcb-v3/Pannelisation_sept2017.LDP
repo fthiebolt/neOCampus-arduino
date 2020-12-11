@@ -1,0 +1,3 @@
+Layer Pairs Export File for PCB: H:\Mes documents\DEV\ALTIUM\Altium conceptions\Son_BU\Pannelisation_sept2017.PcbDoc
+LayersSetName=Top_Bot_Thru_Holes|DrillFile=pannelisation_sept2017-roundholes.txt|LayerPairs=gtl,gbl
+LayersSetName=Top_Bot_Slot_Holes|DrillFile=pannelisation_sept2017-slotholes.txt|LayerPairs=gtl,gbl

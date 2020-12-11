@@ -1,0 +1,2 @@
+Change Component DesignItemId : Designator=Micro1 Old DesignItemId=Microphone_02 New DesignItemId=Microphone_03
+Change Component Footprint: Designator=Micro1 Old Footprint=Micro_electret coudé New Footprint=Micro_electret simple

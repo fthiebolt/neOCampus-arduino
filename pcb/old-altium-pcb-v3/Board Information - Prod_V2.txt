@@ -1,0 +1,10 @@
+Board Information Report
+Filename     : H:\Mes documents\DEV\ALTIUM\Altium conceptions\Son_BU\Prod_V2.PcbDoc
+Date         : 04/04/2017
+Time         : 14:27:02
+Time Elapsed : 00:00:00
+
+General
+    Board Size, 152.4mmx101.6mm
+    Components on board, 0
+count : 2

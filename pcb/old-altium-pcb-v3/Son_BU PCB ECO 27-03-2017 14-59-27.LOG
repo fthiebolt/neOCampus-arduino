@@ -1,0 +1,176 @@
+Added Component: Designator=C1(7343-31)
+Added Component: Designator=C2(0805)
+Added Component: Designator=C3(Tantale 10µF/16V)
+Added Component: Designator=C4(0805)
+Added Component: Designator=C5(Tantale 10µF/6V3)
+Added Component: Designator=C6(0805)
+Added Component: Designator=C7(tantale 47µF/10V)
+Added Component: Designator=C8(0805)
+Added Component: Designator=C9(0805)
+Added Component: Designator=C12(0805)
+Added Component: Designator=C15(RB7.6-15)
+Added Component: Designator=CN3(INCH_1x4_droit)
+Added Component: Designator=CN4(INCH_1x4_droit)
+Added Component: Designator=L1(SELF CD74R)
+Added Component: Designator=Led1(LTW5AM)
+Added Component: Designator=LM1117(SOT-223 thermo1)
+Added Component: Designator=M1(SOT23 (NTR4501))
+Added Component: Designator=Microphone(Micro_electret)
+Added Component: Designator=PT1(Pointe de test)
+Added Component: Designator=PT2(Pointe de test)
+Added Component: Designator=R4(0805)
+Added Component: Designator=R5(0805)
+Added Component: Designator=R6(0805)
+Added Component: Designator=R7(0805)
+Added Component: Designator=R8(0805)
+Added Component: Designator=R9(0805)
+Added Component: Designator=R10(1210)
+Added Component: Designator=R11(0805)
+Added Component: Designator=R13(0805)
+Added Component: Designator=R14(0805)
+Added Component: Designator=R16(0805)
+Added Component: Designator=R18(0805)
+Added Component: Designator=U1(SOIC08)
+Added Component: Designator=U2(SOT23-6)
+Added Component: Designator=U4(MSOP-08)
+Added Component: Designator=Wi-Fi1(ESP-12E)
+Added Pin To Net: NetName=NetC1_1 Pin=C1-1
+Added Pin To Net: NetName=GND Pin=C1-2
+Added Pin To Net: NetName=GND Pin=C2-1
+Added Pin To Net: NetName=NetC1_1 Pin=C2-2
+Added Pin To Net: NetName=3V3 Pin=C3-1
+Added Pin To Net: NetName=GND Pin=C3-2
+Added Pin To Net: NetName=GND Pin=C4-1
+Added Pin To Net: NetName=NetC4_2 Pin=C4-2
+Added Pin To Net: NetName=3V3 Pin=C5-1
+Added Pin To Net: NetName=GND Pin=C5-2
+Added Pin To Net: NetName=NetC6_1 Pin=C6-1
+Added Pin To Net: NetName=GND Pin=C6-2
+Added Pin To Net: NetName=3V3 Pin=C7-1
+Added Pin To Net: NetName=GND Pin=C7-2
+Added Pin To Net: NetName=GND Pin=C8-1
+Added Pin To Net: NetName=3V3 Pin=C8-2
+Added Pin To Net: NetName=GND Pin=C9-1
+Added Pin To Net: NetName=NetC9_2 Pin=C9-2
+Added Pin To Net: NetName=GND Pin=C12-1
+Added Pin To Net: NetName=3V3 Pin=C12-2
+Added Pin To Net: NetName=NetC15_1 Pin=C15-1
+Added Pin To Net: NetName=NetC15_2 Pin=C15-2
+Added Pin To Net: NetName=NetCN3_1 Pin=CN3-1
+Added Pin To Net: NetName=NetCN3_2 Pin=CN3-2
+Added Pin To Net: NetName=NetCN3_3 Pin=CN3-3
+Added Pin To Net: NetName=GND Pin=CN3-4
+Added Pin To Net: NetName=VCC Pin=CN4-1
+Added Pin To Net: NetName=GND Pin=CN4-2
+Added Pin To Net: NetName=NetCN4_3 Pin=CN4-3
+Added Pin To Net: NetName=NetCN4_4 Pin=CN4-4
+Added Pin To Net: NetName=NetC1_1 Pin=L1-1
+Added Pin To Net: NetName=NetL1_2 Pin=L1-2
+Added Pin To Net: NetName=3V3 Pin=Led1-1
+Added Pin To Net: NetName=NetLed1_2 Pin=Led1-2
+Added Pin To Net: NetName=GND Pin=LM1117-1
+Added Pin To Net: NetName=3V3 Pin=LM1117-2
+Added Pin To Net: NetName=3V3 Pin=LM1117-2
+Added Pin To Net: NetName=NetC1_1 Pin=LM1117-3
+Added Pin To Net: NetName=NetM1_1 Pin=M1-1
+Added Pin To Net: NetName=NetM1_2 Pin=M1-2
+Added Pin To Net: NetName=GND Pin=M1-3
+Added Pin To Net: NetName=GND Pin=Microphone-0
+Added Pin To Net: NetName=NetC15_1 Pin=Microphone-1
+Added Pin To Net: NetName=NetPT1_1 Pin=PT1-1
+Added Pin To Net: NetName=GND Pin=PT2-1
+Added Pin To Net: NetName=NetR4_1 Pin=R4-1
+Added Pin To Net: NetName=NetR4_2 Pin=R4-2
+Added Pin To Net: NetName=GND Pin=R5-1
+Added Pin To Net: NetName=NetC6_1 Pin=R5-2
+Added Pin To Net: NetName=NetC6_1 Pin=R6-1
+Added Pin To Net: NetName=3V3 Pin=R6-2
+Added Pin To Net: NetName=NetC15_2 Pin=R7-1
+Added Pin To Net: NetName=NetR4_1 Pin=R7-2
+Added Pin To Net: NetName=NetCN4_4 Pin=R8-1
+Added Pin To Net: NetName=3V3 Pin=R8-2
+Added Pin To Net: NetName=NetCN4_3 Pin=R9-1
+Added Pin To Net: NetName=3V3 Pin=R9-2
+Added Pin To Net: NetName=NetPT1_1 Pin=R10-1
+Added Pin To Net: NetName=NetL1_2 Pin=R10-2
+Added Pin To Net: NetName=NetC9_2 Pin=R11-1
+Added Pin To Net: NetName=3V3 Pin=R11-2
+Added Pin To Net: NetName=NetR13_1 Pin=R13-1
+Added Pin To Net: NetName=3V3 Pin=R13-2
+Added Pin To Net: NetName=NetM1_1 Pin=R14-1
+Added Pin To Net: NetName=NetLed1_2 Pin=R14-2
+Added Pin To Net: NetName=NetCN3_3 Pin=R16-1
+Added Pin To Net: NetName=3V3 Pin=R16-2
+Added Pin To Net: NetName=NetC15_1 Pin=R18-1
+Added Pin To Net: NetName=3V3 Pin=R18-2
+Added Pin To Net: NetName=NetR4_2 Pin=U1-1
+Added Pin To Net: NetName=NetR4_1 Pin=U1-2
+Added Pin To Net: NetName=NetC6_1 Pin=U1-3
+Added Pin To Net: NetName=GND Pin=U1-4
+Added Pin To Net: NetName=NetC4_2 Pin=U1-5
+Added Pin To Net: NetName=NetR4_2 Pin=U1-6
+Added Pin To Net: NetName=NetU1_7 Pin=U1-7
+Added Pin To Net: NetName=3V3 Pin=U1-8
+Added Pin To Net: NetName=NetC4_2 Pin=U2-1
+Added Pin To Net: NetName=GND Pin=U2-2
+Added Pin To Net: NetName=3V3 Pin=U2-3
+Added Pin To Net: NetName=NetCN4_4 Pin=U2-4
+Added Pin To Net: NetName=NetCN4_3 Pin=U2-5
+Added Pin To Net: NetName=NetC6_1 Pin=U2-6
+Added Pin To Net: NetName=NetCN4_4 Pin=U4-1
+Added Pin To Net: NetName=NetCN4_3 Pin=U4-2
+Added Pin To Net: NetName=NetR13_1 Pin=U4-3
+Added Pin To Net: NetName=GND Pin=U4-4
+Added Pin To Net: NetName=GND Pin=U4-5
+Added Pin To Net: NetName=GND Pin=U4-6
+Added Pin To Net: NetName=GND Pin=U4-7
+Added Pin To Net: NetName=3V3 Pin=U4-8
+Added Pin To Net: NetName=NetC9_2 Pin=Wi-Fi1-1
+Added Pin To Net: NetName=3V3 Pin=Wi-Fi1-3
+Added Pin To Net: NetName=NetCN4_4 Pin=Wi-Fi1-5
+Added Pin To Net: NetName=NetCN4_3 Pin=Wi-Fi1-6
+Added Pin To Net: NetName=NetU1_7 Pin=Wi-Fi1-7
+Added Pin To Net: NetName=3V3 Pin=Wi-Fi1-8
+Added Pin To Net: NetName=GND Pin=Wi-Fi1-15
+Added Pin To Net: NetName=GND Pin=Wi-Fi1-16
+Added Pin To Net: NetName=NetCN3_3 Pin=Wi-Fi1-18
+Added Pin To Net: NetName=NetM1_2 Pin=Wi-Fi1-20
+Added Pin To Net: NetName=NetCN3_2 Pin=Wi-Fi1-21
+Added Pin To Net: NetName=NetCN3_1 Pin=Wi-Fi1-22
+Added Member To Class: ClassName=Son_BU Member=Component C1 220µF/16V
+Added Member To Class: ClassName=Son_BU Member=Component C2 100n
+Added Member To Class: ClassName=Son_BU Member=Component C3 10µF/16V
+Added Member To Class: ClassName=Son_BU Member=Component C4 100n
+Added Member To Class: ClassName=Son_BU Member=Component C5 10µF/6V3 tantale
+Added Member To Class: ClassName=Son_BU Member=Component C6 10n
+Added Member To Class: ClassName=Son_BU Member=Component C7 47µF/10V tantale
+Added Member To Class: ClassName=Son_BU Member=Component C8 100n
+Added Member To Class: ClassName=Son_BU Member=Component C9 100n
+Added Member To Class: ClassName=Son_BU Member=Component C12 100n
+Added Member To Class: ClassName=Son_BU Member=Component C15 Cap Pol1
+Added Member To Class: ClassName=Son_BU Member=Component CN3 inch_ligne 1x4
+Added Member To Class: ClassName=Son_BU Member=Component CN4 inch_ligne 1x4
+Added Member To Class: ClassName=Son_BU Member=Component L1 70µH CD74R series
+Added Member To Class: ClassName=Son_BU Member=Component Led1 LTW5AM
+Added Member To Class: ClassName=Son_BU Member=Component LM1117 LM1117/33
+Added Member To Class: ClassName=Son_BU Member=Component M1 NTR4501N
+Added Member To Class: ClassName=Son_BU Member=Component Microphone Microphone_01
+Added Member To Class: ClassName=Son_BU Member=Component PT1 + Alim
+Added Member To Class: ClassName=Son_BU Member=Component PT2 - Alim
+Added Member To Class: ClassName=Son_BU Member=Component R4 100K
+Added Member To Class: ClassName=Son_BU Member=Component R5 10K
+Added Member To Class: ClassName=Son_BU Member=Component R6 10K
+Added Member To Class: ClassName=Son_BU Member=Component R7 1K
+Added Member To Class: ClassName=Son_BU Member=Component R8 10K
+Added Member To Class: ClassName=Son_BU Member=Component R9 10K
+Added Member To Class: ClassName=Son_BU Member=Component R10 0R33
+Added Member To Class: ClassName=Son_BU Member=Component R11 10K
+Added Member To Class: ClassName=Son_BU Member=Component R13 10K
+Added Member To Class: ClassName=Son_BU Member=Component R14 68
+Added Member To Class: ClassName=Son_BU Member=Component R16 10K
+Added Member To Class: ClassName=Son_BU Member=Component R18 2K
+Added Member To Class: ClassName=Son_BU Member=Component U1 AD8052
+Added Member To Class: ClassName=Son_BU Member=Component U2 MCP4706
+Added Member To Class: ClassName=Son_BU Member=Component U4 MCP9808
+Added Member To Class: ClassName=Son_BU Member=Component Wi-Fi1 ESP-12E
+Added Room: Name=Son_BU

@@ -1,0 +1,6 @@
+Change Component DesignItemId : Designator=Cx1 Old DesignItemId=Pont 0603 New DesignItemId=Pont
+Change Component DesignItemId : Designator=Cx2 Old DesignItemId=Pont 0603 New DesignItemId=Pont
+Change Component DesignItemId : Designator=Cx3 Old DesignItemId=Pont 0603 New DesignItemId=Pont
+Change Component Footprint: Designator=Cx1 Old Footprint=0603 New Footprint=0402
+Change Component Footprint: Designator=Cx2 Old Footprint=0603 New Footprint=0402
+Change Component Footprint: Designator=Cx3 Old Footprint=0603 New Footprint=0402

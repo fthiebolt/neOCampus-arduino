@@ -1,0 +1,213 @@
+Designator Footprint               Mid X         Mid Y         Ref X         Ref Y         Pad X         Pad Y TB      Rotation Comment        
+
+CN1        USB_Micro_714-2347       2061mil   4835.961mil       2061mil       4771mil   2112.181mil       4771mil  T        180.00 USB Micro B    
+Wi-Fi1     ESP-12E           1575.961mil   4416.039mil       1261mil       4731mil       1261mil   4738.874mil  B        270.00 ESP-12E        
+U3         TSSOP_8           2237.142mil   3972.614mil       2121mil       4011mil       2121mil       4011mil  T        360.00 MCP47FEB21     
+U1         SOIC08                2366mil     4233.5mil       2441mil       4131mil       2441mil       4131mil  B         90.00 AD8052         
+SW1        µSwitch_KMR4          1261mil       4251mil       1261mil       4251mil    1221.63mil   4160.449mil  T         90.00 KMR 4          
+Reg1       SOT-223_thermo1   2655.016mil       4511mil       2781mil       4511mil       2781mil   4420.449mil  T         90.00 LM1117/33      
+R19        0805                  1401mil       4116mil       1401mil       4071mil       1401mil       4071mil  T         90.00 470            
+R18        0805              2217.679mil   3796.321mil   2217.679mil   3751.321mil   2217.679mil   3751.321mil  B         90.00 2K             
+R17        0805                  1406mil       4271mil       1361mil       4271mil       1361mil       4271mil  T        360.00 15K            
+R16        0805              1922.679mil   3911.321mil   1877.679mil   3911.321mil   1877.679mil   3911.321mil  B        360.00 10K            
+R14        0805                  1806mil       4231mil       1761mil       4231mil       1761mil       4231mil  T        360.00 68             
+R11        0805                  1521mil       4506mil       1521mil       4551mil       1521mil       4551mil  T        270.00 4K7            
+R10        1210              2337.772mil       4791mil       2261mil       4791mil       2261mil       4791mil  T        360.00 0R33           
+R9         0805                  1901mil       4366mil       1901mil       4411mil       1901mil       4411mil  T        270.00 10K            
+R8         0805                  1801mil       4366mil       1801mil       4411mil       1801mil       4411mil  T        270.00 10K            
+R7         0805              2417.679mil   3931.321mil   2372.679mil   3931.321mil   2372.679mil   3931.321mil  B        360.00 1K             
+R6         0805              2412.679mil   3811.321mil   2457.679mil   3811.321mil   2457.679mil   3811.321mil  B        180.00 10K            
+R5         0805                  2656mil       3811mil       2701mil       3811mil       2701mil       3811mil  B        180.00 10K            
+R4         0805              2592.679mil   3931.321mil   2547.679mil   3931.321mil   2547.679mil   3931.321mil  B        360.00 100K           
+R1         0805                  1566mil       4911mil       1521mil       4911mil       1521mil       4911mil  T          0.00 100K           
+PT6        PTEST_boucle          3001mil       4404mil       3001mil       4411mil       3001mil       4404mil  T          0.00 +3V3           
+PT5        PTEST_boucle          2621mil       3691mil       2621mil       3691mil       2621mil       3691mil  T          0.00 Seuil          
+PT4        PTEST_boucle      2960.321mil   3690.679mil       2961mil       3691mil   2960.321mil   3690.679mil  T          0.00 Son            
+PT3        PTEST_boucle          2301mil       4911mil       2301mil       4911mil       2301mil       4911mil  T          0.00 +5V            
+PT2        PTEST_boucle          3001mil       4551mil       3001mil       4551mil       3001mil       4551mil  T          0.00 GND            
+PT1        PTEST_boucle          1241mil       4911mil       1241mil       4911mil       1241mil       4911mil  T          0.00 GND            
+PIR1       PIR_WL_footprint       1941mil       3751mil       2041mil       3751mil       2041mil       3751mil  B        180.00 PIR_WL         
+Micro1     Micro_electret_simple       2411mil       3691mil       2361mil       3691mil       2361mil       3691mil  B        180.00 Electret       
+M1         SOT23_(NTR4501)   1558.401mil    4290.37mil       1521mil       4251mil   1558.402mil    4329.74mil  T          0.00 NTR4501N       
+Led1       LTW5AM                2101mil       4351mil       2101mil       4351mil       2101mil       4483mil  B        270.00 LTW5AM         
+L1         SELF_CD74R        2655.331mil       4831mil       2801mil       4831mil       2801mil       4831mil  T          0.00 100µH CD74R series
+CN4        INCH_1x4_droit        1591mil       3871mil       1441mil       3871mil       1441mil       3871mil  T        360.00 inch_ligne 1x4 
+CN3        INCH_1x5_droit        2881mil       4051mil       2881mil       3851mil       2881mil       3851mil  T         90.00 inch_ligne 1x5 
+C15        3216-18           2190.514mil   3931.321mil   2117.679mil   3931.321mil   2117.679mil   3931.321mil  B        360.00 1µF/16V        
+C12        0805                  1421mil       4506mil       1421mil       4551mil       1421mil       4551mil  T        270.00 100n           
+C11        0805                  1266mil       4511mil       1221mil       4511mil       1221mil       4511mil  T          0.00 100n           
+C10        0805                  1766mil       4911mil       1721mil       4911mil       1721mil       4911mil  T        360.00 100 n          
+C9         0805                  1296mil       4711mil       1341mil       4711mil       1341mil       4711mil  T        180.00 100n           
+C8         0805                  2376mil       4540mil       2331mil       4540mil       2331mil       4540mil  B        360.00 100n           
+C7         tantale_47µF/10V   1518.323mil       4671mil       1601mil       4671mil       1601mil       4671mil  T        180.00 47µF/10V tantale
+C6         0805                  2541mil       3916mil       2541mil       3871mil       2541mil       3871mil  T         90.00 10n            
+C5         Tantale_10µF/6V3   1928.165mil       4071mil       2001mil       4071mil       2001mil       4071mil  T        180.00 10µF/6V3 tantale
+C4         0805                  2336mil       4161mil       2381mil       4161mil       2381mil       4161mil  T        180.00 100n           
+C3         Tantale_10µF/16V       2661mil   4200.134mil       2661mil       4271mil       2661mil       4271mil  B         90.00 10µF/16V       
+C2         0805                  2956mil       4671mil       3001mil       4671mil       3001mil       4671mil  T        180.00 100n           
+C1         7343-31            2642.89mil       4811mil       2761mil       4811mil   2505.095mil       4811mil  B        180.00 220µF/16V      
+C1         7343-31            2642.89mil       3311mil       2761mil       3311mil   2505.095mil       3311mil  B        180.00 220µF/16V      
+C2         0805                  2956mil       3171mil       3001mil       3171mil       3001mil       3171mil  T        180.00 100n           
+C3         Tantale_10µF/16V       2661mil   2700.134mil       2661mil       2771mil       2661mil       2771mil  B         90.00 10µF/16V       
+C4         0805                  2336mil       2661mil       2381mil       2661mil       2381mil       2661mil  T        180.00 100n           
+C5         Tantale_10µF/6V3   1928.165mil       2571mil       2001mil       2571mil       2001mil       2571mil  T        180.00 10µF/6V3 tantale
+C6         0805                  2541mil       2416mil       2541mil       2371mil       2541mil       2371mil  T         90.00 10n            
+C7         tantale_47µF/10V   1518.323mil       3171mil       1601mil       3171mil       1601mil       3171mil  T        180.00 47µF/10V tantale
+C8         0805                  2376mil       3040mil       2331mil       3040mil       2331mil       3040mil  B        360.00 100n           
+C9         0805                  1296mil       3211mil       1341mil       3211mil       1341mil       3211mil  T        180.00 100n           
+C10        0805                  1766mil       3411mil       1721mil       3411mil       1721mil       3411mil  T        360.00 100 n          
+C11        0805                  1266mil       3011mil       1221mil       3011mil       1221mil       3011mil  T          0.00 100n           
+C12        0805                  1421mil       3006mil       1421mil       3051mil       1421mil       3051mil  T        270.00 100n           
+C15        3216-18           2190.514mil   2431.321mil   2117.679mil   2431.321mil   2117.679mil   2431.321mil  B        360.00 1µF/16V        
+CN3        INCH_1x5_droit        2881mil       2551mil       2881mil       2351mil       2881mil       2351mil  T         90.00 inch_ligne 1x5 
+CN4        INCH_1x4_droit        1591mil       2371mil       1441mil       2371mil       1441mil       2371mil  T        360.00 inch_ligne 1x4 
+L1         SELF_CD74R        2655.331mil       3331mil       2801mil       3331mil       2801mil       3331mil  T          0.00 100µH CD74R series
+Led1       LTW5AM                2101mil       2851mil       2101mil       2851mil       2101mil       2983mil  B        270.00 LTW5AM         
+M1         SOT23_(NTR4501)   1558.401mil    2790.37mil       1521mil       2751mil   1558.402mil    2829.74mil  T          0.00 NTR4501N       
+Micro1_1   Micro_electret_simple       2411mil       2191mil       2361mil       2191mil       2361mil       2191mil  B        180.00 Electret       
+PIR1       PIR_WL_footprint       1941mil       2251mil       2041mil       2251mil       2041mil       2251mil  B        180.00 PIR_WL         
+PT1        PTEST_boucle          1241mil       3411mil       1241mil       3411mil       1241mil       3411mil  T          0.00 GND            
+PT2        PTEST_boucle          3001mil       3051mil       3001mil       3051mil       3001mil       3051mil  T          0.00 GND            
+PT3        PTEST_boucle          2301mil       3411mil       2301mil       3411mil       2301mil       3411mil  T          0.00 +5V            
+PT4        PTEST_boucle      2960.321mil   2190.679mil       2961mil       2191mil   2960.321mil   2190.679mil  T          0.00 Son            
+PT5        PTEST_boucle          2621mil       2191mil       2621mil       2191mil       2621mil       2191mil  T          0.00 Seuil          
+PT6        PTEST_boucle          3001mil       2904mil       3001mil       2911mil       3001mil       2904mil  T          0.00 +3V3           
+R1         0805                  1566mil       3411mil       1521mil       3411mil       1521mil       3411mil  T          0.00 100K           
+R4         0805              2592.679mil   2431.321mil   2547.679mil   2431.321mil   2547.679mil   2431.321mil  B        360.00 100K           
+R5         0805                  2656mil       2311mil       2701mil       2311mil       2701mil       2311mil  B        180.00 10K            
+R6         0805              2412.679mil   2311.321mil   2457.679mil   2311.321mil   2457.679mil   2311.321mil  B        180.00 10K            
+R7         0805              2417.679mil   2431.321mil   2372.679mil   2431.321mil   2372.679mil   2431.321mil  B        360.00 1K             
+R8         0805                  1801mil       2866mil       1801mil       2911mil       1801mil       2911mil  T        270.00 10K            
+R9         0805                  1901mil       2866mil       1901mil       2911mil       1901mil       2911mil  T        270.00 10K            
+R10        1210              2337.772mil       3291mil       2261mil       3291mil       2261mil       3291mil  T        360.00 0R33           
+R11        0805                  1521mil       3006mil       1521mil       3051mil       1521mil       3051mil  T        270.00 4K7            
+R14        0805                  1806mil       2731mil       1761mil       2731mil       1761mil       2731mil  T        360.00 68             
+R16        0805              1922.679mil   2411.321mil   1877.679mil   2411.321mil   1877.679mil   2411.321mil  B        360.00 10K            
+R17        0805                  1406mil       2771mil       1361mil       2771mil       1361mil       2771mil  T        360.00 15K            
+R18        0805              2217.679mil   2296.321mil   2217.679mil   2251.321mil   2217.679mil   2251.321mil  B         90.00 2K             
+R19        0805                  1401mil       2616mil       1401mil       2571mil       1401mil       2571mil  T         90.00 470            
+Reg1       SOT-223_thermo1   2655.016mil       3011mil       2781mil       3011mil       2781mil   2920.449mil  T         90.00 LM1117/33      
+SW1        µSwitch_KMR4          1261mil       2751mil       1261mil       2751mil    1221.63mil   2660.449mil  T         90.00 KMR 4          
+U1         SOIC08                2366mil     2733.5mil       2441mil       2631mil       2441mil       2631mil  B         90.00 AD8052         
+U3         TSSOP_8           2237.142mil   2472.614mil       2121mil       2511mil       2121mil       2511mil  T        360.00 MCP47FEB21     
+Wi-Fi1     ESP-12E           1575.961mil   2916.039mil       1261mil       3231mil       1261mil   3238.874mil  B        270.00 ESP-12E        
+CN1        USB_Micro_714-2347       2061mil   3335.961mil       2061mil       3271mil   2112.181mil       3271mil  T        180.00 USB Micro B    
+CN1        USB_Micro_714-2347   3744.039mil       3971mil       3809mil       3971mil       3809mil   4022.181mil  T        270.00 USB Micro B    
+Wi-Fi1     ESP-12E           4163.961mil   3485.961mil       3849mil       3171mil   3841.126mil       3171mil  B        360.00 ESP-12E        
+U3         TSSOP_8           4607.386mil   4147.142mil       4569mil       4031mil       4569mil       4031mil  T         90.00 MCP47FEB21     
+U1         SOIC08              4346.5mil       4276mil       4449mil       4351mil       4449mil       4351mil  B        180.00 AD8052         
+SW1        µSwitch_KMR4          4329mil       3171mil       4329mil       3171mil   4419.551mil    3131.63mil  T        180.00 KMR 4          
+Reg1       SOT-223_thermo1       4069mil   4565.016mil       4069mil       4691mil   4159.551mil       4691mil  T        180.00 LM1117/33      
+R19        0805                  4464mil       3311mil       4509mil       3311mil       4509mil       3311mil  T        180.00 470            
+R18        0805              4783.679mil   4127.679mil   4828.679mil   4127.679mil   4828.679mil   4127.679mil  B        180.00 2K             
+R17        0805                  4309mil       3316mil       4309mil       3271mil       4309mil       3271mil  T         90.00 15K            
+R16        0805              4668.679mil   3832.679mil   4668.679mil   3787.679mil   4668.679mil   3787.679mil  B         90.00 10K            
+R14        0805                  4349mil       3716mil       4349mil       3671mil       4349mil       3671mil  T         90.00 68             
+R11        0805                  4074mil       3431mil       4029mil       3431mil       4029mil       3431mil  T        360.00 4K7            
+R10        1210                  3789mil   4247.772mil       3789mil       4171mil       3789mil       4171mil  T         90.00 0R33           
+R9         0805                  4214mil       3811mil       4169mil       3811mil       4169mil       3811mil  T        360.00 10K            
+R8         0805                  4214mil       3711mil       4169mil       3711mil       4169mil       3711mil  T        360.00 10K            
+R7         0805              4648.679mil   4327.679mil   4648.679mil   4282.679mil   4648.679mil   4282.679mil  B         90.00 1K             
+R6_1       0805              4768.679mil   4322.679mil   4768.679mil   4367.679mil   4768.679mil   4367.679mil  B        270.00 10K            
+R5         0805                  4769mil       4566mil       4769mil       4611mil       4769mil       4611mil  B        270.00 10K            
+R4         0805              4648.679mil   4502.679mil   4648.679mil   4457.679mil   4648.679mil   4457.679mil  B         90.00 100K           
+R1         0805                  3669mil       3476mil       3669mil       3431mil       3669mil       3431mil  T         90.00 100K           
+PT6        PTEST_boucle          4176mil       4911mil       4169mil       4911mil       4176mil       4911mil  T         90.00 +3V3           
+PT5        PTEST_boucle          4889mil       4531mil       4889mil       4531mil       4889mil       4531mil  T         90.00 Seuil          
+PT4        PTEST_boucle      4889.321mil   4870.321mil       4889mil       4871mil   4889.321mil   4870.321mil  T         90.00 Son            
+PT3        PTEST_boucle          3669mil       4211mil       3669mil       4211mil       3669mil       4211mil  T         90.00 +5V            
+PT2        PTEST_boucle          4029mil       4911mil       4029mil       4911mil       4029mil       4911mil  T         90.00 GND            
+PT1        PTEST_boucle          3669mil       3151mil       3669mil       3151mil       3669mil       3151mil  T         90.00 GND            
+PIR1       PIR_WL_footprint       4829mil       3851mil       4829mil       3951mil       4829mil       3951mil  B        270.00 PIR_WL         
+Micro1_1_1 Micro_electret_simple       4889mil       4321mil       4889mil       4271mil       4889mil       4271mil  B        270.00 Electret       
+M1         SOT23_(NTR4501)    4289.63mil   3468.401mil       4329mil       3431mil    4250.26mil   3468.402mil  T         90.00 NTR4501N       
+Led1       LTW5AM                4229mil       4011mil       4229mil       4011mil       4097mil       4011mil  B        360.00 LTW5AM         
+L1         SELF_CD74R            3749mil   4565.331mil       3749mil       4711mil       3749mil       4711mil  T         90.00 100µH CD74R series
+CN4        INCH_1x4_droit        4709mil       3501mil       4709mil       3351mil       4709mil       3351mil  T         90.00 inch_ligne 1x4 
+CN3        INCH_1x5_droit        4529mil       4791mil       4729mil       4791mil       4729mil       4791mil  T        180.00 inch_ligne 1x5 
+C15        3216-18           4648.679mil   4100.514mil   4648.679mil   4027.679mil   4648.679mil   4027.679mil  B         90.00 1µF/16V        
+C12        0805                  4074mil       3331mil       4029mil       3331mil       4029mil       3331mil  T        360.00 100n           
+C11        0805                  4069mil       3176mil       4069mil       3131mil       4069mil       3131mil  T         90.00 100n           
+C10        0805                  3669mil       3676mil       3669mil       3631mil       3669mil       3631mil  T         90.00 100 n          
+C9         0805                  3869mil       3206mil       3869mil       3251mil       3869mil       3251mil  T        270.00 100n           
+C8_1       0805                  4040mil       4286mil       4040mil       4241mil       4040mil       4241mil  B         90.00 100n           
+C7_1       tantale_47µF/10V       3909mil   3428.323mil       3909mil       3511mil       3909mil       3511mil  T        270.00 47µF/10V tantale
+C6         0805                  4664mil       4451mil       4709mil       4451mil       4709mil       4451mil  T        180.00 10n            
+C5         Tantale_10µF/6V3       4509mil   3838.165mil       4509mil       3911mil       4509mil       3911mil  T        270.00 10µF/6V3 tantale
+C4         0805                  4419mil       4246mil       4419mil       4291mil       4419mil       4291mil  T        270.00 100n           
+C3         Tantale_10µF/16V   4379.866mil       4571mil       4309mil       4571mil       4309mil       4571mil  B        180.00 10µF/16V       
+C2         0805                  3909mil       4866mil       3909mil       4911mil       3909mil       4911mil  T        270.00 100n           
+C1         7343-31               3769mil    4552.89mil       3769mil       4671mil       3769mil   4415.095mil  B        270.00 220µF/16V      
+U4         MSOP-08           1490.551mil   1656.614mil       1400mil       1695mil       1400mil       1695mil  T        360.00 MCP9808        
+R3         0805                  1655mil       1280mil       1610mil       1280mil       1610mil       1280mil  T        360.00 10K            
+R2         0805                  1655mil       1520mil       1610mil       1520mil       1610mil       1520mil  T        360.00 10K            
+R1         0805                  1655mil       1400mil       1610mil       1400mil       1610mil       1400mil  T        360.00 10K            
+Cx3        0603              1288.504mil   1503.268mil       1320mil       1520mil   1323.937mil   1503.268mil  B        180.00 PONT           
+Cx2        0603              1288.504mil   1393.268mil       1320mil       1410mil   1323.937mil   1393.268mil  B        180.00 PONT           
+Cx1        0603              1288.504mil   1283.268mil       1320mil       1300mil   1323.937mil   1283.268mil  B        180.00 PONT           
+CN1        INCH_1x5_droit        1500mil       1865mil       1700mil       1865mil       1700mil       1865mil  T        180.00 inch_ligne 1x5 
+C1         3216-18           1587.165mil       1670mil       1660mil       1670mil       1660mil       1670mil  B        180.00 1µF/16V        
+C1         3216-18           2267.165mil       1670mil       2340mil       1670mil       2340mil       1670mil  B        180.00 1µF/16V        
+CN1        INCH_1x5_droit        2180mil       1865mil       2380mil       1865mil       2380mil       1865mil  T        180.00 inch_ligne 1x5 
+Cx1        0603              1968.504mil   1283.268mil       2000mil       1300mil   2003.937mil   1283.268mil  B        180.00 PONT           
+Cx2        0603              1968.504mil   1393.268mil       2000mil       1410mil   2003.937mil   1393.268mil  B        180.00 PONT           
+Cx3        0603              1968.504mil   1503.268mil       2000mil       1520mil   2003.937mil   1503.268mil  B        180.00 PONT           
+R1         0805                  2335mil       1400mil       2290mil       1400mil       2290mil       1400mil  T        360.00 10K            
+R2         0805                  2335mil       1520mil       2290mil       1520mil       2290mil       1520mil  T        360.00 10K            
+R3         0805                  2335mil       1280mil       2290mil       1280mil       2290mil       1280mil  T        360.00 10K            
+U4         MSOP-08           2170.551mil   1656.614mil       2080mil       1695mil       2080mil       1695mil  T        360.00 MCP9808        
+U4         MSOP-08           3530.551mil   1656.614mil       3440mil       1695mil       3440mil       1695mil  T        360.00 MCP9808        
+R3         0805                  3695mil       1280mil       3650mil       1280mil       3650mil       1280mil  T        360.00 10K            
+R2         0805                  3695mil       1520mil       3650mil       1520mil       3650mil       1520mil  T        360.00 10K            
+R1         0805                  3695mil       1400mil       3650mil       1400mil       3650mil       1400mil  T        360.00 10K            
+Cx3        0603              3328.504mil   1503.268mil       3360mil       1520mil   3363.937mil   1503.268mil  B        180.00 PONT           
+Cx2        0603              3328.504mil   1393.268mil       3360mil       1410mil   3363.937mil   1393.268mil  B        180.00 PONT           
+Cx1        0603              3328.504mil   1283.268mil       3360mil       1300mil   3363.937mil   1283.268mil  B        180.00 PONT           
+CN1        INCH_1x5_droit        3540mil       1865mil       3740mil       1865mil       3740mil       1865mil  T        180.00 inch_ligne 1x5 
+C1         3216-18           3627.165mil       1670mil       3700mil       1670mil       3700mil       1670mil  B        180.00 1µF/16V        
+C1         3216-18           2947.165mil       1670mil       3020mil       1670mil       3020mil       1670mil  B        180.00 1µF/16V        
+CN1        INCH_1x5_droit        2860mil       1865mil       3060mil       1865mil       3060mil       1865mil  T        180.00 inch_ligne 1x5 
+Cx1        0603              2648.504mil   1283.268mil       2680mil       1300mil   2683.937mil   1283.268mil  B        180.00 PONT           
+Cx2        0603              2648.504mil   1393.268mil       2680mil       1410mil   2683.937mil   1393.268mil  B        180.00 PONT           
+Cx3        0603              2648.504mil   1503.268mil       2680mil       1520mil   2683.937mil   1503.268mil  B        180.00 PONT           
+R1         0805                  3015mil       1400mil       2970mil       1400mil       2970mil       1400mil  T        360.00 10K            
+R2         0805                  3015mil       1520mil       2970mil       1520mil       2970mil       1520mil  T        360.00 10K            
+R3         0805                  3015mil       1280mil       2970mil       1280mil       2970mil       1280mil  T        360.00 10K            
+U4         MSOP-08           2850.551mil   1656.614mil       2760mil       1695mil       2760mil       1695mil  T        360.00 MCP9808        
+C1         3216-18           4297.165mil       1670mil       4370mil       1670mil       4370mil       1670mil  B        180.00 1µF/16V        
+CN1        INCH_1x5_droit        4210mil       1865mil       4410mil       1865mil       4410mil       1865mil  T        180.00 inch_ligne 1x5 
+Cx1        0603              3998.504mil   1283.268mil       4030mil       1300mil   4033.937mil   1283.268mil  B        180.00 PONT           
+Cx2        0603              3998.504mil   1393.268mil       4030mil       1410mil   4033.937mil   1393.268mil  B        180.00 PONT           
+Cx3        0603              3998.504mil   1503.268mil       4030mil       1520mil   4033.937mil   1503.268mil  B        180.00 PONT           
+R1         0805                  4365mil       1400mil       4320mil       1400mil       4320mil       1400mil  T        360.00 10K            
+R2         0805                  4365mil       1520mil       4320mil       1520mil       4320mil       1520mil  T        360.00 10K            
+R3         0805                  4365mil       1280mil       4320mil       1280mil       4320mil       1280mil  T        360.00 10K            
+U4         MSOP-08           4200.551mil   1656.614mil       4110mil       1695mil       4110mil       1695mil  T        360.00 MCP9808        
+U4         MSOP-08           4685.551mil   2571.614mil       4595mil       2610mil       4595mil       2610mil  T        360.00 MCP9808        
+R3         0805                  4850mil       2195mil       4805mil       2195mil       4805mil       2195mil  T        360.00 10K            
+R2         0805                  4850mil       2435mil       4805mil       2435mil       4805mil       2435mil  T        360.00 10K            
+R1         0805                  4850mil       2315mil       4805mil       2315mil       4805mil       2315mil  T        360.00 10K            
+Cx3        0603              4483.504mil   2418.268mil       4515mil       2435mil   4518.937mil   2418.268mil  B        180.00 PONT           
+Cx2        0603              4483.504mil   2308.268mil       4515mil       2325mil   4518.937mil   2308.268mil  B        180.00 PONT           
+Cx1        0603              4483.504mil   2198.268mil       4515mil       2215mil   4518.937mil   2198.268mil  B        180.00 PONT           
+CN1        INCH_1x5_droit        4695mil       2780mil       4895mil       2780mil       4895mil       2780mil  T        180.00 inch_ligne 1x5 
+C1         3216-18           4782.165mil       2585mil       4855mil       2585mil       4855mil       2585mil  B        180.00 1µF/16V        
+U4         MSOP-08           3410.551mil   2571.614mil       3320mil       2610mil       3320mil       2610mil  T        360.00 MCP9808        
+R3         0805                  3575mil       2195mil       3530mil       2195mil       3530mil       2195mil  T        360.00 10K            
+R2         0805                  3575mil       2435mil       3530mil       2435mil       3530mil       2435mil  T        360.00 10K            
+R1         0805                  3575mil       2315mil       3530mil       2315mil       3530mil       2315mil  T        360.00 10K            
+Cx3        0603              3208.504mil   2418.268mil       3240mil       2435mil   3243.937mil   2418.268mil  B        180.00 PONT           
+Cx2        0603              3208.504mil   2308.268mil       3240mil       2325mil   3243.937mil   2308.268mil  B        180.00 PONT           
+Cx1        0603              3208.504mil   2198.268mil       3240mil       2215mil   3243.937mil   2198.268mil  B        180.00 PONT           
+CN1        INCH_1x5_droit        3420mil       2780mil       3620mil       2780mil       3620mil       2780mil  T        180.00 inch_ligne 1x5 
+C1         3216-18           3507.165mil       2585mil       3580mil       2585mil       3580mil       2585mil  B        180.00 1µF/16V        
+C1         3216-18           4147.165mil       2585mil       4220mil       2585mil       4220mil       2585mil  B        180.00 1µF/16V        
+CN1        INCH_1x5_droit        4060mil       2780mil       4260mil       2780mil       4260mil       2780mil  T        180.00 inch_ligne 1x5 
+Cx1        0603              3848.504mil   2198.268mil       3880mil       2215mil   3883.937mil   2198.268mil  B        180.00 PONT           
+Cx2        0603              3848.504mil   2308.268mil       3880mil       2325mil   3883.937mil   2308.268mil  B        180.00 PONT           
+Cx3        0603              3848.504mil   2418.268mil       3880mil       2435mil   3883.937mil   2418.268mil  B        180.00 PONT           
+R1         0805                  4215mil       2315mil       4170mil       2315mil       4170mil       2315mil  T        360.00 10K            
+R2         0805                  4215mil       2435mil       4170mil       2435mil       4170mil       2435mil  T        360.00 10K            
+R3         0805                  4215mil       2195mil       4170mil       2195mil       4170mil       2195mil  T        360.00 10K            
+U4         MSOP-08           4050.551mil   2571.614mil       3960mil       2610mil       3960mil       2610mil  T        360.00 MCP9808        
+

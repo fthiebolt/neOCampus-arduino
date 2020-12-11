@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name neosensor_addon)(type Legacy)(uri ${KIPRJMOD}/neosensor_addon.lib)(options "")(descr ""))
+  (lib (name pcbv4-rescue)(type Legacy)(uri ${KIPRJMOD}/pcbv4-rescue.lib)(options "")(descr ""))
+)

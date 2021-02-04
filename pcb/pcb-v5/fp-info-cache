@@ -1,4 +1,4 @@
-18999620672187595
+19001233367314595
 Battery
 BatteryHolder_Bulgin_BX0036_1xC
 Bulgin Battery Holder, BX0036, Battery Type C (https://www.bulgin.com/products/pub/media/bulgin/data/Battery_holders.pdf)
@@ -83034,7 +83034,7 @@ Wi-Fi Module
 16
 16
 neosensor_addon
-ESP32_dev_30pins
+ESP32_dev_30p
 
 
 0
@@ -83061,6 +83061,13 @@ KMR4_µsw_smd
 0
 4
 4
+neosensor_addon
+OLED1.3_I2C
+
+
+0
+0
+0
 neosensor_addon
 TSSOP-8_4.4x3mm_P0.65mm_handsolder
 8-Lead Plastic Thin Shrink Small Outline (ST)-4.4 mm Body [TSSOP] (see Microchip Packaging Specification 00000049BS.pdf)

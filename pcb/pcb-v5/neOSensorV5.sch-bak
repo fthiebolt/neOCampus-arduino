@@ -135,34 +135,45 @@ Text Label 9700 4050 2    50   ~ 0
 $Comp
 L Connector_Generic:Conn_01x04 J?
 U 1 1 601C66E2
-P 5750 1250
-F 0 "J?" H 5700 1450 50  0000 L CNN
-F 1 "Conn_01x04" H 5550 950 50  0000 L CNN
-F 2 "" H 5750 1250 50  0001 C CNN
-F 3 "~" H 5750 1250 50  0001 C CNN
-	1    5750 1250
+P 5800 1250
+F 0 "J?" H 5750 1450 50  0000 L CNN
+F 1 "Conn_01x04" H 5600 950 50  0000 L CNN
+F 2 "" H 5800 1250 50  0001 C CNN
+F 3 "~" H 5800 1250 50  0001 C CNN
+	1    5800 1250
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector_Generic:Conn_01x04 J?
+U 1 1 601C8DA2
+P 6600 1250
+F 0 "J?" H 6550 1450 50  0000 L CNN
+F 1 "Conn_01x04" H 6400 950 50  0000 L CNN
+F 2 "" H 6600 1250 50  0001 C CNN
+F 3 "~" H 6600 1250 50  0001 C CNN
+	1    6600 1250
 	1    0    0    -1  
 $EndComp
 $Comp
 L Connector_Generic:Conn_01x05 J?
 U 1 1 601CACB8
-P 7500 1350
-F 0 "J?" H 7450 1650 50  0000 L CNN
-F 1 "Conn_01x05" H 7300 1050 50  0000 L CNN
-F 2 "" H 7500 1350 50  0001 C CNN
-F 3 "~" H 7500 1350 50  0001 C CNN
-	1    7500 1350
+P 7450 1350
+F 0 "J?" H 7400 1650 50  0000 L CNN
+F 1 "Conn_01x05" H 7250 1050 50  0000 L CNN
+F 2 "" H 7450 1350 50  0001 C CNN
+F 3 "~" H 7450 1350 50  0001 C CNN
+	1    7450 1350
 	1    0    0    -1  
 $EndComp
 $Comp
 L Connector_Generic:Conn_01x05 J?
 U 1 1 601CBCDB
-P 8450 1350
-F 0 "J?" H 8400 1650 50  0000 L CNN
-F 1 "Conn_01x05" H 8250 1050 50  0000 L CNN
-F 2 "" H 8450 1350 50  0001 C CNN
-F 3 "~" H 8450 1350 50  0001 C CNN
-	1    8450 1350
+P 8300 1350
+F 0 "J?" H 8250 1650 50  0000 L CNN
+F 1 "Conn_01x05" H 8100 1050 50  0000 L CNN
+F 2 "" H 8300 1350 50  0001 C CNN
+F 3 "~" H 8300 1350 50  0001 C CNN
+	1    8300 1350
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -199,156 +210,4 @@ Wire Wire Line
 Connection ~ 8950 5400
 Wire Wire Line
 	8950 5400 8950 5250
-Wire Wire Line
-	9400 2750 9700 2750
-Text Label 9700 2750 2    50   ~ 0
-SCL
-Wire Wire Line
-	9400 3050 9700 3050
-Text Label 9700 3050 2    50   ~ 0
-SDA
-Wire Wire Line
-	5550 1150 5250 1150
-Text Label 5250 1150 0    50   ~ 0
-3V3
-Wire Wire Line
-	5250 1250 5550 1250
-Text Label 5250 1250 0    50   ~ 0
-GND
-Wire Wire Line
-	5250 1350 5550 1350
-Text Label 5250 1350 0    50   ~ 0
-SCL
-Wire Wire Line
-	5250 1450 5550 1450
-Text Label 5250 1450 0    50   ~ 0
-SDA
-$Comp
-L Connector_Generic:Conn_01x04 J?
-U 1 1 601D570B
-P 6600 1250
-F 0 "J?" H 6550 1450 50  0000 L CNN
-F 1 "Conn_01x04" H 6400 950 50  0000 L CNN
-F 2 "" H 6600 1250 50  0001 C CNN
-F 3 "~" H 6600 1250 50  0001 C CNN
-	1    6600 1250
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	6400 1150 6100 1150
-Text Label 6100 1150 0    50   ~ 0
-3V3
-Wire Wire Line
-	6100 1250 6400 1250
-Text Label 6100 1250 0    50   ~ 0
-GND
-Wire Wire Line
-	6100 1350 6400 1350
-Text Label 6100 1350 0    50   ~ 0
-SCL
-Wire Wire Line
-	6100 1450 6400 1450
-Text Label 6100 1450 0    50   ~ 0
-SDA
-Wire Wire Line
-	7300 1150 7000 1150
-Text Label 7000 1150 0    50   ~ 0
-3V3
-Wire Wire Line
-	7000 1250 7300 1250
-Text Label 7000 1250 0    50   ~ 0
-GND
-Wire Wire Line
-	7000 1350 7300 1350
-Text Label 7000 1350 0    50   ~ 0
-SCL
-Wire Wire Line
-	7000 1450 7300 1450
-Text Label 7000 1450 0    50   ~ 0
-SDA
-Wire Wire Line
-	8250 1150 7950 1150
-Text Label 7950 1150 0    50   ~ 0
-3V3
-Wire Wire Line
-	7950 1250 8250 1250
-Text Label 7950 1250 0    50   ~ 0
-GND
-Wire Wire Line
-	7950 1350 8250 1350
-Text Label 7950 1350 0    50   ~ 0
-SCL
-Wire Wire Line
-	7950 1450 8250 1450
-Text Label 7950 1450 0    50   ~ 0
-SDA
-Wire Wire Line
-	7000 1550 7300 1550
-Wire Wire Line
-	7950 1550 8250 1550
-Text Label 7950 1550 0    50   ~ 0
-INT
-Text Label 7000 1550 0    50   ~ 0
-INT
-Wire Wire Line
-	5800 3050 5800 2750
-Wire Wire Line
-	5900 3050 5900 2750
-Wire Wire Line
-	6000 3050 6000 2750
-Wire Wire Line
-	6100 3050 6100 2750
-Text Label 5800 2750 3    50   ~ 0
-3V3
-Text Label 5900 2750 3    50   ~ 0
-GND
-Text Label 6000 2750 3    50   ~ 0
-SCL
-Text Label 6100 2750 3    50   ~ 0
-SDA
-$Comp
-L Connector_Generic:Conn_01x08 J?
-U 1 1 601E0809
-P 10750 1450
-F 0 "J?" H 10830 1442 50  0000 L CNN
-F 1 "Conn_01x08" H 10830 1351 50  0000 L CNN
-F 2 "" H 10750 1450 50  0001 C CNN
-F 3 "~" H 10750 1450 50  0001 C CNN
-	1    10750 1450
-	1    0    0    -1  
-$EndComp
-Text Label 9750 3550 2    50   ~ 0
-ESP_RX2
-Text Label 9750 3450 2    50   ~ 0
-ESP_TX2
-$Comp
-L Device:R_Small R?
-U 1 1 601E5272
-P 9900 3550
-F 0 "R?" V 9900 3550 50  0000 C CNN
-F 1 "220" V 10000 3550 50  0000 C CNN
-F 2 "" H 9900 3550 50  0001 C CNN
-F 3 "~" H 9900 3550 50  0001 C CNN
-	1    9900 3550
-	0    1    1    0   
-$EndComp
-$Comp
-L Device:R_Small R?
-U 1 1 601E590B
-P 9900 3450
-F 0 "R?" V 9900 3450 50  0000 C CNN
-F 1 "220" V 9800 3450 50  0000 C CNN
-F 2 "" H 9900 3450 50  0001 C CNN
-F 3 "~" H 9900 3450 50  0001 C CNN
-	1    9900 3450
-	0    1    1    0   
-$EndComp
-Wire Wire Line
-	9400 3450 9800 3450
-Wire Wire Line
-	9400 3550 9800 3550
-Wire Wire Line
-	10300 3550 10000 3550
-Wire Wire Line
-	10300 3450 10000 3450
 $EndSCHEMATC

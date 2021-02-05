@@ -293,17 +293,13 @@ Text Label 6300 5000 3    50   ~ 0
 SCL
 Text Label 6400 5000 3    50   ~ 0
 SDA
-Text Label 9750 3550 2    50   ~ 0
-ESP_RX2
-Text Label 9750 3450 2    50   ~ 0
-ESP_TX2
 $Comp
 L Device:R_Small R?
 U 1 1 601E5272
 P 9900 3550
 F 0 "R?" V 9900 3550 50  0000 C CNN
-F 1 "220" V 10000 3550 50  0000 C CNN
-F 2 "" H 9900 3550 50  0001 C CNN
+F 1 "470" V 9850 3400 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" H 9900 3550 50  0001 C CNN
 F 3 "~" H 9900 3550 50  0001 C CNN
 	1    9900 3550
 	0    1    1    0   
@@ -313,8 +309,8 @@ L Device:R_Small R?
 U 1 1 601E590B
 P 9900 3450
 F 0 "R?" V 9900 3450 50  0000 C CNN
-F 1 "220" V 9800 3450 50  0000 C CNN
-F 2 "" H 9900 3450 50  0001 C CNN
+F 1 "470" V 9850 3300 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" H 9900 3450 50  0001 C CNN
 F 3 "~" H 9900 3450 50  0001 C CNN
 	1    9900 3450
 	0    1    1    0   
@@ -349,7 +345,7 @@ U 1 1 601C96F3
 P 9900 2550
 F 0 "R?" V 9900 2550 50  0000 C CNN
 F 1 "4K7" V 10000 2550 50  0000 C CNN
-F 2 "" H 9900 2550 50  0001 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" H 9900 2550 50  0001 C CNN
 F 3 "~" H 9900 2550 50  0001 C CNN
 	1    9900 2550
 	-1   0    0    1   
@@ -360,7 +356,7 @@ U 1 1 601C9D65
 P 10000 2550
 F 0 "R?" V 10000 2550 50  0000 C CNN
 F 1 "4K7" V 9900 2550 50  0000 C CNN
-F 2 "" H 10000 2550 50  0001 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" H 10000 2550 50  0001 C CNN
 F 3 "~" H 10000 2550 50  0001 C CNN
 	1    10000 2550
 	-1   0    0    1   
@@ -402,7 +398,7 @@ Display
 Text Notes 8700 4800 0    100  ~ 0
 Power supply
 Text Notes 6050 3100 0    50   ~ 0
-Notes:\n- GPIO13 reserved for noise sensor\n- GPIO5 reserved for LED + clear sw\n- GPIO4 reserved for IR sensor (really?)\n- GPIO1 & GPIO3 are serial0 (prog.)\n- +3V3 on EN pin is optional
+Notes:\n- GPIO13 reserved for noise sensor\n- GPIO5 reserved for LED + clear sw\n- GPIO4 reserved for IR sensor\n- GPIO1 & GPIO3 are serial0 (prog.)\n- +3V3 on EN pin is optional
 $Comp
 L Device:C_Small C?
 U 1 1 60206A1D
@@ -433,7 +429,7 @@ U 1 1 6022057A
 P 10150 3350
 F 0 "TP?" H 10208 3468 50  0000 L CNN
 F 1 "tp_tx2" H 10208 3377 50  0000 L CNN
-F 2 "" H 10350 3350 50  0001 C CNN
+F 2 "TestPoint:TestPoint_Loop_D2.50mm_Drill1.0mm" H 10350 3350 50  0001 C CNN
 F 3 "~" H 10350 3350 50  0001 C CNN
 	1    10150 3350
 	1    0    0    -1  
@@ -444,7 +440,7 @@ U 1 1 60220FFE
 P 10400 3350
 F 0 "TP?" H 10458 3468 50  0000 L CNN
 F 1 "tp_rx2" H 10458 3377 50  0000 L CNN
-F 2 "" H 10600 3350 50  0001 C CNN
+F 2 "TestPoint:TestPoint_Loop_D2.50mm_Drill1.0mm" H 10600 3350 50  0001 C CNN
 F 3 "~" H 10600 3350 50  0001 C CNN
 	1    10400 3350
 	1    0    0    -1  
@@ -508,5 +504,145 @@ Wire Wire Line
 Text Label 9700 3350 2    50   ~ 0
 LED
 Text Notes 6050 2100 0    50   ~ 0
-TODO:\n- associate INT with an ESP32 pin
+TODO:\n
+Wire Wire Line
+	9700 3150 9400 3150
+Text Label 9700 3150 2    50   ~ 0
+INT
+$Comp
+L neosensor_addon:HC-SR01 U?
+U 1 1 601D6A06
+P 4250 5800
+F 0 "U?" H 4578 5904 50  0000 L CNN
+F 1 "HC-SR01" H 4578 5813 50  0000 L CNN
+F 2 "neosensor_addon:PIR_HC-SR01" H 4250 5800 50  0001 C CNN
+F 3 "" H 4250 5800 50  0001 C CNN
+	1    4250 5800
+	1    0    0    -1  
+$EndComp
+Text Notes 3700 4850 0    100  ~ 0
+PIR sensor
+Wire Wire Line
+	4150 5200 4150 5500
+Wire Wire Line
+	4250 5200 4250 5500
+Wire Wire Line
+	4350 5200 4350 5500
+Text Label 4150 5200 3    50   ~ 0
++5V
+Text Label 4250 5200 3    50   ~ 0
+IR
+Text Label 4350 5200 3    50   ~ 0
+GND
+Wire Wire Line
+	9800 3650 9400 3650
+$Comp
+L Device:R_Small R?
+U 1 1 601E3F8F
+P 9900 3650
+F 0 "R?" V 9900 3650 50  0000 C CNN
+F 1 "470" V 9850 3500 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" H 9900 3650 50  0001 C CNN
+F 3 "~" H 9900 3650 50  0001 C CNN
+	1    9900 3650
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	10000 3650 10150 3650
+Text Label 10750 3650 2    50   ~ 0
+IR
+Text Notes 3700 5050 0    50   ~ 0
+HC-SR01 V+ accepts from 5 to 20v\nOUT pin is 3.3 TTL
+$Comp
+L Device:R_Small R?
+U 1 1 601EA941
+P 10150 3850
+F 0 "R?" V 10150 3850 50  0000 C CNN
+F 1 "15k" V 10075 3850 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" H 10150 3850 50  0001 C CNN
+F 3 "~" H 10150 3850 50  0001 C CNN
+	1    10150 3850
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	10150 3750 10150 3650
+Connection ~ 10150 3650
+Wire Wire Line
+	10150 3650 10750 3650
+$Comp
+L power:GND #PWR?
+U 1 1 601ECAC3
+P 10150 4050
+F 0 "#PWR?" H 10150 3800 50  0001 C CNN
+F 1 "GND" H 10155 3877 50  0000 C CNN
+F 2 "" H 10150 4050 50  0001 C CNN
+F 3 "" H 10150 4050 50  0001 C CNN
+	1    10150 4050
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	10150 4050 10150 3950
+$Comp
+L Transistor_FET:2N7002 Q?
+U 1 1 601EF3E3
+P 2525 6500
+F 0 "Q?" H 2729 6546 50  0000 L CNN
+F 1 "2N7002" H 2729 6455 50  0000 L CNN
+F 2 "Package_TO_SOT_SMD:SOT-23" H 2725 6425 50  0001 L CIN
+F 3 "https://www.onsemi.com/pub/Collateral/NDS7002A-D.PDF" H 2525 6500 50  0001 L CNN
+	1    2525 6500
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 601F9492
+P 2625 6850
+F 0 "#PWR?" H 2625 6600 50  0001 C CNN
+F 1 "GND" H 2630 6677 50  0000 C CNN
+F 2 "" H 2625 6850 50  0001 C CNN
+F 3 "" H 2625 6850 50  0001 C CNN
+	1    2625 6850
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2625 6850 2625 6700
+$Comp
+L Device:R_Small R?
+U 1 1 601FB734
+P 2625 6075
+F 0 "R?" V 2625 6075 50  0000 C CNN
+F 1 "68" V 2550 6075 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" H 2625 6075 50  0001 C CNN
+F 3 "~" H 2625 6075 50  0001 C CNN
+	1    2625 6075
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	2625 6175 2625 6300
+$Comp
+L Device:LED_Small_ALT D?
+U 1 1 601FE5C8
+P 2625 5775
+F 0 "D?" V 2671 5705 50  0000 R CNN
+F 1 "LED_Small_ALT" V 2580 5705 50  0000 R CNN
+F 2 "LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder" V 2625 5775 50  0001 C CNN
+F 3 "~" V 2625 5775 50  0001 C CNN
+	1    2625 5775
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	2625 5975 2625 5875
+$Comp
+L power:+5V #PWR?
+U 1 1 602009CC
+P 2625 5575
+F 0 "#PWR?" H 2625 5425 50  0001 C CNN
+F 1 "+5V" H 2640 5748 50  0000 C CNN
+F 2 "" H 2625 5575 50  0001 C CNN
+F 3 "" H 2625 5575 50  0001 C CNN
+	1    2625 5575
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2625 5675 2625 5575
 $EndSCHEMATC

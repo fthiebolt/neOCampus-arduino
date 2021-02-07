@@ -1,4 +1,4 @@
-19001233644457595
+19002845950864595
 Battery
 BatteryHolder_Bulgin_BX0036_1xC
 Bulgin Battery Holder, BX0036, Battery Type C (https://www.bulgin.com/products/pub/media/bulgin/data/Battery_holders.pdf)
@@ -83068,6 +83068,13 @@ OLED1.3_I2C
 0
 4
 4
+neosensor_addon
+PIR_HC-SR01
+
+
+0
+3
+3
 neosensor_addon
 TSSOP-8_4.4x3mm_P0.65mm_handsolder
 8-Lead Plastic Thin Shrink Small Outline (ST)-4.4 mm Body [TSSOP] (see Microchip Packaging Specification 00000049BS.pdf)

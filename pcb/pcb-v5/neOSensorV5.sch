@@ -302,10 +302,6 @@ Wire Wire Line
 	9400 3450 9800 3450
 Wire Wire Line
 	9400 3550 9800 3550
-Wire Wire Line
-	10750 3550 10400 3550
-Wire Wire Line
-	10750 3450 10150 3450
 $Comp
 L power:+3V3 #PWR07
 U 1 1 601C80B4
@@ -406,38 +402,6 @@ Wire Wire Line
 	8500 2650 8200 2650
 Text Label 8200 2650 0    50   ~ 0
 +3V3
-$Comp
-L Connector:TestPoint TP1
-U 1 1 6022057A
-P 10150 3350
-F 0 "TP1" H 10208 3468 50  0000 L CNN
-F 1 "tp_tx2" H 10208 3377 50  0000 L CNN
-F 2 "TestPoint:TestPoint_Loop_D2.50mm_Drill1.0mm" H 10350 3350 50  0001 C CNN
-F 3 "~" H 10350 3350 50  0001 C CNN
-	1    10150 3350
-	1    0    0    -1  
-$EndComp
-$Comp
-L Connector:TestPoint TP2
-U 1 1 60220FFE
-P 10400 3350
-F 0 "TP2" H 10458 3468 50  0000 L CNN
-F 1 "tp_rx2" H 10458 3377 50  0000 L CNN
-F 2 "TestPoint:TestPoint_Loop_D2.50mm_Drill1.0mm" H 10600 3350 50  0001 C CNN
-F 3 "~" H 10600 3350 50  0001 C CNN
-	1    10400 3350
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	10150 3350 10150 3450
-Connection ~ 10150 3450
-Wire Wire Line
-	10150 3450 10000 3450
-Wire Wire Line
-	10400 3350 10400 3550
-Connection ~ 10400 3550
-Wire Wire Line
-	10400 3550 10000 3550
 Text Label 10750 3450 2    50   ~ 0
 TX2
 Text Label 10750 3550 2    50   ~ 0
@@ -488,8 +452,6 @@ Text Label 9700 3350 2    50   ~ 0
 LED
 Text Notes 6050 2100 0    50   ~ 0
 TODO:\n
-Wire Wire Line
-	10750 3150 10400 3150
 Text Label 10750 3150 2    50   ~ 0
 INT
 $Comp
@@ -577,12 +539,12 @@ Wire Wire Line
 $Comp
 L Device:R_Small R1
 U 1 1 601FB734
-P 1225 5075
-F 0 "R1" V 1225 5075 50  0000 C CNN
-F 1 "68" V 1150 5075 50  0000 C CNN
-F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" H 1225 5075 50  0001 C CNN
-F 3 "~" H 1225 5075 50  0001 C CNN
-	1    1225 5075
+P 1225 4775
+F 0 "R1" V 1225 4775 50  0000 C CNN
+F 1 "68" V 1150 4775 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" H 1225 4775 50  0001 C CNN
+F 3 "~" H 1225 4775 50  0001 C CNN
+	1    1225 4775
 	-1   0    0    1   
 $EndComp
 Wire Wire Line
@@ -590,12 +552,12 @@ Wire Wire Line
 $Comp
 L Device:LED_Small_ALT D1
 U 1 1 601FE5C8
-P 1225 4775
-F 0 "D1" V 1271 4705 50  0000 R CNN
-F 1 "Red" H 1300 4900 50  0000 R CNN
-F 2 "LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder" V 1225 4775 50  0001 C CNN
-F 3 "~" V 1225 4775 50  0001 C CNN
-	1    1225 4775
+P 1225 5075
+F 0 "D1" V 1271 5005 50  0000 R CNN
+F 1 "Red" H 1300 5200 50  0000 R CNN
+F 2 "LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder" V 1225 5075 50  0001 C CNN
+F 3 "~" V 1225 5075 50  0001 C CNN
+	1    1225 5075
 	0    -1   -1   0   
 $EndComp
 Wire Wire Line
@@ -662,21 +624,21 @@ F 1 "clear" H 1950 4959 50  0000 C CNN
 F 2 "neosensor_addon:G71Y_µsw_smd" H 1950 4825 50  0001 C CIN
 F 3 "" H 1950 4825 50  0001 C CNN
 	1    1950 4825
-	1    0    0    -1  
+	-1   0    0    -1  
 $EndComp
 $Comp
 L power:GND #PWR03
 U 1 1 60224902
-P 1750 5025
-F 0 "#PWR03" H 1750 4775 50  0001 C CNN
-F 1 "GND" H 1755 4852 50  0000 C CNN
-F 2 "" H 1750 5025 50  0001 C CNN
-F 3 "" H 1750 5025 50  0001 C CNN
-	1    1750 5025
+P 2150 5025
+F 0 "#PWR03" H 2150 4775 50  0001 C CNN
+F 1 "GND" H 2155 4852 50  0000 C CNN
+F 2 "" H 2150 5025 50  0001 C CNN
+F 3 "" H 2150 5025 50  0001 C CNN
+	1    2150 5025
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	1750 4925 1750 5025
+	2150 4925 2150 5025
 Wire Wire Line
 	1750 4825 1600 4825
 Wire Wire Line
@@ -701,13 +663,13 @@ LED and SWITCHES
 $Comp
 L neosensor_addon:G71Y SW2
 U 1 1 601EB9F1
-P 1150 6600
-F 0 "SW2" H 1150 6825 50  0000 C CNN
-F 1 "+" H 1150 6734 50  0000 C CNN
-F 2 "neosensor_addon:G71Y_µsw_smd" H 1150 6600 50  0001 C CIN
-F 3 "" H 1150 6600 50  0001 C CNN
-	1    1150 6600
-	1    0    0    -1  
+P 1075 6600
+F 0 "SW2" H 1075 6825 50  0000 C CNN
+F 1 "+" H 1075 6734 50  0000 C CNN
+F 2 "neosensor_addon:G71Y_µsw_smd" H 1075 6600 50  0001 C CIN
+F 3 "" H 1075 6600 50  0001 C CNN
+	1    1075 6600
+	-1   0    0    -1  
 $EndComp
 $Comp
 L power:GND #PWR011
@@ -734,11 +696,7 @@ $EndComp
 Wire Wire Line
 	800  6550 800  6600
 Wire Wire Line
-	800  6600 950  6600
-Wire Wire Line
-	950  6700 900  6700
-Wire Wire Line
-	900  6700 900  7000
+	800  6600 875  6600
 Wire Wire Line
 	900  7000 1150 7000
 Wire Wire Line
@@ -755,12 +713,12 @@ F 3 "~" H 1450 6800 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 Wire Wire Line
-	1150 7000 1450 7000
+	1150 7000 1275 7000
 Wire Wire Line
 	1450 7000 1450 6900
 Connection ~ 1150 7000
 Wire Wire Line
-	1350 6600 1450 6600
+	1275 6600 1450 6600
 Wire Wire Line
 	1450 6600 1450 6700
 Wire Wire Line
@@ -773,13 +731,13 @@ SW2
 $Comp
 L neosensor_addon:G71Y SW3
 U 1 1 60238ADD
-P 2600 6600
-F 0 "SW3" H 2600 6825 50  0000 C CNN
-F 1 "-" H 2600 6734 50  0000 C CNN
-F 2 "neosensor_addon:G71Y_µsw_smd" H 2600 6600 50  0001 C CIN
-F 3 "" H 2600 6600 50  0001 C CNN
-	1    2600 6600
-	1    0    0    -1  
+P 2525 6600
+F 0 "SW3" H 2525 6825 50  0000 C CNN
+F 1 "-" H 2525 6734 50  0000 C CNN
+F 2 "neosensor_addon:G71Y_µsw_smd" H 2525 6600 50  0001 C CIN
+F 3 "" H 2525 6600 50  0001 C CNN
+	1    2525 6600
+	-1   0    0    -1  
 $EndComp
 $Comp
 L power:GND #PWR013
@@ -806,22 +764,18 @@ $EndComp
 Wire Wire Line
 	2250 6550 2250 6600
 Wire Wire Line
-	2250 6600 2400 6600
-Wire Wire Line
-	2400 6700 2350 6700
-Wire Wire Line
-	2350 6700 2350 7000
+	2250 6600 2325 6600
 Wire Wire Line
 	2350 7000 2600 7000
 Wire Wire Line
 	2600 7000 2600 7050
 Wire Wire Line
-	2600 7000 2900 7000
+	2600 7000 2725 7000
 Wire Wire Line
 	2900 7000 2900 6900
 Connection ~ 2600 7000
 Wire Wire Line
-	2800 6600 2900 6600
+	2725 6600 2900 6600
 Wire Wire Line
 	2900 6600 2900 6700
 Wire Wire Line
@@ -1378,27 +1332,11 @@ F 3 "~" H 10175 2550 50  0001 C CNN
 	1    10175 2550
 	-1   0    0    1   
 $EndComp
-$Comp
-L Connector:TestPoint TP7
-U 1 1 6047575F
-P 10400 2975
-F 0 "TP7" H 10458 3093 50  0000 L CNN
-F 1 "tp_INT" H 10458 3002 50  0000 L CNN
-F 2 "TestPoint:TestPoint_Loop_D2.50mm_Drill1.0mm" H 10600 2975 50  0001 C CNN
-F 3 "~" H 10600 2975 50  0001 C CNN
-	1    10400 2975
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	10400 2975 10400 3150
-Connection ~ 10400 3150
-Wire Wire Line
-	10400 3150 10175 3150
 Wire Wire Line
 	6100 5300 6100 5000
-Text Label 950  7000 0    50   ~ 0
+Text Label 900  7000 0    50   ~ 0
 GND
-Text Label 2400 7000 0    50   ~ 0
+Text Label 2350 7000 0    50   ~ 0
 GND
 $Comp
 L power:GND #PWR0105
@@ -1453,4 +1391,20 @@ Text Label 1275 1200 2    50   ~ 0
 ANA_2
 Text Label 1275 1300 2    50   ~ 0
 ANA_3
+Wire Wire Line
+	1275 6700 1275 7000
+Connection ~ 1275 7000
+Wire Wire Line
+	1275 7000 1450 7000
+Wire Wire Line
+	10000 3550 10750 3550
+Wire Wire Line
+	10000 3450 10750 3450
+Wire Wire Line
+	10175 3150 10750 3150
+Wire Wire Line
+	2725 6700 2725 7000
+Connection ~ 2725 7000
+Wire Wire Line
+	2725 7000 2900 7000
 $EndSCHEMATC

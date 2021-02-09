@@ -731,13 +731,13 @@ SW2
 $Comp
 L neosensor_addon:G71Y SW3
 U 1 1 60238ADD
-P 2600 6600
-F 0 "SW3" H 2600 6825 50  0000 C CNN
-F 1 "-" H 2600 6734 50  0000 C CNN
-F 2 "neosensor_addon:G71Y_µsw_smd" H 2600 6600 50  0001 C CIN
-F 3 "" H 2600 6600 50  0001 C CNN
-	1    2600 6600
-	1    0    0    -1  
+P 2525 6600
+F 0 "SW3" H 2525 6825 50  0000 C CNN
+F 1 "-" H 2525 6734 50  0000 C CNN
+F 2 "neosensor_addon:G71Y_µsw_smd" H 2525 6600 50  0001 C CIN
+F 3 "" H 2525 6600 50  0001 C CNN
+	1    2525 6600
+	-1   0    0    -1  
 $EndComp
 $Comp
 L power:GND #PWR013
@@ -764,22 +764,18 @@ $EndComp
 Wire Wire Line
 	2250 6550 2250 6600
 Wire Wire Line
-	2250 6600 2400 6600
-Wire Wire Line
-	2400 6700 2350 6700
-Wire Wire Line
-	2350 6700 2350 7000
+	2250 6600 2325 6600
 Wire Wire Line
 	2350 7000 2600 7000
 Wire Wire Line
 	2600 7000 2600 7050
 Wire Wire Line
-	2600 7000 2900 7000
+	2600 7000 2725 7000
 Wire Wire Line
 	2900 7000 2900 6900
 Connection ~ 2600 7000
 Wire Wire Line
-	2800 6600 2900 6600
+	2725 6600 2900 6600
 Wire Wire Line
 	2900 6600 2900 6700
 Wire Wire Line
@@ -1340,7 +1336,7 @@ Wire Wire Line
 	6100 5300 6100 5000
 Text Label 900  7000 0    50   ~ 0
 GND
-Text Label 2400 7000 0    50   ~ 0
+Text Label 2350 7000 0    50   ~ 0
 GND
 $Comp
 L power:GND #PWR0105
@@ -1406,4 +1402,9 @@ Wire Wire Line
 	10000 3450 10750 3450
 Wire Wire Line
 	10175 3150 10750 3150
+Wire Wire Line
+	2725 6700 2725 7000
+Connection ~ 2725 7000
+Wire Wire Line
+	2725 7000 2900 7000
 $EndSCHEMATC

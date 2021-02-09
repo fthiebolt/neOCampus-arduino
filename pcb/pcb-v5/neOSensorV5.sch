@@ -51,17 +51,6 @@ I2C sensors connectors
 Text Notes 8900 850  0    100  ~ 0
 Serial sensors connector
 $Comp
-L Mechanical:MountingHole_Pad H1
-U 1 1 601BFC00
-P 5550 7050
-F 0 "H1" V 5504 7200 50  0000 L CNN
-F 1 "3.2mm for MH3 screw" V 5595 7200 50  0000 L CNN
-F 2 "MountingHole:MountingHole_3.2mm_M3_Pad" H 5550 7050 50  0001 C CNN
-F 3 "~" H 5550 7050 50  0001 C CNN
-	1    5550 7050
-	0    1    1    0   
-$EndComp
-$Comp
 L Mechanical:MountingHole_Pad H2
 U 1 1 601C095B
 P 5550 7350
@@ -1407,4 +1396,15 @@ Wire Wire Line
 Connection ~ 2725 7000
 Wire Wire Line
 	2725 7000 2900 7000
+$Comp
+L Mechanical:MountingHole_Pad H1
+U 1 1 601BFC00
+P 5550 7050
+F 0 "H1" V 5504 7200 50  0000 L CNN
+F 1 "3.2mm for MH3 screw" V 5595 7200 50  0000 L CNN
+F 2 "MountingHole:MountingHole_3.2mm_M3_Pad" H 5550 7050 50  0001 C CNN
+F 3 "~" H 5550 7050 50  0001 C CNN
+	1    5550 7050
+	0    1    1    0   
+$EndComp
 $EndSCHEMATC

@@ -1,12 +1,17 @@
-# neOCampus-arduino library
-neOCampus IoT support library for Arduino. This library will provides support for the following neOCampus boards:
-  * neOSensor boards based on ESP8266 (rev. >= V2)
+# neOCampus-arduino | home of the neOSensor end-devices #
+________________________________________________________________
+
+This repository provides support for the following neOCampus boards:
   * neOSensor boards based on ESP32
   * neOSensor-AirQuality board (ESP32) from CNRS' LCC lab.
+  * neOSensor boards based on ESP8266 (rev. >= V2)
+
+All this work was undertaken at Université Toulouse 3 / IRIT laboratory in the context of the [neOCampus](https://neocampus.org "neOCampus corporate") operation.
 
 ## NEWS ##
- * **[Dec.20]** added PCB from ESP8266 version 4 (KiCad) :)\
- * **[Aug.20]** new definition board for neOSensor-AirQuality board :)\
+ * **[Feb.21]** added KiCad PCB for neOSensor v5 (ESP32 based) :)\
+ * **[Dec.20]** added PCB from ESP8266 version 4 (KiCad)\
+ * **[Aug.20]** new definition board for neOSensor-AirQuality board\
 added definition board for (future) neOSensor esp32 based board\
 added suppport for boards configuration via sensOCampus JSON config\
 added Arduino IDE support for our various neOSensor boards\
@@ -21,10 +26,13 @@ This board comes from CNRS LCC lab, it's a PhD work undertaken by Aymen Sendi (a
 The board features four specific sensors able to measure NO2, CO, CH20, NO2 alternate.
 
 ## Getting started ##
-First of all, you ought to install esp32 or esp8266  support in your Arduino IDE.
+First of all, you ought to install esp32, esp8266 or CubeCell support in your Arduino IDE.
 
-  - esp8266 https://arduino.esp8266.com/stable/package_esp8266com_index.json
-  - esp32 https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
+| Device   | Arduino Board Manager json file                                                             |
+|----------|---------------------------------------------------------------------------------------------|
+| esp8266  | https://arduino.esp8266.com/stable/package_esp8266com_index.json                            |
+| esp32    | https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json |
+| CubeCell | https://resource.heltec.cn/download/package_CubeCell_index.json                             |
 
 Then, run script './deploy.sh' and boards will get added to your Arduino boards list :)
 
@@ -45,7 +53,9 @@ Once you've launched the Arduino IDE, before compiling and uploading sketches to
   - debug serial link speed 115200
 
 ### WiFi setup ###
-Once started the board will provides a WiFi Access Point (AP) named: `neOSensor_xxxx` where xxxx are the MAC address last bytes.
+Only for ESP based boards.
+
+Once started, the board will provides a WiFi Access Point (AP) named: `neOSensor_xxxx` where xxxx are the MAC address last bytes.
 
 **First time setup**\
 In this case, AP will get available for 5mn for you to configure SSID along with WPA2 key.

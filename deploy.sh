@@ -1,7 +1,8 @@
 #!/bin/bash
 #
-# Deployment script for neOCampus / neOSensor ESP32 based boards
+# Deployment script for neOCampus / neOSensor boards
 #
+# F.Thiebolt    feb.21  added CubeCell support
 # F.Thiebolt    sep.20  force SDK 2.7.1 for esp8266 (2.7.4 exhibits WiFi failures
 #                       in higly degraded WiFi environment).
 # F.Thiebolt    aug.20  initial release
@@ -11,22 +12,23 @@
 # Global defs
 ESP32_REV=${ESP32_REV:-"1.0.4"}
 ESP8266_REV=${ESP8266_REV:-"2.7.1"}
+CUBECELL_REV=${CUBECELL_REV:-"1.2.0"}
 
 
 #
 # function install
-# $1: ARCH (e.g ESP8266 or ESP32)
+# $1: ARCH (e.g ESP8266, ESP32 or CubeCell)
 # $2: SDK_REV (e.g "2.7.4" for esp8266 "1.0.4" for esp32)
 function boards_install() {
     [ $# -ne 2 ] && { return 1; }
     ARCH=$1
     SDK_REV=$2
 
-    SDK_DIR="~/.arduino15/packages/${ARCH,,}/hardware/${ARCH,,}/${SDK_REV}"
+    SDK_DIR="~/.arduino15/packages/${ARCH}/hardware/${ARCH}/${SDK_REV}"
     eval SDK_DIR=${SDK_DIR}
-    [ -d ${SDK_DIR} ] || { echo -e "unable to find ${ARCH,,} SDK dir '${SDK_DIR}' ... wrong revision ??" >&2; return 1; }
+    [ -d ${SDK_DIR} ] || { echo -e "unable to find ${ARCH} SDK dir '${SDK_DIR}' ... wrong revision ??" >&2; return 1; }
 
-    echo -e   "# Detected ${ARCH,,} SDK dir:"
+    echo -e   "# Detected ${ARCH} SDK dir:"
     printf    "%-80s\n" "${SDK_DIR}"
     echo -e   "# -------------------------------------------------------- #"
     sleep 1
@@ -45,7 +47,7 @@ function boards_install() {
         _variant_dir=${variant_dir#*/}
         _vdir=${_variant_dir%%/}
         [ -f ${_vdir}/variant.h ] || { continue; }
-        echo -ne "${_vdir} --> install ${ARCH,,} board [y/N]? : "
+        echo -ne "${_vdir} --> install ${ARCH,,} board(s) [y/N]? : "
         read -e -n 1 answer
         [ "X${answer,,}" != "Xy" ] && { echo -e "cancelled!"; continue; }
         # copy variant dir
@@ -87,15 +89,20 @@ function boards_install() {
 # usage
 echo -e "\n############################################################"
 echo -e   "#                                                          #"
-echo -e   "#        neOCampus ESP8266/ESP32 boards installer          #"
+echo -e   "#         neOCampus | neOSensor boards installer           #"
 echo -e   "#                                                          #"
 echo -e   "# -------------------------------------------------------- #"
 
 # ESP32 boards
-boards_install "ESP32" ${ESP32_REV}
+boards_install "esp32" ${ESP32_REV}
 [ $? -ne 0 ] && { echo -e "\n\tfailed to install additional ESP32 boards ?!?!" >&2; sleep 2; }
 
-boards_install "ESP8266" ${ESP8266_REV}
+# CubeCell boards
+boards_install "CubeCell" ${CUBECELL_REV}
+[ $? -ne 0 ] && { echo -e "\n\tfailed to install additional CubeCell boards ?!?!" >&2; sleep 2; }
+
+# ESP8266 boards
+boards_install "esp8266" ${ESP8266_REV}
 [ $? -ne 0 ] && { echo -e "\n\tfailed to install additional ESP8266 boards ?!?!" >&2; sleep 2; }
 
 # finialize

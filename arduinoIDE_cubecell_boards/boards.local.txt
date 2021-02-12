@@ -1,0 +1,60 @@
+# neOCampus | neOsensor LoRaWAN additional boards
+
+#
+# NEOSENSOR
+neOSensor.name=neOSensor-lorawan
+
+neOSensor.upload.tool=CubeCellflash
+neOSensor.upload.maximum_size=131072
+neOSensor.upload.maximum_data_size=131072
+neOSensor.upload.wait_for_upload_port=true
+
+neOSensor.build.board=CubeCell_Board
+neOSensor.build.core=asr650x
+neOSensor.build.variant=CubeCell-Board
+
+# neOSensor boards specific definitions
+# [feb.21] only way to add defines is through a platform.local.txt :(
+# neOSensor.build.defines=-DNEOSENSOR_BOARD -DLED=2
+
+# LoRaWAN settings
+neOSensor.menu.LORAWAN_REGION.0=REGION_EU868
+neOSensor.menu.LORAWAN_REGION.0.build.band=REGION_EU868
+
+# Either class A or C
+neOSensor.menu.LORAWAN_CLASS.0=CLASS_A
+neOSensor.menu.LORAWAN_CLASS.0.build.LORAWAN_CLASS=CLASS_A
+
+neOSensor.build.LORAWAN_DEVEUI_AUTO=0
+
+# OTAA (true) / ABP (false)
+neOSensor.menu.LORAWAN_METHODE.0=OTAA
+neOSensor.menu.LORAWAN_METHODE.0.build.LORAWAN_NETMODE=true
+
+# ADR ON(true) / OFF(false)
+neOSensor.menu.LORAWAN_ADR.0=ADR on
+neOSensor.menu.LORAWAN_ADR.0.build.LORAWAN_NETMODE=true
+
+# Uplinks confirmation
+neOSensor.menu.LORAWAN_UPLINKMODE.0=uplink uncnf
+neOSensor.menu.LORAWAN_UPLINKMODE.0.build.LORAWAN_UPLINKMODE=false
+
+# Net reservation ??
+neOSensor.menu.LORAWAN_Net_Reserve.0=No Net Resv.
+neOSensor.menu.LORAWAN_Net_Reserve.0.build.LORAWAN_Net_Reserve=false
+
+# No AT support
+neOSensor.menu.LORAWAN_AT_SUPPORT.0=no AT support
+neOSensor.menu.LORAWAN_AT_SUPPORT.0.build.LORAWAN_AT_SUPPORT=0
+
+# On board RGB led
+neOSensor.menu.RGB.0=RGB led active
+neOSensor.menu.RGB.0.build.RGB=1
+
+# LoRaWAN debug: None(0) to 2
+neOSensor.menu.LORAWAN_DebugLevel.0=None
+neOSensor.menu.LORAWAN_DebugLevel.0.build.LORAWAN_DebugLevel=0
+
+##############################################################
+
+

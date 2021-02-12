@@ -34,7 +34,7 @@ First of all, you ought to install esp32, esp8266 or CubeCell support in your Ar
 | esp32    | https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json |
 | CubeCell | https://resource.heltec.cn/download/package_CubeCell_index.json                             |
 
-Then, run script './deploy.sh' and boards will get added to your Arduino boards list :)
+Then, run script `./deploy.sh` and boards will get added to your Arduino boards list :)
 
 If not already installed, you'll need python-serial package; thus either you install it at the system level
 ```

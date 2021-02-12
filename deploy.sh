@@ -28,18 +28,19 @@ function boards_install() {
     eval SDK_DIR=${SDK_DIR}
     [ -d ${SDK_DIR} ] || { echo -e "unable to find ${ARCH} SDK dir '${SDK_DIR}' ... wrong revision ??" >&2; return 1; }
 
-    echo -e   "# Detected ${ARCH} SDK dir:"
-    printf    "%-80s\n" "${SDK_DIR}"
-    echo -e   "# -------------------------------------------------------- #"
+    echo -e "\n# -------------------------------------------------------- #"
+    echo -e "#\tTARGET:\t${ARCH^^}"
+    echo -e "#\tDetected ${ARCH} SDK dir:"
+    printf  "#\t%-80s\n" "${SDK_DIR}"
     sleep 1
 
     SRC_DIR="arduinoIDE_${ARCH,,}_boards"
-    [ -d ${SRC_DIR} ] || { echo -e "unable to find dir '${SRC_DIR}' ... aborting" >&2; return 1; }
+    [ -d ${SRC_DIR} ] || { echo -e "unable to find dir '${SRC_DIR}' ... aborting" >&2; echo -e "# -------------------------------------------------------- #"; return 1; }
 
     #
     # parse current variants directory
-    echo -e   "#         install boards                                   #"
-    echo -e   "#                                                          #"
+    echo -e "#         install boards                                   #"
+    echo -e "#                                                          #"
     _cpt=0
     for variant_dir in $(/bin/ls -d ${SRC_DIR}/*); do
         # [sep.20] NOT TESTED !!
@@ -59,15 +60,14 @@ function boards_install() {
         echo -e "\tsuccessfully installed board '${_vdir}' :)"
         (( _cpt++ ))
     done
-    echo -e   "#                                                          #"
-    echo -e   "# -------------------------------------------------------- #"
+
     #[aug.20] some boards does not have variant defs!
     #[ "X${_cpt}" == "X0" ] && { exit 0; }
 
     #
     # copy local defs files
-    echo -e   "#         copy local files                                 #"
-    echo -e   "#                                                          #"
+    echo -e "#         copy local files                                 #"
+    echo -e "#                                                          #"
     for local_file in $(/bin/ls ${SRC_DIR}/*local.txt); do
         _local_file=${local_file#*/}
         if [ -f ${SDK_DIR}/${_local_file} ]; then
@@ -79,8 +79,8 @@ function boards_install() {
         [ $? -ne 0 ] && { echo -e "\n### ERROR while copying '${local_file}' file to '${SDK_DIR}' directory ... aborting!" >&2; exit 1; }
         echo -e "\tsuccessfully installed local file '${_local_file}'"
     done
-    echo -e   "#                                                          #"
-    echo -e   "# -------------------------------------------------------- #"
+    echo -e "#                                                          #"
+    echo -e "# -------------------------------------------------------- #"
 
     return 0
 }
@@ -88,10 +88,10 @@ function boards_install() {
 
 # usage
 echo -e "\n############################################################"
-echo -e   "#                                                          #"
-echo -e   "#         neOCampus | neOSensor boards installer           #"
-echo -e   "#                                                          #"
-echo -e   "# -------------------------------------------------------- #"
+echo -e "#                                                          #"
+echo -e "#         neOCampus | neOSensor boards installer           #"
+echo -e "#                                                          #"
+echo -e "# -------------------------------------------------------- #"
 
 # ESP32 boards
 boards_install "esp32" ${ESP32_REV}

@@ -34,22 +34,29 @@ neOSensor.menu.LORAWAN_METHODE.0.build.LORAWAN_NETMODE=true
 # ADR ON(true) / OFF(false)
 neOSensor.menu.LORAWAN_ADR.0=ADR on
 neOSensor.menu.LORAWAN_ADR.0.build.LORAWAN_NETMODE=true
+neOSensor.menu.LORAWAN_ADR.1=ADR off
+neOSensor.menu.LORAWAN_ADR.1.build.LORAWAN_NETMODE=false
 
 # Uplinks confirmation
 neOSensor.menu.LORAWAN_UPLINKMODE.0=uplink uncnf
 neOSensor.menu.LORAWAN_UPLINKMODE.0.build.LORAWAN_UPLINKMODE=false
 
-# Net reservation ??
+# Net reservation: save keys related to OTAA join somewhere in flash
+#   thus not needing to join again on next powerup :)
 neOSensor.menu.LORAWAN_Net_Reserve.0=No Net Resv.
 neOSensor.menu.LORAWAN_Net_Reserve.0.build.LORAWAN_Net_Reserve=false
+neOSensor.menu.LORAWAN_Net_Reserve.1=Save OTAA join keys
+neOSensor.menu.LORAWAN_Net_Reserve.1.build.LORAWAN_Net_Reserve=true
 
 # No AT support
 neOSensor.menu.LORAWAN_AT_SUPPORT.0=no AT support
 neOSensor.menu.LORAWAN_AT_SUPPORT.0.build.LORAWAN_AT_SUPPORT=0
 
 # On board RGB led
-neOSensor.menu.RGB.0=RGB led active
-neOSensor.menu.RGB.0.build.RGB=1
+neOSensor.menu.RGB.0=RGB led disabled
+neOSensor.menu.RGB.0.build.RGB=0
+neOSensor.menu.RGB.1=RGB led active
+neOSensor.menu.RGB.1.build.RGB=1
 
 # LoRaWAN debug: None(0) to 2
 neOSensor.menu.LORAWAN_DebugLevel.0=None

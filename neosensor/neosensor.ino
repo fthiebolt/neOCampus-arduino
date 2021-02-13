@@ -101,6 +101,19 @@
 #endif /* ESP32 adcanced ADC */
 
 
+
+
+/* [Feb.21] test about binary whole size with graphic lib
+ *  TO REMOVE !!
+ *  TO REMOVE !!
+ *  TO REMOVE !!
+ */
+#include <U8x8lib.h>
+U8X8_SSD1306_128X64_NONAME_SW_I2C u8x8(/* clock=*/ SCL, /* data=*/ SDA, /* reset=*/ U8X8_PIN_NONE);   // OLEDs without Reset of the Display
+
+
+
+
 /* neOCampus related includes */
 #include "neocampus.h"
 

@@ -1,0 +1,4 @@
+=== neOSensor PCB V5 ===
+TODO list:
+  * instead of OLED and IRsensor labels, you may add VCC/GND/SCL/SDA labels on silk screen
+

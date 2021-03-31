@@ -4,12 +4,12 @@ EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
-Title "neOSensor v5"
+Title "neOSensor v5.1"
 Date "2021-02-04"
-Rev "v5"
+Rev "v5.1"
 Comp "(c) neOCampus / Dr THIEBOLT François"
-Comment1 "M2siame 2020-2021 project"
-Comment2 "Univ.Tlse3 / IRIT / neOCampus"
+Comment1 "Univ.Tlse3 / IRIT / neOCampus"
+Comment2 "[mar.21][v5.1] corrected Q1 inversion; removed EN tied to 3v3"
 Comment3 ""
 Comment4 ""
 $EndDescr
@@ -387,10 +387,6 @@ Wire Wire Line
 	8500 5700 8500 5800
 Wire Wire Line
 	8500 5800 8950 5800
-Wire Wire Line
-	8500 2650 8200 2650
-Text Label 8200 2650 0    50   ~ 0
-+3V3
 Text Label 10750 3450 2    50   ~ 0
 TX2
 Text Label 10750 3550 2    50   ~ 0
@@ -510,7 +506,7 @@ F 1 "2N7002" H 1530 5545 50  0000 L CNN
 F 2 "Package_TO_SOT_SMD:SOT-23_Handsoldering" H 1525 5425 50  0001 L CIN
 F 3 "https://www.onsemi.com/pub/Collateral/NDS7002A-D.PDF" H 1325 5500 50  0001 L CNN
 	1    1325 5500
-	-1   0    0    1   
+	-1   0    0    -1  
 $EndComp
 $Comp
 L power:GND #PWR02
@@ -1407,4 +1403,5 @@ F 3 "~" H 5550 7050 50  0001 C CNN
 	1    5550 7050
 	0    1    1    0   
 $EndComp
+NoConn ~ 8500 2650
 $EndSCHEMATC

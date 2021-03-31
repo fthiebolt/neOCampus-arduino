@@ -20,5 +20,6 @@
 
 # KiCad
 .bck
+.sch-bak
 fp-info-cache
 

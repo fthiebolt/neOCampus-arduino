@@ -75,9 +75,10 @@
 // main output led
 #ifndef LED
   #ifdef ESP8266
-    #define LED             5   // GPIO5 (our main led)
+    #define LED             5   // GPIO5 (our main led + clear switch)
   #elif defined(ESP32)
-    #define LED             5   // GPIO5 (our main led)
+    #define LED             15  // GPIO15 (our main led + clear switch)
+                                // WARNING: GPIO5 on esp32 devkit V1 has 10k pull-up on 3v3
 //  #define LED             INVALID_GPIO
   #endif
 #endif

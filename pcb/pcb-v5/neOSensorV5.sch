@@ -144,8 +144,8 @@ L Device:CP1_Small C2
 U 1 1 601D0AC1
 P 9350 5600
 F 0 "C2" H 9441 5646 50  0000 L CNN
-F 1 "470µF 6.3v" H 9441 5555 50  0000 L CNN
-F 2 "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm" H 9350 5600 50  0001 C CNN
+F 1 "100µF 6.3v" H 9441 5555 50  0000 L CNN
+F 2 "Capacitor_THT:CP_Radial_D5.0mm_P2.50mm" H 9350 5600 50  0001 C CNN
 F 3 "~" H 9350 5600 50  0001 C CNN
 	1    9350 5600
 	1    0    0    -1  
@@ -266,17 +266,6 @@ SCL
 Text Label 6400 5000 3    50   ~ 0
 SDA
 $Comp
-L Device:R_Small R6
-U 1 1 601E5272
-P 9900 3550
-F 0 "R6" V 9900 3550 50  0000 C CNN
-F 1 "470" V 9850 3400 50  0000 C CNN
-F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" H 9900 3550 50  0001 C CNN
-F 3 "~" H 9900 3550 50  0001 C CNN
-	1    9900 3550
-	0    1    1    0   
-$EndComp
-$Comp
 L Device:R_Small R5
 U 1 1 601E590B
 P 9900 3450
@@ -289,8 +278,6 @@ F 3 "~" H 9900 3450 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	9400 3450 9800 3450
-Wire Wire Line
-	9400 3550 9800 3550
 $Comp
 L power:+3V3 #PWR07
 U 1 1 601C80B4
@@ -366,7 +353,7 @@ Display
 Text Notes 8400 4800 0    100  ~ 0
 Power supply
 Text Notes 6050 3100 0    50   ~ 0
-Notes:\n- GPIO13 reserved for noise sensor\n- GPIO5 reserved for LED + clear sw\n- GPIO4 reserved for IR sensor\n- ADC2 pins cannot be used when WiFi in use\n- prefer ADC1 pins (GPIO32 --> 39)\n- GPIO1 & GPIO3 are serial0 (prog.)\n- +3V3 on EN pin is optional
+Notes:\n- GPIO5 has a 10k pull-up on +3v3 on devkit V1 !!\n- GPIO5 reserved for Particule Meter ENable (3v3)\n- GPIOX reserved for LED + clear sw\n- GPIO13 reserved for noise sensor\n- GPIO4 reserved for IR sensor (input)\n- ADC2 pins cannot be used when WiFi in use\n- prefer ADC1 pins (GPIO32 --> 39)\n- GPIO1 & GPIO3 are serial0 (prog.)\n- GPIO2 onboard blue led @ devkit V1\n- EN must be floating !
 $Comp
 L Device:C_Small C1
 U 1 1 60206A1D
@@ -426,17 +413,9 @@ Text Label 10350 1550 0    50   ~ 0
 PM_EN
 NoConn ~ 9400 2850
 NoConn ~ 9400 2950
-Wire Wire Line
-	9700 3750 9400 3750
-Text Label 9700 3750 2    50   ~ 0
-PM_EN
 NoConn ~ 8500 3850
 Wire Wire Line
 	9400 3350 9700 3350
-Text Label 9700 3350 2    50   ~ 0
-LED
-Text Notes 6050 2100 0    50   ~ 0
-TODO:\n
 Text Label 10750 3150 2    50   ~ 0
 INT
 $Comp
@@ -526,7 +505,7 @@ L Device:R_Small R1
 U 1 1 601FB734
 P 1225 4775
 F 0 "R1" V 1225 4775 50  0000 C CNN
-F 1 "68" V 1150 4775 50  0000 C CNN
+F 1 "150" V 1150 4775 50  0000 C CNN
 F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" H 1225 4775 50  0001 C CNN
 F 3 "~" H 1225 4775 50  0001 C CNN
 	1    1225 4775
@@ -1176,7 +1155,6 @@ NoConn ~ 8500 3450
 NoConn ~ 8500 3550
 NoConn ~ 8500 3650
 NoConn ~ 8500 3750
-NoConn ~ 9400 3850
 $Comp
 L Amplifier_Operational:LM2902 U5
 U 4 1 6030FAE4
@@ -1311,7 +1289,7 @@ L Device:R_Small R21
 U 1 1 603D554C
 P 10175 2550
 F 0 "R21" V 10175 2550 50  0000 C CNN
-F 1 "15K" V 10200 2400 50  0000 C CNN
+F 1 "15k" V 10200 2400 50  0000 C CNN
 F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" H 10175 2550 50  0001 C CNN
 F 3 "~" H 10175 2550 50  0001 C CNN
 	1    10175 2550
@@ -1382,8 +1360,6 @@ Connection ~ 1275 7000
 Wire Wire Line
 	1275 7000 1450 7000
 Wire Wire Line
-	10000 3550 10750 3550
-Wire Wire Line
 	10000 3450 10750 3450
 Wire Wire Line
 	10175 3150 10750 3150
@@ -1404,4 +1380,15 @@ F 3 "~" H 5550 7050 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 NoConn ~ 8500 2650
+Text Label 9700 3350 2    50   ~ 0
+PM_EN
+NoConn ~ 9400 3750
+Wire Wire Line
+	9700 3850 9400 3850
+Text Label 9700 3850 2    50   ~ 0
+LED
+Text Notes 1025 5275 1    50   ~ 0
+Red led Vf=1.56v
+Wire Wire Line
+	9400 3550 10750 3550
 $EndSCHEMATC

@@ -8,8 +8,8 @@ Title "neOSensor v5.1"
 Date "2021-02-04"
 Rev "v5.1"
 Comp "(c) neOCampus / Dr THIEBOLT François"
-Comment1 "M2siame 2020-2021 project"
-Comment2 "Univ.Tlse3 / IRIT / neOCampus"
+Comment1 "Univ.Tlse3 / IRIT / neOCampus"
+Comment2 "[mar.21][v5.1] corrected Q1 inversion; removed EN tied to 3v3"
 Comment3 ""
 Comment4 ""
 $EndDescr
@@ -366,7 +366,7 @@ Display
 Text Notes 8400 4800 0    100  ~ 0
 Power supply
 Text Notes 6050 3100 0    50   ~ 0
-Notes:\n- GPIO13 reserved for noise sensor\n- GPIO5 reserved for LED + clear sw\n- GPIO4 reserved for IR sensor\n- ADC2 pins cannot be used when WiFi in use\n- prefer ADC1 pins (GPIO32 --> 39)\n- GPIO1 & GPIO3 are serial0 (prog.)\n- +3V3 on EN pin is optional
+Notes:\n- GPIO5 has a 10k pull-up on +3v3 on devkit V1 !!\n- GPIO5 reserved for Particule Meter ENable (3v3)\n- GPIOX reserved for LED + clear sw\n- GPIO13 reserved for noise sensor\n- GPIO4 reserved for IR sensor (input)\n- ADC2 pins cannot be used when WiFi in use\n- prefer ADC1 pins (GPIO32 --> 39)\n- GPIO1 & GPIO3 are serial0 (prog.)\n- GPIO2 onboard blue led @ devkit V1\n- +3V3 on EN pin is optional
 $Comp
 L Device:C_Small C1
 U 1 1 60206A1D
@@ -387,10 +387,6 @@ Wire Wire Line
 	8500 5700 8500 5800
 Wire Wire Line
 	8500 5800 8950 5800
-Wire Wire Line
-	8500 2650 8200 2650
-Text Label 8200 2650 0    50   ~ 0
-+3V3
 Text Label 10750 3450 2    50   ~ 0
 TX2
 Text Label 10750 3550 2    50   ~ 0
@@ -430,17 +426,9 @@ Text Label 10350 1550 0    50   ~ 0
 PM_EN
 NoConn ~ 9400 2850
 NoConn ~ 9400 2950
-Wire Wire Line
-	9700 3750 9400 3750
-Text Label 9700 3750 2    50   ~ 0
-PM_EN
 NoConn ~ 8500 3850
 Wire Wire Line
 	9400 3350 9700 3350
-Text Label 9700 3350 2    50   ~ 0
-LED
-Text Notes 6050 2100 0    50   ~ 0
-TODO:\n
 Text Label 10750 3150 2    50   ~ 0
 INT
 $Comp
@@ -1407,4 +1395,8 @@ F 3 "~" H 5550 7050 50  0001 C CNN
 	1    5550 7050
 	0    1    1    0   
 $EndComp
+NoConn ~ 8500 2650
+Text Label 9700 3350 2    50   ~ 0
+PM_EN
+NoConn ~ 9400 3750
 $EndSCHEMATC

@@ -12,6 +12,7 @@
  *  - noise detector (8bits DAC MCP4706)
  * ---
  *
+ * F.Thiebolt   Mar.21  corrected leds definitions for neOSensor V5 :)
  * F.Thiebolt   Aug.20  added definitions for future ESP32 version (e.g LED PWM channel)
  *                      set default ADC resolution according to architecture
  * F.Thiebolt   Jun.18  merged neOClock as options to neOSensor
@@ -36,8 +37,8 @@
  * Definitions
  */
 #define BOARD_NAME          "neOSensor"
-#define BOARD_REVISION      1.1
-#define BOARD_FWREV         201102          // Firmware revision <year><month><day> in 2 digits each
+#define BOARD_REVISION      1.2
+#define BOARD_FWREV         210331          // Firmware revision <year><month><day> in 2 digits each
 
 
 /* #############################################################################
@@ -66,7 +67,8 @@
   #ifdef ESP8266
     #define SYS_LED         2             // GPIO2 (ESP8266 embedded led)
   #elif defined(ESP32)
-    #define SYS_LED         INVALID_GPIO  // no system led on ESP32
+    #define SYS_LED         2             // GPIO2 (ESP32 30pins & green devkit)
+//  #define SYS_LED         INVALID_GPIO  // no system led on ESP32 38 pins
   #endif
 #endif
 
@@ -75,7 +77,8 @@
   #ifdef ESP8266
     #define LED             5   // GPIO5 (our main led)
   #elif defined(ESP32)
-    #define LED             INVALID_GPIO
+    #define LED             5   // GPIO5 (our main led)
+//  #define LED             INVALID_GPIO
   #endif
 #endif
 

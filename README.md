@@ -9,7 +9,8 @@ This repository provides support for the following neOCampus boards:
 All this work was undertaken at Université Toulouse 3 / IRIT laboratory in the context of the [neOCampus](https://neocampus.org "neOCampus corporate") operation.
 
 ## NEWS ##
- * **[Feb.21]** added KiCad PCB for neOSensor v5 (ESP32 based) :)\
+ * **[Apr.21]** added KiCad PCB for neOSensor v5.1 (ESP32 based)\
+ * **[Feb.21]** added KiCad PCB for neOSensor v5 (ESP32 based)\
  * **[Dec.20]** added PCB from ESP8266 version 4 (KiCad)\
  * **[Aug.20]** new definition board for neOSensor-AirQuality board\
 added definition board for (future) neOSensor esp32 based board\

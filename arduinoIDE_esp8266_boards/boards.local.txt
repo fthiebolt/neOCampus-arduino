@@ -36,7 +36,9 @@ neOSensor.build.flash_freq=40
 # [sep.20] additional compilation flags
 # DISABLE_AP_PASSWD: flag to disable access point password (i.e free to connect to)
 #neOSensor.build.extra_flags=-DESP8266 -DNEOSENSOR_BOARD -DMQTT_KEEPALIVE=60 -DMQTT_SOCKET_TIMEOUT=60 -DMQTT_MAX_PACKET_SIZE=256 -DDISABLE_SSL -DDISABLE_AP_PASSWD
-neOSensor.build.extra_flags=-DESP8266 -DNEOSENSOR_BOARD -DMQTT_KEEPALIVE=60 -DMQTT_SOCKET_TIMEOUT=60 -DMQTT_MAX_PACKET_SIZE=256 -DDISABLE_SSL
+# [apr.21] MQTT specs sets through API (buffer_size, timeout ...)
+neOSensor.build.extra_flags=-DESP8266 -DNEOSENSOR_BOARD -DDISABLE_SSL
+#neOSensor.build.extra_flags=-DESP8266 -DNEOSENSOR_BOARD -DMQTT_KEEPALIVE=60 -DMQTT_SOCKET_TIMEOUT=60 -DMQTT_MAX_PACKET_SIZE=256 -DDISABLE_SSL
 #neOSensor.build.extra_flags=-DESP8266 -DNEOSENSOR_BOARD -DMQTT_KEEPALIVE=60 -DMQTT_SOCKET_TIMEOUT=60 -DMQTT_MAX_PACKET_SIZE=256
 
 neOSensor.menu.ip.lm2f=v2 Lower Memory

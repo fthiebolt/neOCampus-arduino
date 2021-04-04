@@ -3,7 +3,13 @@
  * 
  * Base module that all others module should inherit from
  * 
- * Thiebolt F. July 17
+ * ---
+ * TODO:
+ * -
+ * 
+ * ---
+ * F.Thiebolt   apr.21  removed BASE_MQTT_MSG_MAXLEN for MQTT_MAX_PACKET_SIZE
+ * F.Thiebolt   Jul.17  initial release
  * 
  */
 
@@ -38,7 +44,6 @@ extern bool _need2reboot;
  * Definitions
  */
 #define MQTT_CONNECT_MAX_RETRIES        3     // maximum number of MQTT connect attempts
-#define BASE_MQTT_MSG_MAXLEN            256   // maximum length of a MQTT msg (json) sent to the broker
 
 #define MODULE_CONFIG_FILE(_NAME_)      ( MCFG_FILE_PREFIX _NAME_ MCFG_FILE_SUFFIX )
 

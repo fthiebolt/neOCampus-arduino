@@ -1,5 +1,5 @@
 // ArduinoJson - arduinojson.org
-// Copyright Benoit Blanchon 2014-2020
+// Copyright Benoit Blanchon 2014-2021
 // MIT License
 
 #pragma once
@@ -9,12 +9,13 @@
 
 namespace ARDUINOJSON_NAMESPACE {
 
-template <typename Visitor>
-inline void variantAccept(const VariantData *var, Visitor &visitor) {
+template <typename TVisitor>
+inline typename TVisitor::result_type variantAccept(const VariantData *var,
+                                                    TVisitor &visitor) {
   if (var != 0)
-    var->accept(visitor);
+    return var->accept(visitor);
   else
-    visitor.visitNull();
+    return visitor.visitNull();
 }
 
 inline const CollectionData *variantAsArray(const VariantData *var) {

@@ -10,6 +10,7 @@
  * -
  * 
  * ---
+ * F.Thiebolt   apr.21  changed BASE_MQTT_MSG_MAXLEN to MQTT_MAX_PACKET_SIZE
  * F.Thiebolt   aug.20  set MQTT comm class as an independant module in order to
  *                      manage a single TCP(s) connexion with the MQTT server.
  * Thiebolt F. July 17
@@ -48,10 +49,6 @@ extern bool _need2reboot;
  */
 #ifndef MQTT_CONNECT_MAX_RETRIES
 #define MQTT_CONNECT_MAX_RETRIES        3     // maximum number of MQTT connect attempts
-#endif
-
-#ifndef BASE_MQTT_MSG_MAXLEN
-#define BASE_MQTT_MSG_MAXLEN            256   // maximum length of a MQTT msg (json) sent to the broker
 #endif
 
 

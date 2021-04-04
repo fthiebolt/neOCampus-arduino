@@ -3,7 +3,14 @@
  * 
  * Base for all kinds of module sensors (temperature, luminosity etc)
  * 
- * Thiebolt F. July 17
+ * ---
+ * TODO:
+ * - implement single TCP connexion for all MQTT messages (WARNING: requires topic parsing!)
+ * 
+ * ---
+ * F.Thiebolt   apr.21  added MQTT client settings through API (buffer_size,
+ *                      socker_timeout ...)
+ * F.Thiebolt   Jul.17  initial release
  * 
  */
 
@@ -91,7 +98,13 @@ bool base::start( senso *sensocampus ) {
   mqttClient.setClient( _wifiClient );
   mqttClient.setServer( _sensoClient->getServer(), _sensoClient->getServerPort() );
   mqttClient.setCallback( [this] (char* topic, byte* payload, unsigned int length) { this->callback(topic, payload, length); });
-    
+
+  // [apr.21] MQTT settings
+  mqttClient.setBufferSize(MQTT_MAX_PACKET_SIZE);
+  mqttClient.setKeepAlive(MQTT_KEEPALIVE);
+  mqttClient.setSocketTimeout(MQTT_SOCKET_TIMEOUT);
+
+
   // launch MQTT connexion + subscriptions + ...
   _ret = reConnect();
   
@@ -339,7 +352,7 @@ bool base::sendmsg( JsonObject root ) {
   bool _ret = false;
 
   // static way to hold text json frame
-  char jFrame[BASE_MQTT_MSG_MAXLEN];
+  char jFrame[MQTT_MAX_PACKET_SIZE];
   
   // add basic identity
   if( (root.containsKey(F("unitID"))==false) ) {
@@ -348,7 +361,7 @@ bool base::sendmsg( JsonObject root ) {
 
   // print frame to temporary buffer
   if( serializeJson( root, jFrame, sizeof(jFrame) ) >= sizeof(jFrame) ) {
-    log_error(F("\n[base] ERROR undersized BASE_MQTT_MSG_MAXLEN buffer !")); log_flush();
+    log_error(F("\n[base] ERROR undersized jFrame buffer !")); log_flush();
     return false;
   }
   

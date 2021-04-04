@@ -1,5 +1,5 @@
 // ArduinoJson - arduinojson.org
-// Copyright Benoit Blanchon 2014-2020
+// Copyright Benoit Blanchon 2014-2021
 // MIT License
 
 #pragma once
@@ -33,7 +33,7 @@ class Filter {
     if (_variant == true)  // "true" means "allow recursively"
       return *this;
     else
-      return Filter(_variant[key]);
+      return Filter(_variant[key] | _variant["*"]);
   }
 
  private:

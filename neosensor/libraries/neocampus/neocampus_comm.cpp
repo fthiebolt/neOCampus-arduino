@@ -10,6 +10,8 @@
  * -
  * 
  * ---
+ * F.Thiebolt   apr.21  added MQTT client settings through API (buffer_size,
+ *                      socker_timeout ...)
  * F.Thiebolt   aug.20  set MQTT comm class as an independant module in order to
  *                      manage a single TCP(s) connexion with the MQTT server.
  * Thiebolt F. July 17
@@ -69,7 +71,12 @@ boolean comm::start( senso *sensocampus ) {
   mqttClient.setClient( _wifiClient );
   mqttClient.setServer( _sensoClient->getServer(), _sensoClient->getServerPort() );
   mqttClient.setCallback( [this] (char* topic, byte* payload, unsigned int length) { this->callback(topic, payload, length); });
-    
+  
+  // [apr.21] MQTT settings
+  mqttClient.setBufferSize(MQTT_MAX_PACKET_SIZE);
+  mqttClient.setKeepAlive(MQTT_KEEPALIVE);
+  mqttClient.setSocketTimeout(MQTT_SOCKET_TIMEOUT);
+
   // launch MQTT connexion + subscriptions + ...
   _ret = this->reConnect();
     

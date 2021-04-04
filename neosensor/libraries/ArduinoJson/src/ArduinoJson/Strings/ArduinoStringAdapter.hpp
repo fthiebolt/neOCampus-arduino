@@ -1,10 +1,10 @@
 // ArduinoJson - arduinojson.org
-// Copyright Benoit Blanchon 2014-2020
+// Copyright Benoit Blanchon 2014-2021
 // MIT License
 
 #pragma once
 
-#include <WString.h>
+#include <Arduino.h>
 
 #include <ArduinoJson/Polyfills/safe_strcmp.hpp>
 #include <ArduinoJson/Strings/IsString.hpp>

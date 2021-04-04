@@ -134,18 +134,21 @@ typedef uint32_t firmwareRev_t;
 /*
  * PubSub MQTT client (re)definitions
  */
-#if !defined(MQTT_KEEPALIVE)
-    #warning "strange that MQTT_KEEPALIVE is not defined ... wrong board selected ??"
-    #define MQTT_KEEPALIVE          60
+#if defined(MQTT_KEEPALIVE)
+  #warning "MQTT_KEEPALIVE overriden by compilation directive !"
+#else
+  #define MQTT_KEEPALIVE          60
 #endif /* MQTT_KEEPALIVE */
-#if !defined(MQTT_SOCKET_TIMEOUT)
-    #warning "strange that MQTT_SOCKET_TIMEOUT is not defined ... wrong board selected ??"
-    #define MQTT_SOCKET_TIMEOUT     60
+#if defined(MQTT_SOCKET_TIMEOUT)
+  #warning "MQTT_SOCKET_TIMEOUT overriden by compilation directive !"
+#else
+  #define MQTT_SOCKET_TIMEOUT     60
 #endif /* MQTT_SOCKET_TIMEOUT */
-#if !defined(MQTT_MAX_PACKET_SIZE)
-    #warning "strange that MQTT_MAX_PACKET_SIZE is not defined ... wrong board selected ??"
-    #define MQTT_MAX_PACKET_SIZE    256
-#endif /* MQTT_MAX_PACKET_SIZ */
+#if defined(MQTT_MAX_PACKET_SIZE)
+  #warning "MQTT_MAX_PACKET_SIZE overriden by compilation directive !"
+#else
+  #define MQTT_MAX_PACKET_SIZE    256
+#endif /* MQTT_MAX_PACKET_SIZE */
 
 
 

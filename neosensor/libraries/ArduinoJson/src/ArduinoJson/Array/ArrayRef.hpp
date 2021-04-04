@@ -1,5 +1,5 @@
 // ArduinoJson - arduinojson.org
-// Copyright Benoit Blanchon 2014-2020
+// Copyright Benoit Blanchon 2014-2021
 // MIT License
 
 #pragma once
@@ -27,9 +27,9 @@ class ArrayRefBase {
     return VariantConstRef(reinterpret_cast<const VariantData*>(data));
   }
 
-  template <typename Visitor>
-  FORCE_INLINE void accept(Visitor& visitor) const {
-    arrayAccept(_data, visitor);
+  template <typename TVisitor>
+  FORCE_INLINE typename TVisitor::result_type accept(TVisitor& visitor) const {
+    return arrayAccept(_data, visitor);
   }
 
   FORCE_INLINE bool isNull() const {

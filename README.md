@@ -9,13 +9,13 @@ This repository provides support for the following neOCampus boards:
 All this work was undertaken at Université Toulouse 3 / IRIT laboratory in the context of the [neOCampus](https://neocampus.org "neOCampus corporate") operation.
 
 ## NEWS ##
- * **[Apr.21]** added KiCad PCB for neOSensor v5.1 (ESP32 based)\
- * **[Feb.21]** added KiCad PCB for neOSensor v5 (ESP32 based)\
- * **[Dec.20]** added PCB from ESP8266 version 4 (KiCad)\
- * **[Aug.20]** new definition board for neOSensor-AirQuality board\
+ * **[Apr.21]** added KiCad PCB for neOSensor v5.1 (ESP32 based)
+ * **[Feb.21]** added KiCad PCB for neOSensor v5 (ESP32 based)
+ * **[Dec.20]** added PCB from ESP8266 version 4 (KiCad)
+ * **[Aug.20]** new definition board for neOSensor-AirQuality board
 added definition board for (future) neOSensor esp32 based board\
 added suppport for boards configuration via sensOCampus JSON config\
-added Arduino IDE support for our various neOSensor boards\
+added Arduino IDE support for our various neOSensor boards
 
 ## neOSensor boards ##
 neOSensor first boards releases were based on esp8266. Nowadays, we added support for esp32 devices :)
@@ -39,12 +39,8 @@ Then, run script `./deploy.sh` and boards will get added to your Arduino boards 
 
 If not already installed, you'll need python-serial package; thus either you install it at the system level
 ```
-dnf -y install python-serial
-apt-get -y install python-serial
-```
-or using the python library installation tool
-```
-pip3 install pyserial
+[fedora] dnf -y install python-serial
+[ubuntu] apt-get -y install python3-serial python-is-python3
 ```
 
 Once you've launched the Arduino IDE, before compiling and uploading sketches to your board, you need to undertake the following steps:

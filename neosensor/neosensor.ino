@@ -542,7 +542,7 @@ bool setupNTP( void ) {
 #else /* ESP32 */
   // register ntp sync callback
   #warning "no sntp callback in ESP32 ?!?!"
-//set_time_sync_notification_cb( syncNTP_cb );
+  //set_time_sync_notification_cb( syncNTP_cb );
   // is it possible to retrive the one from the DHCP server ??
   configTime(gmtOffset_sec, daylightOffset_sec, NTP_DEFAULT_SERVER1, NTP_DEFAULT_SERVER2, NTP_DEFAULT_SERVER3 );
 #endif    

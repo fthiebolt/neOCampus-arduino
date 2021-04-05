@@ -9,6 +9,7 @@
  * - ...
  * 
  * ---
+ * F.Thiebolt   apr.21  removed DNS related includes
  * F.Thiebolt   aug.20  removed EEPROM support
  * F.Thiebolt   Nov.19  set 30s WiFi connexion timeout with previous credentials
  * Thiebolt F. July 17
@@ -35,11 +36,11 @@
 #endif
 
 //needed for WiFiManager library
-#include <DNSServer.h>            // for captive portal
+//#include <DNSServer.h>            // for captive portal
 #include <WiFiManager.h>          // https://github.com/tzapu/WiFiManager
 #include <ArduinoJson.h>          // https://github.com/bblanchon/ArduinoJson
 
-#include <Dns.h>                  // getHostByName
+//#include <Dns.h>                  // getHostByName
 #include <time.h>                 // time() ctime()
 
 #include "neocampus.h"

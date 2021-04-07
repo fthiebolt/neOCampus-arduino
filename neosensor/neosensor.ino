@@ -475,6 +475,12 @@ void setupLed( uint8_t led, enum_ledmode_t led_mode ) {
 /* sync ntp callback:
  *  This function gets called whenever a NTP sync occurs
  */
+#ifdef ESP32
+void _syncNTP_cb(struct timeval *tv) {
+  // tv arg is time from NTP server
+  syncNTP_cb();
+}
+#endif
 void syncNTP_cb( void ) {
   char _tmpbuf[64];
   struct tm *_tm;
@@ -539,11 +545,10 @@ bool setupNTP( void ) {
   settimeofday_cb( syncNTP_cb );
   // [may.20] as default, NTP server is provided by the DHCP server
   configTime( MYTZ, NTP_DEFAULT_SERVER1, NTP_DEFAULT_SERVER2, NTP_DEFAULT_SERVER3 );
-#else /* ESP32 */
+#elif ESP32
   // register ntp sync callback
-  #warning "no sntp callback in ESP32 ?!?!"
-  //set_time_sync_notification_cb( syncNTP_cb );
-  // is it possible to retrive the one from the DHCP server ??
+  sntp_set_time_sync_notification_cb( _syncNTP_cb );
+  // [may.20] as default, NTP server is provided by the DHCP server
   configTime(gmtOffset_sec, daylightOffset_sec, NTP_DEFAULT_SERVER1, NTP_DEFAULT_SERVER2, NTP_DEFAULT_SERVER3 );
 #endif    
 

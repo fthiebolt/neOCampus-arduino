@@ -18,11 +18,8 @@
  * 
  * ---
  * TODO:
- * - add sntp_cb once available for ESP32
  * - check sntp!=IPADDR_ANY works with ESP8266 (line 342)
- * - check SYS_LED is working (add -DSYS_LED=2)
  * - remove DISABLE_SSL compilation flag
- * - AutoConnect lib vs WiFiManager --> have a look to https://github.com/Hieromon/AutoConnect
  * - MQTT client --> have a look to https://github.com/xluthi/pulse_counter_esp8266
  * - test OTA feature
  * - as the number of modules is increasing, implement a list of modules in the setup()

@@ -107,6 +107,7 @@
   #define SDA               14      // GPIO14  
   #define SCL               12      // GPIO12
 #elif defined(ESP32)
+  //#define I2C_FREQ          50000   // default is 100KHz
   #define SDA               21
   #define SCL               22
 #endif

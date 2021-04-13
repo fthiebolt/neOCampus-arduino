@@ -36,6 +36,7 @@ neOSensor.build.defines=-DNEOSENSOR_BOARD -DDISABLE_SSL -DDISABLE_AP_PASSWD
 #neOSensor.build.defines=-DNEOSENSOR_BOARD -DMQTT_KEEPALIVE=60 -DMQTT_SOCKET_TIMEOUT=60 -DMQTT_MAX_PACKET_SIZE=256 -DLED=2 -DDISABLE_SSL -DDISABLE_AP_PASSWD
 #neOSensor.build.defines=-DNEOSENSOR_BOARD -DMQTT_KEEPALIVE=60 -DMQTT_SOCKET_TIMEOUT=60 -DMQTT_MAX_PACKET_SIZE=256
 
+# upload speed
 neOSensor.menu.UploadSpeed.921600=921600
 neOSensor.menu.UploadSpeed.921600.upload.speed=921600
 neOSensor.menu.UploadSpeed.115200=115200
@@ -44,6 +45,20 @@ neOSensor.menu.UploadSpeed.115200.upload.speed=115200
 # FLASH partitioning
 neOSensor.menu.PartitionScheme.default=Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)
 neOSensor.menu.PartitionScheme.default.build.partitions=default
+
+# Core debug
+neOSensor.menu.DebugLevel.none=None
+neOSensor.menu.DebugLevel.none.build.code_debug=0
+neOSensor.menu.DebugLevel.error=Error
+neOSensor.menu.DebugLevel.error.build.code_debug=1
+neOSensor.menu.DebugLevel.warn=Warn
+neOSensor.menu.DebugLevel.warn.build.code_debug=2
+neOSensor.menu.DebugLevel.info=Info
+neOSensor.menu.DebugLevel.info.build.code_debug=3
+neOSensor.menu.DebugLevel.debug=Debug
+neOSensor.menu.DebugLevel.debug.build.code_debug=4
+neOSensor.menu.DebugLevel.verbose=Verbose
+neOSensor.menu.DebugLevel.verbose.build.code_debug=5
 
 
 #

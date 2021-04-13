@@ -571,7 +571,7 @@ bool SHT2x::_check_identity( uint8_t a ) {
 
   // retrieve serial number
   if( getSerialNumber( a ) == (uint64_t)(-1) ) {
-    // we've not been able to read the serial number ... mat be not the device we're expecting
+    // we've not been able to read the serial number ... maybe not the device we're expecting
     return false;
   }
 

@@ -158,19 +158,28 @@ boolean MAX44009::acquire( float *pval )
  */
 bool MAX44009::_check_identity( uint8_t a ) {
   
+  uint8_t _count = 0;   // probability the device is what we expect
+
   // read control register
   uint16_t _res = 0;
   _res = (uint16_t)read8(a, static_cast<uint8_t>(max44009Regs_t::config));
   //log_debug(F("\n[MAX44009] REG_CONFIG = 0x")); log_debug(_res,HEX); log_flush();
-  if( (uint8_t)_res != (uint8_t)MAX44009_REG_CONFIG_DEFL &&
-      (uint8_t)_res != (uint8_t)MAX44009_REG_CONFIG_DEFL_ALT ) return false;
+  if( (uint8_t)_res == (uint8_t)MAX44009_REG_CONFIG_DEFL ||
+      (uint8_t)_res == (uint8_t)MAX44009_REG_CONFIG_DEFL_ALT ) _count++;
 
   // read threshold register
   _res = read16(a, static_cast<uint8_t>(max44009Regs_t::threshold_upper));  
   //log_debug(F("\n[MAX44009] REG_THRESHOLD = 0x")); log_debug(_res,HEX); log_flush();
-  if( _res != (uint16_t)MAX44009_REG_THRESHOLD_DEFL &&
-      _res != (uint16_t)MAX44009_REG_THRESHOLD_DEFL_ALT ) return false;
+  if( _res == (uint16_t)MAX44009_REG_THRESHOLD_DEFL ||
+      _res == (uint16_t)MAX44009_REG_THRESHOLD_DEFL_ALT ) _count++;
 
+  // read threshold timer register
+  _res = (uint16_t)read8(a, static_cast<uint8_t>(max44009Regs_t::threshold_timer));
+  //log_debug(F("\n[MAX44009] REG_THRES_TIMER = 0x")); log_debug(_res,HEX); log_flush();
+  if( (uint8_t)_res == (uint8_t)MAX44009_REG_THRES_TIMER_DEFL ) _count++;
+
+  // let's check
+  if( _count < 2 ) return false;
   return true;
 }
 

@@ -8,7 +8,7 @@ This repository provides support for the following neOCampus boards:
 
 All this work was undertaken at Université Toulouse 3 / IRIT laboratory in the context of the [neOCampus](https://neocampus.org "neOCampus corporate") operation.
 
-![neOSensorv5](/images/neOSensorV5-front_apr21.jpg)
+![neOSensorv5](/images/neOSensorV5.jpg)
 
 ## NEWS ##
  * **[Apr.21]** added KiCad PCB for neOSensor v5.1 (ESP32 based)

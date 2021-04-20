@@ -11,7 +11,8 @@ All this work was undertaken at Université Toulouse 3 / IRIT laboratory in the 
 ![neOSensorv5](/images/neOSensorV5.jpg)
 
 ## NEWS ##
- * **[Apr.21]** added KiCad PCB for neOSensor v5.1 (ESP32 based)
+ * **[Apr.21]** added support for 3 NTP servers + NTP from DHCP to lwip. Have a look to `arduinoIDE_esp32_boards/README.md`
+                added KiCad PCB for neOSensor v5.1 (ESP32 based)
  * **[Feb.21]** added KiCad PCB for neOSensor v5 (ESP32 based)
  * **[Dec.20]** added PCB from ESP8266 version 4 (KiCad)
  * **[Aug.20]** new definition board for neOSensor-AirQuality board

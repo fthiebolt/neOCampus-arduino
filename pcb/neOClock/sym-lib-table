@@ -1,0 +1,5 @@
+(sym_lib_table
+  (lib (name DC_DC_LM2596)(type Legacy)(uri /home/devynck/Documents/ETD/Stage/neOCampus-arduino/pcb/kicad-libs/neosensor_addon.pretty/DC_DC_LM2596.lib)(options "")(descr ""))
+  (lib (name MAX6959)(type Legacy)(uri /home/devynck/Documents/ETD/Stage/neOCampus-arduino/pcb/kicad-libs/neosensor_addon.pretty/MAX6959.lib)(options "")(descr ""))
+  (lib (name neosensor_addon)(type Legacy)(uri /home/devynck/Documents/ETD/Stage/neOCampus-arduino/pcb/kicad-libs/neosensor_addon.pretty/neosensor_addon.lib)(options "")(descr ""))
+)

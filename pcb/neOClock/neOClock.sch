@@ -1,0 +1,403 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 3
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+Wire Wire Line
+	6395 2645 6395 2665
+Wire Wire Line
+	6330 2645 6395 2645
+$Comp
+L pspice:0 #GND0103
+U 1 1 60DC3790
+P 6395 2665
+F 0 "#GND0103" H 6395 2565 50  0001 C CNN
+F 1 "0" H 6395 2754 50  0000 C CNN
+F 2 "" H 6395 2665 50  0001 C CNN
+F 3 "~" H 6395 2665 50  0001 C CNN
+	1    6395 2665
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5370 2645 5370 2665
+Wire Wire Line
+	5430 2645 5370 2645
+$Comp
+L pspice:0 #GND0102
+U 1 1 60DBED57
+P 5370 2665
+F 0 "#GND0102" H 5370 2565 50  0001 C CNN
+F 1 "0" H 5370 2754 50  0000 C CNN
+F 2 "" H 5370 2665 50  0001 C CNN
+F 3 "~" H 5370 2665 50  0001 C CNN
+	1    5370 2665
+	1    0    0    -1  
+$EndComp
+NoConn ~ 6330 2745
+$Sheet
+S 6895 3210 1320 610 
+U 6103C8FA
+F0 "digit" 50
+F1 "digit.sch" 50
+F2 "Sda" O L 6895 3330 50 
+F3 "Scl" O L 6895 3255 50 
+F4 "Input1" O L 6895 3545 50 
+F5 "Input2" O L 6895 3465 50 
+F6 "V+" O L 6895 3720 50 
+F7 "Gnd" O L 6895 3780 50 
+$EndSheet
+$Sheet
+S 3660 2695 1205 1180
+U 61173FE1
+F0 "Alim" 50
+F1 "Alim.sch" 50
+F2 "5v" O R 4865 2945 50 
+F3 "3v3" O R 4865 3135 50 
+F4 "Gnd" O R 4865 3610 50 
+$EndSheet
+Wire Wire Line
+	4865 2945 5430 2945
+Wire Wire Line
+	5430 2945 5430 2745
+Wire Wire Line
+	5430 3720 6895 3720
+Wire Wire Line
+	6895 3255 6755 3255
+Wire Wire Line
+	6755 3255 6755 1445
+Wire Wire Line
+	6755 1445 6540 1445
+Wire Wire Line
+	6895 3330 6615 3330
+Wire Wire Line
+	6615 3330 6615 1745
+Wire Wire Line
+	6895 3465 6540 3465
+Wire Wire Line
+	6540 3465 6540 1545
+Wire Wire Line
+	6540 1545 6330 1545
+Wire Wire Line
+	6895 3545 6475 3545
+Wire Wire Line
+	6475 3545 6475 1645
+Wire Wire Line
+	6475 1645 6330 1645
+Wire Wire Line
+	4865 3610 4915 3610
+$Comp
+L pspice:0 #GND0101
+U 1 1 612127B3
+P 4915 3610
+F 0 "#GND0101" H 4915 3510 50  0001 C CNN
+F 1 "0" V 4915 3654 50  0000 L CNN
+F 2 "" H 4915 3610 50  0001 C CNN
+F 3 "~" H 4915 3610 50  0001 C CNN
+	1    4915 3610
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	6895 3780 6840 3780
+$Comp
+L pspice:0 #GND0107
+U 1 1 6121C9F0
+P 6840 3780
+F 0 "#GND0107" H 6840 3680 50  0001 C CNN
+F 1 "0" V 6840 3824 50  0000 L CNN
+F 2 "" H 6840 3780 50  0001 C CNN
+F 3 "~" H 6840 3780 50  0001 C CNN
+	1    6840 3780
+	0    1    1    0   
+$EndComp
+NoConn ~ 5430 2545
+NoConn ~ 5430 2445
+NoConn ~ 5430 2345
+NoConn ~ 5430 2245
+NoConn ~ 5430 2145
+NoConn ~ 5430 2045
+NoConn ~ 5430 1945
+NoConn ~ 5430 1845
+NoConn ~ 5430 1745
+NoConn ~ 5430 1345
+NoConn ~ 6330 2545
+NoConn ~ 6330 2445
+NoConn ~ 6330 2345
+NoConn ~ 6330 2245
+NoConn ~ 6330 2145
+NoConn ~ 6330 2045
+NoConn ~ 6330 1945
+NoConn ~ 6330 1345
+NoConn ~ 6560 4650
+$Comp
+L neosensor_addon:IRsensor IR1
+U 1 1 60A834AB
+P 5835 3220
+F 0 "IR1" V 5881 3042 50  0000 R CNN
+F 1 "IRsensor" V 5790 3042 50  0000 R CNN
+F 2 "neosensor_addon:IRsensor_TH_and_smd" H 5835 3220 50  0001 C CIN
+F 3 "" H 5835 3220 50  0001 C CNN
+	1    5835 3220
+	0    -1   -1   0   
+$EndComp
+$Comp
+L neosensor_addon:ESP32_dev_30p U3
+U 1 1 60A65F7C
+P 5880 2095
+F 0 "U3" H 5880 3070 50  0000 C CNN
+F 1 "ESP32_dev_30p" H 5880 2979 50  0000 C CNN
+F 2 "neosensor_addon:ESP32_dev_30p" V 5880 2145 50  0001 C CIN
+F 3 "" H 5880 2495 50  0001 C CNN
+	1    5880 2095
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6330 1845 6450 1845
+Wire Wire Line
+	6450 1845 6450 2970
+Wire Wire Line
+	6450 2970 5835 2970
+Wire Wire Line
+	5430 3470 5735 3470
+Wire Wire Line
+	5430 3135 5430 3470
+Connection ~ 5430 3470
+Wire Wire Line
+	5430 3470 5430 3720
+$Comp
+L pspice:0 #GND0111
+U 1 1 60A9911E
+P 5935 3470
+F 0 "#GND0111" H 5935 3370 50  0001 C CNN
+F 1 "0" H 5935 3559 50  0000 C CNN
+F 2 "" H 5935 3470 50  0001 C CNN
+F 3 "~" H 5935 3470 50  0001 C CNN
+	1    5935 3470
+	1    0    0    -1  
+$EndComp
+$Comp
+L Switch:SW_Push SW2
+U 1 1 60A9C9E6
+P 3995 1150
+F 0 "SW2" H 3995 1435 50  0000 C CNN
+F 1 "SW_Push" H 3995 1344 50  0000 C CNN
+F 2 "Button_Switch_SMD:SW_Push_1P1T_NO_CK_KMR2" H 3995 1350 50  0001 C CNN
+F 3 "~" H 3995 1350 50  0001 C CNN
+	1    3995 1150
+	1    0    0    -1  
+$EndComp
+$Comp
+L Switch:SW_Push SW3
+U 1 1 60A9D2E8
+P 4485 1150
+F 0 "SW3" H 4485 1435 50  0000 C CNN
+F 1 "SW_Push" H 4485 1344 50  0000 C CNN
+F 2 "Button_Switch_SMD:SW_Push_1P1T_NO_CK_KMR2" H 4485 1350 50  0001 C CNN
+F 3 "~" H 4485 1350 50  0001 C CNN
+	1    4485 1150
+	1    0    0    -1  
+$EndComp
+$Comp
+L Switch:SW_Push SW1
+U 1 1 60A9D859
+P 3465 1150
+F 0 "SW1" H 3465 1435 50  0000 C CNN
+F 1 "SW_Push" H 3465 1344 50  0000 C CNN
+F 2 "Button_Switch_SMD:SW_Push_1P1T_NO_CK_KMR2" H 3465 1350 50  0001 C CNN
+F 3 "~" H 3465 1350 50  0001 C CNN
+	1    3465 1150
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5055 3135 5055 1385
+Wire Wire Line
+	3265 1385 3265 1150
+Wire Wire Line
+	4865 3135 5055 3135
+Connection ~ 5055 3135
+Wire Wire Line
+	3795 1150 3795 1385
+Connection ~ 3795 1385
+Wire Wire Line
+	3795 1385 3265 1385
+Wire Wire Line
+	4285 1150 4285 1385
+Wire Wire Line
+	3795 1385 4285 1385
+Connection ~ 4285 1385
+Wire Wire Line
+	4285 1385 5055 1385
+Wire Wire Line
+	5430 1445 5340 1445
+Wire Wire Line
+	5340 1445 5340 1150
+Wire Wire Line
+	5340 1150 4685 1150
+Wire Wire Line
+	5430 1545 5275 1545
+Wire Wire Line
+	5275 1545 5275 1195
+Wire Wire Line
+	5275 1195 4195 1195
+Wire Wire Line
+	4195 1195 4195 1150
+Wire Wire Line
+	5430 1645 5220 1645
+Wire Wire Line
+	5220 1645 5220 1235
+Wire Wire Line
+	5220 1235 3665 1235
+Wire Wire Line
+	3665 1235 3665 1150
+$Comp
+L Connector_Generic:Conn_01x04 J2
+U 1 1 60AB1160
+P 7780 1225
+F 0 "J2" H 7860 1217 50  0000 L CNN
+F 1 "Conn_01x04" H 7860 1126 50  0000 L CNN
+F 2 "Connector_PinHeader_2.00mm:PinHeader_1x04_P2.00mm_Vertical" H 7780 1225 50  0001 C CNN
+F 3 "~" H 7780 1225 50  0001 C CNN
+	1    7780 1225
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector_Generic:Conn_01x04 J3
+U 1 1 60AB1E8C
+P 8620 1240
+F 0 "J3" H 8700 1232 50  0000 L CNN
+F 1 "Conn_01x04" H 8700 1141 50  0000 L CNN
+F 2 "Connector_PinHeader_2.00mm:PinHeader_1x04_P2.00mm_Vertical" H 8620 1240 50  0001 C CNN
+F 3 "~" H 8620 1240 50  0001 C CNN
+	1    8620 1240
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector_Generic:Conn_01x04 J4
+U 1 1 60AB25DA
+P 9480 1235
+F 0 "J4" H 9560 1227 50  0000 L CNN
+F 1 "Conn_01x04" H 9560 1136 50  0000 L CNN
+F 2 "Connector_PinHeader_2.00mm:PinHeader_1x04_P2.00mm_Vertical" H 9480 1235 50  0001 C CNN
+F 3 "~" H 9480 1235 50  0001 C CNN
+	1    9480 1235
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6540 1445 6540 925 
+Wire Wire Line
+	6540 925  7540 925 
+Wire Wire Line
+	9280 925  9280 1135
+Connection ~ 6540 1445
+Wire Wire Line
+	6540 1445 6330 1445
+Wire Wire Line
+	6610 1745 6610 990 
+Wire Wire Line
+	6610 990  7455 990 
+Wire Wire Line
+	9220 990  9220 1235
+Wire Wire Line
+	9220 1235 9280 1235
+Wire Wire Line
+	6330 1745 6610 1745
+Connection ~ 6610 1745
+Wire Wire Line
+	6610 1745 6615 1745
+Wire Wire Line
+	7240 3135 7240 1325
+Wire Wire Line
+	7240 1040 8325 1040
+Wire Wire Line
+	9175 1040 9175 1335
+Wire Wire Line
+	9175 1335 9280 1335
+Wire Wire Line
+	5055 3135 5430 3135
+Connection ~ 5430 3135
+Wire Wire Line
+	5430 3135 7240 3135
+Wire Wire Line
+	7580 1325 7240 1325
+Connection ~ 7240 1325
+Wire Wire Line
+	7240 1325 7240 1040
+Wire Wire Line
+	8420 1340 8325 1340
+Wire Wire Line
+	8325 1340 8325 1040
+Connection ~ 8325 1040
+Wire Wire Line
+	8325 1040 9175 1040
+Wire Wire Line
+	8420 1240 8380 1240
+Wire Wire Line
+	8380 1240 8380 990 
+Connection ~ 8380 990 
+Wire Wire Line
+	8380 990  9220 990 
+Wire Wire Line
+	7585 1225 7580 1225
+Wire Wire Line
+	7455 1225 7455 990 
+Connection ~ 7580 1225
+Wire Wire Line
+	7580 1225 7455 1225
+Connection ~ 7455 990 
+Wire Wire Line
+	7455 990  8380 990 
+Wire Wire Line
+	7580 1125 7540 1125
+Wire Wire Line
+	7540 1125 7540 925 
+Connection ~ 7540 925 
+Wire Wire Line
+	7540 925  8420 925 
+Wire Wire Line
+	8420 1140 8420 925 
+Connection ~ 8420 925 
+Wire Wire Line
+	8420 925  9280 925 
+$Comp
+L pspice:0 #GND0112
+U 1 1 60AC3B51
+P 7580 1425
+F 0 "#GND0112" H 7580 1325 50  0001 C CNN
+F 1 "0" V 7580 1469 50  0000 L CNN
+F 2 "" H 7580 1425 50  0001 C CNN
+F 3 "~" H 7580 1425 50  0001 C CNN
+	1    7580 1425
+	0    1    1    0   
+$EndComp
+$Comp
+L pspice:0 #GND0113
+U 1 1 60AC4429
+P 8420 1440
+F 0 "#GND0113" H 8420 1340 50  0001 C CNN
+F 1 "0" V 8420 1484 50  0000 L CNN
+F 2 "" H 8420 1440 50  0001 C CNN
+F 3 "~" H 8420 1440 50  0001 C CNN
+	1    8420 1440
+	0    1    1    0   
+$EndComp
+$Comp
+L pspice:0 #GND0114
+U 1 1 60AC4E5B
+P 9280 1435
+F 0 "#GND0114" H 9280 1335 50  0001 C CNN
+F 1 "0" V 9280 1479 50  0000 L CNN
+F 2 "" H 9280 1435 50  0001 C CNN
+F 3 "~" H 9280 1435 50  0001 C CNN
+	1    9280 1435
+	0    1    1    0   
+$EndComp
+$EndSCHEMATC

@@ -211,19 +211,6 @@ F 3 "~" H 1355 6550 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L pspice:DIODE D?
-U 1 1 60B5D4FF
-P 1555 6350
-AR Path="/61173FE1/60B5D4FF" Ref="D?"  Part="1" 
-AR Path="/60B5D4FF" Ref="D1"  Part="1" 
-F 0 "D1" H 1555 6615 50  0000 C CNN
-F 1 "DIODE" H 1555 6524 50  0000 C CNN
-F 2 "Diode_SMD:D_0603_1608Metric_Pad1.05x0.95mm_HandSolder" H 1555 6350 50  0001 C CNN
-F 3 "~" H 1555 6350 50  0001 C CNN
-	1    1555 6350
-	1    0    0    -1  
-$EndComp
-$Comp
 L Connector:Barrel_Jack J?
 U 1 1 60B5D507
 P 1055 6450
@@ -242,7 +229,7 @@ U 1 1 60B7846A
 P 9550 3775
 F 0 "U6" H 9550 4942 50  0000 C CNN
 F 1 "SAA1064" H 9550 4851 50  0000 C CNN
-F 2 "SAA1064" H 9550 3775 50  0001 L BNN
+F 2 "neosensor_addon:SAA1064" H 9550 3775 50  0001 L BNN
 F 3 "" H 9550 3775 50  0001 L BNN
 	1    9550 3775
 	1    0    0    -1  
@@ -265,7 +252,7 @@ L Device:Q_NPN_CBE Q1
 U 1 1 60B92168
 P 8695 3875
 F 0 "Q1" H 8886 3829 50  0000 L CNN
-F 1 "Q_NPN_CBE" H 8886 3920 50  0000 L CNN
+F 1 "BC337" H 8886 3920 50  0000 L CNN
 F 2 "Package_TO_SOT_SMD:SC-59_Handsoldering" H 8895 3975 50  0001 C CNN
 F 3 "~" H 8695 3875 50  0001 C CNN
 	1    8695 3875
@@ -275,8 +262,6 @@ Wire Bus Line
 	9185 4725 9195 4725
 Text GLabel 8595 4075 3    50   Input ~ 0
 12v
-Wire Wire Line
-	1755 6350 1805 6350
 Wire Wire Line
 	1805 6350 1805 6045
 Connection ~ 1805 6350
@@ -790,12 +775,12 @@ Wire Notes Line
 Wire Notes Line
 	7935 890  7935 1720
 $Comp
-L 78_01_030_0004:78_01_030_0004 J5
+L neOClock-rescue:78_01_030_0004-78_01_030_0004 J5
 U 1 1 6124A331
 P 2690 2130
 F 0 "J5" H 2690 2497 50  0000 C CNN
 F 1 "78_01_030_0004" H 2690 2406 50  0000 C CNN
-F 2 "neosensor_addon:HARTING_78_01_030_0004" H 2690 2130 50  0001 L BNN
+F 2 "neosensor_addon:ATECC508A" H 2690 2130 50  0001 L BNN
 F 3 "" H 2690 2130 50  0001 L BNN
 F 4 "Harting" H 2690 2130 50  0001 L BNN "MANUFACTURER"
 F 5 "2021-04-27" H 2690 2130 50  0001 L BNN "PARTREV"
@@ -939,78 +924,16 @@ $EndComp
 Text Notes 1075 2725 0    50   ~ 0
 EKMC1601112
 $Comp
-L Device:Buzzer BZ?
-U 1 1 60B011C7
-P 5265 2555
-F 0 "BZ?" H 5417 2584 50  0000 L CNN
-F 1 "Buzzer" H 5417 2493 50  0000 L CNN
-F 2 "" V 5240 2655 50  0001 C CNN
-F 3 "~" V 5240 2655 50  0001 C CNN
-	1    5265 2555
-	1    0    0    -1  
+L Device:LED D1
+U 1 1 60BAEB43
+P 1505 6350
+F 0 "D1" H 1498 6566 50  0000 C CNN
+F 1 "LED" H 1498 6475 50  0000 C CNN
+F 2 "LED_THT:LED_D5.0mm" H 1505 6350 50  0001 C CNN
+F 3 "~" H 1505 6350 50  0001 C CNN
+	1    1505 6350
+	-1   0    0    1   
 $EndComp
-$Comp
-L Device:LED D?
-U 1 1 60B0484D
-P 5865 2585
-F 0 "D?" H 5858 2801 50  0000 C CNN
-F 1 "LED" H 5858 2710 50  0000 C CNN
-F 2 "LED_THT:LED_D5.0mm" H 5865 2585 50  0001 C CNN
-F 3 "~" H 5865 2585 50  0001 C CNN
-	1    5865 2585
-	1    0    0    -1  
-$EndComp
-$Comp
-L Switch:SW_Push SW?
-U 1 1 60B0ACDF
-P 5620 3550
-F 0 "SW?" H 5620 3835 50  0000 C CNN
-F 1 "SW_Push" H 5620 3744 50  0000 C CNN
-F 2 "Button_Switch_SMD:SW_Push_1P1T_NO_6x6mm_H9.5mm" H 5620 3750 50  0001 C CNN
-F 3 "~" H 5620 3750 50  0001 C CNN
-	1    5620 3550
-	1    0    0    -1  
-$EndComp
-Text GLabel 5420 3550 0    50   Input ~ 0
-3v3
-Text GLabel 5820 3550 2    50   Input ~ 0
-Push_3
-$Comp
-L Switch:SW_Push SW?
-U 1 1 60B0E355
-P 5665 4535
-F 0 "SW?" H 5665 4820 50  0000 C CNN
-F 1 "SW_Push" H 5665 4729 50  0000 C CNN
-F 2 "Button_Switch_SMD:SW_Push_1P1T_NO_6x6mm_H9.5mm" H 5665 4735 50  0001 C CNN
-F 3 "~" H 5665 4735 50  0001 C CNN
-	1    5665 4535
-	1    0    0    -1  
-$EndComp
-Text GLabel 5465 4535 0    50   Input ~ 0
-3v3
-Text GLabel 5865 4535 2    50   Input ~ 0
-Push_3
-Text Notes 5305 2845 0    50   ~ 0
-alarme et led alarm
-Text Notes 5520 4145 0    50   ~ 0
-push timer
-Text Notes 5330 3765 0    50   ~ 0
-push fuseau horaire
-$Comp
-L Switch:SW_Push SW?
-U 1 1 60B5712B
-P 5675 5270
-F 0 "SW?" H 5675 5555 50  0000 C CNN
-F 1 "SW_Push" H 5675 5464 50  0000 C CNN
-F 2 "Button_Switch_SMD:SW_Push_1P1T_NO_6x6mm_H9.5mm" H 5675 5470 50  0001 C CNN
-F 3 "~" H 5675 5470 50  0001 C CNN
-	1    5675 5270
-	1    0    0    -1  
-$EndComp
-Text GLabel 5475 5270 0    50   Input ~ 0
-3v3
-Text GLabel 5875 5270 2    50   Input ~ 0
-Push_3
-Text Notes 5655 5485 0    50   ~ 0
-chono
+Wire Wire Line
+	1655 6350 1805 6350
 $EndSCHEMATC

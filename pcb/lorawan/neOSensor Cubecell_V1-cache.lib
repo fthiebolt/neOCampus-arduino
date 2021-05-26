@@ -1,6 +1,30 @@
 EESchema-LIBRARY Version 2.4
 #encoding utf-8
 #
+# ATECC508A_78_01_030_0004
+#
+DEF ATECC508A_78_01_030_0004 J 0 40 Y Y 1 L N
+F0 "J" -200 230 50 H V L BNN
+F1 "ATECC508A_78_01_030_0004" -200 -330 50 H V L BNN
+F2 "HARTING_78_01_030_0004" 0 0 50 H I L BNN
+F3 "" 0 0 50 H I L BNN
+F4 "Harting" 0 0 50 H I L BNN "MANUFACTURER"
+F5 "2021-04-27" 0 0 50 H I L BNN "PARTREV"
+F6 "8 mm" 0 0 50 H I L BNN "MAXIMUM_PACKAGE_HEIGHT"
+F7 "Manufacturer Recommendations" 0 0 50 H I L BNN "STANDARD"
+DRAW
+S -200 -300 200 200 0 0 10 f
+X 1 1 -400 100 200 R 40 40 0 0 P
+X 2 2 -400 0 200 R 40 40 0 0 P
+X 3 3 -400 -100 200 R 40 40 0 0 P
+X 4 4 -400 -200 200 R 40 40 0 0 P
+X 5 5 400 -200 200 L 40 40 0 0 P
+X 6 6 400 -100 200 L 40 40 0 0 P
+X 7 7 400 0 200 L 40 40 0 0 P
+X 8 8 400 100 200 L 40 40 0 0 P
+ENDDRAW
+ENDDEF
+#
 # Connector_Generic_Conn_01x04
 #
 DEF Connector_Generic_Conn_01x04 J 0 40 Y N 1 F N
@@ -140,11 +164,33 @@ X 1 1 0 -100 100 U 50 50 1 1 I
 ENDDRAW
 ENDDEF
 #
-# htcc-ab01_HTCC-AB01
+# neOSensor_Cubecell_V1-rescue_G71Y-neosensor_addon
 #
-DEF htcc-ab01_HTCC-AB01 U 0 40 Y Y 1 F N
+DEF neOSensor_Cubecell_V1-rescue_G71Y-neosensor_addon SW 0 40 Y Y 1 F N
+F0 "SW" 0 100 50 H V C CNN
+F1 "neOSensor_Cubecell_V1-rescue_G71Y-neosensor_addon" 0 -200 50 H V C CNN
+F2 "neosensor_addon:G71Y_µsw_smd" 0 0 50 H I C CIN
+F3 "" 0 0 50 H I C CNN
+DRAW
+S 100 -100 100 -100 0 1 0 F
+P 2 0 1 0 -50 -110 50 -110 N
+P 2 0 1 0 -35 -125 35 -125 N
+P 2 0 1 0 -10 -140 10 -140 N
+P 2 0 1 0 50 0 100 0 N
+P 3 0 1 0 -100 -100 0 -100 0 -110 N
+P 3 0 1 0 -100 0 -50 0 50 -50 N
+P 5 0 1 0 -100 50 100 50 100 -150 -100 -150 -100 50 f
+X ~ 1 -200 0 100 R 50 50 1 1 P
+X ~ 2 200 0 100 L 50 50 1 1 P
+X ~ 3 -200 -100 100 R 50 50 1 1 P
+ENDDRAW
+ENDDEF
+#
+# neOSensor_Cubecell_V1-rescue_HTCC-AB01-htcc-ab01
+#
+DEF neOSensor_Cubecell_V1-rescue_HTCC-AB01-htcc-ab01 U 0 40 Y Y 1 F N
 F0 "U" 250 1300 50 H V C CNN
-F1 "htcc-ab01_HTCC-AB01" 300 -100 50 H V C CNN
+F1 "neOSensor_Cubecell_V1-rescue_HTCC-AB01-htcc-ab01" 300 -100 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 DRAW
@@ -171,28 +217,6 @@ X SCL 6 -200 600 100 R 50 50 1 1 I
 X SDA 7 -200 500 100 R 50 50 1 1 I
 X GPIO0 8 -200 400 100 R 50 50 1 1 B
 X GPIO4 9 -200 300 100 R 50 50 1 1 B
-ENDDRAW
-ENDDEF
-#
-# neosensor_addon_G71Y
-#
-DEF neosensor_addon_G71Y SW 0 40 Y Y 1 F N
-F0 "SW" 0 100 50 H V C CNN
-F1 "neosensor_addon_G71Y" 0 -200 50 H V C CNN
-F2 "neosensor_addon:G71Y_µsw_smd" 0 0 50 H I C CIN
-F3 "" 0 0 50 H I C CNN
-DRAW
-S 100 -100 100 -100 0 1 0 F
-P 2 0 1 0 -50 -110 50 -110 N
-P 2 0 1 0 -35 -125 35 -125 N
-P 2 0 1 0 -10 -140 10 -140 N
-P 2 0 1 0 50 0 100 0 N
-P 3 0 1 0 -100 -100 0 -100 0 -110 N
-P 3 0 1 0 -100 0 -50 0 50 -50 N
-P 5 0 1 0 -100 50 100 50 100 -150 -100 -150 -100 50 f
-X ~ 1 -200 0 100 R 50 50 1 1 P
-X ~ 2 200 0 100 L 50 50 1 1 P
-X ~ 3 -200 -100 100 R 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #

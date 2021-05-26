@@ -14,7 +14,7 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L htcc-ab01:HTCC-AB01 U1
+L neOSensor_Cubecell_V1-rescue:HTCC-AB01-htcc-ab01 U1
 U 1 1 5F579B0C
 P 4900 3100
 F 0 "U1" H 5200 4465 50  0000 C CNN
@@ -172,7 +172,7 @@ SDA
 Text Notes 9500 3000 0    50   ~ 0
 Expansion connectors for screen\n\n\n
 $Comp
-L neosensor_addon:G71Y SW1
+L neOSensor_Cubecell_V1-rescue:G71Y-neosensor_addon SW1
 U 1 1 5F5ADA5E
 P 10000 4400
 F 0 "SW1" H 10000 4625 50  0000 C CNN
@@ -540,6 +540,43 @@ F 1 "Logo_Open_Hardware_Small" H 5850 3975 50  0001 C CNN
 F 2 "" H 5850 4200 50  0001 C CNN
 F 3 "~" H 5850 4200 50  0001 C CNN
 	1    5850 4200
+	1    0    0    -1  
+$EndComp
+Text Notes 9345 5915 0    50   ~ 0
+ATECC508A-SSHDA
+Wire Notes Line
+	9115 5995 9115 5035
+Text Label 10085 5570 0    50   ~ 0
+SCL
+Text Label 10085 5670 0    50   ~ 0
+SDA
+Text Label 9285 5670 2    50   ~ 0
+GND
+Text Label 10085 5370 0    50   ~ 0
+Vsensor
+Wire Notes Line
+	10395 5035 10395 5995
+Wire Notes Line
+	9115 5035 10395 5035
+Wire Notes Line
+	9115 5995 10395 5995
+NoConn ~ 10085 5470
+NoConn ~ 9285 5370
+NoConn ~ 9285 5470
+NoConn ~ 9285 5570
+$Comp
+L ATECC508A:78_01_030_0004 J7
+U 1 1 60AE7AA0
+P 9685 5470
+F 0 "J7" H 9685 5837 50  0000 C CNN
+F 1 "78_01_030_0004" H 9685 5746 50  0000 C CNN
+F 2 "neosensor_addon:ATECC508A" H 9685 5470 50  0001 L BNN
+F 3 "" H 9685 5470 50  0001 L BNN
+F 4 "Harting" H 9685 5470 50  0001 L BNN "MANUFACTURER"
+F 5 "2021-04-27" H 9685 5470 50  0001 L BNN "PARTREV"
+F 6 "8 mm" H 9685 5470 50  0001 L BNN "MAXIMUM_PACKAGE_HEIGHT"
+F 7 "Manufacturer Recommendations" H 9685 5470 50  0001 L BNN "STANDARD"
+	1    9685 5470
 	1    0    0    -1  
 $EndComp
 $EndSCHEMATC

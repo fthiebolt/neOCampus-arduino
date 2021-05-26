@@ -1,5 +1,5 @@
 
-(module SAA1064 (layer F.Cu) (tedit 60ACC7A6)
+(module SAA1064 (layer F.Cu) (tedit 60AE49D3)
   (descr "")
   (fp_text reference REF** (at -20.34395 3.17874 900) (layer F.SilkS)
     (effects (font (size 1.40165354331 1.40165354331) (thickness 0.015)))

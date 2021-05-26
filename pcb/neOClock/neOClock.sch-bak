@@ -3,7 +3,7 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 1 3
+Sheet 1 1
 Title ""
 Date ""
 Rev ""
@@ -13,391 +13,1004 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
-Wire Wire Line
-	6395 2645 6395 2665
-Wire Wire Line
-	6330 2645 6395 2645
 $Comp
 L pspice:0 #GND0103
 U 1 1 60DC3790
-P 6395 2665
-F 0 "#GND0103" H 6395 2565 50  0001 C CNN
-F 1 "0" H 6395 2754 50  0000 C CNN
-F 2 "" H 6395 2665 50  0001 C CNN
-F 3 "~" H 6395 2665 50  0001 C CNN
-	1    6395 2665
-	1    0    0    -1  
+P 1740 4675
+F 0 "#GND0103" H 1740 4575 50  0001 C CNN
+F 1 "0" H 1740 4764 50  0000 C CNN
+F 2 "" H 1740 4675 50  0001 C CNN
+F 3 "~" H 1740 4675 50  0001 C CNN
+	1    1740 4675
+	0    -1   -1   0   
 $EndComp
-Wire Wire Line
-	5370 2645 5370 2665
-Wire Wire Line
-	5430 2645 5370 2645
 $Comp
 L pspice:0 #GND0102
 U 1 1 60DBED57
-P 5370 2665
-F 0 "#GND0102" H 5370 2565 50  0001 C CNN
-F 1 "0" H 5370 2754 50  0000 C CNN
-F 2 "" H 5370 2665 50  0001 C CNN
-F 3 "~" H 5370 2665 50  0001 C CNN
-	1    5370 2665
-	1    0    0    -1  
-$EndComp
-NoConn ~ 6330 2745
-$Sheet
-S 6895 3210 1320 610 
-U 6103C8FA
-F0 "digit" 50
-F1 "digit.sch" 50
-F2 "Sda" O L 6895 3330 50 
-F3 "Scl" O L 6895 3255 50 
-F4 "Input1" O L 6895 3545 50 
-F5 "Input2" O L 6895 3465 50 
-F6 "V+" O L 6895 3720 50 
-F7 "Gnd" O L 6895 3780 50 
-$EndSheet
-$Sheet
-S 3660 2695 1205 1180
-U 61173FE1
-F0 "Alim" 50
-F1 "Alim.sch" 50
-F2 "5v" O R 4865 2945 50 
-F3 "3v3" O R 4865 3135 50 
-F4 "Gnd" O R 4865 3610 50 
-$EndSheet
-Wire Wire Line
-	4865 2945 5430 2945
-Wire Wire Line
-	5430 2945 5430 2745
-Wire Wire Line
-	5430 3720 6895 3720
-Wire Wire Line
-	6895 3255 6755 3255
-Wire Wire Line
-	6755 3255 6755 1445
-Wire Wire Line
-	6755 1445 6540 1445
-Wire Wire Line
-	6895 3330 6615 3330
-Wire Wire Line
-	6615 3330 6615 1745
-Wire Wire Line
-	6895 3465 6540 3465
-Wire Wire Line
-	6540 3465 6540 1545
-Wire Wire Line
-	6540 1545 6330 1545
-Wire Wire Line
-	6895 3545 6475 3545
-Wire Wire Line
-	6475 3545 6475 1645
-Wire Wire Line
-	6475 1645 6330 1645
-Wire Wire Line
-	4865 3610 4915 3610
-$Comp
-L pspice:0 #GND0101
-U 1 1 612127B3
-P 4915 3610
-F 0 "#GND0101" H 4915 3510 50  0001 C CNN
-F 1 "0" V 4915 3654 50  0000 L CNN
-F 2 "" H 4915 3610 50  0001 C CNN
-F 3 "~" H 4915 3610 50  0001 C CNN
-	1    4915 3610
-	0    -1   -1   0   
-$EndComp
-Wire Wire Line
-	6895 3780 6840 3780
-$Comp
-L pspice:0 #GND0107
-U 1 1 6121C9F0
-P 6840 3780
-F 0 "#GND0107" H 6840 3680 50  0001 C CNN
-F 1 "0" V 6840 3824 50  0000 L CNN
-F 2 "" H 6840 3780 50  0001 C CNN
-F 3 "~" H 6840 3780 50  0001 C CNN
-	1    6840 3780
+P 840 4675
+F 0 "#GND0102" H 840 4575 50  0001 C CNN
+F 1 "0" H 840 4764 50  0000 C CNN
+F 2 "" H 840 4675 50  0001 C CNN
+F 3 "~" H 840 4675 50  0001 C CNN
+	1    840  4675
 	0    1    1    0   
 $EndComp
-NoConn ~ 5430 2545
-NoConn ~ 5430 2445
-NoConn ~ 5430 2345
-NoConn ~ 5430 2245
-NoConn ~ 5430 2145
-NoConn ~ 5430 2045
-NoConn ~ 5430 1945
-NoConn ~ 5430 1845
-NoConn ~ 5430 1745
-NoConn ~ 5430 1345
-NoConn ~ 6330 2545
-NoConn ~ 6330 2445
-NoConn ~ 6330 2345
-NoConn ~ 6330 2245
-NoConn ~ 6330 2145
-NoConn ~ 6330 2045
-NoConn ~ 6330 1945
-NoConn ~ 6330 1345
-NoConn ~ 6560 4650
 $Comp
 L neosensor_addon:IRsensor IR1
 U 1 1 60A834AB
-P 5835 3220
-F 0 "IR1" V 5881 3042 50  0000 R CNN
-F 1 "IRsensor" V 5790 3042 50  0000 R CNN
-F 2 "neosensor_addon:IRsensor_TH_and_smd" H 5835 3220 50  0001 C CIN
-F 3 "" H 5835 3220 50  0001 C CNN
-	1    5835 3220
-	0    -1   -1   0   
+P 1330 2475
+F 0 "IR1" V 1376 2297 50  0000 R CNN
+F 1 "IRsensor" V 1285 2297 50  0000 R CNN
+F 2 "neosensor_addon:IRsensor_TH_and_smd" H 1330 2475 50  0001 C CIN
+F 3 "" H 1330 2475 50  0001 C CNN
+	1    1330 2475
+	-1   0    0    1   
 $EndComp
-$Comp
-L neosensor_addon:ESP32_dev_30p U3
-U 1 1 60A65F7C
-P 5880 2095
-F 0 "U3" H 5880 3070 50  0000 C CNN
-F 1 "ESP32_dev_30p" H 5880 2979 50  0000 C CNN
-F 2 "neosensor_addon:ESP32_dev_30p" V 5880 2145 50  0001 C CIN
-F 3 "" H 5880 2495 50  0001 C CNN
-	1    5880 2095
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	6330 1845 6450 1845
-Wire Wire Line
-	6450 1845 6450 2970
-Wire Wire Line
-	6450 2970 5835 2970
-Wire Wire Line
-	5430 3470 5735 3470
-Wire Wire Line
-	5430 3135 5430 3470
-Connection ~ 5430 3470
-Wire Wire Line
-	5430 3470 5430 3720
 $Comp
 L pspice:0 #GND0111
 U 1 1 60A9911E
-P 5935 3470
-F 0 "#GND0111" H 5935 3370 50  0001 C CNN
-F 1 "0" H 5935 3559 50  0000 C CNN
-F 2 "" H 5935 3470 50  0001 C CNN
-F 3 "~" H 5935 3470 50  0001 C CNN
-	1    5935 3470
-	1    0    0    -1  
+P 1580 2375
+F 0 "#GND0111" H 1580 2275 50  0001 C CNN
+F 1 "0" H 1580 2464 50  0000 C CNN
+F 2 "" H 1580 2375 50  0001 C CNN
+F 3 "~" H 1580 2375 50  0001 C CNN
+	1    1580 2375
+	0    -1   -1   0   
 $EndComp
 $Comp
 L Switch:SW_Push SW2
 U 1 1 60A9C9E6
-P 3995 1150
-F 0 "SW2" H 3995 1435 50  0000 C CNN
-F 1 "SW_Push" H 3995 1344 50  0000 C CNN
-F 2 "Button_Switch_SMD:SW_Push_1P1T_NO_CK_KMR2" H 3995 1350 50  0001 C CNN
-F 3 "~" H 3995 1350 50  0001 C CNN
-	1    3995 1150
+P 1335 1515
+F 0 "SW2" H 1335 1800 50  0000 C CNN
+F 1 "SW_Push" H 1335 1709 50  0000 C CNN
+F 2 "Button_Switch_SMD:SW_Push_1P1T_NO_6x6mm_H9.5mm" H 1335 1715 50  0001 C CNN
+F 3 "~" H 1335 1715 50  0001 C CNN
+	1    1335 1515
 	1    0    0    -1  
 $EndComp
 $Comp
 L Switch:SW_Push SW3
 U 1 1 60A9D2E8
-P 4485 1150
-F 0 "SW3" H 4485 1435 50  0000 C CNN
-F 1 "SW_Push" H 4485 1344 50  0000 C CNN
-F 2 "Button_Switch_SMD:SW_Push_1P1T_NO_CK_KMR2" H 4485 1350 50  0001 C CNN
-F 3 "~" H 4485 1350 50  0001 C CNN
-	1    4485 1150
+P 1335 1880
+F 0 "SW3" H 1335 2165 50  0000 C CNN
+F 1 "SW_Push" H 1335 2074 50  0000 C CNN
+F 2 "Button_Switch_SMD:SW_Push_1P1T_NO_6x6mm_H9.5mm" H 1335 2080 50  0001 C CNN
+F 3 "~" H 1335 2080 50  0001 C CNN
+	1    1335 1880
 	1    0    0    -1  
 $EndComp
 $Comp
 L Switch:SW_Push SW1
 U 1 1 60A9D859
-P 3465 1150
-F 0 "SW1" H 3465 1435 50  0000 C CNN
-F 1 "SW_Push" H 3465 1344 50  0000 C CNN
-F 2 "Button_Switch_SMD:SW_Push_1P1T_NO_CK_KMR2" H 3465 1350 50  0001 C CNN
-F 3 "~" H 3465 1350 50  0001 C CNN
-	1    3465 1150
+P 1335 1150
+F 0 "SW1" H 1335 1435 50  0000 C CNN
+F 1 "SW_Push" H 1335 1344 50  0000 C CNN
+F 2 "Button_Switch_SMD:SW_Push_1P1T_NO_6x6mm_H9.5mm" H 1335 1350 50  0001 C CNN
+F 3 "~" H 1335 1350 50  0001 C CNN
+	1    1335 1150
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	5055 3135 5055 1385
-Wire Wire Line
-	3265 1385 3265 1150
-Wire Wire Line
-	4865 3135 5055 3135
-Connection ~ 5055 3135
-Wire Wire Line
-	3795 1150 3795 1385
-Connection ~ 3795 1385
-Wire Wire Line
-	3795 1385 3265 1385
-Wire Wire Line
-	4285 1150 4285 1385
-Wire Wire Line
-	3795 1385 4285 1385
-Connection ~ 4285 1385
-Wire Wire Line
-	4285 1385 5055 1385
-Wire Wire Line
-	5430 1445 5340 1445
-Wire Wire Line
-	5340 1445 5340 1150
-Wire Wire Line
-	5340 1150 4685 1150
-Wire Wire Line
-	5430 1545 5275 1545
-Wire Wire Line
-	5275 1545 5275 1195
-Wire Wire Line
-	5275 1195 4195 1195
-Wire Wire Line
-	4195 1195 4195 1150
-Wire Wire Line
-	5430 1645 5220 1645
-Wire Wire Line
-	5220 1645 5220 1235
-Wire Wire Line
-	5220 1235 3665 1235
-Wire Wire Line
-	3665 1235 3665 1150
 $Comp
 L Connector_Generic:Conn_01x04 J2
 U 1 1 60AB1160
-P 7780 1225
-F 0 "J2" H 7860 1217 50  0000 L CNN
-F 1 "Conn_01x04" H 7860 1126 50  0000 L CNN
-F 2 "Connector_PinHeader_2.00mm:PinHeader_1x04_P2.00mm_Vertical" H 7780 1225 50  0001 C CNN
-F 3 "~" H 7780 1225 50  0001 C CNN
-	1    7780 1225
-	1    0    0    -1  
+P 2250 1100
+F 0 "J2" H 2330 1092 50  0000 L CNN
+F 1 "Conn_01x04" H 2330 1001 50  0000 L CNN
+F 2 "Connector_PinHeader_2.00mm:PinHeader_1x04_P2.00mm_Vertical" H 2250 1100 50  0001 C CNN
+F 3 "~" H 2250 1100 50  0001 C CNN
+	1    2250 1100
+	0    -1   -1   0   
 $EndComp
 $Comp
 L Connector_Generic:Conn_01x04 J3
 U 1 1 60AB1E8C
-P 8620 1240
-F 0 "J3" H 8700 1232 50  0000 L CNN
-F 1 "Conn_01x04" H 8700 1141 50  0000 L CNN
-F 2 "Connector_PinHeader_2.00mm:PinHeader_1x04_P2.00mm_Vertical" H 8620 1240 50  0001 C CNN
-F 3 "~" H 8620 1240 50  0001 C CNN
-	1    8620 1240
-	1    0    0    -1  
+P 2725 1110
+F 0 "J3" H 2805 1102 50  0000 L CNN
+F 1 "Conn_01x04" H 2805 1011 50  0000 L CNN
+F 2 "Connector_PinHeader_2.00mm:PinHeader_1x04_P2.00mm_Vertical" H 2725 1110 50  0001 C CNN
+F 3 "~" H 2725 1110 50  0001 C CNN
+	1    2725 1110
+	0    -1   -1   0   
 $EndComp
 $Comp
 L Connector_Generic:Conn_01x04 J4
 U 1 1 60AB25DA
-P 9480 1235
-F 0 "J4" H 9560 1227 50  0000 L CNN
-F 1 "Conn_01x04" H 9560 1136 50  0000 L CNN
-F 2 "Connector_PinHeader_2.00mm:PinHeader_1x04_P2.00mm_Vertical" H 9480 1235 50  0001 C CNN
-F 3 "~" H 9480 1235 50  0001 C CNN
-	1    9480 1235
-	1    0    0    -1  
+P 3235 1120
+F 0 "J4" H 3315 1112 50  0000 L CNN
+F 1 "Conn_01x04" H 3315 1021 50  0000 L CNN
+F 2 "Connector_PinHeader_2.00mm:PinHeader_1x04_P2.00mm_Vertical" H 3235 1120 50  0001 C CNN
+F 3 "~" H 3235 1120 50  0001 C CNN
+	1    3235 1120
+	0    -1   -1   0   
 $EndComp
-Wire Wire Line
-	6540 1445 6540 925 
-Wire Wire Line
-	6540 925  7540 925 
-Wire Wire Line
-	9280 925  9280 1135
-Connection ~ 6540 1445
-Wire Wire Line
-	6540 1445 6330 1445
-Wire Wire Line
-	6610 1745 6610 990 
-Wire Wire Line
-	6610 990  7455 990 
-Wire Wire Line
-	9220 990  9220 1235
-Wire Wire Line
-	9220 1235 9280 1235
-Wire Wire Line
-	6330 1745 6610 1745
-Connection ~ 6610 1745
-Wire Wire Line
-	6610 1745 6615 1745
-Wire Wire Line
-	7240 3135 7240 1325
-Wire Wire Line
-	7240 1040 8325 1040
-Wire Wire Line
-	9175 1040 9175 1335
-Wire Wire Line
-	9175 1335 9280 1335
-Wire Wire Line
-	5055 3135 5430 3135
-Connection ~ 5430 3135
-Wire Wire Line
-	5430 3135 7240 3135
-Wire Wire Line
-	7580 1325 7240 1325
-Connection ~ 7240 1325
-Wire Wire Line
-	7240 1325 7240 1040
-Wire Wire Line
-	8420 1340 8325 1340
-Wire Wire Line
-	8325 1340 8325 1040
-Connection ~ 8325 1040
-Wire Wire Line
-	8325 1040 9175 1040
-Wire Wire Line
-	8420 1240 8380 1240
-Wire Wire Line
-	8380 1240 8380 990 
-Connection ~ 8380 990 
-Wire Wire Line
-	8380 990  9220 990 
-Wire Wire Line
-	7585 1225 7580 1225
-Wire Wire Line
-	7455 1225 7455 990 
-Connection ~ 7580 1225
-Wire Wire Line
-	7580 1225 7455 1225
-Connection ~ 7455 990 
-Wire Wire Line
-	7455 990  8380 990 
-Wire Wire Line
-	7580 1125 7540 1125
-Wire Wire Line
-	7540 1125 7540 925 
-Connection ~ 7540 925 
-Wire Wire Line
-	7540 925  8420 925 
-Wire Wire Line
-	8420 1140 8420 925 
-Connection ~ 8420 925 
-Wire Wire Line
-	8420 925  9280 925 
 $Comp
 L pspice:0 #GND0112
 U 1 1 60AC3B51
-P 7580 1425
-F 0 "#GND0112" H 7580 1325 50  0001 C CNN
-F 1 "0" V 7580 1469 50  0000 L CNN
-F 2 "" H 7580 1425 50  0001 C CNN
-F 3 "~" H 7580 1425 50  0001 C CNN
-	1    7580 1425
-	0    1    1    0   
+P 2450 1300
+F 0 "#GND0112" H 2450 1200 50  0001 C CNN
+F 1 "0" V 2450 1344 50  0000 L CNN
+F 2 "" H 2450 1300 50  0001 C CNN
+F 3 "~" H 2450 1300 50  0001 C CNN
+	1    2450 1300
+	1    0    0    -1  
 $EndComp
 $Comp
 L pspice:0 #GND0113
 U 1 1 60AC4429
-P 8420 1440
-F 0 "#GND0113" H 8420 1340 50  0001 C CNN
-F 1 "0" V 8420 1484 50  0000 L CNN
-F 2 "" H 8420 1440 50  0001 C CNN
-F 3 "~" H 8420 1440 50  0001 C CNN
-	1    8420 1440
-	0    1    1    0   
+P 2925 1310
+F 0 "#GND0113" H 2925 1210 50  0001 C CNN
+F 1 "0" V 2925 1354 50  0000 L CNN
+F 2 "" H 2925 1310 50  0001 C CNN
+F 3 "~" H 2925 1310 50  0001 C CNN
+	1    2925 1310
+	1    0    0    -1  
 $EndComp
 $Comp
 L pspice:0 #GND0114
 U 1 1 60AC4E5B
-P 9280 1435
-F 0 "#GND0114" H 9280 1335 50  0001 C CNN
-F 1 "0" V 9280 1479 50  0000 L CNN
-F 2 "" H 9280 1435 50  0001 C CNN
-F 3 "~" H 9280 1435 50  0001 C CNN
-	1    9280 1435
+P 3435 1320
+F 0 "#GND0114" H 3435 1220 50  0001 C CNN
+F 1 "0" V 3435 1364 50  0000 L CNN
+F 2 "" H 3435 1320 50  0001 C CNN
+F 3 "~" H 3435 1320 50  0001 C CNN
+	1    3435 1320
+	1    0    0    -1  
+$EndComp
+Text GLabel 1135 1150 0    50   Input ~ 0
+3v3
+Text GLabel 1135 1515 0    50   Input ~ 0
+3v3
+Text GLabel 1135 1880 0    50   Input ~ 0
+3v3
+Text GLabel 1740 3475 2    50   Input ~ 0
+SCL
+Text GLabel 1740 3775 2    50   Input ~ 0
+SDA
+Text GLabel 2150 1300 3    50   Input ~ 0
+3v3
+Text GLabel 2625 1310 3    50   Input ~ 0
+3v3
+Text GLabel 3135 1320 3    50   Input ~ 0
+3v3
+Text GLabel 2250 1300 3    50   Input ~ 0
+SDA
+Text GLabel 2725 1310 3    50   Input ~ 0
+SDA
+Text GLabel 3235 1320 3    50   Input ~ 0
+SDA
+Text GLabel 2350 1300 3    50   Input ~ 0
+SCL
+Text GLabel 2825 1310 3    50   Input ~ 0
+SCL
+Text GLabel 3335 1320 3    50   Input ~ 0
+SCL
+Text GLabel 1580 2575 2    50   Input ~ 0
+3v3
+$Comp
+L neosensor_addon:ESP32_dev_30p U3
+U 1 1 60A65F7C
+P 1290 4125
+F 0 "U3" H 1290 5100 50  0000 C CNN
+F 1 "ESP32_dev_30p" H 1290 5009 50  0000 C CNN
+F 2 "neosensor_addon:ESP32_dev_30p" V 1290 4175 50  0001 C CIN
+F 3 "" H 1290 4525 50  0001 C CNN
+	1    1290 4125
+	1    0    0    -1  
+$EndComp
+$Comp
+L pspice:0 #GND?
+U 1 1 60B5D4F9
+P 1355 6550
+AR Path="/61173FE1/60B5D4F9" Ref="#GND?"  Part="1" 
+AR Path="/60B5D4F9" Ref="#GND0108"  Part="1" 
+F 0 "#GND0108" H 1355 6450 50  0001 C CNN
+F 1 "0" H 1355 6639 50  0000 C CNN
+F 2 "" H 1355 6550 50  0001 C CNN
+F 3 "~" H 1355 6550 50  0001 C CNN
+	1    1355 6550
+	0    -1   -1   0   
+$EndComp
+$Comp
+L pspice:DIODE D?
+U 1 1 60B5D4FF
+P 1555 6350
+AR Path="/61173FE1/60B5D4FF" Ref="D?"  Part="1" 
+AR Path="/60B5D4FF" Ref="D1"  Part="1" 
+F 0 "D1" H 1555 6615 50  0000 C CNN
+F 1 "DIODE" H 1555 6524 50  0000 C CNN
+F 2 "Diode_SMD:D_0603_1608Metric_Pad1.05x0.95mm_HandSolder" H 1555 6350 50  0001 C CNN
+F 3 "~" H 1555 6350 50  0001 C CNN
+	1    1555 6350
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:Barrel_Jack J?
+U 1 1 60B5D507
+P 1055 6450
+AR Path="/61173FE1/60B5D507" Ref="J?"  Part="1" 
+AR Path="/60B5D507" Ref="J1"  Part="1" 
+F 0 "J1" H 1112 6775 50  0000 C CNN
+F 1 "Barrel_Jack" H 1112 6684 50  0000 C CNN
+F 2 "Connector_BarrelJack:BarrelJack_CUI_PJ-036AH-SMT_Horizontal" H 1105 6410 50  0001 C CNN
+F 3 "~" H 1105 6410 50  0001 C CNN
+	1    1055 6450
+	1    0    0    -1  
+$EndComp
+$Comp
+L SAA1064:SAA1064 U6
+U 1 1 60B7846A
+P 9550 3775
+F 0 "U6" H 9550 4942 50  0000 C CNN
+F 1 "SAA1064" H 9550 4851 50  0000 C CNN
+F 2 "SAA1064" H 9550 3775 50  0001 L BNN
+F 3 "" H 9550 3775 50  0001 L BNN
+	1    9550 3775
+	1    0    0    -1  
+$EndComp
+Text GLabel 10150 3975 2    50   Input ~ 0
+12v
+$Comp
+L pspice:0 #GND0109
+U 1 1 60B86152
+P 8950 2875
+F 0 "#GND0109" H 8950 2775 50  0001 C CNN
+F 1 "0" V 8950 2919 50  0000 L CNN
+F 2 "" H 8950 2875 50  0001 C CNN
+F 3 "~" H 8950 2875 50  0001 C CNN
+	1    8950 2875
 	0    1    1    0   
 $EndComp
+$Comp
+L Device:Q_NPN_CBE Q1
+U 1 1 60B92168
+P 8695 3875
+F 0 "Q1" H 8886 3829 50  0000 L CNN
+F 1 "Q_NPN_CBE" H 8886 3920 50  0000 L CNN
+F 2 "Package_TO_SOT_SMD:SC-59_Handsoldering" H 8895 3975 50  0001 C CNN
+F 3 "~" H 8695 3875 50  0001 C CNN
+	1    8695 3875
+	-1   0    0    1   
+$EndComp
+Wire Bus Line
+	9185 4725 9195 4725
+Text GLabel 8595 4075 3    50   Input ~ 0
+12v
+Wire Wire Line
+	1755 6350 1805 6350
+Wire Wire Line
+	1805 6350 1805 6045
+Connection ~ 1805 6350
+Wire Wire Line
+	1805 6350 1850 6350
+Wire Wire Line
+	1805 6045 3365 6045
+Wire Wire Line
+	2650 6350 2650 6235
+Wire Wire Line
+	2650 6235 3365 6235
+Text GLabel 3365 6045 2    50   Input ~ 0
+12v
+Text GLabel 3365 6235 2    50   Input ~ 0
+5v
+Text GLabel 840  4775 0    50   Input ~ 0
+5v
+NoConn ~ 1740 4775
+Text GLabel 10445 2875 2    50   Input ~ 0
+SCL
+Text GLabel 10445 2975 2    50   Input ~ 0
+SDA
+Text GLabel 1535 1150 2    50   Input ~ 0
+Push_1
+Text GLabel 840  3475 0    50   Input ~ 0
+Push_1
+Text GLabel 1535 1515 2    50   Input ~ 0
+Push_2
+Text GLabel 1535 1880 2    50   Input ~ 0
+Push_3
+Text GLabel 840  3675 0    50   Input ~ 0
+Push_3
+Text GLabel 840  3575 0    50   Input ~ 0
+Push_2
+Text GLabel 1080 2475 0    50   Input ~ 0
+IR
+Text GLabel 840  3775 0    50   Input ~ 0
+IR
+NoConn ~ 1740 3375
+NoConn ~ 6745 1125
+NoConn ~ 6745 1225
+NoConn ~ 1740 3875
+NoConn ~ 1740 3975
+NoConn ~ 1740 4075
+NoConn ~ 1740 4175
+NoConn ~ 1740 4275
+NoConn ~ 1740 4375
+NoConn ~ 1740 4475
+NoConn ~ 1740 4575
+NoConn ~ 840  3375
+NoConn ~ 840  3875
+NoConn ~ 840  3975
+NoConn ~ 840  4075
+NoConn ~ 840  4175
+NoConn ~ 840  4275
+NoConn ~ 840  4375
+NoConn ~ 840  4475
+NoConn ~ 840  4575
+Connection ~ 2650 6350
+Text GLabel 3365 6550 2    50   Input ~ 0
+3v3
+Connection ~ 3250 6550
+Wire Wire Line
+	3250 6550 3365 6550
+Wire Wire Line
+	3250 6550 3250 6660
+Connection ~ 2650 6550
+Wire Wire Line
+	2650 6550 2650 6860
+Wire Wire Line
+	2650 6350 2650 6550
+$Comp
+L pspice:0 #GND?
+U 1 1 60B5D4F3
+P 2350 6750
+AR Path="/61173FE1/60B5D4F3" Ref="#GND?"  Part="1" 
+AR Path="/60B5D4F3" Ref="#GND0107"  Part="1" 
+F 0 "#GND0107" H 2350 6650 50  0001 C CNN
+F 1 "0" H 2350 6839 50  0000 C CNN
+F 2 "" H 2350 6750 50  0001 C CNN
+F 3 "~" H 2350 6750 50  0001 C CNN
+	1    2350 6750
+	1    0    0    -1  
+$EndComp
+$Comp
+L pspice:0 #GND?
+U 1 1 60B5D4E5
+P 3250 6960
+AR Path="/61173FE1/60B5D4E5" Ref="#GND?"  Part="1" 
+AR Path="/60B5D4E5" Ref="#GND0106"  Part="1" 
+F 0 "#GND0106" H 3250 6860 50  0001 C CNN
+F 1 "0" H 3250 7049 50  0000 C CNN
+F 2 "" H 3250 6960 50  0001 C CNN
+F 3 "~" H 3250 6960 50  0001 C CNN
+	1    3250 6960
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C2
+U 1 1 60B5D4DF
+P 3250 6810
+AR Path="/60B5D4DF" Ref="C2"  Part="1" 
+AR Path="/61173FE1/60B5D4DF" Ref="C?"  Part="1" 
+F 0 "C2" H 3365 6856 50  0000 L CNN
+F 1 "100µF" H 3365 6765 50  0000 L CNN
+F 2 "Capacitor_Tantalum_SMD:CP_EIA-3216-18_Kemet-A_Pad1.58x1.35mm_HandSolder" H 3288 6660 50  0001 C CNN
+F 3 "~" H 3250 6810 50  0001 C CNN
+	1    3250 6810
+	1    0    0    -1  
+$EndComp
+$Comp
+L pspice:0 #GND0105
+U 1 1 60B5D4D6
+P 2950 6850
+AR Path="/60B5D4D6" Ref="#GND0105"  Part="1" 
+AR Path="/61173FE1/60B5D4D6" Ref="#GND?"  Part="1" 
+F 0 "#GND0105" H 2950 6750 50  0001 C CNN
+F 1 "0" H 2950 6939 50  0000 C CNN
+F 2 "" H 2950 6850 50  0001 C CNN
+F 3 "~" H 2950 6850 50  0001 C CNN
+	1    2950 6850
+	1    0    0    -1  
+$EndComp
+$Comp
+L DC_DC_LM2596:YAAJ_DCDC_StepDown_LM2596 U1
+U 1 1 60B5D4CF
+P 2250 6450
+AR Path="/60B5D4CF" Ref="U1"  Part="1" 
+AR Path="/61173FE1/60B5D4CF" Ref="U?"  Part="1" 
+F 0 "U1" H 2250 6815 50  0000 C CNN
+F 1 "YAAJ_DCDC_StepDown_LM2596" H 2250 6724 50  0000 C CNN
+F 2 "neosensor_addon:DC_DC_LM2596" H 2200 6450 50  0001 C CNN
+F 3 "" H 2200 6450 50  0001 C CNN
+	1    2250 6450
+	1    0    0    -1  
+$EndComp
+$Comp
+L pspice:0 #GND0104
+U 1 1 60B5D4C9
+P 2150 6750
+AR Path="/60B5D4C9" Ref="#GND0104"  Part="1" 
+AR Path="/61173FE1/60B5D4C9" Ref="#GND?"  Part="1" 
+F 0 "#GND0104" H 2150 6650 50  0001 C CNN
+F 1 "0" H 2150 6839 50  0000 C CNN
+F 2 "" H 2150 6750 50  0001 C CNN
+F 3 "~" H 2150 6750 50  0001 C CNN
+	1    2150 6750
+	1    0    0    -1  
+$EndComp
+$Comp
+L Regulator_Linear:AMS1117 U2
+U 1 1 60B5D4C3
+P 2950 6550
+AR Path="/60B5D4C3" Ref="U2"  Part="1" 
+AR Path="/61173FE1/60B5D4C3" Ref="U?"  Part="1" 
+F 0 "U2" H 2950 6792 50  0000 C CNN
+F 1 "AMS1117" H 2950 6701 50  0000 C CNN
+F 2 "Package_TO_SOT_SMD:SOT-223-3_TabPin2" H 2950 6750 50  0001 C CNN
+F 3 "http://www.advanced-monolithic.com/pdf/ds1117.pdf" H 3050 6300 50  0001 C CNN
+	1    2950 6550
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:CP C1
+U 1 1 60B5D4B9
+P 2650 7010
+AR Path="/60B5D4B9" Ref="C1"  Part="1" 
+AR Path="/61173FE1/60B5D4B9" Ref="C?"  Part="1" 
+F 0 "C1" H 2768 7056 50  0000 L CNN
+F 1 "470µF" H 2768 6965 50  0000 L CNN
+F 2 "Capacitor_THT:CP_Radial_D5.0mm_P2.50mm" H 2688 6860 50  0001 C CNN
+F 3 "~" H 2650 7010 50  0001 C CNN
+	1    2650 7010
+	1    0    0    -1  
+$EndComp
+$Comp
+L pspice:0 #GND0101
+U 1 1 60B5D4B0
+P 2650 7160
+AR Path="/60B5D4B0" Ref="#GND0101"  Part="1" 
+AR Path="/61173FE1/60B5D4B0" Ref="#GND?"  Part="1" 
+F 0 "#GND0101" H 2650 7060 50  0001 C CNN
+F 1 "0" H 2650 7249 50  0000 C CNN
+F 2 "" H 2650 7160 50  0001 C CNN
+F 3 "~" H 2650 7160 50  0001 C CNN
+	1    2650 7160
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:CP C4
+U 1 1 60DD6A09
+P 1805 6930
+AR Path="/60DD6A09" Ref="C4"  Part="1" 
+AR Path="/61173FE1/60DD6A09" Ref="C?"  Part="1" 
+F 0 "C4" H 1923 6976 50  0000 L CNN
+F 1 "470µF" H 1923 6885 50  0000 L CNN
+F 2 "Capacitor_THT:CP_Radial_D5.0mm_P2.50mm" H 1843 6780 50  0001 C CNN
+F 3 "~" H 1805 6930 50  0001 C CNN
+	1    1805 6930
+	1    0    0    -1  
+$EndComp
+$Comp
+L pspice:0 #GND0115
+U 1 1 60DD777F
+P 1805 7080
+F 0 "#GND0115" H 1805 6980 50  0001 C CNN
+F 1 "0" H 1805 7169 50  0000 C CNN
+F 2 "" H 1805 7080 50  0001 C CNN
+F 3 "~" H 1805 7080 50  0001 C CNN
+	1    1805 7080
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1805 6350 1805 6780
+Connection ~ 1805 6780
+Wire Wire Line
+	1805 6780 1805 6785
+Text GLabel 10505 4075 3    50   Input ~ 0
+12v
+$Comp
+L Device:Q_NPN_CBE Q2
+U 1 1 60CE98A8
+P 10405 3875
+F 0 "Q2" H 10596 3829 50  0000 L CNN
+F 1 "Q_NPN_CBE" H 10596 3920 50  0000 L CNN
+F 2 "Package_TO_SOT_SMD:SC-59_Handsoldering" H 10605 3975 50  0001 C CNN
+F 3 "~" H 10405 3875 50  0001 C CNN
+	1    10405 3875
+	1    0    0    1   
+$EndComp
+Wire Wire Line
+	8895 3875 8950 3875
+$Comp
+L Display_Character:HDSP-7801 U4
+U 1 1 60FD84CF
+P 8420 1430
+F 0 "U4" H 8420 2097 50  0000 C CNN
+F 1 "HDSP-7801" H 8420 2006 50  0000 C CNN
+F 2 "Display_7Segment:SBC18-11SURKCGKWA" H 8420 880 50  0001 C CNN
+F 3 "https://docs.broadcom.com/docs/AV02-2553EN" H 8420 1430 50  0001 C CNN
+	1    8420 1430
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	8720 1130 8735 1130
+Wire Wire Line
+	8720 1230 8755 1230
+Wire Wire Line
+	8720 1330 8775 1330
+Wire Wire Line
+	8720 1430 8795 1430
+Wire Wire Line
+	8720 1530 8815 1530
+Wire Wire Line
+	8720 1630 8835 1630
+Wire Wire Line
+	8720 1730 8855 1730
+Wire Wire Line
+	8735 1130 8735 3775
+Wire Wire Line
+	8735 3775 8950 3775
+Wire Wire Line
+	8755 1230 8755 3675
+Wire Wire Line
+	8755 3675 8950 3675
+Wire Wire Line
+	8775 1330 8775 3575
+Wire Wire Line
+	8775 3575 8950 3575
+Wire Wire Line
+	8795 1430 8795 3475
+Wire Wire Line
+	8795 3475 8950 3475
+Wire Wire Line
+	8815 1530 8815 3375
+Wire Wire Line
+	8815 3375 8950 3375
+Wire Wire Line
+	8835 1630 8835 3275
+Wire Wire Line
+	8835 3275 8950 3275
+Wire Wire Line
+	8855 1730 8855 3175
+Wire Wire Line
+	8855 3175 8950 3175
+Wire Wire Line
+	8875 1830 8875 3075
+Wire Wire Line
+	8875 3075 8950 3075
+$Comp
+L Display_Character:HDSP-7801 U5
+U 1 1 60EA8860
+P 9190 1430
+F 0 "U5" H 9190 2097 50  0000 C CNN
+F 1 "HDSP-7801" H 9190 2006 50  0000 C CNN
+F 2 "Display_7Segment:SBC18-11SURKCGKWA" H 9190 880 50  0001 C CNN
+F 3 "https://docs.broadcom.com/docs/AV02-2553EN" H 9190 1430 50  0001 C CNN
+	1    9190 1430
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8720 1830 8875 1830
+Connection ~ 8875 1830
+Wire Wire Line
+	8875 1830 8890 1830
+Wire Wire Line
+	8890 1130 8735 1130
+Connection ~ 8735 1130
+Wire Wire Line
+	8755 1230 8890 1230
+Connection ~ 8755 1230
+Wire Wire Line
+	8890 1330 8775 1330
+Connection ~ 8775 1330
+Wire Wire Line
+	8815 1530 8890 1530
+Connection ~ 8815 1530
+Wire Wire Line
+	8835 1630 8890 1630
+Connection ~ 8835 1630
+Wire Wire Line
+	8855 1730 8890 1730
+Connection ~ 8855 1730
+Wire Wire Line
+	8890 1430 8795 1430
+Connection ~ 8795 1430
+Connection ~ 10305 1430
+Wire Wire Line
+	10210 1430 10305 1430
+Connection ~ 10245 1730
+Wire Wire Line
+	10245 1730 10210 1730
+Connection ~ 10265 1630
+Wire Wire Line
+	10265 1630 10210 1630
+Connection ~ 10285 1530
+Wire Wire Line
+	10285 1530 10210 1530
+Connection ~ 10325 1330
+Wire Wire Line
+	10210 1330 10325 1330
+Connection ~ 10345 1230
+Wire Wire Line
+	10345 1230 10210 1230
+Connection ~ 10365 1130
+Wire Wire Line
+	10210 1130 10365 1130
+Wire Wire Line
+	10225 1830 10210 1830
+Connection ~ 10225 1830
+Wire Wire Line
+	10380 1830 10225 1830
+$Comp
+L Display_Character:HDSP-7801 U7
+U 1 1 6106251F
+P 9910 1430
+F 0 "U7" H 9910 2097 50  0000 C CNN
+F 1 "HDSP-7801" H 9910 2006 50  0000 C CNN
+F 2 "Display_7Segment:SBC18-11SURKCGKWA" H 9910 880 50  0001 C CNN
+F 3 "https://docs.broadcom.com/docs/AV02-2553EN" H 9910 1430 50  0001 C CNN
+	1    9910 1430
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	10225 1830 10225 3075
+Wire Wire Line
+	10245 1730 10245 3175
+Wire Wire Line
+	10265 1630 10265 3275
+Wire Wire Line
+	10285 1530 10285 3375
+Wire Wire Line
+	10305 1430 10305 3475
+Wire Wire Line
+	10325 1330 10325 3575
+Wire Wire Line
+	10345 1230 10345 3675
+Wire Wire Line
+	10365 1130 10365 3775
+Wire Wire Line
+	10380 1730 10245 1730
+Wire Wire Line
+	10380 1630 10265 1630
+Wire Wire Line
+	10380 1530 10285 1530
+Wire Wire Line
+	10380 1430 10305 1430
+Wire Wire Line
+	10380 1330 10325 1330
+Wire Wire Line
+	10380 1230 10345 1230
+Wire Wire Line
+	10380 1130 10365 1130
+$Comp
+L Display_Character:HDSP-7801 U8
+U 1 1 6106250A
+P 10680 1430
+F 0 "U8" H 10680 2097 50  0000 C CNN
+F 1 "HDSP-7801" H 10680 2006 50  0000 C CNN
+F 2 "Display_7Segment:SBC18-11SURKCGKWA" H 10680 880 50  0001 C CNN
+F 3 "https://docs.broadcom.com/docs/AV02-2553EN" H 10680 1430 50  0001 C CNN
+	1    10680 1430
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	10150 3775 10365 3775
+Wire Wire Line
+	10150 3675 10345 3675
+Wire Wire Line
+	10150 3575 10325 3575
+Wire Wire Line
+	10150 3075 10225 3075
+Wire Wire Line
+	10150 3175 10245 3175
+Wire Wire Line
+	10150 3275 10265 3275
+Wire Wire Line
+	10150 3375 10285 3375
+Wire Wire Line
+	10150 3475 10305 3475
+Wire Wire Line
+	10150 2875 10445 2875
+Wire Wire Line
+	10150 2975 10450 2975
+Wire Wire Line
+	10150 3875 10205 3875
+Wire Wire Line
+	9610 1730 9610 715 
+Wire Wire Line
+	9610 715  8120 715 
+Wire Wire Line
+	8120 715  8120 1730
+Wire Wire Line
+	10980 1730 10980 700 
+Wire Wire Line
+	10980 700  9490 700 
+Wire Wire Line
+	9490 700  9490 1730
+Wire Wire Line
+	9490 1730 9490 1830
+Connection ~ 9490 1730
+Wire Wire Line
+	9610 1730 9610 1830
+Connection ~ 9610 1730
+Wire Wire Line
+	10980 1730 10980 1830
+Connection ~ 10980 1730
+Wire Wire Line
+	8120 1730 8120 1830
+Connection ~ 8120 1730
+Wire Wire Line
+	10505 3675 10980 3675
+Wire Wire Line
+	10980 3675 10980 1830
+Connection ~ 10980 1830
+Wire Wire Line
+	8595 3675 8120 3675
+Wire Wire Line
+	8120 3675 8120 1830
+Connection ~ 8120 1830
+$Comp
+L pspice:0 #GND0110
+U 1 1 60B80272
+P 8950 3975
+F 0 "#GND0110" H 8950 3875 50  0001 C CNN
+F 1 "0" V 8950 4019 50  0000 L CNN
+F 2 "" H 8950 3975 50  0001 C CNN
+F 3 "~" H 8950 3975 50  0001 C CNN
+	1    8950 3975
+	0    1    1    0   
+$EndComp
+$Comp
+L pspice:0 #GND0116
+U 1 1 611ECB50
+P 8950 2975
+F 0 "#GND0116" H 8950 2875 50  0001 C CNN
+F 1 "0" V 8950 3019 50  0000 L CNN
+F 2 "" H 8950 2975 50  0001 C CNN
+F 3 "~" H 8950 2975 50  0001 C CNN
+	1    8950 2975
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:LED D7
+U 1 1 61217B9F
+P 7645 1170
+F 0 "D7" H 7638 1386 50  0000 C CNN
+F 1 "LED" H 7638 1295 50  0000 C CNN
+F 2 "LED_THT:LED_D5.0mm" H 7645 1170 50  0001 C CNN
+F 3 "~" H 7645 1170 50  0001 C CNN
+	1    7645 1170
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:LED D6
+U 1 1 6121B0B0
+P 7640 1505
+F 0 "D6" H 7633 1721 50  0000 C CNN
+F 1 "LED" H 7633 1630 50  0000 C CNN
+F 2 "LED_THT:LED_D5.0mm" H 7640 1505 50  0001 C CNN
+F 3 "~" H 7640 1505 50  0001 C CNN
+	1    7640 1505
+	1    0    0    -1  
+$EndComp
+Wire Notes Line
+	7935 1720 7330 1720
+Wire Notes Line
+	7330 1720 7330 890 
+Wire Notes Line
+	7330 890  7935 890 
+Wire Notes Line
+	7935 890  7935 1720
+$Comp
+L 78_01_030_0004:78_01_030_0004 J5
+U 1 1 6124A331
+P 2690 2130
+F 0 "J5" H 2690 2497 50  0000 C CNN
+F 1 "78_01_030_0004" H 2690 2406 50  0000 C CNN
+F 2 "neosensor_addon:HARTING_78_01_030_0004" H 2690 2130 50  0001 L BNN
+F 3 "" H 2690 2130 50  0001 L BNN
+F 4 "Harting" H 2690 2130 50  0001 L BNN "MANUFACTURER"
+F 5 "2021-04-27" H 2690 2130 50  0001 L BNN "PARTREV"
+F 6 "8 mm" H 2690 2130 50  0001 L BNN "MAXIMUM_PACKAGE_HEIGHT"
+F 7 "Manufacturer Recommendations" H 2690 2130 50  0001 L BNN "STANDARD"
+	1    2690 2130
+	1    0    0    -1  
+$EndComp
+Text Notes 2335 2540 0    50   ~ 0
+ATECC508A-SSHDA-T
+Text GLabel 3090 2030 2    50   Input ~ 0
+3v3
+Text GLabel 3090 2230 2    50   Input ~ 0
+SCL
+Text GLabel 3090 2330 2    50   Input ~ 0
+SDA
+$Comp
+L pspice:0 #GND0117
+U 1 1 6125F9DF
+P 2290 2330
+F 0 "#GND0117" H 2290 2230 50  0001 C CNN
+F 1 "0" V 2290 2374 50  0000 L CNN
+F 2 "" H 2290 2330 50  0001 C CNN
+F 3 "~" H 2290 2330 50  0001 C CNN
+	1    2290 2330
+	0    1    1    0   
+$EndComp
+NoConn ~ 2290 2030
+NoConn ~ 2290 2130
+NoConn ~ 2290 2230
+NoConn ~ 3090 2130
+$Comp
+L LED:APA102 D2
+U 1 1 61274911
+P 4645 1225
+F 0 "D2" H 4645 1706 50  0000 C CNN
+F 1 "APA102" H 4645 1615 50  0000 C CNN
+F 2 "LED_SMD:LED_RGB_5050-6" H 4695 925 50  0001 L TNN
+F 3 "http://www.led-color.com/upload/201506/APA102%20LED.pdf" H 4745 850 50  0001 L TNN
+	1    4645 1225
+	1    0    0    -1  
+$EndComp
+$Comp
+L LED:APA102 D3
+U 1 1 612815DC
+P 5245 1225
+F 0 "D3" H 5245 1706 50  0000 C CNN
+F 1 "APA102" H 5245 1615 50  0000 C CNN
+F 2 "LED_SMD:LED_RGB_5050-6" H 5295 925 50  0001 L TNN
+F 3 "http://www.led-color.com/upload/201506/APA102%20LED.pdf" H 5345 850 50  0001 L TNN
+	1    5245 1225
+	1    0    0    -1  
+$EndComp
+$Comp
+L LED:APA102 D4
+U 1 1 6128410F
+P 5845 1225
+F 0 "D4" H 5845 1706 50  0000 C CNN
+F 1 "APA102" H 5845 1615 50  0000 C CNN
+F 2 "LED_SMD:LED_RGB_5050-6" H 5895 925 50  0001 L TNN
+F 3 "http://www.led-color.com/upload/201506/APA102%20LED.pdf" H 5945 850 50  0001 L TNN
+	1    5845 1225
+	1    0    0    -1  
+$EndComp
+$Comp
+L LED:APA102 D5
+U 1 1 612CF7A7
+P 6445 1225
+F 0 "D5" H 6445 1706 50  0000 C CNN
+F 1 "APA102" H 6445 1615 50  0000 C CNN
+F 2 "LED_SMD:LED_RGB_5050-6" H 6495 925 50  0001 L TNN
+F 3 "http://www.led-color.com/upload/201506/APA102%20LED.pdf" H 6545 850 50  0001 L TNN
+	1    6445 1225
+	1    0    0    -1  
+$EndComp
+Connection ~ 4645 925 
+Wire Wire Line
+	4645 925  5245 925 
+Connection ~ 5245 925 
+Wire Wire Line
+	5245 925  5845 925 
+Connection ~ 5845 925 
+Wire Wire Line
+	5845 925  6445 925 
+Wire Wire Line
+	4595 925  4645 925 
+Wire Wire Line
+	4605 1525 4645 1525
+Connection ~ 4645 1525
+Wire Wire Line
+	4645 1525 5245 1525
+Connection ~ 5245 1525
+Wire Wire Line
+	5245 1525 5845 1525
+Connection ~ 5845 1525
+Wire Wire Line
+	5845 1525 6445 1525
+$Comp
+L pspice:0 #GND0118
+U 1 1 61413F41
+P 4605 1525
+F 0 "#GND0118" H 4605 1425 50  0001 C CNN
+F 1 "0" V 4605 1569 50  0000 L CNN
+F 2 "" H 4605 1525 50  0001 C CNN
+F 3 "~" H 4605 1525 50  0001 C CNN
+	1    4605 1525
+	0    1    1    0   
+$EndComp
+Text GLabel 4595 925  0    50   Input ~ 0
+3v3
+Text GLabel 4345 1125 0    50   Input ~ 0
+DI
+Text GLabel 4345 1225 0    50   Input ~ 0
+CI
+Text GLabel 1740 3575 2    50   Input ~ 0
+DI
+Text GLabel 1740 3675 2    50   Input ~ 0
+CI
+$Comp
+L pspice:0 #GND0119
+U 1 1 6146F202
+P 7490 1505
+F 0 "#GND0119" H 7490 1405 50  0001 C CNN
+F 1 "0" V 7490 1549 50  0000 L CNN
+F 2 "" H 7490 1505 50  0001 C CNN
+F 3 "~" H 7490 1505 50  0001 C CNN
+	1    7490 1505
+	0    1    1    0   
+$EndComp
+$Comp
+L pspice:0 #GND0120
+U 1 1 61470633
+P 7495 1170
+F 0 "#GND0120" H 7495 1070 50  0001 C CNN
+F 1 "0" V 7495 1214 50  0000 L CNN
+F 2 "" H 7495 1170 50  0001 C CNN
+F 3 "~" H 7495 1170 50  0001 C CNN
+	1    7495 1170
+	0    1    1    0   
+$EndComp
+Text Notes 1075 2725 0    50   ~ 0
+EKMC1601112
+$Comp
+L Device:Buzzer BZ?
+U 1 1 60B011C7
+P 5265 2555
+F 0 "BZ?" H 5417 2584 50  0000 L CNN
+F 1 "Buzzer" H 5417 2493 50  0000 L CNN
+F 2 "" V 5240 2655 50  0001 C CNN
+F 3 "~" V 5240 2655 50  0001 C CNN
+	1    5265 2555
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:LED D?
+U 1 1 60B0484D
+P 5865 2585
+F 0 "D?" H 5858 2801 50  0000 C CNN
+F 1 "LED" H 5858 2710 50  0000 C CNN
+F 2 "LED_THT:LED_D5.0mm" H 5865 2585 50  0001 C CNN
+F 3 "~" H 5865 2585 50  0001 C CNN
+	1    5865 2585
+	1    0    0    -1  
+$EndComp
+$Comp
+L Switch:SW_Push SW?
+U 1 1 60B0ACDF
+P 5620 3550
+F 0 "SW?" H 5620 3835 50  0000 C CNN
+F 1 "SW_Push" H 5620 3744 50  0000 C CNN
+F 2 "Button_Switch_SMD:SW_Push_1P1T_NO_6x6mm_H9.5mm" H 5620 3750 50  0001 C CNN
+F 3 "~" H 5620 3750 50  0001 C CNN
+	1    5620 3550
+	1    0    0    -1  
+$EndComp
+Text GLabel 5420 3550 0    50   Input ~ 0
+3v3
+Text GLabel 5820 3550 2    50   Input ~ 0
+Push_3
+$Comp
+L Switch:SW_Push SW?
+U 1 1 60B0E355
+P 5665 4535
+F 0 "SW?" H 5665 4820 50  0000 C CNN
+F 1 "SW_Push" H 5665 4729 50  0000 C CNN
+F 2 "Button_Switch_SMD:SW_Push_1P1T_NO_6x6mm_H9.5mm" H 5665 4735 50  0001 C CNN
+F 3 "~" H 5665 4735 50  0001 C CNN
+	1    5665 4535
+	1    0    0    -1  
+$EndComp
+Text GLabel 5465 4535 0    50   Input ~ 0
+3v3
+Text GLabel 5865 4535 2    50   Input ~ 0
+Push_3
+Text Notes 5305 2845 0    50   ~ 0
+alarme et led alarm
+Text Notes 5520 4145 0    50   ~ 0
+push timer
+Text Notes 5330 3765 0    50   ~ 0
+push fuseau horaire
+$Comp
+L Switch:SW_Push SW?
+U 1 1 60B5712B
+P 5675 5270
+F 0 "SW?" H 5675 5555 50  0000 C CNN
+F 1 "SW_Push" H 5675 5464 50  0000 C CNN
+F 2 "Button_Switch_SMD:SW_Push_1P1T_NO_6x6mm_H9.5mm" H 5675 5470 50  0001 C CNN
+F 3 "~" H 5675 5470 50  0001 C CNN
+	1    5675 5270
+	1    0    0    -1  
+$EndComp
+Text GLabel 5475 5270 0    50   Input ~ 0
+3v3
+Text GLabel 5875 5270 2    50   Input ~ 0
+Push_3
+Text Notes 5655 5485 0    50   ~ 0
+chono
 $EndSCHEMATC

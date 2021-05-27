@@ -1,30 +1,6 @@
 EESchema-LIBRARY Version 2.4
 #encoding utf-8
 #
-# ATECC508A_78_01_030_0004
-#
-DEF ATECC508A_78_01_030_0004 J 0 40 Y Y 1 L N
-F0 "J" -200 230 50 H V L BNN
-F1 "ATECC508A_78_01_030_0004" -200 -330 50 H V L BNN
-F2 "HARTING_78_01_030_0004" 0 0 50 H I L BNN
-F3 "" 0 0 50 H I L BNN
-F4 "Harting" 0 0 50 H I L BNN "MANUFACTURER"
-F5 "2021-04-27" 0 0 50 H I L BNN "PARTREV"
-F6 "8 mm" 0 0 50 H I L BNN "MAXIMUM_PACKAGE_HEIGHT"
-F7 "Manufacturer Recommendations" 0 0 50 H I L BNN "STANDARD"
-DRAW
-S -200 -300 200 200 0 0 10 f
-X 1 1 -400 100 200 R 40 40 0 0 P
-X 2 2 -400 0 200 R 40 40 0 0 P
-X 3 3 -400 -100 200 R 40 40 0 0 P
-X 4 4 -400 -200 200 R 40 40 0 0 P
-X 5 5 400 -200 200 L 40 40 0 0 P
-X 6 6 400 -100 200 L 40 40 0 0 P
-X 7 7 400 0 200 L 40 40 0 0 P
-X 8 8 400 100 200 L 40 40 0 0 P
-ENDDRAW
-ENDDEF
-#
 # Connector_Generic_Conn_01x04
 #
 DEF Connector_Generic_Conn_01x04 J 0 40 Y N 1 F N
@@ -70,6 +46,24 @@ X Pin_2 2 -200 100 150 R 50 50 1 1 P
 X Pin_3 3 -200 0 150 R 50 50 1 1 P
 X Pin_4 4 -200 -100 150 R 50 50 1 1 P
 X Pin_5 5 -200 -200 150 R 50 50 1 1 P
+ENDDRAW
+ENDDEF
+#
+# Device_C
+#
+DEF Device_C C 0 10 N Y 1 F N
+F0 "C" 25 100 50 H V L CNN
+F1 "Device_C" 25 -100 50 H V L CNN
+F2 "" 38 -150 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+$FPLIST
+ C_*
+$ENDFPLIST
+DRAW
+P 2 0 1 20 -80 -30 80 -30 N
+P 2 0 1 20 -80 30 80 30 N
+X ~ 1 0 150 110 D 50 50 1 1 P
+X ~ 2 0 -150 110 U 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #
@@ -164,11 +158,30 @@ X 1 1 0 -100 100 U 50 50 1 1 I
 ENDDRAW
 ENDDEF
 #
-# neOSensor_Cubecell_V1-rescue_G71Y-neosensor_addon
+# Regulator_Linear_AMS1117
 #
-DEF neOSensor_Cubecell_V1-rescue_G71Y-neosensor_addon SW 0 40 Y Y 1 F N
+DEF Regulator_Linear_AMS1117 U 0 30 Y Y 1 F N
+F0 "U" -150 125 50 H V C CNN
+F1 "Regulator_Linear_AMS1117" 0 125 50 H V L CNN
+F2 "Package_TO_SOT_SMD:SOT-223-3_TabPin2" 0 200 50 H I C CNN
+F3 "" 100 -250 50 H I C CNN
+ALIAS NCP1117-ADJ_SOT223 AMS1117
+$FPLIST
+ SOT?223*TabPin2*
+$ENDFPLIST
+DRAW
+S -200 -200 200 75 0 1 10 f
+X ADJ 1 0 -300 100 U 50 50 1 1 I
+X VO 2 300 0 100 L 50 50 1 1 w
+X VI 3 -300 0 100 R 50 50 1 1 W
+ENDDRAW
+ENDDEF
+#
+# neOSensor-Cubecell_V1-rescue_G71Y-neosensor_addon-neOSensor_Cubecell_V1-rescue
+#
+DEF neOSensor-Cubecell_V1-rescue_G71Y-neosensor_addon-neOSensor_Cubecell_V1-rescue SW 0 40 Y Y 1 F N
 F0 "SW" 0 100 50 H V C CNN
-F1 "neOSensor_Cubecell_V1-rescue_G71Y-neosensor_addon" 0 -200 50 H V C CNN
+F1 "neOSensor-Cubecell_V1-rescue_G71Y-neosensor_addon-neOSensor_Cubecell_V1-rescue" 0 -200 50 H V C CNN
 F2 "neosensor_addon:G71Y_µsw_smd" 0 0 50 H I C CIN
 F3 "" 0 0 50 H I C CNN
 DRAW
@@ -186,11 +199,11 @@ X ~ 3 -200 -100 100 R 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #
-# neOSensor_Cubecell_V1-rescue_HTCC-AB01-htcc-ab01
+# neOSensor-Cubecell_V1-rescue_HTCC-AB01-htcc-ab01-neOSensor_Cubecell_V1-rescue
 #
-DEF neOSensor_Cubecell_V1-rescue_HTCC-AB01-htcc-ab01 U 0 40 Y Y 1 F N
+DEF neOSensor-Cubecell_V1-rescue_HTCC-AB01-htcc-ab01-neOSensor_Cubecell_V1-rescue U 0 40 Y Y 1 F N
 F0 "U" 250 1300 50 H V C CNN
-F1 "neOSensor_Cubecell_V1-rescue_HTCC-AB01-htcc-ab01" 300 -100 50 H V C CNN
+F1 "neOSensor-Cubecell_V1-rescue_HTCC-AB01-htcc-ab01-neOSensor_Cubecell_V1-rescue" 300 -100 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 DRAW
@@ -217,6 +230,84 @@ X SCL 6 -200 600 100 R 50 50 1 1 I
 X SDA 7 -200 500 100 R 50 50 1 1 I
 X GPIO0 8 -200 400 100 R 50 50 1 1 B
 X GPIO4 9 -200 300 100 R 50 50 1 1 B
+ENDDRAW
+ENDDEF
+#
+# neosensor_addon_ATECC508A
+#
+DEF neosensor_addon_ATECC508A J 0 40 Y Y 1 L N
+F0 "J" -200 230 50 H V L BNN
+F1 "neosensor_addon_ATECC508A" -200 -330 50 H V L BNN
+F2 "HARTING_78_01_030_0004" 0 0 50 H I L BNN
+F3 "" 0 0 50 H I L BNN
+F4 "Harting" 0 0 50 H I L BNN "MANUFACTURER"
+F5 "2021-04-27" 0 0 50 H I L BNN "PARTREV"
+F6 "8 mm" 0 0 50 H I L BNN "MAXIMUM_PACKAGE_HEIGHT"
+F7 "Manufacturer Recommendations" 0 0 50 H I L BNN "STANDARD"
+DRAW
+S -200 -300 200 200 0 0 10 f
+X 1 1 -400 100 200 R 40 40 0 0 P
+X 2 2 -400 0 200 R 40 40 0 0 P
+X 3 3 -400 -100 200 R 40 40 0 0 P
+X 4 4 -400 -200 200 R 40 40 0 0 P
+X 5 5 400 -200 200 L 40 40 0 0 P
+X 6 6 400 -100 200 L 40 40 0 0 P
+X 7 7 400 0 200 L 40 40 0 0 P
+X 8 8 400 100 200 L 40 40 0 0 P
+ENDDRAW
+ENDDEF
+#
+# neosensor_addon_HC-SR01
+#
+DEF neosensor_addon_HC-SR01 U 0 40 Y Y 1 F N
+F0 "U" 0 -250 50 H V C CNN
+F1 "neosensor_addon_HC-SR01" -250 0 50 V V C CNN
+F2 "neosensor_addon:PIR_HC-SR01" 0 0 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+DRAW
+C 0 0 50 0 1 0 N
+C 0 0 127 0 1 0 N
+C 0 0 175 0 1 0 N
+T 0 225 -150 50 0 0 0 PIR Normal 0 C C
+S -300 200 300 -200 0 1 0 f
+P 2 0 1 0 -125 -125 -75 -100 N
+P 2 0 1 0 -125 -25 -175 -25 N
+P 2 0 1 0 -125 25 -125 125 N
+P 2 0 1 0 -100 -75 -25 -50 N
+P 2 0 1 0 -75 100 0 175 N
+P 2 0 1 0 -50 0 -125 0 N
+P 2 0 1 0 -50 25 -100 75 N
+P 2 0 1 0 -25 -125 -25 -175 N
+P 2 0 1 0 0 -50 0 -125 N
+P 2 0 1 0 25 -50 100 -75 N
+P 2 0 1 0 25 125 25 175 N
+P 2 0 1 0 50 0 125 0 N
+P 2 0 1 0 50 25 75 100 N
+P 2 0 1 0 100 75 125 125 N
+P 2 0 1 0 125 -25 125 -125 N
+P 2 0 1 0 125 25 175 25 N
+P 3 0 1 0 0 50 0 125 0 50 N
+X V+ 1 -100 300 100 D 50 50 1 1 W
+X OUT 2 0 300 100 D 50 50 1 1 O
+X GND 3 100 300 100 D 50 50 1 1 W
+ENDDRAW
+ENDDEF
+#
+# neosensor_addon_OLED1.3_I2C
+#
+DEF neosensor_addon_OLED1.3_I2C U 0 40 Y Y 1 F N
+F0 "U" 0 -400 50 H V C CNN
+F1 "neosensor_addon_OLED1.3_I2C" -400 -100 50 V V C CNN
+F2 "neosensor_addon:OLED1.3_I2C" 0 0 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+DRAW
+T 0 0 -150 50 0 0 0 "128 x 64" Normal 0 C C
+S -450 150 450 -350 0 1 0 f
+S -300 -50 350 -250 0 1 0 N
+X VCC 1 -150 250 100 D 50 50 1 1 W
+X GND 2 -50 250 100 D 50 50 1 1 W
+X SCL 3 50 250 100 D 50 50 1 1 B
+X SDA 4 150 250 100 D 50 50 1 1 B
 ENDDRAW
 ENDDEF
 #

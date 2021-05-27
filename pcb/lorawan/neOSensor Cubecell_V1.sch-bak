@@ -14,7 +14,7 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L neOSensor_Cubecell_V1-rescue:HTCC-AB01-htcc-ab01 U1
+L neOSensor-Cubecell_V1-rescue:HTCC-AB01-htcc-ab01-neOSensor_Cubecell_V1-rescue U1
 U 1 1 5F579B0C
 P 4900 3100
 F 0 "U1" H 5200 4465 50  0000 C CNN
@@ -132,8 +132,6 @@ Wire Wire Line
 	9100 2400 8900 2400
 Wire Wire Line
 	9100 2500 8900 2500
-Text Label 8600 2400 3    50   ~ 0
-VDD
 Text Label 8800 2400 3    50   ~ 0
 GND
 Text Label 8900 2300 0    50   ~ 0
@@ -147,32 +145,7 @@ Expansion connectors for i2C sensors with interup\n\n
 Text Label 6500 1200 3    50   ~ 0
 Vsensor
 $Comp
-L Connector_Generic:Conn_01x04 J4
-U 1 1 5F591203
-P 10100 3200
-F 0 "J4" H 10180 3192 50  0000 L CNN
-F 1 "Conn_01x04" H 10180 3101 50  0000 L CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" H 10100 3200 50  0001 C CNN
-F 3 "~" H 10100 3200 50  0001 C CNN
-	1    10100 3200
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	9900 3300 9700 3300
-Wire Wire Line
-	9900 3400 9700 3400
-Text Label 9200 3400 3    50   ~ 0
-GND
-Text Label 9400 3400 3    50   ~ 0
-Vsensor
-Text Label 9700 3300 0    50   ~ 0
-SCL
-Text Label 9700 3400 0    50   ~ 0
-SDA
-Text Notes 9500 3000 0    50   ~ 0
-Expansion connectors for screen\n\n\n
-$Comp
-L neOSensor_Cubecell_V1-rescue:G71Y-neosensor_addon SW1
+L neOSensor-Cubecell_V1-rescue:G71Y-neosensor_addon-neOSensor_Cubecell_V1-rescue SW1
 U 1 1 5F5ADA5E
 P 10000 4400
 F 0 "SW1" H 10000 4625 50  0000 C CNN
@@ -242,46 +215,18 @@ Wire Wire Line
 	9400 1300 9750 1300
 Text Label 9400 1300 0    50   ~ 0
 Vsensor
-Text Label 9900 1000 0    50   ~ 0
+Text Label 9900 1700 0    50   ~ 0
 VEXT
 Wire Wire Line
 	9900 1500 9900 1700
-Text Label 9900 1700 0    50   ~ 0
+Text Label 9900 1000 0    50   ~ 0
 VDD
-$Comp
-L Device:C_Small C2
-U 1 1 5F593B1B
-P 8700 2200
-F 0 "C2" V 8929 2200 50  0000 C CNN
-F 1 "100n" V 8838 2200 50  0000 C CNN
-F 2 "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 8700 2200 50  0001 C CNN
-F 3 "~" H 8700 2200 50  0001 C CNN
-	1    8700 2200
-	0    -1   -1   0   
-$EndComp
-$Comp
-L Device:C_Small C4
-U 1 1 5F595F37
-P 9300 3200
-F 0 "C4" V 9529 3200 50  0000 C CNN
-F 1 "100n" V 9438 3200 50  0000 C CNN
-F 2 "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 9300 3200 50  0001 C CNN
-F 3 "~" H 9300 3200 50  0001 C CNN
-	1    9300 3200
-	0    -1   -1   0   
-$EndComp
-Wire Wire Line
-	8600 2100 8600 2200
-Connection ~ 8600 2200
-Wire Wire Line
-	8600 2200 8600 2400
 Wire Wire Line
 	8600 2100 9100 2100
 Wire Wire Line
 	8800 2200 9100 2200
 Wire Wire Line
 	8800 2200 8800 2400
-Connection ~ 8800 2200
 Wire Wire Line
 	7200 2100 7800 2100
 Connection ~ 7400 2200
@@ -338,18 +283,6 @@ Text Label 6100 2700 0    50   ~ 0
 GPIO3
 Text Label 6100 2800 0    50   ~ 0
 GPIO2
-Wire Wire Line
-	9200 3100 9200 3200
-Wire Wire Line
-	9200 3100 9900 3100
-Connection ~ 9200 3200
-Wire Wire Line
-	9200 3200 9200 3400
-Wire Wire Line
-	9400 3200 9900 3200
-Wire Wire Line
-	9400 3200 9400 3400
-Connection ~ 9400 3200
 $Comp
 L Mechanical:MountingHole_Pad MH1
 U 1 1 5F5E57EB
@@ -544,8 +477,6 @@ F 3 "~" H 5850 4200 50  0001 C CNN
 $EndComp
 Text Notes 9345 5915 0    50   ~ 0
 ATECC508A-SSHDA
-Wire Notes Line
-	9115 5995 9115 5035
 Text Label 10085 5570 0    50   ~ 0
 SCL
 Text Label 10085 5670 0    50   ~ 0
@@ -554,22 +485,50 @@ Text Label 9285 5670 2    50   ~ 0
 GND
 Text Label 10085 5370 0    50   ~ 0
 Vsensor
-Wire Notes Line
-	10395 5035 10395 5995
-Wire Notes Line
-	9115 5035 10395 5035
-Wire Notes Line
-	9115 5995 10395 5995
 NoConn ~ 10085 5470
 NoConn ~ 9285 5370
 NoConn ~ 9285 5470
 NoConn ~ 9285 5570
 $Comp
-L ATECC508A:78_01_030_0004 J7
-U 1 1 60AE7AA0
+L neosensor_addon:HC-SR01 U2
+U 1 1 60B0C27A
+P 6840 5635
+F 0 "U2" H 7168 5739 50  0000 L CNN
+F 1 "HC-SR01" H 7168 5648 50  0000 L CNN
+F 2 "neosensor_addon:PIR_HC-SR01" H 6840 5635 50  0001 C CNN
+F 3 "" H 6840 5635 50  0001 C CNN
+	1    6840 5635
+	1    0    0    -1  
+$EndComp
+$Comp
+L neosensor_addon:OLED1.3_I2C U3
+U 1 1 60B0C862
+P 8455 5800
+F 0 "U3" H 8933 5804 50  0000 L CNN
+F 1 "OLED1.3_I2C" H 8933 5713 50  0000 L CNN
+F 2 "neosensor_addon:OLED1.3_I2C" H 8455 5800 50  0001 C CNN
+F 3 "" H 8455 5800 50  0001 C CNN
+	1    8455 5800
+	0    -1   -1   0   
+$EndComp
+Text Label 6740 5335 1    50   ~ 0
+Vsensor
+Text Label 8205 5750 2    50   ~ 0
+SCL
+Text Label 8205 5650 2    50   ~ 0
+SDA
+Text Label 8205 5850 2    50   ~ 0
+GND
+Text Label 6940 5335 1    50   ~ 0
+GND
+Text Label 8205 5950 2    50   ~ 0
+Vsensor
+$Comp
+L neosensor_addon:ATECC508A J7
+U 1 1 60B67E25
 P 9685 5470
 F 0 "J7" H 9685 5837 50  0000 C CNN
-F 1 "78_01_030_0004" H 9685 5746 50  0000 C CNN
+F 1 "ATECC508A" H 9685 5746 50  0000 C CNN
 F 2 "neosensor_addon:ATECC508A" H 9685 5470 50  0001 L BNN
 F 3 "" H 9685 5470 50  0001 L BNN
 F 4 "Harting" H 9685 5470 50  0001 L BNN "MANUFACTURER"
@@ -579,4 +538,10 @@ F 7 "Manufacturer Recommendations" H 9685 5470 50  0001 L BNN "STANDARD"
 	1    9685 5470
 	1    0    0    -1  
 $EndComp
+Wire Wire Line
+	8600 2100 8600 2400
+Text Label 6840 5335 1    50   ~ 0
+GPIO0
+Text Label 8600 2400 3    50   ~ 0
+VDD
 $EndSCHEMATC

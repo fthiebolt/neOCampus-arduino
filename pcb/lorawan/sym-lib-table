@@ -1,6 +1,3 @@
 (sym_lib_table
-  (lib (name ATECC508A)(type Legacy)(uri /home/devynck/Documents/ETD/Stage/neOCampus-arduino/pcb/kicad-libs/neosensor_addon.pretty/ATECC508A.lib)(options "")(descr "")(disabled))
-  (lib (name neOSensor_Cubecell_V1-rescue)(type Legacy)(uri "/home/devynck/Documents/ETD/Stage/neOCampus-arduino/pcb/kicad-libs/neosensor_addon.pretty/neOSensor Cubecell_V1-rescue.lib")(options "")(descr "")(disabled))
-  (lib (name neOSensor-Cubecell_V1-rescue)(type Legacy)(uri "${KIPRJMOD}/neOSensor Cubecell_V1-rescue.lib")(options "")(descr "")(disabled))
   (lib (name neosensor_addon)(type Legacy)(uri /home/devynck/Documents/ETD/Stage/neOCampus-arduino/pcb/kicad-libs/neosensor_addon.lib)(options "")(descr ""))
 )

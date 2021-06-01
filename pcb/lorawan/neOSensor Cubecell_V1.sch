@@ -13,17 +13,6 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
-$Comp
-L neOSensor-Cubecell_V1-rescue:HTCC-AB01-htcc-ab01-neOSensor_Cubecell_V1-rescue U1
-U 1 1 5F579B0C
-P 4900 3100
-F 0 "U1" H 5200 4465 50  0000 C CNN
-F 1 "HTCC-AB01" H 5200 4374 50  0000 C CNN
-F 2 "HTCC-AB01:htcc-ab01" H 4900 3100 50  0001 C CNN
-F 3 "" H 4900 3100 50  0001 C CNN
-	1    4900 3100
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	4700 2000 4300 2000
 Wire Wire Line
@@ -144,18 +133,7 @@ Text Notes 7300 1900 0    50   ~ 0
 Expansion connectors for i2C sensors with interup\n\n
 Text Label 6500 1200 3    50   ~ 0
 Vsensor
-$Comp
-L neOSensor-Cubecell_V1-rescue:G71Y-neosensor_addon-neOSensor_Cubecell_V1-rescue SW1
-U 1 1 5F5ADA5E
-P 10000 4400
-F 0 "SW1" H 10000 4625 50  0000 C CNN
-F 1 "G71Y" H 10000 4534 50  0000 C CNN
-F 2 "neosensor_addon:G71Y_µsw_smd" H 10000 4400 50  0001 C CIN
-F 3 "" H 10000 4400 50  0001 C CNN
-	1    10000 4400
-	1    0    0    -1  
-$EndComp
-Text Notes 9600 4300 0    50   ~ 0
+Text Notes 9700 4300 0    50   ~ 0
 Programming switch\n\n\n\n
 $Comp
 L Device:R R1
@@ -171,22 +149,11 @@ $EndComp
 Wire Wire Line
 	9800 4400 9600 4400
 Wire Wire Line
-	9800 4500 9600 4500
-Wire Wire Line
-	10200 4400 10300 4400
-Wire Wire Line
-	10300 4400 10300 4700
-Wire Wire Line
-	10300 4700 9800 4700
-Wire Wire Line
-	9800 4700 9800 4500
-Connection ~ 9800 4500
-Text Label 9600 4500 0    50   ~ 0
-GND
-Text Label 9600 4400 0    50   ~ 0
+	10400 4400 10400 4500
+Text Label 10950 4400 0    50   ~ 0
 GPIO5
 Text Label 4200 3900 0    50   ~ 0
-VIN
+Vsensor
 Wire Wire Line
 	4200 3650 4200 3900
 Wire Wire Line
@@ -201,26 +168,14 @@ Wire Wire Line
 $Comp
 L Jumper:SolderJumper_3_Bridged12 JP1
 U 1 1 5F5EEAA0
-P 9900 1300
-F 0 "JP1" V 9854 1368 50  0000 L CNN
-F 1 "SolderJumper_3_Bridged12" V 9945 1368 50  0000 L CNN
-F 2 "Jumper:SolderJumper-3_P1.3mm_Bridged2Bar12_Pad1.0x1.5mm" H 9900 1300 50  0001 C CNN
-F 3 "~" H 9900 1300 50  0001 C CNN
-	1    9900 1300
+P 2450 5300
+F 0 "JP1" V 2404 5368 50  0000 L CNN
+F 1 "SolderJumper_3_Bridged12" V 2495 5368 50  0000 L CNN
+F 2 "Jumper:SolderJumper-3_P1.3mm_Bridged2Bar12_Pad1.0x1.5mm" H 2450 5300 50  0001 C CNN
+F 3 "~" H 2450 5300 50  0001 C CNN
+	1    2450 5300
 	0    1    1    0   
 $EndComp
-Wire Wire Line
-	9900 1100 9900 1000
-Wire Wire Line
-	9400 1300 9750 1300
-Text Label 9400 1300 0    50   ~ 0
-Vsensor
-Text Label 9900 1700 0    50   ~ 0
-VEXT
-Wire Wire Line
-	9900 1500 9900 1700
-Text Label 9900 1000 0    50   ~ 0
-VDD
 Wire Wire Line
 	8600 2100 9100 2100
 Wire Wire Line
@@ -475,29 +430,23 @@ F 3 "~" H 5850 4200 50  0001 C CNN
 	1    5850 4200
 	1    0    0    -1  
 $EndComp
-Text Notes 9345 5915 0    50   ~ 0
-ATECC508A-SSHDA
-Text Label 10085 5570 0    50   ~ 0
+Text Label 9995 5575 0    50   ~ 0
 SCL
-Text Label 10085 5670 0    50   ~ 0
+Text Label 9995 5675 0    50   ~ 0
 SDA
-Text Label 9285 5670 2    50   ~ 0
+Text Label 9395 5675 2    50   ~ 0
 GND
-Text Label 10085 5370 0    50   ~ 0
+Text Label 9995 5375 0    50   ~ 0
 Vsensor
-NoConn ~ 10085 5470
-NoConn ~ 9285 5370
-NoConn ~ 9285 5470
-NoConn ~ 9285 5570
 $Comp
 L neosensor_addon:HC-SR01 U2
 U 1 1 60B0C27A
-P 6840 5635
-F 0 "U2" H 7168 5739 50  0000 L CNN
-F 1 "HC-SR01" H 7168 5648 50  0000 L CNN
-F 2 "neosensor_addon:PIR_HC-SR01" H 6840 5635 50  0001 C CNN
-F 3 "" H 6840 5635 50  0001 C CNN
-	1    6840 5635
+P 6700 5500
+F 0 "U2" H 7028 5604 50  0000 L CNN
+F 1 "HC-SR01" H 7028 5513 50  0000 L CNN
+F 2 "neosensor_addon:PIR_HC-SR01" H 6700 5500 50  0001 C CNN
+F 3 "" H 6700 5500 50  0001 C CNN
+	1    6700 5500
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -511,7 +460,7 @@ F 3 "" H 8455 5800 50  0001 C CNN
 	1    8455 5800
 	0    -1   -1   0   
 $EndComp
-Text Label 6740 5335 1    50   ~ 0
+Text Label 5650 5300 1    50   ~ 0
 Vsensor
 Text Label 8205 5750 2    50   ~ 0
 SCL
@@ -519,81 +468,198 @@ Text Label 8205 5650 2    50   ~ 0
 SDA
 Text Label 8205 5850 2    50   ~ 0
 GND
-Text Label 6940 5335 1    50   ~ 0
+Text Label 6800 5200 1    50   ~ 0
 GND
 Text Label 8205 5950 2    50   ~ 0
 Vsensor
-$Comp
-L neosensor_addon:ATECC508A J7
-U 1 1 60B67E25
-P 9685 5470
-F 0 "J7" H 9685 5837 50  0000 C CNN
-F 1 "ATECC508A" H 9685 5746 50  0000 C CNN
-F 2 "neosensor_addon:ATECC508A" H 9685 5470 50  0001 L BNN
-F 3 "" H 9685 5470 50  0001 L BNN
-F 4 "Harting" H 9685 5470 50  0001 L BNN "MANUFACTURER"
-F 5 "2021-04-27" H 9685 5470 50  0001 L BNN "PARTREV"
-F 6 "8 mm" H 9685 5470 50  0001 L BNN "MAXIMUM_PACKAGE_HEIGHT"
-F 7 "Manufacturer Recommendations" H 9685 5470 50  0001 L BNN "STANDARD"
-	1    9685 5470
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	8600 2100 8600 2400
-Text Label 6840 5335 1    50   ~ 0
+Text Label 6700 5200 1    50   ~ 0
 GPIO0
 Text Label 8600 2400 3    50   ~ 0
 VDD
 $Comp
-L Regulator_Linear:AMS1117 U?
+L Regulator_Linear:AMS1117 U4
 U 1 1 60C3FD4D
-P 5035 5490
-F 0 "U?" H 5035 5732 50  0000 C CNN
-F 1 "AMS1117" H 5035 5641 50  0000 C CNN
-F 2 "Package_TO_SOT_SMD:SOT-223-3_TabPin2" H 5035 5690 50  0001 C CNN
-F 3 "http://www.advanced-monolithic.com/pdf/ds1117.pdf" H 5135 5240 50  0001 C CNN
-	1    5035 5490
+P 3685 5890
+F 0 "U4" H 3685 6132 50  0000 C CNN
+F 1 "AMS1117" H 3685 6041 50  0000 C CNN
+F 2 "Package_TO_SOT_SMD:SOT-223-3_TabPin2" H 3685 6090 50  0001 C CNN
+F 3 "http://www.advanced-monolithic.com/pdf/ds1117.pdf" H 3785 5640 50  0001 C CNN
+	1    3685 5890
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:C C?
+L Device:C C2
 U 1 1 60C4535A
-P 4480 5640
-F 0 "C?" H 4595 5686 50  0000 L CNN
-F 1 "100nF" H 4595 5595 50  0000 L CNN
-F 2 "" H 4518 5490 50  0001 C CNN
-F 3 "~" H 4480 5640 50  0001 C CNN
-	1    4480 5640
+P 3130 6040
+F 0 "C2" H 3245 6086 50  0000 L CNN
+F 1 "100nF" H 3245 5995 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 3168 5890 50  0001 C CNN
+F 3 "~" H 3130 6040 50  0001 C CNN
+	1    3130 6040
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	5335 5490 5410 5490
+	3985 5890 4060 5890
+$Comp
+L Device:C C4
+U 1 1 60C4A52B
+P 4060 6040
+F 0 "C4" H 4175 6086 50  0000 L CNN
+F 1 "C" H 4175 5995 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 4098 5890 50  0001 C CNN
+F 3 "~" H 4060 6040 50  0001 C CNN
+	1    4060 6040
+	1    0    0    -1  
+$EndComp
+Connection ~ 4060 5890
+Wire Wire Line
+	4060 5890 4170 5890
+Wire Wire Line
+	3130 5890 3385 5890
+Wire Wire Line
+	3130 5890 2890 5890
+Connection ~ 3130 5890
+Wire Wire Line
+	3130 6190 3685 6190
+Connection ~ 3685 6190
+Wire Wire Line
+	3685 6190 4060 6190
+Wire Wire Line
+	3685 6190 3685 6255
+Text Label 3685 6255 3    50   ~ 0
+GND
+$Comp
+L neosensor_addon:HTCC-AB01 U1
+U 1 1 60B68D5B
+P 4900 3100
+F 0 "U1" H 5200 4465 50  0000 C CNN
+F 1 "HTCC-AB01" H 5200 4374 50  0000 C CNN
+F 2 "neosensor_addon:HTCC-AB01" V 5200 3700 50  0001 C CIN
+F 3 "" H 4900 3100 50  0001 C CNN
+	1    4900 3100
+	1    0    0    -1  
+$EndComp
+$Comp
+L neosensor_addon:ATECC508A U5
+U 1 1 60B75613
+P 9695 5475
+F 0 "U5" H 9695 5842 50  0000 C CNN
+F 1 "ATECC508A" H 9695 5751 50  0000 C CNN
+F 2 "neosensor_addon:SOIC-8_3.9x5.4mm_P1.27mm_HandSolder" H 8895 5825 50  0001 L BIN
+F 3 "" H 9695 5475 50  0001 L BNN
+	1    9695 5475
+	1    0    0    -1  
+$EndComp
+$Comp
+L neosensor_addon:G71Y SW1
+U 1 1 60B86387
+P 10000 4400
+F 0 "SW1" H 10000 4625 50  0000 C CNN
+F 1 "G71Y" H 10000 4534 50  0000 C CNN
+F 2 "neosensor_addon:G71Y_µsw_smd" H 10000 4400 50  0001 C CIN
+F 3 "" H 10000 4400 50  0001 C CNN
+	1    10000 4400
+	-1   0    0    -1  
+$EndComp
+Text Label 2890 5890 2    50   ~ 0
+VIN
+Text Label 4170 5890 0    50   ~ 0
+3v3
+$Comp
+L neosensor_addon:IRsensor IR?
+U 1 1 60B77FCE
+P 5900 5400
+F 0 "IR?" H 5900 5725 50  0000 C CNN
+F 1 "IRsensor" H 5900 5634 50  0000 C CNN
+F 2 "neosensor_addon:IRsensor_TH_and_smd" H 5900 5400 50  0001 C CIN
+F 3 "" H 5900 5400 50  0001 C CNN
+	1    5900 5400
+	1    0    0    -1  
+$EndComp
+Text Label 6600 5200 1    50   ~ 0
+VIN
+Wire Wire Line
+	2450 5500 2450 5900
+Wire Wire Line
+	1900 5300 2300 5300
+Wire Wire Line
+	2450 4750 2450 5100
+Text Label 1900 5300 2    50   ~ 0
+Vsensor
+Text Label 2450 4750 1    50   ~ 0
+3v3
+Text Label 2450 5900 3    50   ~ 0
+VDD
+$Comp
+L Device:R R?
+U 1 1 60BBF3F3
+P 3600 3900
+F 0 "R?" H 3670 3946 50  0000 L CNN
+F 1 "R" H 3670 3855 50  0000 L CNN
+F 2 "" V 3530 3900 50  0001 C CNN
+F 3 "~" H 3600 3900 50  0001 C CNN
+	1    3600 3900
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 60B63050
+P 10550 4400
+F 0 "R?" V 10343 4400 50  0000 C CNN
+F 1 "15K" V 10434 4400 50  0000 C CNN
+F 2 "" V 10480 4400 50  0001 C CNN
+F 3 "~" H 10550 4400 50  0001 C CNN
+	1    10550 4400
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 60B632E0
+P 10400 4650
+F 0 "R?" H 10470 4696 50  0000 L CNN
+F 1 "15K" H 10470 4605 50  0000 L CNN
+F 2 "" V 10330 4650 50  0001 C CNN
+F 3 "~" H 10400 4650 50  0001 C CNN
+	1    10400 4650
+	1    0    0    -1  
+$EndComp
 $Comp
 L Device:C C?
-U 1 1 60C4A52B
-P 5410 5640
-F 0 "C?" H 5525 5686 50  0000 L CNN
-F 1 "C" H 5525 5595 50  0000 L CNN
-F 2 "" H 5448 5490 50  0001 C CNN
-F 3 "~" H 5410 5640 50  0001 C CNN
-	1    5410 5640
+U 1 1 60B6378A
+P 10750 4650
+F 0 "C?" H 10865 4696 50  0000 L CNN
+F 1 "1µF" H 10865 4605 50  0000 L CNN
+F 2 "" H 10788 4500 50  0001 C CNN
+F 3 "~" H 10750 4650 50  0001 C CNN
+	1    10750 4650
 	1    0    0    -1  
 $EndComp
-Connection ~ 5410 5490
+Connection ~ 10400 4400
 Wire Wire Line
-	5410 5490 5520 5490
+	10700 4400 10750 4400
 Wire Wire Line
-	4480 5490 4735 5490
+	10750 4400 10750 4500
 Wire Wire Line
-	4480 5490 4240 5490
-Connection ~ 4480 5490
+	10750 4400 10950 4400
+Connection ~ 10750 4400
 Wire Wire Line
-	4480 5790 5035 5790
-Connection ~ 5035 5790
+	10200 4800 10350 4800
 Wire Wire Line
-	5035 5790 5410 5790
+	10200 4500 10200 4800
 Wire Wire Line
-	5035 5790 5035 5855
-Text Label 5035 5855 3    50   ~ 0
+	10400 4800 10750 4800
+Wire Wire Line
+	10350 4800 10350 4850
+Text Label 10350 4850 3    50   ~ 0
 GND
+Text Label 9600 4400 2    50   ~ 0
+3v3
+Wire Wire Line
+	10350 4800 10400 4800
+Connection ~ 10350 4800
+Connection ~ 10400 4800
+Wire Wire Line
+	10200 4400 10400 4400
 $EndSCHEMATC

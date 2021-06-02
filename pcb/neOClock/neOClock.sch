@@ -14,28 +14,6 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L pspice:0 #GND0103
-U 1 1 60DC3790
-P 6250 2200
-F 0 "#GND0103" H 6250 2100 50  0001 C CNN
-F 1 "0" H 6250 2050 50  0000 C CNN
-F 2 "" H 6250 2200 50  0001 C CNN
-F 3 "~" H 6250 2200 50  0001 C CNN
-	1    6250 2200
-	0    -1   -1   0   
-$EndComp
-$Comp
-L pspice:0 #GND0102
-U 1 1 60DBED57
-P 5350 2200
-F 0 "#GND0102" H 5350 2100 50  0001 C CNN
-F 1 "0" H 5350 2100 50  0000 C CNN
-F 2 "" H 5350 2200 50  0001 C CNN
-F 3 "~" H 5350 2200 50  0001 C CNN
-	1    5350 2200
-	0    1    1    0   
-$EndComp
-$Comp
 L neosensor_addon:IRsensor IR1
 U 1 1 60A834AB
 P 1300 3700
@@ -101,10 +79,6 @@ F 3 "~" H 4150 2000 50  0001 C CNN
 	1    4150 2000
 	0    -1   -1   0   
 $EndComp
-Text GLabel 6700 1000 2    50   Input ~ 0
-SCL
-Text GLabel 7300 1300 2    50   Input ~ 0
-SDA
 Text GLabel 4150 1200 2    50   Input ~ 0
 3v3
 Text GLabel 4150 2300 2    50   Input ~ 0
@@ -125,17 +99,6 @@ Text GLabel 4150 1550 2    50   Input ~ 0
 SCL
 Text GLabel 1550 3800 2    50   Input ~ 0
 3v3
-$Comp
-L neosensor_addon:ESP32_dev_30p U3
-U 1 1 60A65F7C
-P 5800 1650
-F 0 "U3" H 5800 2625 50  0000 C CNN
-F 1 "ESP32_dev_30p" H 5800 2534 50  0000 C CNN
-F 2 "neosensor_addon:ESP32_dev_30p" V 5800 1700 50  0001 C CIN
-F 3 "" H 5800 2050 50  0001 C CNN
-	1    5800 1650
-	1    0    0    -1  
-$EndComp
 $Comp
 L pspice:0 #GND?
 U 1 1 60B5D4F9
@@ -162,57 +125,17 @@ F 3 "~" H 800 6910 50  0001 C CNN
 	1    750  6950
 	1    0    0    -1  
 $EndComp
-Text GLabel 10150 3975 2    50   Input ~ 0
-12v
-$Comp
-L pspice:0 #GND0109
-U 1 1 60B86152
-P 8950 2875
-F 0 "#GND0109" H 8950 2775 50  0001 C CNN
-F 1 "0" V 8950 2919 50  0000 L CNN
-F 2 "" H 8950 2875 50  0001 C CNN
-F 3 "~" H 8950 2875 50  0001 C CNN
-	1    8950 2875
-	0    1    1    0   
-$EndComp
-$Comp
-L Device:Q_NPN_CBE Q1
-U 1 1 60B92168
-P 8695 3875
-F 0 "Q1" H 8886 3829 50  0000 L CNN
-F 1 "2n2222a" H 8886 3920 50  0000 L CNN
-F 2 "Package_TO_SOT_SMD:SC-59_Handsoldering" H 8895 3975 50  0001 C CNN
-F 3 "~" H 8695 3875 50  0001 C CNN
-	1    8695 3875
-	-1   0    0    1   
-$EndComp
-Text GLabel 8595 4075 3    50   Input ~ 0
-12v
 Text GLabel 3400 6450 2    50   Input ~ 0
 12v
 Text GLabel 3400 6550 2    50   Input ~ 0
 5v
-Text GLabel 5350 2300 0    50   Input ~ 0
-5v
-Text GLabel 10445 2875 2    50   Input ~ 0
-SCL
-Text GLabel 10445 2975 2    50   Input ~ 0
-SDA
 Text GLabel 1750 900  2    50   Input ~ 0
-Push_1
-Text GLabel 5350 1000 0    50   Input ~ 0
 Push_1
 Text GLabel 1750 1650 2    50   Input ~ 0
 Push_2
 Text GLabel 1750 2350 2    50   Input ~ 0
 Push_3
-Text GLabel 5350 1200 0    50   Input ~ 0
-Push_3
-Text GLabel 5350 1100 0    50   Input ~ 0
-Push_2
 Text GLabel 850  3700 0    50   Input ~ 0
-IR
-Text GLabel 6250 1900 2    50   Input ~ 0
 IR
 Text GLabel 3400 6850 2    50   Input ~ 0
 3v3
@@ -295,303 +218,25 @@ F 3 "~" H 2500 7500 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:CP C4
-U 1 1 60DD6A09
-P 1450 7500
-AR Path="/60DD6A09" Ref="C4"  Part="1" 
-AR Path="/61173FE1/60DD6A09" Ref="C?"  Part="1" 
-F 0 "C4" H 1568 7546 50  0000 L CNN
-F 1 "470µF" H 1568 7455 50  0000 L CNN
-F 2 "Capacitor_THT:CP_Radial_D5.0mm_P2.50mm" H 1488 7350 50  0001 C CNN
-F 3 "~" H 1450 7500 50  0001 C CNN
-	1    1450 7500
-	1    0    0    -1  
-$EndComp
-$Comp
-L pspice:0 #GND0115
-U 1 1 60DD777F
-P 1450 7650
-F 0 "#GND0115" H 1450 7550 50  0001 C CNN
-F 1 "0" H 1450 7551 50  0000 C CNN
-F 2 "" H 1450 7650 50  0001 C CNN
-F 3 "~" H 1450 7650 50  0001 C CNN
-	1    1450 7650
-	1    0    0    -1  
-$EndComp
-Text GLabel 10505 4075 3    50   Input ~ 0
-12v
-$Comp
-L Device:Q_NPN_CBE Q2
-U 1 1 60CE98A8
-P 10405 3875
-F 0 "Q2" H 10596 3829 50  0000 L CNN
-F 1 "2n2222a" H 10596 3920 50  0000 L CNN
-F 2 "Package_TO_SOT_THT:TO-92" H 10605 3975 50  0001 C CNN
-F 3 "~" H 10405 3875 50  0001 C CNN
-	1    10405 3875
-	1    0    0    1   
-$EndComp
-Wire Wire Line
-	8895 3875 8950 3875
-$Comp
 L Display_Character:HDSP-7801 U4
 U 1 1 60FD84CF
-P 8420 1430
-F 0 "U4" H 8420 2097 50  0000 C CNN
-F 1 "HDSP-7801" H 8420 2006 50  0000 C CNN
-F 2 "Display_7Segment:SBC18-11SURKCGKWA" H 8420 880 50  0001 C CNN
-F 3 "https://docs.broadcom.com/docs/AV02-2553EN" H 8420 1430 50  0001 C CNN
-	1    8420 1430
+P 7825 1300
+F 0 "U4" H 7825 1967 50  0000 C CNN
+F 1 "HDSP-7801" H 7825 1876 50  0000 C CNN
+F 2 "Display_7Segment:SBC18-11SURKCGKWA" H 7825 750 50  0001 C CNN
+F 3 "https://docs.broadcom.com/docs/AV02-2553EN" H 7825 1300 50  0001 C CNN
+	1    7825 1300
 	-1   0    0    -1  
 $EndComp
-Wire Wire Line
-	8720 1130 8735 1130
-Wire Wire Line
-	8720 1230 8755 1230
-Wire Wire Line
-	8720 1330 8775 1330
-Wire Wire Line
-	8720 1430 8795 1430
-Wire Wire Line
-	8720 1530 8815 1530
-Wire Wire Line
-	8720 1630 8835 1630
-Wire Wire Line
-	8720 1730 8855 1730
-Wire Wire Line
-	8735 1130 8735 3775
-Wire Wire Line
-	8735 3775 8950 3775
-Wire Wire Line
-	8755 1230 8755 3675
-Wire Wire Line
-	8755 3675 8950 3675
-Wire Wire Line
-	8775 1330 8775 3575
-Wire Wire Line
-	8775 3575 8950 3575
-Wire Wire Line
-	8795 1430 8795 3475
-Wire Wire Line
-	8795 3475 8950 3475
-Wire Wire Line
-	8815 1530 8815 3375
-Wire Wire Line
-	8815 3375 8950 3375
-Wire Wire Line
-	8835 1630 8835 3275
-Wire Wire Line
-	8835 3275 8950 3275
-Wire Wire Line
-	8855 1730 8855 3175
-Wire Wire Line
-	8855 3175 8950 3175
-Wire Wire Line
-	8875 1830 8875 3075
-Wire Wire Line
-	8875 3075 8950 3075
 $Comp
 L Display_Character:HDSP-7801 U5
 U 1 1 60EA8860
-P 9190 1430
-F 0 "U5" H 9190 2097 50  0000 C CNN
-F 1 "HDSP-7801" H 9190 2006 50  0000 C CNN
-F 2 "Display_7Segment:SBC18-11SURKCGKWA" H 9190 880 50  0001 C CNN
-F 3 "https://docs.broadcom.com/docs/AV02-2553EN" H 9190 1430 50  0001 C CNN
-	1    9190 1430
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	8720 1830 8875 1830
-Connection ~ 8875 1830
-Wire Wire Line
-	8875 1830 8890 1830
-Wire Wire Line
-	8890 1130 8735 1130
-Connection ~ 8735 1130
-Wire Wire Line
-	8755 1230 8890 1230
-Connection ~ 8755 1230
-Wire Wire Line
-	8890 1330 8775 1330
-Connection ~ 8775 1330
-Wire Wire Line
-	8815 1530 8890 1530
-Connection ~ 8815 1530
-Wire Wire Line
-	8835 1630 8890 1630
-Connection ~ 8835 1630
-Wire Wire Line
-	8855 1730 8890 1730
-Connection ~ 8855 1730
-Wire Wire Line
-	8890 1430 8795 1430
-Connection ~ 8795 1430
-Connection ~ 10305 1430
-Wire Wire Line
-	10210 1430 10305 1430
-Connection ~ 10245 1730
-Wire Wire Line
-	10245 1730 10210 1730
-Connection ~ 10265 1630
-Wire Wire Line
-	10265 1630 10210 1630
-Connection ~ 10285 1530
-Wire Wire Line
-	10285 1530 10210 1530
-Connection ~ 10325 1330
-Wire Wire Line
-	10210 1330 10325 1330
-Connection ~ 10345 1230
-Wire Wire Line
-	10345 1230 10210 1230
-Connection ~ 10365 1130
-Wire Wire Line
-	10210 1130 10365 1130
-Wire Wire Line
-	10225 1830 10210 1830
-Connection ~ 10225 1830
-Wire Wire Line
-	10380 1830 10225 1830
-$Comp
-L Display_Character:HDSP-7801 U7
-U 1 1 6106251F
-P 9910 1430
-F 0 "U7" H 9910 2097 50  0000 C CNN
-F 1 "HDSP-7801" H 9910 2006 50  0000 C CNN
-F 2 "Display_7Segment:SBC18-11SURKCGKWA" H 9910 880 50  0001 C CNN
-F 3 "https://docs.broadcom.com/docs/AV02-2553EN" H 9910 1430 50  0001 C CNN
-	1    9910 1430
-	-1   0    0    -1  
-$EndComp
-Wire Wire Line
-	10225 1830 10225 3075
-Wire Wire Line
-	10245 1730 10245 3175
-Wire Wire Line
-	10265 1630 10265 3275
-Wire Wire Line
-	10285 1530 10285 3375
-Wire Wire Line
-	10305 1430 10305 3475
-Wire Wire Line
-	10325 1330 10325 3575
-Wire Wire Line
-	10345 1230 10345 3675
-Wire Wire Line
-	10365 1130 10365 3775
-Wire Wire Line
-	10380 1730 10245 1730
-Wire Wire Line
-	10380 1630 10265 1630
-Wire Wire Line
-	10380 1530 10285 1530
-Wire Wire Line
-	10380 1430 10305 1430
-Wire Wire Line
-	10380 1330 10325 1330
-Wire Wire Line
-	10380 1230 10345 1230
-Wire Wire Line
-	10380 1130 10365 1130
-$Comp
-L Display_Character:HDSP-7801 U8
-U 1 1 6106250A
-P 10680 1430
-F 0 "U8" H 10680 2097 50  0000 C CNN
-F 1 "HDSP-7801" H 10680 2006 50  0000 C CNN
-F 2 "Display_7Segment:SBC18-11SURKCGKWA" H 10680 880 50  0001 C CNN
-F 3 "https://docs.broadcom.com/docs/AV02-2553EN" H 10680 1430 50  0001 C CNN
-	1    10680 1430
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	10150 3775 10365 3775
-Wire Wire Line
-	10150 3675 10345 3675
-Wire Wire Line
-	10150 3575 10325 3575
-Wire Wire Line
-	10150 3075 10225 3075
-Wire Wire Line
-	10150 3175 10245 3175
-Wire Wire Line
-	10150 3275 10265 3275
-Wire Wire Line
-	10150 3375 10285 3375
-Wire Wire Line
-	10150 3475 10305 3475
-Wire Wire Line
-	10150 2875 10445 2875
-Wire Wire Line
-	10150 2975 10450 2975
-Wire Wire Line
-	10150 3875 10205 3875
-Wire Wire Line
-	9610 1730 9610 715 
-Wire Wire Line
-	9610 715  8120 715 
-Wire Wire Line
-	8120 715  8120 1730
-Wire Wire Line
-	10980 1730 10980 700 
-Wire Wire Line
-	10980 700  9490 700 
-Wire Wire Line
-	9490 700  9490 1730
-Wire Wire Line
-	9490 1730 9490 1830
-Connection ~ 9490 1730
-Wire Wire Line
-	9610 1730 9610 1830
-Connection ~ 9610 1730
-Wire Wire Line
-	10980 1730 10980 1830
-Connection ~ 10980 1730
-Wire Wire Line
-	8120 1730 8120 1830
-Connection ~ 8120 1730
-Wire Wire Line
-	10505 3675 10980 3675
-Wire Wire Line
-	10980 3675 10980 1830
-Connection ~ 10980 1830
-Wire Wire Line
-	8595 3675 8120 3675
-Wire Wire Line
-	8120 3675 8120 1830
-Connection ~ 8120 1830
-$Comp
-L pspice:0 #GND0110
-U 1 1 60B80272
-P 8950 3975
-F 0 "#GND0110" H 8950 3875 50  0001 C CNN
-F 1 "0" V 8950 4019 50  0000 L CNN
-F 2 "" H 8950 3975 50  0001 C CNN
-F 3 "~" H 8950 3975 50  0001 C CNN
-	1    8950 3975
-	0    1    1    0   
-$EndComp
-$Comp
-L pspice:0 #GND0116
-U 1 1 611ECB50
-P 8950 2975
-F 0 "#GND0116" H 8950 2875 50  0001 C CNN
-F 1 "0" V 8950 3019 50  0000 L CNN
-F 2 "" H 8950 2975 50  0001 C CNN
-F 3 "~" H 8950 2975 50  0001 C CNN
-	1    8950 2975
-	0    1    1    0   
-$EndComp
-$Comp
-L Device:LED D6
-U 1 1 6121B0B0
-P 8450 2800
-F 0 "D6" H 8443 3016 50  0000 C CNN
-F 1 "LED" H 8443 2925 50  0000 C CNN
-F 2 "LED_THT:LED_D5.0mm" H 8450 2800 50  0001 C CNN
-F 3 "~" H 8450 2800 50  0001 C CNN
-	1    8450 2800
+P 8825 1300
+F 0 "U5" H 8825 1967 50  0000 C CNN
+F 1 "HDSP-7801" H 8825 1876 50  0000 C CNN
+F 2 "Display_7Segment:SBC18-11SURKCGKWA" H 8825 750 50  0001 C CNN
+F 3 "https://docs.broadcom.com/docs/AV02-2553EN" H 8825 1300 50  0001 C CNN
+	1    8825 1300
 	1    0    0    -1  
 $EndComp
 Text GLabel 4100 2700 2    50   Input ~ 0
@@ -672,32 +317,6 @@ Text GLabel 850  5800 0    50   Input ~ 0
 DI
 Text GLabel 850  5900 0    50   Input ~ 0
 CI
-Text GLabel 6250 900  2    50   Input ~ 0
-DI
-Text GLabel 6250 1500 2    50   Input ~ 0
-CI
-$Comp
-L pspice:0 #GND0119
-U 1 1 6146F202
-P 8300 2450
-F 0 "#GND0119" H 8300 2350 50  0001 C CNN
-F 1 "0" V 8300 2300 50  0000 L CNN
-F 2 "" H 8300 2450 50  0001 C CNN
-F 3 "~" H 8300 2450 50  0001 C CNN
-	1    8300 2450
-	0    1    1    0   
-$EndComp
-$Comp
-L pspice:0 #GND0120
-U 1 1 61470633
-P 8300 2800
-F 0 "#GND0120" H 8300 2700 50  0001 C CNN
-F 1 "0" V 8300 2650 50  0000 L CNN
-F 2 "" H 8300 2800 50  0001 C CNN
-F 3 "~" H 8300 2800 50  0001 C CNN
-	1    8300 2800
-	0    1    1    0   
-$EndComp
 $Comp
 L neosensor_addon:ATECC508A J5
 U 1 1 60AFCD17
@@ -727,12 +346,12 @@ $EndComp
 $Comp
 L neosensor_addon:SAA1064 U6
 U 1 1 60AFEF04
-P 9550 3775
-F 0 "U6" H 9550 4942 50  0000 C CNN
-F 1 "SAA1064" H 9550 4851 50  0000 C CNN
-F 2 "neosensor_addon:SOIC-24W_7.5x15.4mm_P1.27mm_HandSolder" H 9550 3775 50  0001 L BNN
-F 3 "" H 9550 3775 50  0001 L BNN
-	1    9550 3775
+P 9150 2600
+F 0 "U6" H 9150 3400 50  0000 C CNN
+F 1 "SAA1064" H 9150 3300 50  0000 C CNN
+F 2 "neosensor_addon:SOIC-24W_7.5x15.4mm_P1.27mm_HandSolder" H 9150 2600 50  0001 L BNN
+F 3 "" H 9150 2600 50  0001 L BNN
+	1    9150 2600
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -923,43 +542,21 @@ F 3 "http://www.led-color.com/upload/201506/APA102%20LED.pdf" H 7850 5525 50  00
 	1    0    0    -1  
 $EndComp
 $Comp
-L Mechanical:MountingHole_Pad H5
-U 1 1 60B7C550
-P 2500 2550
-F 0 "H5" H 2600 2599 50  0000 L CNN
-F 1 "MountingHole_Pad" H 2600 2508 50  0000 L CNN
-F 2 "MountingHole:MountingHole_3.2mm_M3_Pad" H 2500 2550 50  0001 C CNN
-F 3 "~" H 2500 2550 50  0001 C CNN
-	1    2500 2550
-	1    0    0    -1  
-$EndComp
-$Comp
-L pspice:0 #GND0126
-U 1 1 60B7C556
-P 2500 2650
-F 0 "#GND0126" H 2500 2550 50  0001 C CNN
-F 1 "0" H 2500 2550 50  0000 C CNN
-F 2 "" H 2500 2650 50  0001 C CNN
-F 3 "~" H 2500 2650 50  0001 C CNN
-	1    2500 2650
-	1    0    0    -1  
-$EndComp
-$Comp
-L Device:CP_Small C?
+L Device:CP_Small C5
 U 1 1 60B92AE4
 P 3300 7050
-F 0 "C?" H 3388 7096 50  0000 L CNN
+F 0 "C5" H 3388 7096 50  0000 L CNN
 F 1 "100µF" H 3388 7005 50  0000 L CNN
-F 2 "" H 3300 7050 50  0001 C CNN
+F 2 "Capacitor_THT:CP_Radial_D5.0mm_P2.50mm" H 3300 7050 50  0001 C CNN
 F 3 "~" H 3300 7050 50  0001 C CNN
 	1    3300 7050
 	1    0    0    -1  
 $EndComp
 $Comp
-L Diode:1N4148 D?
+L Diode:1N4148 D1
 U 1 1 60B7E350
 P 1200 6850
-F 0 "D?" H 1200 6634 50  0000 C CNN
+F 0 "D1" H 1200 6634 50  0000 C CNN
 F 1 "1N4148" H 1200 6725 50  0000 C CNN
 F 2 "Diode_THT:D_DO-35_SOD27_P7.62mm_Horizontal" H 1200 6675 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/1N4148_1N4448.pdf" H 1200 6850 50  0001 C CNN
@@ -967,34 +564,34 @@ F 3 "https://assets.nexperia.com/documents/data-sheet/1N4148_1N4448.pdf" H 1200 
 	-1   0    0    1   
 $EndComp
 $Comp
-L Device:R R?
+L Device:R R2
 U 1 1 60BBC5F1
 P 1300 1100
-F 0 "R?" H 1370 1146 50  0000 L CNN
+F 0 "R2" H 1370 1146 50  0000 L CNN
 F 1 "15K" H 1370 1055 50  0000 L CNN
-F 2 "" V 1230 1100 50  0001 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 1230 1100 50  0001 C CNN
 F 3 "~" H 1300 1100 50  0001 C CNN
 	1    1300 1100
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:C C?
+L Device:C C1
 U 1 1 60BBF12C
 P 1700 1100
-F 0 "C?" H 1815 1146 50  0000 L CNN
+F 0 "C1" H 1815 1146 50  0000 L CNN
 F 1 "1µF" H 1815 1055 50  0000 L CNN
-F 2 "" H 1738 950 50  0001 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" H 1738 950 50  0001 C CNN
 F 3 "~" H 1700 1100 50  0001 C CNN
 	1    1700 1100
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:R R?
+L Device:R R5
 U 1 1 60BC40BF
 P 1500 900
-F 0 "R?" V 1293 900 50  0000 C CNN
+F 0 "R5" V 1293 900 50  0000 C CNN
 F 1 "15K" V 1384 900 50  0000 C CNN
-F 2 "" V 1430 900 50  0001 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 1430 900 50  0001 C CNN
 F 3 "~" H 1500 900 50  0001 C CNN
 	1    1500 900 
 	0    1    1    0   
@@ -1009,7 +606,7 @@ Wire Wire Line
 Wire Wire Line
 	2350 6850 2500 6850
 Wire Wire Line
-	3200 6850 3400 6850
+	3200 6850 3300 6850
 Wire Wire Line
 	2500 6850 2500 6550
 Wire Wire Line
@@ -1020,20 +617,18 @@ Wire Wire Line
 Wire Wire Line
 	1450 6450 3400 6450
 $Comp
-L Device:C C?
+L Device:C C4
 U 1 1 60CC56B3
 P 2500 7350
-F 0 "C?" H 2615 7396 50  0000 L CNN
+F 0 "C4" H 2615 7396 50  0000 L CNN
 F 1 "100nF" H 2615 7305 50  0000 L CNN
-F 2 "" H 2538 7200 50  0001 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" H 2538 7200 50  0001 C CNN
 F 3 "~" H 2500 7350 50  0001 C CNN
 	1    2500 7350
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
 	2500 6850 2500 7200
-Wire Wire Line
-	1450 6850 1450 7350
 Wire Wire Line
 	1150 900  1300 900 
 Wire Wire Line
@@ -1056,10 +651,10 @@ Connection ~ 1300 1250
 Wire Wire Line
 	1300 1250 1700 1250
 $Comp
-L pspice:0 #GND?
+L pspice:0 #GND0115
 U 1 1 60D3CF49
 P 1150 1300
-F 0 "#GND?" H 1150 1200 50  0001 C CNN
+F 0 "#GND0115" H 1150 1200 50  0001 C CNN
 F 1 "0" H 1150 1200 50  0000 C CNN
 F 2 "" H 1150 1300 50  0001 C CNN
 F 3 "~" H 1150 1300 50  0001 C CNN
@@ -1070,10 +665,10 @@ Wire Wire Line
 	1150 1250 1150 1300
 Connection ~ 1150 1250
 $Comp
-L neosensor_addon:G71Y SW?
+L neosensor_addon:G71Y SW2
 U 1 1 60D6D9C5
 P 950 1650
-F 0 "SW?" H 950 1875 50  0000 C CNN
+F 0 "SW2" H 950 1875 50  0000 C CNN
 F 1 "G71Y" H 950 1784 50  0000 C CNN
 F 2 "neosensor_addon:G71Y_µsw_smd" H 950 1650 50  0001 C CIN
 F 3 "" H 950 1650 50  0001 C CNN
@@ -1081,34 +676,34 @@ F 3 "" H 950 1650 50  0001 C CNN
 	-1   0    0    -1  
 $EndComp
 $Comp
-L Device:R R?
+L Device:R R3
 U 1 1 60D6D9CB
 P 1300 1850
-F 0 "R?" H 1370 1896 50  0000 L CNN
+F 0 "R3" H 1370 1896 50  0000 L CNN
 F 1 "15K" H 1370 1805 50  0000 L CNN
-F 2 "" V 1230 1850 50  0001 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 1230 1850 50  0001 C CNN
 F 3 "~" H 1300 1850 50  0001 C CNN
 	1    1300 1850
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:C C?
+L Device:C C2
 U 1 1 60D6D9D1
 P 1700 1850
-F 0 "C?" H 1815 1896 50  0000 L CNN
+F 0 "C2" H 1815 1896 50  0000 L CNN
 F 1 "1µF" H 1815 1805 50  0000 L CNN
-F 2 "" H 1738 1700 50  0001 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" H 1738 1700 50  0001 C CNN
 F 3 "~" H 1700 1850 50  0001 C CNN
 	1    1700 1850
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:R R?
+L Device:R R6
 U 1 1 60D6D9D7
 P 1500 1650
-F 0 "R?" V 1293 1650 50  0000 C CNN
+F 0 "R6" V 1293 1650 50  0000 C CNN
 F 1 "15K" V 1384 1650 50  0000 C CNN
-F 2 "" V 1430 1650 50  0001 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 1430 1650 50  0001 C CNN
 F 3 "~" H 1500 1650 50  0001 C CNN
 	1    1500 1650
 	0    1    1    0   
@@ -1135,10 +730,10 @@ Connection ~ 1300 2000
 Wire Wire Line
 	1300 2000 1700 2000
 $Comp
-L pspice:0 #GND?
+L pspice:0 #GND0119
 U 1 1 60D6D9E9
 P 1150 2050
-F 0 "#GND?" H 1150 1950 50  0001 C CNN
+F 0 "#GND0119" H 1150 1950 50  0001 C CNN
 F 1 "0" H 1150 1950 50  0000 C CNN
 F 2 "" H 1150 2050 50  0001 C CNN
 F 3 "~" H 1150 2050 50  0001 C CNN
@@ -1149,10 +744,10 @@ Wire Wire Line
 	1150 2000 1150 2050
 Connection ~ 1150 2000
 $Comp
-L neosensor_addon:G71Y SW?
+L neosensor_addon:G71Y SW3
 U 1 1 60D76A18
 P 950 2350
-F 0 "SW?" H 950 2575 50  0000 C CNN
+F 0 "SW3" H 950 2575 50  0000 C CNN
 F 1 "G71Y" H 950 2484 50  0000 C CNN
 F 2 "neosensor_addon:G71Y_µsw_smd" H 950 2350 50  0001 C CIN
 F 3 "" H 950 2350 50  0001 C CNN
@@ -1160,34 +755,34 @@ F 3 "" H 950 2350 50  0001 C CNN
 	-1   0    0    -1  
 $EndComp
 $Comp
-L Device:R R?
+L Device:R R4
 U 1 1 60D76A1E
 P 1300 2550
-F 0 "R?" H 1370 2596 50  0000 L CNN
+F 0 "R4" H 1370 2596 50  0000 L CNN
 F 1 "15K" H 1370 2505 50  0000 L CNN
-F 2 "" V 1230 2550 50  0001 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 1230 2550 50  0001 C CNN
 F 3 "~" H 1300 2550 50  0001 C CNN
 	1    1300 2550
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:C C?
+L Device:C C3
 U 1 1 60D76A24
 P 1700 2550
-F 0 "C?" H 1815 2596 50  0000 L CNN
+F 0 "C3" H 1815 2596 50  0000 L CNN
 F 1 "1µF" H 1815 2505 50  0000 L CNN
-F 2 "" H 1738 2400 50  0001 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" H 1738 2400 50  0001 C CNN
 F 3 "~" H 1700 2550 50  0001 C CNN
 	1    1700 2550
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:R R?
+L Device:R R7
 U 1 1 60D76A2A
 P 1500 2350
-F 0 "R?" V 1293 2350 50  0000 C CNN
+F 0 "R7" V 1293 2350 50  0000 C CNN
 F 1 "15K" V 1384 2350 50  0000 C CNN
-F 2 "" V 1430 2350 50  0001 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 1430 2350 50  0001 C CNN
 F 3 "~" H 1500 2350 50  0001 C CNN
 	1    1500 2350
 	0    1    1    0   
@@ -1214,10 +809,10 @@ Connection ~ 1300 2700
 Wire Wire Line
 	1300 2700 1700 2700
 $Comp
-L pspice:0 #GND?
+L pspice:0 #GND0120
 U 1 1 60D76A3C
 P 1150 2750
-F 0 "#GND?" H 1150 2650 50  0001 C CNN
+F 0 "#GND0120" H 1150 2650 50  0001 C CNN
 F 1 "0" H 1150 2650 50  0000 C CNN
 F 2 "" H 1150 2750 50  0001 C CNN
 F 3 "~" H 1150 2750 50  0001 C CNN
@@ -1233,39 +828,6 @@ Text GLabel 750  1650 0    50   Input ~ 0
 3v3
 Text GLabel 750  2350 0    50   Input ~ 0
 3v3
-$Comp
-L Device:R R?
-U 1 1 60E904A2
-P 7050 1150
-F 0 "R?" H 6980 1104 50  0000 R CNN
-F 1 "4.7K" H 6980 1195 50  0000 R CNN
-F 2 "" V 6980 1150 50  0001 C CNN
-F 3 "~" H 7050 1150 50  0001 C CNN
-	1    7050 1150
-	-1   0    0    1   
-$EndComp
-$Comp
-L Device:R R?
-U 1 1 60E90D0E
-P 6550 850
-F 0 "R?" H 6480 804 50  0000 R CNN
-F 1 "4.7K" H 6480 895 50  0000 R CNN
-F 2 "" V 6480 850 50  0001 C CNN
-F 3 "~" H 6550 850 50  0001 C CNN
-	1    6550 850 
-	-1   0    0    1   
-$EndComp
-$Comp
-L Device:LED D7
-U 1 1 61217B9F
-P 8450 2450
-F 0 "D7" H 8443 2666 50  0000 C CNN
-F 1 "LED" H 8443 2575 50  0000 C CNN
-F 2 "LED_THT:LED_D5.0mm" H 8450 2450 50  0001 C CNN
-F 3 "~" H 8450 2450 50  0001 C CNN
-	1    8450 2450
-	1    0    0    -1  
-$EndComp
 NoConn ~ 8050 5800
 NoConn ~ 8050 5900
 Wire Wire Line
@@ -1360,32 +922,22 @@ F 3 "~" H 4150 900 50  0001 C CNN
 	1    4150 900 
 	0    -1   -1   0   
 $EndComp
-Wire Wire Line
-	6250 1000 6550 1000
-Connection ~ 6550 1000
-Wire Wire Line
-	6550 1000 6700 1000
-Wire Wire Line
-	6250 1300 7050 1300
-Connection ~ 7050 1300
-Wire Wire Line
-	7050 1300 7300 1300
 $Comp
-L Device:R R?
+L Device:R R1
 U 1 1 61383ACF
 P 950 3950
-F 0 "R?" H 1020 3996 50  0000 L CNN
+F 0 "R1" H 1020 3996 50  0000 L CNN
 F 1 "15k" H 1020 3905 50  0000 L CNN
-F 2 "" V 880 3950 50  0001 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 880 3950 50  0001 C CNN
 F 3 "~" H 950 3950 50  0001 C CNN
 	1    950  3950
 	1    0    0    -1  
 $EndComp
 $Comp
-L pspice:0 #GND?
+L pspice:0 #GND0125
 U 1 1 61384771
 P 950 4100
-F 0 "#GND?" H 950 4000 50  0001 C CNN
+F 0 "#GND0125" H 950 4000 50  0001 C CNN
 F 1 "0" H 950 3950 50  0000 C CNN
 F 2 "" H 950 4100 50  0001 C CNN
 F 3 "~" H 950 4100 50  0001 C CNN
@@ -1399,8 +951,548 @@ Wire Wire Line
 Connection ~ 950  3700
 Wire Wire Line
 	950  3700 1050 3700
-Text GLabel 6550 700  1    50   Input ~ 0
+Wire Wire Line
+	3300 6850 3300 6950
+Connection ~ 3300 6850
+Wire Wire Line
+	3300 6850 3400 6850
+Text GLabel 9500 3150 2    50   Input ~ 0
+12v
+$Comp
+L pspice:0 #GND0109
+U 1 1 60BA5CFB
+P 8775 2050
+F 0 "#GND0109" H 8775 1950 50  0001 C CNN
+F 1 "0" V 8775 1925 50  0000 L CNN
+F 2 "" H 8775 2050 50  0001 C CNN
+F 3 "~" H 8775 2050 50  0001 C CNN
+	1    8775 2050
+	0    1    1    0   
+$EndComp
+Text GLabel 7525 2125 3    50   Input ~ 0
+12v
+Text GLabel 9500 2050 2    50   Input ~ 0
+SCL
+Text GLabel 9500 2150 2    50   Input ~ 0
+SDA
+Text GLabel 10750 2125 3    50   Input ~ 0
+12v
+$Comp
+L pspice:0 #GND0110
+U 1 1 60BA5D91
+P 8775 3150
+F 0 "#GND0110" H 8775 3050 50  0001 C CNN
+F 1 "0" V 8775 3025 50  0000 L CNN
+F 2 "" H 8775 3150 50  0001 C CNN
+F 3 "~" H 8775 3150 50  0001 C CNN
+	1    8775 3150
+	0    1    1    0   
+$EndComp
+$Comp
+L pspice:0 #GND0116
+U 1 1 60BA5D97
+P 8775 2150
+F 0 "#GND0116" H 8775 2050 50  0001 C CNN
+F 1 "0" V 8775 2025 50  0000 L CNN
+F 2 "" H 8775 2150 50  0001 C CNN
+F 3 "~" H 8775 2150 50  0001 C CNN
+	1    8775 2150
+	0    1    1    0   
+$EndComp
+Text Label 8125 1000 0    50   ~ 0
+a10
+Text Label 8125 1100 0    50   ~ 0
+a9
+Text Label 8125 1200 0    50   ~ 0
+a8
+Text Label 8125 1300 0    50   ~ 0
+a5
+Text Label 8125 1400 0    50   ~ 0
+a4
+Text Label 8125 1500 0    50   ~ 0
+a2
+Text Label 8125 1600 0    50   ~ 0
+a3
+Text Label 8125 1700 0    50   ~ 0
+a7
+Wire Wire Line
+	8125 1000 8225 1000
+Wire Wire Line
+	8125 1100 8225 1100
+Wire Wire Line
+	8125 1200 8225 1200
+Wire Wire Line
+	8125 1300 8225 1300
+Wire Wire Line
+	8125 1400 8225 1400
+Wire Wire Line
+	8125 1500 8225 1500
+Wire Wire Line
+	8125 1600 8225 1600
+Wire Wire Line
+	8125 1700 8225 1700
+Entry Wire Line
+	8225 1000 8325 1100
+Entry Wire Line
+	8225 1100 8325 1200
+Entry Wire Line
+	8225 1200 8325 1300
+Entry Wire Line
+	8225 1300 8325 1400
+Entry Wire Line
+	8225 1400 8325 1500
+Entry Wire Line
+	8225 1500 8325 1600
+Entry Wire Line
+	8225 1600 8325 1700
+Entry Wire Line
+	8225 1700 8325 1800
+Text Label 8525 1000 2    50   ~ 0
+a10
+Text Label 8525 1100 2    50   ~ 0
+a9
+Text Label 8525 1200 2    50   ~ 0
+a8
+Text Label 8525 1300 2    50   ~ 0
+a5
+Text Label 8525 1400 2    50   ~ 0
+a4
+Text Label 8525 1500 2    50   ~ 0
+a2
+Text Label 8525 1600 2    50   ~ 0
+a3
+Text Label 8525 1700 2    50   ~ 0
+a7
+Wire Wire Line
+	8525 1000 8425 1000
+Wire Wire Line
+	8525 1100 8425 1100
+Wire Wire Line
+	8525 1200 8425 1200
+Wire Wire Line
+	8525 1300 8425 1300
+Wire Wire Line
+	8525 1400 8425 1400
+Wire Wire Line
+	8525 1500 8425 1500
+Wire Wire Line
+	8525 1600 8425 1600
+Wire Wire Line
+	8525 1700 8425 1700
+Entry Wire Line
+	8425 1000 8325 1100
+Entry Wire Line
+	8425 1100 8325 1200
+Entry Wire Line
+	8425 1200 8325 1300
+Entry Wire Line
+	8425 1300 8325 1400
+Entry Wire Line
+	8425 1400 8325 1500
+Entry Wire Line
+	8425 1500 8325 1600
+Entry Wire Line
+	8425 1600 8325 1700
+Entry Wire Line
+	8425 1700 8325 1800
+Text Label 8525 2250 2    50   ~ 0
+a7
+Text Label 8525 2350 2    50   ~ 0
+a3
+Text Label 8525 2450 2    50   ~ 0
+a2
+Text Label 8525 2550 2    50   ~ 0
+a4
+Text Label 8525 2650 2    50   ~ 0
+a5
+Text Label 8525 2750 2    50   ~ 0
+a8
+Text Label 8525 2850 2    50   ~ 0
+a9
+Text Label 8525 2950 2    50   ~ 0
+a10
+Entry Wire Line
+	8425 2950 8325 2850
+Entry Wire Line
+	8425 2850 8325 2750
+Entry Wire Line
+	8425 2550 8325 2450
+Entry Wire Line
+	8425 2350 8325 2250
+Entry Wire Line
+	8425 2250 8325 2150
+Entry Wire Line
+	8425 2450 8325 2350
+Entry Wire Line
+	8425 2650 8325 2550
+Entry Wire Line
+	8425 2750 8325 2650
+Entry Wire Line
+	9850 2750 9950 2650
+Entry Wire Line
+	9850 2650 9950 2550
+Entry Wire Line
+	9850 2450 9950 2350
+Entry Wire Line
+	9850 2250 9950 2150
+Entry Wire Line
+	9850 2350 9950 2250
+Entry Wire Line
+	9850 2550 9950 2450
+Entry Wire Line
+	9850 2850 9950 2750
+Entry Wire Line
+	9850 2950 9950 2850
+Text Label 9750 2950 0    50   ~ 0
+b10
+Text Label 9750 2850 0    50   ~ 0
+b9
+Text Label 9750 2750 0    50   ~ 0
+b8
+Text Label 9750 2650 0    50   ~ 0
+b5
+Text Label 9750 2550 0    50   ~ 0
+b4
+Text Label 9750 2450 0    50   ~ 0
+b2
+Text Label 9750 2350 0    50   ~ 0
+b3
+Text Label 9750 2250 0    50   ~ 0
+b7
+Entry Wire Line
+	10050 1700 9950 1800
+Entry Wire Line
+	10050 1600 9950 1700
+Entry Wire Line
+	10050 1500 9950 1600
+Entry Wire Line
+	10050 1400 9950 1500
+Entry Wire Line
+	10050 1300 9950 1400
+Entry Wire Line
+	10050 1200 9950 1300
+Entry Wire Line
+	10050 1100 9950 1200
+Entry Wire Line
+	10050 1000 9950 1100
+Wire Wire Line
+	10150 1700 10050 1700
+Wire Wire Line
+	10150 1600 10050 1600
+Wire Wire Line
+	10150 1500 10050 1500
+Wire Wire Line
+	10150 1400 10050 1400
+Wire Wire Line
+	10150 1300 10050 1300
+Wire Wire Line
+	10150 1200 10050 1200
+Wire Wire Line
+	10150 1100 10050 1100
+Wire Wire Line
+	10150 1000 10050 1000
+Text Label 10150 1700 2    50   ~ 0
+b7
+Text Label 10150 1600 2    50   ~ 0
+b3
+Text Label 10150 1500 2    50   ~ 0
+b2
+Text Label 10150 1400 2    50   ~ 0
+b4
+Text Label 10150 1300 2    50   ~ 0
+b5
+Text Label 10150 1200 2    50   ~ 0
+b8
+Text Label 10150 1100 2    50   ~ 0
+b9
+Text Label 10150 1000 2    50   ~ 0
+b10
+Entry Wire Line
+	9850 1700 9950 1800
+Entry Wire Line
+	9850 1600 9950 1700
+Entry Wire Line
+	9850 1500 9950 1600
+Entry Wire Line
+	9850 1400 9950 1500
+Entry Wire Line
+	9850 1300 9950 1400
+Entry Wire Line
+	9850 1200 9950 1300
+Entry Wire Line
+	9850 1100 9950 1200
+Entry Wire Line
+	9850 1000 9950 1100
+Wire Wire Line
+	9750 1700 9850 1700
+Wire Wire Line
+	9750 1600 9850 1600
+Wire Wire Line
+	9750 1500 9850 1500
+Wire Wire Line
+	9750 1400 9850 1400
+Wire Wire Line
+	9750 1300 9850 1300
+Wire Wire Line
+	9750 1200 9850 1200
+Wire Wire Line
+	9750 1100 9850 1100
+Wire Wire Line
+	9750 1000 9850 1000
+Text Label 9750 1700 0    50   ~ 0
+b7
+Text Label 9750 1600 0    50   ~ 0
+b3
+Text Label 9750 1500 0    50   ~ 0
+b2
+Text Label 9750 1400 0    50   ~ 0
+b4
+Text Label 9750 1300 0    50   ~ 0
+b5
+Text Label 9750 1200 0    50   ~ 0
+b8
+Text Label 9750 1100 0    50   ~ 0
+b9
+Text Label 9750 1000 0    50   ~ 0
+b10
+$Comp
+L Display_Character:HDSP-7801 U8
+U 1 1 60E5B8EC
+P 10450 1300
+F 0 "U8" H 10450 1967 50  0000 C CNN
+F 1 "HDSP-7801" H 10450 1876 50  0000 C CNN
+F 2 "Display_7Segment:SBC18-11SURKCGKWA" H 10450 750 50  0001 C CNN
+F 3 "https://docs.broadcom.com/docs/AV02-2553EN" H 10450 1300 50  0001 C CNN
+	1    10450 1300
+	1    0    0    -1  
+$EndComp
+$Comp
+L Display_Character:HDSP-7801 U7
+U 1 1 60E5B8E6
+P 9450 1300
+F 0 "U7" H 9450 1967 50  0000 C CNN
+F 1 "HDSP-7801" H 9450 1876 50  0000 C CNN
+F 2 "Display_7Segment:SBC18-11SURKCGKWA" H 9450 750 50  0001 C CNN
+F 3 "https://docs.broadcom.com/docs/AV02-2553EN" H 9450 1300 50  0001 C CNN
+	1    9450 1300
+	-1   0    0    -1  
+$EndComp
+$Comp
+L Device:Q_NPN_CBE Q2
+U 1 1 60CE98A8
+P 10650 1925
+F 0 "Q2" H 10841 1879 50  0000 L CNN
+F 1 "2n2222a" H 10841 1970 50  0000 L CNN
+F 2 "Package_TO_SOT_THT:TO-92" H 10850 2025 50  0001 C CNN
+F 3 "~" H 10650 1925 50  0001 C CNN
+	1    10650 1925
+	1    0    0    1   
+$EndComp
+Wire Wire Line
+	7525 1600 7525 1700
+Wire Wire Line
+	10750 1600 10750 1700
+Wire Wire Line
+	9150 1600 9150 1700
+Wire Wire Line
+	9125 1600 9125 1700
+Entry Wire Line
+	8225 1925 8325 2025
+Text Label 7825 1925 2    50   ~ 0
+a1
+$Comp
+L Device:Q_NPN_CBE Q1
+U 1 1 60B92168
+P 7625 1925
+F 0 "Q1" H 7816 1879 50  0000 L CNN
+F 1 "2n2222a" H 7816 1970 50  0000 L CNN
+F 2 "Package_TO_SOT_SMD:SC-59_Handsoldering" H 7825 2025 50  0001 C CNN
+F 3 "~" H 7625 1925 50  0001 C CNN
+	1    7625 1925
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	10750 1700 10750 1725
+Connection ~ 10750 1700
+Wire Wire Line
+	7525 1700 7525 1725
+Connection ~ 7525 1700
+Text Label 10450 1925 0    50   ~ 0
+b1
+Entry Wire Line
+	9950 2025 10050 1925
+Wire Wire Line
+	7825 1925 8225 1925
+Wire Wire Line
+	10450 1925 10050 1925
+Wire Wire Line
+	8425 2250 8775 2250
+Wire Wire Line
+	9500 2250 9850 2250
+Wire Wire Line
+	9500 2350 9850 2350
+Wire Wire Line
+	9500 2450 9850 2450
+Wire Wire Line
+	9500 2550 9850 2550
+Wire Wire Line
+	9500 2650 9850 2650
+Wire Wire Line
+	9500 2750 9850 2750
+Wire Wire Line
+	9500 2850 9850 2850
+Wire Wire Line
+	9500 2950 9850 2950
+Wire Wire Line
+	8425 2350 8775 2350
+Wire Wire Line
+	8425 2450 8775 2450
+Wire Wire Line
+	8425 2550 8775 2550
+Wire Wire Line
+	8425 2650 8775 2650
+Wire Wire Line
+	8425 2750 8775 2750
+Wire Wire Line
+	8425 2850 8775 2850
+Wire Wire Line
+	8425 2950 8775 2950
+Wire Wire Line
+	9500 3050 9850 3050
+Wire Wire Line
+	8425 3050 8775 3050
+Entry Wire Line
+	8325 2950 8425 3050
+Entry Wire Line
+	9850 3050 9950 2950
+Text Label 8525 3050 2    50   ~ 0
+a1
+Text Label 9750 3050 0    50   ~ 0
+b1
+Wire Wire Line
+	7525 1600 7525 600 
+Wire Wire Line
+	7525 600  9150 600 
+Wire Wire Line
+	9150 600  9150 1600
+Connection ~ 7525 1600
+Connection ~ 9150 1600
+Wire Wire Line
+	10750 1600 10750 575 
+Wire Wire Line
+	10750 575  9125 575 
+Wire Wire Line
+	9125 575  9125 1600
+Connection ~ 10750 1600
+Connection ~ 9125 1600
+$Comp
+L pspice:0 #GND0103
+U 1 1 60DC3790
+P 6500 4700
+F 0 "#GND0103" H 6500 4600 50  0001 C CNN
+F 1 "0" H 6500 4550 50  0000 C CNN
+F 2 "" H 6500 4700 50  0001 C CNN
+F 3 "~" H 6500 4700 50  0001 C CNN
+	1    6500 4700
+	0    -1   -1   0   
+$EndComp
+$Comp
+L pspice:0 #GND0102
+U 1 1 60DBED57
+P 5600 4700
+F 0 "#GND0102" H 5600 4600 50  0001 C CNN
+F 1 "0" H 5600 4600 50  0000 C CNN
+F 2 "" H 5600 4700 50  0001 C CNN
+F 3 "~" H 5600 4700 50  0001 C CNN
+	1    5600 4700
+	0    1    1    0   
+$EndComp
+Text GLabel 6950 3500 2    50   Input ~ 0
+SCL
+Text GLabel 7550 3800 2    50   Input ~ 0
+SDA
+$Comp
+L neosensor_addon:ESP32_dev_30p U3
+U 1 1 60A65F7C
+P 6050 4150
+F 0 "U3" H 6050 5125 50  0000 C CNN
+F 1 "ESP32_dev_30p" H 6050 5034 50  0000 C CNN
+F 2 "neosensor_addon:ESP32_dev_30p" V 6050 4200 50  0001 C CIN
+F 3 "" H 6050 4550 50  0001 C CNN
+	1    6050 4150
+	1    0    0    -1  
+$EndComp
+Text GLabel 5600 4800 0    50   Input ~ 0
+5v
+Text GLabel 5600 3500 0    50   Input ~ 0
+Push_1
+Text GLabel 5600 3700 0    50   Input ~ 0
+Push_3
+Text GLabel 5600 3600 0    50   Input ~ 0
+Push_2
+Text GLabel 6500 4400 2    50   Input ~ 0
+IR
+Text GLabel 6500 3400 2    50   Input ~ 0
+DI
+Text GLabel 6500 4000 2    50   Input ~ 0
+CI
+$Comp
+L Device:R R9
+U 1 1 60E904A2
+P 7300 3650
+F 0 "R9" H 7230 3604 50  0000 R CNN
+F 1 "4.7K" H 7230 3695 50  0000 R CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 7230 3650 50  0001 C CNN
+F 3 "~" H 7300 3650 50  0001 C CNN
+	1    7300 3650
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:R R8
+U 1 1 60E90D0E
+P 6800 3350
+F 0 "R8" H 6730 3304 50  0000 R CNN
+F 1 "4.7K" H 6730 3395 50  0000 R CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 6730 3350 50  0001 C CNN
+F 3 "~" H 6800 3350 50  0001 C CNN
+	1    6800 3350
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	6500 3500 6800 3500
+Connection ~ 6800 3500
+Wire Wire Line
+	6800 3500 6950 3500
+Wire Wire Line
+	6500 3800 7300 3800
+Connection ~ 7300 3800
+Wire Wire Line
+	7300 3800 7550 3800
+Text GLabel 6800 3200 1    50   Input ~ 0
 3v3
-Text GLabel 7050 1000 1    50   Input ~ 0
+Text GLabel 7300 3500 1    50   Input ~ 0
 3v3
+NoConn ~ 5600 3400
+NoConn ~ 5600 3800
+NoConn ~ 5600 3900
+NoConn ~ 5600 4000
+NoConn ~ 5600 4100
+NoConn ~ 5600 4200
+NoConn ~ 5600 4300
+NoConn ~ 5600 4400
+NoConn ~ 5600 4500
+NoConn ~ 5600 4600
+NoConn ~ 6500 4600
+NoConn ~ 6500 4500
+NoConn ~ 6500 4800
+NoConn ~ 6500 4300
+NoConn ~ 6500 4200
+NoConn ~ 6500 4100
+NoConn ~ 6500 3900
+NoConn ~ 6500 3700
+NoConn ~ 6500 3600
+Wire Bus Line
+	8325 1100 8325 2950
+Wire Bus Line
+	9950 1100 9950 2950
 $EndSCHEMATC

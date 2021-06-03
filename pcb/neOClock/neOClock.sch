@@ -217,28 +217,6 @@ F 3 "~" H 2500 7500 50  0001 C CNN
 	1    2500 7500
 	1    0    0    -1  
 $EndComp
-$Comp
-L Display_Character:HDSP-7801 U4
-U 1 1 60FD84CF
-P 7825 1300
-F 0 "U4" H 7825 1967 50  0000 C CNN
-F 1 "HDSP-7801" H 7825 1876 50  0000 C CNN
-F 2 "Display_7Segment:SBC18-11SURKCGKWA" H 7825 750 50  0001 C CNN
-F 3 "https://docs.broadcom.com/docs/AV02-2553EN" H 7825 1300 50  0001 C CNN
-	1    7825 1300
-	-1   0    0    -1  
-$EndComp
-$Comp
-L Display_Character:HDSP-7801 U5
-U 1 1 60EA8860
-P 8825 1300
-F 0 "U5" H 8825 1967 50  0000 C CNN
-F 1 "HDSP-7801" H 8825 1876 50  0000 C CNN
-F 2 "Display_7Segment:SBC18-11SURKCGKWA" H 8825 750 50  0001 C CNN
-F 3 "https://docs.broadcom.com/docs/AV02-2553EN" H 8825 1300 50  0001 C CNN
-	1    8825 1300
-	1    0    0    -1  
-$EndComp
 Text GLabel 4100 2700 2    50   Input ~ 0
 3v3
 Text GLabel 4100 2900 2    50   Input ~ 0
@@ -999,21 +977,21 @@ F 3 "~" H 8775 2150 50  0001 C CNN
 	1    8775 2150
 	0    1    1    0   
 $EndComp
-Text Label 8125 1000 0    50   ~ 0
-a10
-Text Label 8125 1100 0    50   ~ 0
-a9
-Text Label 8125 1200 0    50   ~ 0
-a8
-Text Label 8125 1300 0    50   ~ 0
-a5
-Text Label 8125 1400 0    50   ~ 0
-a4
-Text Label 8125 1500 0    50   ~ 0
-a2
 Text Label 8125 1600 0    50   ~ 0
-a3
+a10
+Text Label 8125 1500 0    50   ~ 0
+a9
 Text Label 8125 1700 0    50   ~ 0
+a8
+Text Label 8125 1100 0    50   ~ 0
+a6
+Text Label 8125 1200 0    50   ~ 0
+a4
+Text Label 8125 1400 0    50   ~ 0
+a2
+Text Label 8125 1300 0    50   ~ 0
+a3
+Text Label 8125 1000 0    50   ~ 0
 a7
 Wire Wire Line
 	8125 1000 8225 1000
@@ -1047,38 +1025,22 @@ Entry Wire Line
 	8225 1600 8325 1700
 Entry Wire Line
 	8225 1700 8325 1800
-Text Label 8525 1000 2    50   ~ 0
-a10
-Text Label 8525 1100 2    50   ~ 0
-a9
-Text Label 8525 1200 2    50   ~ 0
-a8
-Text Label 8525 1300 2    50   ~ 0
-a5
-Text Label 8525 1400 2    50   ~ 0
-a4
-Text Label 8525 1500 2    50   ~ 0
-a2
 Text Label 8525 1600 2    50   ~ 0
-a3
+a10
+Text Label 8525 1500 2    50   ~ 0
+a9
 Text Label 8525 1700 2    50   ~ 0
+a8
+Text Label 8525 1100 2    50   ~ 0
+a6
+Text Label 8525 1200 2    50   ~ 0
+a4
+Text Label 8525 1400 2    50   ~ 0
+a2
+Text Label 8525 1300 2    50   ~ 0
+a3
+Text Label 8525 1000 2    50   ~ 0
 a7
-Wire Wire Line
-	8525 1000 8425 1000
-Wire Wire Line
-	8525 1100 8425 1100
-Wire Wire Line
-	8525 1200 8425 1200
-Wire Wire Line
-	8525 1300 8425 1300
-Wire Wire Line
-	8525 1400 8425 1400
-Wire Wire Line
-	8525 1500 8425 1500
-Wire Wire Line
-	8525 1600 8425 1600
-Wire Wire Line
-	8525 1700 8425 1700
 Entry Wire Line
 	8425 1000 8325 1100
 Entry Wire Line
@@ -1095,21 +1057,21 @@ Entry Wire Line
 	8425 1600 8325 1700
 Entry Wire Line
 	8425 1700 8325 1800
-Text Label 8525 2250 2    50   ~ 0
+Text Label 8775 2950 2    50   ~ 0
 a7
-Text Label 8525 2350 2    50   ~ 0
+Text Label 8775 2650 2    50   ~ 0
 a3
-Text Label 8525 2450 2    50   ~ 0
+Text Label 8775 2550 2    50   ~ 0
 a2
-Text Label 8525 2550 2    50   ~ 0
+Text Label 8775 2750 2    50   ~ 0
 a4
-Text Label 8525 2650 2    50   ~ 0
-a5
-Text Label 8525 2750 2    50   ~ 0
+Text Label 8775 2850 2    50   ~ 0
+a6
+Text Label 8775 2250 2    50   ~ 0
 a8
-Text Label 8525 2850 2    50   ~ 0
+Text Label 8775 2450 2    50   ~ 0
 a9
-Text Label 8525 2950 2    50   ~ 0
+Text Label 8775 2350 2    50   ~ 0
 a10
 Entry Wire Line
 	8425 2950 8325 2850
@@ -1143,21 +1105,21 @@ Entry Wire Line
 	9850 2850 9950 2750
 Entry Wire Line
 	9850 2950 9950 2850
-Text Label 9750 2950 0    50   ~ 0
+Text Label 9500 2350 0    50   ~ 0
 b10
-Text Label 9750 2850 0    50   ~ 0
+Text Label 9500 2450 0    50   ~ 0
 b9
-Text Label 9750 2750 0    50   ~ 0
+Text Label 9500 2250 0    50   ~ 0
 b8
-Text Label 9750 2650 0    50   ~ 0
-b5
-Text Label 9750 2550 0    50   ~ 0
+Text Label 9500 2850 0    50   ~ 0
+b6
+Text Label 9500 2750 0    50   ~ 0
 b4
-Text Label 9750 2450 0    50   ~ 0
+Text Label 9500 2550 0    50   ~ 0
 b2
-Text Label 9750 2350 0    50   ~ 0
+Text Label 9500 2650 0    50   ~ 0
 b3
-Text Label 9750 2250 0    50   ~ 0
+Text Label 9500 2950 0    50   ~ 0
 b7
 Entry Wire Line
 	10050 1700 9950 1800
@@ -1191,21 +1153,21 @@ Wire Wire Line
 	10150 1100 10050 1100
 Wire Wire Line
 	10150 1000 10050 1000
-Text Label 10150 1700 2    50   ~ 0
-b7
-Text Label 10150 1600 2    50   ~ 0
-b3
-Text Label 10150 1500 2    50   ~ 0
-b2
-Text Label 10150 1400 2    50   ~ 0
-b4
-Text Label 10150 1300 2    50   ~ 0
-b5
-Text Label 10150 1200 2    50   ~ 0
-b8
-Text Label 10150 1100 2    50   ~ 0
-b9
 Text Label 10150 1000 2    50   ~ 0
+b7
+Text Label 10150 1300 2    50   ~ 0
+b3
+Text Label 10150 1400 2    50   ~ 0
+b2
+Text Label 10150 1200 2    50   ~ 0
+b4
+Text Label 10150 1100 2    50   ~ 0
+b6
+Text Label 10150 1700 2    50   ~ 0
+b8
+Text Label 10150 1500 2    50   ~ 0
+b9
+Text Label 10150 1600 2    50   ~ 0
 b10
 Entry Wire Line
 	9850 1700 9950 1800
@@ -1239,44 +1201,22 @@ Wire Wire Line
 	9750 1100 9850 1100
 Wire Wire Line
 	9750 1000 9850 1000
-Text Label 9750 1700 0    50   ~ 0
+Text Label 9750 1400 0    50   ~ 0
 b7
-Text Label 9750 1600 0    50   ~ 0
+Text Label 9750 1700 0    50   ~ 0
 b3
 Text Label 9750 1500 0    50   ~ 0
 b2
-Text Label 9750 1400 0    50   ~ 0
-b4
 Text Label 9750 1300 0    50   ~ 0
-b5
+b4
 Text Label 9750 1200 0    50   ~ 0
-b8
-Text Label 9750 1100 0    50   ~ 0
-b9
+b6
 Text Label 9750 1000 0    50   ~ 0
+b8
+Text Label 9750 1600 0    50   ~ 0
+b9
+Text Label 9750 1100 0    50   ~ 0
 b10
-$Comp
-L Display_Character:HDSP-7801 U8
-U 1 1 60E5B8EC
-P 10450 1300
-F 0 "U8" H 10450 1967 50  0000 C CNN
-F 1 "HDSP-7801" H 10450 1876 50  0000 C CNN
-F 2 "Display_7Segment:SBC18-11SURKCGKWA" H 10450 750 50  0001 C CNN
-F 3 "https://docs.broadcom.com/docs/AV02-2553EN" H 10450 1300 50  0001 C CNN
-	1    10450 1300
-	1    0    0    -1  
-$EndComp
-$Comp
-L Display_Character:HDSP-7801 U7
-U 1 1 60E5B8E6
-P 9450 1300
-F 0 "U7" H 9450 1967 50  0000 C CNN
-F 1 "HDSP-7801" H 9450 1876 50  0000 C CNN
-F 2 "Display_7Segment:SBC18-11SURKCGKWA" H 9450 750 50  0001 C CNN
-F 3 "https://docs.broadcom.com/docs/AV02-2553EN" H 9450 1300 50  0001 C CNN
-	1    9450 1300
-	-1   0    0    -1  
-$EndComp
 $Comp
 L Device:Q_NPN_CBE Q2
 U 1 1 60CE98A8
@@ -1288,37 +1228,23 @@ F 3 "~" H 10650 1925 50  0001 C CNN
 	1    10650 1925
 	1    0    0    1   
 $EndComp
-Wire Wire Line
-	7525 1600 7525 1700
-Wire Wire Line
-	10750 1600 10750 1700
-Wire Wire Line
-	9150 1600 9150 1700
-Wire Wire Line
-	9125 1600 9125 1700
 Entry Wire Line
 	8225 1925 8325 2025
-Text Label 7825 1925 2    50   ~ 0
-a1
+Text Label 7875 1925 2    50   ~ 0
+a1_5
 $Comp
 L Device:Q_NPN_CBE Q1
 U 1 1 60B92168
 P 7625 1925
 F 0 "Q1" H 7816 1879 50  0000 L CNN
 F 1 "2n2222a" H 7816 1970 50  0000 L CNN
-F 2 "Package_TO_SOT_SMD:SC-59_Handsoldering" H 7825 2025 50  0001 C CNN
+F 2 "Package_TO_SOT_THT:TO-92" H 7825 2025 50  0001 C CNN
 F 3 "~" H 7625 1925 50  0001 C CNN
 	1    7625 1925
 	-1   0    0    1   
 $EndComp
-Wire Wire Line
-	10750 1700 10750 1725
-Connection ~ 10750 1700
-Wire Wire Line
-	7525 1700 7525 1725
-Connection ~ 7525 1700
-Text Label 10450 1925 0    50   ~ 0
-b1
+Text Label 10400 1925 0    50   ~ 0
+b1_5
 Entry Wire Line
 	9950 2025 10050 1925
 Wire Wire Line
@@ -1365,26 +1291,14 @@ Entry Wire Line
 	8325 2950 8425 3050
 Entry Wire Line
 	9850 3050 9950 2950
-Text Label 8525 3050 2    50   ~ 0
-a1
-Text Label 9750 3050 0    50   ~ 0
-b1
-Wire Wire Line
-	7525 1600 7525 600 
+Text Label 8775 3050 2    50   ~ 0
+a1_5
+Text Label 9500 3050 0    50   ~ 0
+b1_5
 Wire Wire Line
 	7525 600  9150 600 
 Wire Wire Line
-	9150 600  9150 1600
-Connection ~ 7525 1600
-Connection ~ 9150 1600
-Wire Wire Line
-	10750 1600 10750 575 
-Wire Wire Line
 	10750 575  9125 575 
-Wire Wire Line
-	9125 575  9125 1600
-Connection ~ 10750 1600
-Connection ~ 9125 1600
 $Comp
 L pspice:0 #GND0103
 U 1 1 60DC3790
@@ -1491,8 +1405,94 @@ NoConn ~ 6500 4100
 NoConn ~ 6500 3900
 NoConn ~ 6500 3700
 NoConn ~ 6500 3600
-Wire Bus Line
-	8325 1100 8325 2950
+$Comp
+L Display_Character:SA15-11GWA U4
+U 1 1 60BA85DE
+P 7825 1300
+F 0 "U4" H 7825 1967 50  0000 C CNN
+F 1 "SA15-11GWA" H 7825 1876 50  0000 C CNN
+F 2 "Display_7Segment:SA15-11xxx" H 7825 1250 50  0001 C CNN
+F 3 "http://www.kingbrightusa.com/images/catalog/SPEC/SA15-11GWA.pdf" H 7825 1250 50  0001 C CNN
+	1    7825 1300
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	8525 1500 8425 1500
+Wire Wire Line
+	8525 1700 8425 1700
+Wire Wire Line
+	8525 1000 8425 1000
+Wire Wire Line
+	8525 1100 8425 1100
+Wire Wire Line
+	8525 1200 8425 1200
+Wire Wire Line
+	8525 1300 8425 1300
+Wire Wire Line
+	8525 1400 8425 1400
+Wire Wire Line
+	8525 1600 8425 1600
+$Comp
+L Display_Character:SA15-11GWA U5
+U 1 1 60BA473B
+P 8825 1300
+F 0 "U5" H 8825 1967 50  0000 C CNN
+F 1 "SA15-11GWA" H 8825 1876 50  0000 C CNN
+F 2 "Display_7Segment:SA15-11xxx" H 8825 1250 50  0001 C CNN
+F 3 "http://www.kingbrightusa.com/images/catalog/SPEC/SA15-11GWA.pdf" H 8825 1250 50  0001 C CNN
+	1    8825 1300
+	1    0    0    -1  
+$EndComp
+Connection ~ 9125 1600
+Wire Wire Line
+	9125 575  9125 1600
+Wire Wire Line
+	9125 1600 9125 1700
+Wire Wire Line
+	7525 600  7525 1600
+Wire Wire Line
+	7525 1700 7525 1725
+Wire Wire Line
+	7525 1600 7525 1700
+Connection ~ 7525 1600
+Connection ~ 7525 1700
+Wire Wire Line
+	10750 575  10750 1600
+$Comp
+L Display_Character:SA15-11GWA U8
+U 1 1 60C590DD
+P 10450 1300
+F 0 "U8" H 10450 1967 50  0000 C CNN
+F 1 "SA15-11GWA" H 10450 1876 50  0000 C CNN
+F 2 "Display_7Segment:SA15-11xxx" H 10450 1250 50  0001 C CNN
+F 3 "http://www.kingbrightusa.com/images/catalog/SPEC/SA15-11GWA.pdf" H 10450 1250 50  0001 C CNN
+	1    10450 1300
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	10750 1700 10750 1725
+Wire Wire Line
+	10750 1600 10750 1700
+Connection ~ 10750 1600
+Connection ~ 10750 1700
+$Comp
+L Display_Character:SA15-11GWA U7
+U 1 1 60C42FF4
+P 9450 1400
+F 0 "U7" H 9450 733 50  0000 C CNN
+F 1 "SA15-11GWA" H 9450 824 50  0000 C CNN
+F 2 "Display_7Segment:SA15-11xxx" H 9450 1350 50  0001 C CNN
+F 3 "http://www.kingbrightusa.com/images/catalog/SPEC/SA15-11GWA.pdf" H 9450 1350 50  0001 C CNN
+	1    9450 1400
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	9150 600  9150 1000
+Wire Wire Line
+	9150 1100 9150 1000
 Wire Bus Line
 	9950 1100 9950 2950
+Wire Bus Line
+	8325 1100 8325 2950
+Connection ~ 9150 1000
 $EndSCHEMATC

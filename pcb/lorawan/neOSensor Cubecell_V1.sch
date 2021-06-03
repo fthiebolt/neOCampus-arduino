@@ -408,7 +408,7 @@ F 3 "" H 6100 5450 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 Text Label 6600 5200 1    50   ~ 0
-Vsensor
+VIN
 $Comp
 L Device:R R5
 U 1 1 60B63050

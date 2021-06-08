@@ -564,4 +564,24 @@ Wire Wire Line
 Connection ~ 9800 6050
 Text Notes 825  825  0    100  ~ 0
 I2C crypto flash
+Wire Wire Line
+	800  1575 1050 1575
+Text Label 800  1575 0    50   ~ 0
+GND
+Wire Wire Line
+	1875 1575 1650 1575
+Text Label 1875 1575 2    50   ~ 0
+SDA
+Wire Wire Line
+	1875 1475 1650 1475
+Text Label 1875 1475 2    50   ~ 0
+SCL
+Wire Wire Line
+	1875 1275 1650 1275
+Text Label 1875 1275 0    50   ~ 0
+Vsensor
+Wire Notes Line
+	2350 600  2350 1850
+Wire Notes Line
+	2350 1850 550  1850
 $EndSCHEMATC

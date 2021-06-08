@@ -4,11 +4,11 @@ EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
-Title ""
-Date ""
-Rev ""
-Comp ""
-Comment1 ""
+Title "neOSensor-LoRaWAN V2"
+Date "2021-06-08"
+Rev "2"
+Comp "(c) neOCampus / Dr THIEBOLT François"
+Comment1 "Univ.Tlse3 / IRIT / neOCampus"
 Comment2 ""
 Comment3 ""
 Comment4 ""
@@ -308,14 +308,6 @@ Wire Wire Line
 	6300 3350 6300 3550
 Text Label 6300 3550 0    50   ~ 0
 Vsensor
-Text Label 1445 1225 0    50   ~ 0
-SCL
-Text Label 1445 1325 0    50   ~ 0
-SDA
-Text Label 845  1325 2    50   ~ 0
-GND
-Text Label 1445 1025 0    50   ~ 0
-Vsensor
 $Comp
 L neosensor_addon:HC-SR01 U2
 U 1 1 60B0C27A
@@ -366,12 +358,12 @@ $EndComp
 $Comp
 L neosensor_addon:ATECC508A U5
 U 1 1 60B75613
-P 1145 1125
-F 0 "U5" H 1145 1492 50  0000 C CNN
-F 1 "ATECC508A" H 1145 1401 50  0000 C CNN
-F 2 "neosensor_addon:SOIC-8_3.9x5.4mm_P1.27mm_HandSolder" H 345 1475 50  0001 L BIN
-F 3 "" H 1145 1125 50  0001 L BNN
-	1    1145 1125
+P 1350 1375
+F 0 "U5" H 1350 1742 50  0000 C CNN
+F 1 "ATECC508A" H 1350 1651 50  0000 C CNN
+F 2 "neosensor_addon:SOIC-8_3.9x5.4mm_P1.27mm_HandSolder" H 550 1725 50  0001 L BIN
+F 3 "" H 1350 1375 50  0001 L BNN
+	1    1350 1375
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -570,4 +562,22 @@ Wire Wire Line
 Wire Wire Line
 	10200 6050 10200 5900
 Connection ~ 9800 6050
+Text Notes 825  825  0    100  ~ 0
+I2C crypto flash
+Wire Wire Line
+	800  1575 1050 1575
+Text Label 800  1575 0    50   ~ 0
+GND
+Wire Wire Line
+	1875 1575 1650 1575
+Text Label 1875 1575 2    50   ~ 0
+SDA
+Wire Wire Line
+	1875 1475 1650 1475
+Text Label 1875 1475 2    50   ~ 0
+SCL
+Wire Wire Line
+	1875 1275 1650 1275
+Text Label 1875 1275 0    50   ~ 0
+Vsensor
 $EndSCHEMATC

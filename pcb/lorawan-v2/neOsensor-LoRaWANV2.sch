@@ -42,7 +42,7 @@ Vsensor
 Text Notes 875  850  0    100  ~ 0
 I2C crypto flash
 Wire Wire Line
-	850  1600 1100 1600
+	850  1600 1075 1600
 Text Label 850  1600 0    50   ~ 0
 GND
 Wire Wire Line
@@ -54,13 +54,9 @@ Wire Wire Line
 Text Label 1925 1500 2    50   ~ 0
 SCL
 Wire Wire Line
-	1925 1300 1700 1300
+	1925 1300 1750 1300
 Text Label 1925 1300 0    50   ~ 0
 Vsensor
-Wire Notes Line
-	2400 625  2400 1875
-Wire Notes Line
-	2400 1875 600  1875
 Wire Notes Line
 	6850 6550 4700 6550
 Wire Notes Line
@@ -133,17 +129,6 @@ F 1 "Conn_01x04" H 4450 825 50  0000 L CNN
 F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" H 4650 1125 50  0001 C CNN
 F 3 "~" H 4650 1125 50  0001 C CNN
 	1    4650 1125
-	1    0    0    -1  
-$EndComp
-$Comp
-L Connector_Generic:Conn_01x05 J4
-U 1 1 601CACB8
-P 7350 1225
-F 0 "J4" H 7300 1525 50  0000 L CNN
-F 1 "Conn_01x05" H 7150 925 50  0000 L CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Vertical" H 7350 1225 50  0001 C CNN
-F 3 "~" H 7350 1225 50  0001 C CNN
-	1    7350 1225
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -224,20 +209,20 @@ Wire Wire Line
 Text Label 5000 1325 0    50   ~ 0
 SDA
 Wire Wire Line
-	7150 1025 6850 1025
-Text Label 6850 1025 0    50   ~ 0
+	6175 1025 5875 1025
+Text Label 5875 1025 0    50   ~ 0
 Vsensor
 Wire Wire Line
-	6850 1125 7150 1125
-Text Label 6850 1125 0    50   ~ 0
+	5875 1125 6175 1125
+Text Label 5875 1125 0    50   ~ 0
 GND
 Wire Wire Line
-	6850 1225 7150 1225
-Text Label 6850 1225 0    50   ~ 0
+	5875 1225 6175 1225
+Text Label 5875 1225 0    50   ~ 0
 SCL
 Wire Wire Line
-	6850 1325 7150 1325
-Text Label 6850 1325 0    50   ~ 0
+	5875 1325 6175 1325
+Text Label 5875 1325 0    50   ~ 0
 SDA
 Wire Wire Line
 	8100 1025 7800 1025
@@ -256,12 +241,8 @@ Wire Wire Line
 Text Label 7800 1325 0    50   ~ 0
 SDA
 Wire Wire Line
-	6850 1425 7150 1425
-Wire Wire Line
 	7800 1425 8100 1425
 Text Label 7800 1425 0    50   ~ 0
-INT
-Text Label 6850 1425 0    50   ~ 0
 INT
 Wire Wire Line
 	1200 5325 1200 5025
@@ -795,33 +776,33 @@ VS+
 $Comp
 L Connector_Generic:Conn_01x05 J7
 U 1 1 60D63244
-P 6450 1225
-F 0 "J7" H 6400 1525 50  0000 L CNN
-F 1 "Conn_01x05" H 6250 925 50  0000 L CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Vertical" H 6450 1225 50  0001 C CNN
-F 3 "~" H 6450 1225 50  0001 C CNN
-	1    6450 1225
+P 7500 1225
+F 0 "J7" H 7450 1525 50  0000 L CNN
+F 1 "Conn_01x05" H 7300 925 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Vertical" H 7500 1225 50  0001 C CNN
+F 3 "~" H 7500 1225 50  0001 C CNN
+	1    7500 1225
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	6250 1025 5950 1025
-Text Label 5950 1025 0    50   ~ 0
+	7300 1025 7000 1025
+Text Label 7000 1025 0    50   ~ 0
 Vsensor
 Wire Wire Line
-	5950 1125 6250 1125
-Text Label 5950 1125 0    50   ~ 0
+	7000 1125 7300 1125
+Text Label 7000 1125 0    50   ~ 0
 GND
 Wire Wire Line
-	5950 1225 6250 1225
-Text Label 5950 1225 0    50   ~ 0
+	7000 1225 7300 1225
+Text Label 7000 1225 0    50   ~ 0
 SCL
 Wire Wire Line
-	5950 1325 6250 1325
-Text Label 5950 1325 0    50   ~ 0
+	7000 1325 7300 1325
+Text Label 7000 1325 0    50   ~ 0
 SDA
 Wire Wire Line
-	5950 1425 6250 1425
-Text Label 5950 1425 0    50   ~ 0
+	7000 1425 7300 1425
+Text Label 7000 1425 0    50   ~ 0
 INT
 Wire Wire Line
 	8700 3300 9375 3300
@@ -880,4 +861,40 @@ Wire Wire Line
 	7275 3200 7400 3200
 Wire Wire Line
 	7000 3200 7275 3200
+$Comp
+L Connector_Generic:Conn_01x04 J4
+U 1 1 60C16F38
+P 6375 1125
+F 0 "J4" H 6325 1325 50  0000 L CNN
+F 1 "Conn_01x04" H 6175 825 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" H 6375 1125 50  0001 C CNN
+F 3 "~" H 6375 1125 50  0001 C CNN
+	1    6375 1125
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C_Small C4
+U 1 1 60C48C70
+P 1425 1850
+F 0 "C4" V 1325 1975 50  0000 C CNN
+F 1 "100n" V 1325 1700 50  0000 C CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder" H 1425 1850 50  0001 C CNN
+F 3 "~" H 1425 1850 50  0001 C CNN
+	1    1425 1850
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	1325 1850 1075 1850
+Wire Wire Line
+	1075 1850 1075 1600
+Connection ~ 1075 1600
+Wire Wire Line
+	1075 1600 1100 1600
+Wire Wire Line
+	1525 1850 1750 1850
+Wire Wire Line
+	1750 1850 1750 1300
+Connection ~ 1750 1300
+Wire Wire Line
+	1750 1300 1700 1300
 $EndSCHEMATC

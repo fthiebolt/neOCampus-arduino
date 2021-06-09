@@ -127,12 +127,12 @@ Text Label 8175 5450 2    50   ~ 0
 $Comp
 L Connector_Generic:Conn_01x04 J1
 U 1 1 601C66E2
-P 5600 1125
-F 0 "J1" H 5550 1325 50  0000 L CNN
-F 1 "Conn_01x04" H 5400 825 50  0000 L CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" H 5600 1125 50  0001 C CNN
-F 3 "~" H 5600 1125 50  0001 C CNN
-	1    5600 1125
+P 4650 1125
+F 0 "J1" H 4600 1325 50  0000 L CNN
+F 1 "Conn_01x04" H 4450 825 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" H 4650 1125 50  0001 C CNN
+F 3 "~" H 4650 1125 50  0001 C CNN
+	1    4650 1125
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -181,47 +181,47 @@ Connection ~ 7425 5900
 Wire Wire Line
 	7425 5900 7425 5750
 Wire Wire Line
-	5400 1025 5100 1025
-Text Label 5100 1025 0    50   ~ 0
+	4450 1025 4150 1025
+Text Label 4150 1025 0    50   ~ 0
 Vsensor
 Wire Wire Line
-	5100 1125 5400 1125
-Text Label 5100 1125 0    50   ~ 0
+	4150 1125 4450 1125
+Text Label 4150 1125 0    50   ~ 0
 GND
 Wire Wire Line
-	5100 1225 5400 1225
-Text Label 5100 1225 0    50   ~ 0
+	4150 1225 4450 1225
+Text Label 4150 1225 0    50   ~ 0
 SCL
 Wire Wire Line
-	5100 1325 5400 1325
-Text Label 5100 1325 0    50   ~ 0
+	4150 1325 4450 1325
+Text Label 4150 1325 0    50   ~ 0
 SDA
 $Comp
 L Connector_Generic:Conn_01x04 J3
 U 1 1 601D570B
-P 6450 1125
-F 0 "J3" H 6400 1325 50  0000 L CNN
-F 1 "Conn_01x04" H 6250 825 50  0000 L CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" H 6450 1125 50  0001 C CNN
-F 3 "~" H 6450 1125 50  0001 C CNN
-	1    6450 1125
+P 5500 1125
+F 0 "J3" H 5450 1325 50  0000 L CNN
+F 1 "Conn_01x04" H 5300 825 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" H 5500 1125 50  0001 C CNN
+F 3 "~" H 5500 1125 50  0001 C CNN
+	1    5500 1125
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	6250 1025 5950 1025
-Text Label 5950 1025 0    50   ~ 0
+	5300 1025 5000 1025
+Text Label 5000 1025 0    50   ~ 0
 Vsensor
 Wire Wire Line
-	5950 1125 6250 1125
-Text Label 5950 1125 0    50   ~ 0
+	5000 1125 5300 1125
+Text Label 5000 1125 0    50   ~ 0
 GND
 Wire Wire Line
-	5950 1225 6250 1225
-Text Label 5950 1225 0    50   ~ 0
+	5000 1225 5300 1225
+Text Label 5000 1225 0    50   ~ 0
 SCL
 Wire Wire Line
-	5950 1325 6250 1325
-Text Label 5950 1325 0    50   ~ 0
+	5000 1325 5300 1325
+Text Label 5000 1325 0    50   ~ 0
 SDA
 Wire Wire Line
 	7150 1025 6850 1025
@@ -660,17 +660,17 @@ Wire Wire Line
 $Comp
 L Device:R_Small R6
 U 1 1 603D554C
-P 9475 3075
-F 0 "R6" V 9475 3075 50  0000 C CNN
-F 1 "15k" V 9500 2925 50  0000 C CNN
-F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 9475 3075 50  0001 C CNN
-F 3 "~" H 9475 3075 50  0001 C CNN
-	1    9475 3075
+P 9375 3075
+F 0 "R6" V 9375 3075 50  0000 C CNN
+F 1 "15k" V 9400 2925 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 9375 3075 50  0001 C CNN
+F 3 "~" H 9375 3075 50  0001 C CNN
+	1    9375 3075
 	-1   0    0    1   
 $EndComp
-Text Label 7400 2900 0    50   ~ 0
+Text Label 6600 2900 0    50   ~ 0
 SCL
-Text Label 7400 3000 0    50   ~ 0
+Text Label 6700 3000 0    50   ~ 0
 SDA
 Wire Wire Line
 	8700 2900 8750 2900
@@ -697,16 +697,14 @@ NoConn ~ 8700 3100
 Text Label 6900 2350 0    50   ~ 0
 Vsensor
 Wire Wire Line
-	9475 2975 9475 2750
+	9375 2975 9375 2750
 Wire Wire Line
-	9475 2750 9775 2750
-Text Label 9775 2750 2    50   ~ 0
+	9375 2750 9675 2750
+Text Label 9675 2750 2    50   ~ 0
 Vsensor
 Wire Wire Line
-	9475 3300 9475 3175
-Wire Wire Line
-	8700 3300 9475 3300
-Text Label 9000 3300 2    50   ~ 0
+	9375 3300 9375 3175
+Text Label 9675 3300 2    50   ~ 0
 INT
 NoConn ~ 7700 3100
 NoConn ~ 7700 3200
@@ -795,4 +793,46 @@ Wire Wire Line
 	3200 7325 3200 6900
 Text Label 3200 7325 1    50   ~ 0
 VS+
+$Comp
+L Connector_Generic:Conn_01x05 J7
+U 1 1 60D63244
+P 6450 1225
+F 0 "J7" H 6400 1525 50  0000 L CNN
+F 1 "Conn_01x05" H 6250 925 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Vertical" H 6450 1225 50  0001 C CNN
+F 3 "~" H 6450 1225 50  0001 C CNN
+	1    6450 1225
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6250 1025 5950 1025
+Text Label 5950 1025 0    50   ~ 0
+Vsensor
+Wire Wire Line
+	5950 1125 6250 1125
+Text Label 5950 1125 0    50   ~ 0
+GND
+Wire Wire Line
+	5950 1225 6250 1225
+Text Label 5950 1225 0    50   ~ 0
+SCL
+Wire Wire Line
+	5950 1325 6250 1325
+Text Label 5950 1325 0    50   ~ 0
+SDA
+Wire Wire Line
+	5950 1425 6250 1425
+Text Label 5950 1425 0    50   ~ 0
+INT
+Wire Wire Line
+	8700 3300 9375 3300
+Wire Wire Line
+	9675 3300 9375 3300
+Connection ~ 9375 3300
+Wire Wire Line
+	6700 3000 7000 3000
+Connection ~ 7000 3000
+Wire Wire Line
+	6600 2900 6900 2900
+Connection ~ 6900 2900
 $EndSCHEMATC

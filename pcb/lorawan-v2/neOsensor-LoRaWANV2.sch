@@ -328,7 +328,7 @@ Display
 Text Notes 6250 4800 0    100  ~ 0
 Power supply
 Text Notes 4250 2600 0    50   ~ 0
-Notes:\n- ADC must be left floating to enable VBat reading\n  (onboard BR1 not removed)\n
+Notes:\n- ADC must be left floating to enable VBat reading\n  (onboard BR1 not removed)\n- Panasonic IR sensor delivers upto 100µA, hence 47K
 $Comp
 L Device:C_Small C2
 U 1 1 60206A1D
@@ -660,17 +660,17 @@ Wire Wire Line
 $Comp
 L Device:R_Small R6
 U 1 1 603D554C
-P 9475 3075
-F 0 "R6" V 9475 3075 50  0000 C CNN
-F 1 "15k" V 9500 2925 50  0000 C CNN
-F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 9475 3075 50  0001 C CNN
-F 3 "~" H 9475 3075 50  0001 C CNN
-	1    9475 3075
+P 9375 3075
+F 0 "R6" V 9375 3075 50  0000 C CNN
+F 1 "15k" V 9400 2925 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 9375 3075 50  0001 C CNN
+F 3 "~" H 9375 3075 50  0001 C CNN
+	1    9375 3075
 	-1   0    0    1   
 $EndComp
-Text Label 7400 2900 0    50   ~ 0
+Text Label 6600 2900 0    50   ~ 0
 SCL
-Text Label 7400 3000 0    50   ~ 0
+Text Label 6700 3000 0    50   ~ 0
 SDA
 Wire Wire Line
 	8700 2900 8750 2900
@@ -697,19 +697,16 @@ NoConn ~ 8700 3100
 Text Label 6900 2350 0    50   ~ 0
 Vsensor
 Wire Wire Line
-	9475 2975 9475 2750
+	9375 2975 9375 2750
 Wire Wire Line
-	9475 2750 9775 2750
-Text Label 9775 2750 2    50   ~ 0
+	9375 2750 9675 2750
+Text Label 9675 2750 2    50   ~ 0
 Vsensor
 Wire Wire Line
-	9475 3300 9475 3175
-Wire Wire Line
-	8700 3300 9475 3300
-Text Label 9000 3300 2    50   ~ 0
+	9375 3300 9375 3175
+Text Label 9675 3300 2    50   ~ 0
 INT
 NoConn ~ 7700 3100
-NoConn ~ 7700 3200
 Wire Wire Line
 	7400 3300 7700 3300
 Text Label 7400 3300 0    50   ~ 0
@@ -826,4 +823,61 @@ Wire Wire Line
 	5950 1425 6250 1425
 Text Label 5950 1425 0    50   ~ 0
 INT
+Wire Wire Line
+	8700 3300 9375 3300
+Wire Wire Line
+	9675 3300 9375 3300
+Connection ~ 9375 3300
+Wire Wire Line
+	6700 3000 7000 3000
+Connection ~ 7000 3000
+Wire Wire Line
+	6600 2900 6900 2900
+Connection ~ 6900 2900
+$Comp
+L Device:R_Small R8
+U 1 1 60C35398
+P 7500 3200
+F 0 "R8" V 7500 3200 50  0000 C CNN
+F 1 "470" V 7425 3200 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 7500 3200 50  0001 C CNN
+F 3 "~" H 7500 3200 50  0001 C CNN
+	1    7500 3200
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	7700 3200 7600 3200
+Text Label 7000 3200 0    50   ~ 0
+IR
+$Comp
+L Device:R_Small R7
+U 1 1 60C3D53E
+P 7275 3475
+F 0 "R7" V 7275 3475 50  0000 C CNN
+F 1 "47K" V 7200 3475 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 7275 3475 50  0001 C CNN
+F 3 "~" H 7275 3475 50  0001 C CNN
+	1    7275 3475
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	7275 3375 7275 3200
+$Comp
+L power:GND #PWR0101
+U 1 1 60C41A48
+P 7275 3650
+F 0 "#PWR0101" H 7275 3400 50  0001 C CNN
+F 1 "GND" H 7280 3477 50  0000 C CNN
+F 2 "" H 7275 3650 50  0001 C CNN
+F 3 "" H 7275 3650 50  0001 C CNN
+	1    7275 3650
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7275 3650 7275 3575
+Connection ~ 7275 3200
+Wire Wire Line
+	7275 3200 7400 3200
+Wire Wire Line
+	7000 3200 7275 3200
 $EndSCHEMATC

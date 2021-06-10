@@ -42,7 +42,7 @@ Vsensor
 Text Notes 875  850  0    100  ~ 0
 I2C crypto flash
 Wire Wire Line
-	850  1600 1100 1600
+	850  1600 1075 1600
 Text Label 850  1600 0    50   ~ 0
 GND
 Wire Wire Line
@@ -54,13 +54,9 @@ Wire Wire Line
 Text Label 1925 1500 2    50   ~ 0
 SCL
 Wire Wire Line
-	1925 1300 1700 1300
+	1925 1300 1750 1300
 Text Label 1925 1300 0    50   ~ 0
 Vsensor
-Wire Notes Line
-	2400 625  2400 1875
-Wire Notes Line
-	2400 1875 600  1875
 Wire Notes Line
 	6850 6550 4700 6550
 Wire Notes Line
@@ -876,4 +872,29 @@ F 3 "~" H 6375 1125 50  0001 C CNN
 	1    6375 1125
 	1    0    0    -1  
 $EndComp
+$Comp
+L Device:C_Small C4
+U 1 1 60C48C70
+P 1425 1850
+F 0 "C4" V 1325 1975 50  0000 C CNN
+F 1 "100n" V 1325 1700 50  0000 C CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder" H 1425 1850 50  0001 C CNN
+F 3 "~" H 1425 1850 50  0001 C CNN
+	1    1425 1850
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	1325 1850 1075 1850
+Wire Wire Line
+	1075 1850 1075 1600
+Connection ~ 1075 1600
+Wire Wire Line
+	1075 1600 1100 1600
+Wire Wire Line
+	1525 1850 1750 1850
+Wire Wire Line
+	1750 1850 1750 1300
+Connection ~ 1750 1300
+Wire Wire Line
+	1750 1300 1700 1300
 $EndSCHEMATC

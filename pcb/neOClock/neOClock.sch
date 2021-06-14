@@ -854,7 +854,7 @@ Text Label 8125 1600 0    50   ~ 0
 a10
 Text Label 8125 1500 0    50   ~ 0
 a9
-Text Label 8125 1700 0    50   ~ 0
+Text Label 7225 1500 2    50   ~ 0
 a8
 Text Label 8125 1100 0    50   ~ 0
 a6
@@ -880,8 +880,6 @@ Wire Wire Line
 	8125 1500 8225 1500
 Wire Wire Line
 	8125 1600 8225 1600
-Wire Wire Line
-	8125 1700 8225 1700
 Entry Wire Line
 	8225 1000 8325 1100
 Entry Wire Line
@@ -896,8 +894,6 @@ Entry Wire Line
 	8225 1500 8325 1600
 Entry Wire Line
 	8225 1600 8325 1700
-Entry Wire Line
-	8225 1700 8325 1800
 Text Label 8525 1600 2    50   ~ 0
 a10
 Text Label 8525 1500 2    50   ~ 0
@@ -995,8 +991,6 @@ b3
 Text Label 9500 2950 0    50   ~ 0
 b7
 Entry Wire Line
-	10050 1700 9950 1800
-Entry Wire Line
 	10050 1600 9950 1700
 Entry Wire Line
 	10050 1500 9950 1600
@@ -1010,8 +1004,6 @@ Entry Wire Line
 	10050 1100 9950 1200
 Entry Wire Line
 	10050 1000 9950 1100
-Wire Wire Line
-	10150 1700 10050 1700
 Wire Wire Line
 	10150 1600 10050 1600
 Wire Wire Line
@@ -1036,7 +1028,7 @@ Text Label 10150 1200 2    50   ~ 0
 b4
 Text Label 10150 1100 2    50   ~ 0
 b6
-Text Label 10150 1700 2    50   ~ 0
+Text Label 11050 1500 0    50   ~ 0
 b8
 Text Label 10150 1500 2    50   ~ 0
 b9
@@ -1074,21 +1066,21 @@ Wire Wire Line
 	9750 1100 9850 1100
 Wire Wire Line
 	9750 1000 9850 1000
-Text Label 9750 1400 0    50   ~ 0
-b7
-Text Label 9750 1700 0    50   ~ 0
-b3
-Text Label 9750 1500 0    50   ~ 0
-b2
-Text Label 9750 1300 0    50   ~ 0
-b4
-Text Label 9750 1200 0    50   ~ 0
-b6
 Text Label 9750 1000 0    50   ~ 0
-b8
-Text Label 9750 1600 0    50   ~ 0
-b9
+b7
+Text Label 9750 1300 0    50   ~ 0
+b3
+Text Label 9750 1400 0    50   ~ 0
+b2
+Text Label 9750 1200 0    50   ~ 0
+b4
 Text Label 9750 1100 0    50   ~ 0
+b6
+Text Label 9750 1700 0    50   ~ 0
+b8
+Text Label 9750 1500 0    50   ~ 0
+b9
+Text Label 9750 1600 0    50   ~ 0
 b10
 $Comp
 L Device:Q_NPN_CBE Q2
@@ -1277,7 +1269,7 @@ NoConn ~ 6500 4200
 NoConn ~ 6500 4100
 NoConn ~ 6500 3900
 NoConn ~ 6500 3700
-NoConn ~ 6500 3600
+NoConn ~ 6850 3600
 $Comp
 L Display_Character:SA15-11GWA U4
 U 1 1 60BA85DE
@@ -1322,15 +1314,13 @@ Wire Wire Line
 Wire Wire Line
 	9125 1600 9125 1700
 Wire Wire Line
-	7525 600  7525 1600
+	7525 600  7525 1500
 Wire Wire Line
 	7525 1700 7525 1725
 Wire Wire Line
 	7525 1600 7525 1700
 Connection ~ 7525 1600
 Connection ~ 7525 1700
-Wire Wire Line
-	10750 575  10750 1600
 $Comp
 L Display_Character:SA15-11GWA U8
 U 1 1 60C590DD
@@ -1351,19 +1341,14 @@ Connection ~ 10750 1700
 $Comp
 L Display_Character:SA15-11GWA U7
 U 1 1 60C42FF4
-P 9450 1400
-F 0 "U7" H 9450 733 50  0000 C CNN
-F 1 "SA15-11GWA" H 9450 824 50  0000 C CNN
-F 2 "Display_7Segment:SA15-11xxx" H 9450 1350 50  0001 C CNN
-F 3 "http://www.kingbrightusa.com/images/catalog/SPEC/SA15-11GWA.pdf" H 9450 1350 50  0001 C CNN
-	1    9450 1400
-	-1   0    0    1   
+P 9450 1300
+F 0 "U7" H 9450 633 50  0000 C CNN
+F 1 "SA15-11GWA" H 9450 724 50  0000 C CNN
+F 2 "Display_7Segment:SA15-11xxx" H 9450 1250 50  0001 C CNN
+F 3 "http://www.kingbrightusa.com/images/catalog/SPEC/SA15-11GWA.pdf" H 9450 1250 50  0001 C CNN
+	1    9450 1300
+	-1   0    0    -1  
 $EndComp
-Wire Wire Line
-	9150 600  9150 1000
-Wire Wire Line
-	9150 1100 9150 1000
-Connection ~ 9150 1000
 Wire Wire Line
 	850  6200 1750 6200
 Wire Wire Line
@@ -1376,6 +1361,56 @@ Wire Wire Line
 	850  5800 1450 5800
 Wire Wire Line
 	850  5900 1450 5900
+Wire Wire Line
+	6500 3600 6550 3600
+$Comp
+L Device:R R10
+U 1 1 60C86E5A
+P 6700 3600
+F 0 "R10" V 6800 3525 50  0000 C CNN
+F 1 "470" V 6800 3725 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 6630 3600 50  0001 C CNN
+F 3 "~" H 6700 3600 50  0001 C CNN
+	1    6700 3600
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	9150 600  9150 1600
+Connection ~ 9150 1600
+Wire Wire Line
+	9150 1600 9150 1700
+$Comp
+L Device:LED D6
+U 1 1 60CB96E0
+P 10900 1500
+F 0 "D6" H 10893 1245 50  0000 C CNN
+F 1 "LED" H 10893 1336 50  0000 C CNN
+F 2 "LED_THT:LED_D3.0mm" H 10900 1500 50  0001 C CNN
+F 3 "~" H 10900 1500 50  0001 C CNN
+	1    10900 1500
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:LED D2
+U 1 1 60CBAB59
+P 7375 1500
+F 0 "D2" H 7368 1716 50  0000 C CNN
+F 1 "LED" H 7368 1625 50  0000 C CNN
+F 2 "LED_THT:LED_D3.0mm" H 7375 1500 50  0001 C CNN
+F 3 "~" H 7375 1500 50  0001 C CNN
+	1    7375 1500
+	1    0    0    -1  
+$EndComp
+Connection ~ 10750 1500
+Wire Wire Line
+	10750 1500 10750 1600
+Connection ~ 7525 1500
+Wire Wire Line
+	7525 1500 7525 1600
+Wire Wire Line
+	10750 575  10750 1500
+NoConn ~ 8125 1700
+NoConn ~ 10150 1700
 Wire Bus Line
 	9950 1100 9950 2950
 Wire Bus Line

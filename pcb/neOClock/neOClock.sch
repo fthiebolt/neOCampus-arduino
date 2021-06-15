@@ -16,23 +16,23 @@ $EndDescr
 $Comp
 L neosensor_addon:IRsensor IR1
 U 1 1 60A834AB
-P 1300 3700
-F 0 "IR1" V 1346 3522 50  0000 R CNN
-F 1 "IRsensor" V 1255 3522 50  0000 R CNN
-F 2 "neosensor_addon:IRsensor_TH_and_smd" H 1300 3700 50  0001 C CIN
-F 3 "" H 1300 3700 50  0001 C CNN
-	1    1300 3700
+P 1450 3750
+F 0 "IR1" V 1496 3572 50  0000 R CNN
+F 1 "IRsensor" V 1405 3572 50  0000 R CNN
+F 2 "neosensor_addon:IRsensor_TH_and_smd" H 1450 3750 50  0001 C CIN
+F 3 "" H 1450 3750 50  0001 C CNN
+	1    1450 3750
 	-1   0    0    1   
 $EndComp
 $Comp
 L pspice:0 #GND0111
 U 1 1 60A9911E
-P 1550 3600
-F 0 "#GND0111" H 1550 3500 50  0001 C CNN
-F 1 "0" H 1550 3500 50  0000 C CNN
-F 2 "" H 1550 3600 50  0001 C CNN
-F 3 "~" H 1550 3600 50  0001 C CNN
-	1    1550 3600
+P 1700 3650
+F 0 "#GND0111" H 1700 3550 50  0001 C CNN
+F 1 "0" H 1700 3550 50  0000 C CNN
+F 2 "" H 1700 3650 50  0001 C CNN
+F 3 "~" H 1700 3650 50  0001 C CNN
+	1    1700 3650
 	0    -1   -1   0   
 $EndComp
 $Comp
@@ -97,7 +97,7 @@ Text GLabel 4150 2100 2    50   Input ~ 0
 SCL
 Text GLabel 4150 1550 2    50   Input ~ 0
 SCL
-Text GLabel 1550 3800 2    50   Input ~ 0
+Text GLabel 1700 3850 2    50   Input ~ 0
 3v3
 $Comp
 L pspice:0 #GND?
@@ -135,7 +135,7 @@ Text GLabel 1750 1650 2    50   Input ~ 0
 Push_2
 Text GLabel 1750 2350 2    50   Input ~ 0
 Push_3
-Text GLabel 850  3700 0    50   Input ~ 0
+Text GLabel 700  3750 0    50   Input ~ 0
 IR
 Text GLabel 3400 6850 2    50   Input ~ 0
 3v3
@@ -776,32 +776,32 @@ $EndComp
 $Comp
 L Device:R R1
 U 1 1 61383ACF
-P 950 3950
-F 0 "R1" H 1020 3996 50  0000 L CNN
-F 1 "15k" H 1020 3905 50  0000 L CNN
-F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 880 3950 50  0001 C CNN
-F 3 "~" H 950 3950 50  0001 C CNN
-	1    950  3950
+P 1100 4000
+F 0 "R1" H 1170 4046 50  0000 L CNN
+F 1 "47k" H 1170 3955 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 1030 4000 50  0001 C CNN
+F 3 "~" H 1100 4000 50  0001 C CNN
+	1    1100 4000
 	1    0    0    -1  
 $EndComp
 $Comp
 L pspice:0 #GND0125
 U 1 1 61384771
-P 950 4100
-F 0 "#GND0125" H 950 4000 50  0001 C CNN
-F 1 "0" H 950 3950 50  0000 C CNN
-F 2 "" H 950 4100 50  0001 C CNN
-F 3 "~" H 950 4100 50  0001 C CNN
-	1    950  4100
+P 1100 4150
+F 0 "#GND0125" H 1100 4050 50  0001 C CNN
+F 1 "0" H 1100 4000 50  0000 C CNN
+F 2 "" H 1100 4150 50  0001 C CNN
+F 3 "~" H 1100 4150 50  0001 C CNN
+	1    1100 4150
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	850  3700 950  3700
+	1000 3750 1100 3750
 Wire Wire Line
-	950  3700 950  3800
-Connection ~ 950  3700
+	1100 3750 1100 3850
+Connection ~ 1100 3750
 Wire Wire Line
-	950  3700 1050 3700
+	1100 3750 1200 3750
 Wire Wire Line
 	3300 6850 3300 6950
 Connection ~ 3300 6850
@@ -1411,6 +1411,17 @@ Wire Wire Line
 	10750 575  10750 1500
 NoConn ~ 8125 1700
 NoConn ~ 10150 1700
+$Comp
+L Device:R R11
+U 1 1 60C98695
+P 850 3750
+F 0 "R11" V 643 3750 50  0000 C CNN
+F 1 "470" V 734 3750 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 780 3750 50  0001 C CNN
+F 3 "~" H 850 3750 50  0001 C CNN
+	1    850  3750
+	0    1    1    0   
+$EndComp
 Wire Bus Line
 	9950 1100 9950 2950
 Wire Bus Line

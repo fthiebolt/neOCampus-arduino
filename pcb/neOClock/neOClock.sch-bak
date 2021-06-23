@@ -1412,12 +1412,12 @@ Wire Wire Line
 NoConn ~ 8125 1700
 NoConn ~ 10150 1700
 $Comp
-L Device:R R?
+L Device:R R11
 U 1 1 60C98695
 P 850 3750
-F 0 "R?" V 643 3750 50  0000 C CNN
+F 0 "R11" V 643 3750 50  0000 C CNN
 F 1 "470" V 734 3750 50  0000 C CNN
-F 2 "" V 780 3750 50  0001 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 780 3750 50  0001 C CNN
 F 3 "~" H 850 3750 50  0001 C CNN
 	1    850  3750
 	0    1    1    0   
@@ -1426,4 +1426,6 @@ Wire Bus Line
 	9950 1100 9950 2950
 Wire Bus Line
 	8325 1100 8325 2950
+Text GLabel 4550 5800 2    50   Input ~ 0
+pin12
 $EndSCHEMATC

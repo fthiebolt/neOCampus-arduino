@@ -237,48 +237,48 @@ $EndComp
 $Comp
 L LED:APA102 D3
 U 1 1 612815DC
-P 1750 5900
-F 0 "D3" H 1750 6381 50  0000 C CNN
-F 1 "APA102" H 1750 6290 50  0000 C CNN
-F 2 "LED_SMD:LED_WS2812_PLCC6_5.0x5.0mm_P1.6mm" H 1800 5600 50  0001 L TNN
-F 3 "http://www.led-color.com/upload/201506/APA102%20LED.pdf" H 1850 5525 50  0001 L TNN
-	1    1750 5900
+P 3750 5750
+F 0 "D3" H 3750 6231 50  0000 C CNN
+F 1 "APA102" H 3750 6140 50  0000 C CNN
+F 2 "LED_SMD:LED_WS2812_PLCC6_5.0x5.0mm_P1.6mm" H 3800 5450 50  0001 L TNN
+F 3 "http://www.led-color.com/upload/201506/APA102%20LED.pdf" H 3850 5375 50  0001 L TNN
+	1    3750 5750
 	1    0    0    -1  
 $EndComp
 $Comp
 L LED:APA102 D4
 U 1 1 6128410F
-P 2350 5900
-F 0 "D4" H 2350 6381 50  0000 C CNN
-F 1 "APA102" H 2350 6290 50  0000 C CNN
-F 2 "LED_SMD:LED_WS2812_PLCC6_5.0x5.0mm_P1.6mm" H 2400 5600 50  0001 L TNN
-F 3 "http://www.led-color.com/upload/201506/APA102%20LED.pdf" H 2450 5525 50  0001 L TNN
-	1    2350 5900
+P 4350 5750
+F 0 "D4" H 4350 6231 50  0000 C CNN
+F 1 "APA102" H 4350 6140 50  0000 C CNN
+F 2 "LED_SMD:LED_WS2812_PLCC6_5.0x5.0mm_P1.6mm" H 4400 5450 50  0001 L TNN
+F 3 "http://www.led-color.com/upload/201506/APA102%20LED.pdf" H 4450 5375 50  0001 L TNN
+	1    4350 5750
 	1    0    0    -1  
 $EndComp
 $Comp
 L LED:APA102 D5
 U 1 1 612CF7A7
-P 2950 5900
-F 0 "D5" H 2950 6381 50  0000 C CNN
-F 1 "APA102" H 2950 6290 50  0000 C CNN
-F 2 "LED_SMD:LED_WS2812_PLCC6_5.0x5.0mm_P1.6mm" H 3000 5600 50  0001 L TNN
-F 3 "http://www.led-color.com/upload/201506/APA102%20LED.pdf" H 3050 5525 50  0001 L TNN
-	1    2950 5900
+P 4950 5750
+F 0 "D5" H 4950 6231 50  0000 C CNN
+F 1 "APA102" H 4950 6140 50  0000 C CNN
+F 2 "LED_SMD:LED_WS2812_PLCC6_5.0x5.0mm_P1.6mm" H 5000 5450 50  0001 L TNN
+F 3 "http://www.led-color.com/upload/201506/APA102%20LED.pdf" H 5050 5375 50  0001 L TNN
+	1    4950 5750
 	1    0    0    -1  
 $EndComp
 $Comp
 L pspice:0 #GND0118
 U 1 1 61413F41
-P 850 6200
-F 0 "#GND0118" H 850 6100 50  0001 C CNN
-F 1 "0" V 850 6050 50  0000 L CNN
-F 2 "" H 850 6200 50  0001 C CNN
-F 3 "~" H 850 6200 50  0001 C CNN
-	1    850  6200
+P 3450 6050
+F 0 "#GND0118" H 3450 5950 50  0001 C CNN
+F 1 "0" V 3450 5900 50  0000 L CNN
+F 2 "" H 3450 6050 50  0001 C CNN
+F 3 "~" H 3450 6050 50  0001 C CNN
+	1    3450 6050
 	0    1    1    0   
 $EndComp
-Text GLabel 850  5600 0    50   Input ~ 0
+Text GLabel 3450 5450 0    50   Input ~ 0
 5v
 $Comp
 L neosensor_addon:ATECC508A J5
@@ -419,23 +419,23 @@ $EndComp
 $Comp
 L LED:APA102 D8
 U 1 1 60B650F7
-P 3550 5900
-F 0 "D8" H 3550 6381 50  0000 C CNN
-F 1 "APA102" H 3550 6290 50  0000 C CNN
-F 2 "LED_SMD:LED_WS2812_PLCC6_5.0x5.0mm_P1.6mm" H 3600 5600 50  0001 L TNN
-F 3 "http://www.led-color.com/upload/201506/APA102%20LED.pdf" H 3650 5525 50  0001 L TNN
-	1    3550 5900
+P 5550 5750
+F 0 "D8" H 5550 6231 50  0000 C CNN
+F 1 "APA102" H 5550 6140 50  0000 C CNN
+F 2 "LED_SMD:LED_WS2812_PLCC6_5.0x5.0mm_P1.6mm" H 5600 5450 50  0001 L TNN
+F 3 "http://www.led-color.com/upload/201506/APA102%20LED.pdf" H 5650 5375 50  0001 L TNN
+	1    5550 5750
 	1    0    0    -1  
 $EndComp
 $Comp
 L LED:APA102 D9
 U 1 1 60B650FD
-P 4150 5900
-F 0 "D9" H 4150 6381 50  0000 C CNN
-F 1 "APA102" H 4150 6290 50  0000 C CNN
-F 2 "LED_SMD:LED_WS2812_PLCC6_5.0x5.0mm_P1.6mm" H 4200 5600 50  0001 L TNN
-F 3 "http://www.led-color.com/upload/201506/APA102%20LED.pdf" H 4250 5525 50  0001 L TNN
-	1    4150 5900
+P 6150 5750
+F 0 "D9" H 6150 6231 50  0000 C CNN
+F 1 "APA102" H 6150 6140 50  0000 C CNN
+F 2 "LED_SMD:LED_WS2812_PLCC6_5.0x5.0mm_P1.6mm" H 6200 5450 50  0001 L TNN
+F 3 "http://www.led-color.com/upload/201506/APA102%20LED.pdf" H 6250 5375 50  0001 L TNN
+	1    6150 5750
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -725,32 +725,10 @@ Text GLabel 750  1650 0    50   Input ~ 0
 3v3
 Text GLabel 750  2350 0    50   Input ~ 0
 3v3
-NoConn ~ 4450 5800
-NoConn ~ 4450 5900
-Connection ~ 1750 5600
 Wire Wire Line
-	1750 5600 2350 5600
-Connection ~ 2350 5600
+	4500 8675 5100 8675
 Wire Wire Line
-	2350 5600 2950 5600
-Connection ~ 2950 5600
-Wire Wire Line
-	2950 5600 3550 5600
-Connection ~ 3550 5600
-Wire Wire Line
-	3550 5600 4150 5600
-Connection ~ 1750 6200
-Wire Wire Line
-	1750 6200 2350 6200
-Connection ~ 2350 6200
-Wire Wire Line
-	2350 6200 2950 6200
-Connection ~ 2950 6200
-Wire Wire Line
-	2950 6200 3550 6200
-Connection ~ 3550 6200
-Wire Wire Line
-	3550 6200 4150 6200
+	4700 8825 5300 8825
 $Comp
 L pspice:0 #GND0114
 U 1 1 60AC4E5B
@@ -1264,12 +1242,10 @@ NoConn ~ 5600 4600
 NoConn ~ 6500 4600
 NoConn ~ 6500 4500
 NoConn ~ 6500 4800
-NoConn ~ 6500 4300
-NoConn ~ 6500 4200
-NoConn ~ 6500 4100
+NoConn ~ 6450 5750
 NoConn ~ 6500 3900
 NoConn ~ 6500 3700
-NoConn ~ 6850 3600
+NoConn ~ 6500 3600
 $Comp
 L Display_Character:SA15-11GWA U4
 U 1 1 60BA85DE
@@ -1349,29 +1325,23 @@ F 3 "http://www.kingbrightusa.com/images/catalog/SPEC/SA15-11GWA.pdf" H 9450 125
 	1    9450 1300
 	-1   0    0    -1  
 $EndComp
+Text GLabel 3450 5750 0    50   Input ~ 0
+CI_LED
+Text GLabel 3450 5650 0    50   Input ~ 0
+DI_LED
 Wire Wire Line
-	850  6200 1750 6200
+	4650 9375 5250 9375
 Wire Wire Line
-	850  5600 1750 5600
-Text GLabel 850  5900 0    50   Input ~ 0
-CI
-Text GLabel 850  5800 0    50   Input ~ 0
-DI
-Wire Wire Line
-	850  5800 1450 5800
-Wire Wire Line
-	850  5900 1450 5900
-Wire Wire Line
-	6500 3600 6550 3600
+	4650 9475 5250 9475
 $Comp
 L Device:R R10
 U 1 1 60C86E5A
-P 6700 3600
-F 0 "R10" V 6800 3525 50  0000 C CNN
-F 1 "470" V 6800 3725 50  0000 C CNN
-F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 6630 3600 50  0001 C CNN
-F 3 "~" H 6700 3600 50  0001 C CNN
-	1    6700 3600
+P 6800 4200
+F 0 "R10" V 6900 4125 50  0000 C CNN
+F 1 "470" V 6900 4325 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 6730 4200 50  0001 C CNN
+F 3 "~" H 6800 4200 50  0001 C CNN
+	1    6800 4200
 	0    1    1    0   
 $EndComp
 Wire Wire Line
@@ -1422,6 +1392,208 @@ F 3 "~" H 850 3750 50  0001 C CNN
 	1    850  3750
 	0    1    1    0   
 $EndComp
+Text GLabel 6450 5650 2    50   Input ~ 0
+BACK_LED
+$Comp
+L Transistor_FET:2N7000 Q?
+U 1 1 60D750A1
+P 1900 5900
+F 0 "Q?" V 2149 5900 50  0000 C CNN
+F 1 "2N7000" V 2240 5900 50  0000 C CNN
+F 2 "Package_TO_SOT_THT:TO-92_Inline" H 2100 5825 50  0001 L CIN
+F 3 "https://www.fairchildsemi.com/datasheets/2N/2N7000.pdf" H 1900 5900 50  0001 L CNN
+	1    1900 5900
+	0    1    1    0   
+$EndComp
+$Comp
+L Transistor_FET:2N7000 Q?
+U 1 1 60D7AD06
+P 1550 5550
+F 0 "Q?" V 1799 5550 50  0000 C CNN
+F 1 "2N7000" V 1890 5550 50  0000 C CNN
+F 2 "Package_TO_SOT_THT:TO-92_Inline" H 1750 5475 50  0001 L CIN
+F 3 "https://www.fairchildsemi.com/datasheets/2N/2N7000.pdf" H 1550 5550 50  0001 L CNN
+	1    1550 5550
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 60D87858
+P 950 5400
+F 0 "R?" H 1020 5446 50  0000 L CNN
+F 1 "2k2" H 1020 5355 50  0000 L CNN
+F 2 "" V 880 5400 50  0001 C CNN
+F 3 "~" H 950 5400 50  0001 C CNN
+	1    950  5400
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 60D88785
+P 1200 5400
+F 0 "R?" H 1270 5446 50  0000 L CNN
+F 1 "2k2" H 1270 5355 50  0000 L CNN
+F 2 "" V 1130 5400 50  0001 C CNN
+F 3 "~" H 1200 5400 50  0001 C CNN
+	1    1200 5400
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 60D88BB5
+P 2200 5400
+F 0 "R?" H 2270 5446 50  0000 L CNN
+F 1 "2k2" H 2270 5355 50  0000 L CNN
+F 2 "" V 2130 5400 50  0001 C CNN
+F 3 "~" H 2200 5400 50  0001 C CNN
+	1    2200 5400
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 60D88F34
+P 2450 5400
+F 0 "R?" H 2520 5446 50  0000 L CNN
+F 1 "2k2" H 2520 5355 50  0000 L CNN
+F 2 "" V 2380 5400 50  0001 C CNN
+F 3 "~" H 2450 5400 50  0001 C CNN
+	1    2450 5400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	950  5550 950  5650
+Wire Wire Line
+	950  5650 1350 5650
+Wire Wire Line
+	1200 5550 1200 6000
+Wire Wire Line
+	1200 6000 1700 6000
+Wire Wire Line
+	950  5250 1200 5250
+Wire Wire Line
+	1550 5250 1550 5350
+Connection ~ 1200 5250
+Wire Wire Line
+	1200 5250 1550 5250
+Wire Wire Line
+	1550 5250 1900 5250
+Wire Wire Line
+	1900 5250 1900 5700
+Connection ~ 1550 5250
+Wire Wire Line
+	2450 5250 2200 5250
+Wire Wire Line
+	2100 6000 2200 6000
+Wire Wire Line
+	2200 5550 2200 6000
+Wire Wire Line
+	1750 5650 2450 5650
+Wire Wire Line
+	2450 5650 2450 5550
+Wire Wire Line
+	950  5250 800  5250
+Connection ~ 950  5250
+Wire Wire Line
+	2450 5250 2700 5250
+Connection ~ 2450 5250
+Wire Wire Line
+	950  5650 800  5650
+Connection ~ 950  5650
+Wire Wire Line
+	1200 6000 800  6000
+Connection ~ 1200 6000
+Wire Wire Line
+	2450 5650 2700 5650
+Connection ~ 2450 5650
+Wire Wire Line
+	2200 6000 2700 6000
+Connection ~ 2200 6000
+Text GLabel 800  5250 0    50   Input ~ 0
+3v3
+Text GLabel 2700 5250 2    50   Input ~ 0
+5v
+Text GLabel 800  5650 0    50   Input ~ 0
+DI
+Text GLabel 800  6000 0    50   Input ~ 0
+CI
+Text GLabel 2700 5650 2    50   Input ~ 0
+DI_LED
+Text GLabel 2700 6000 2    50   Input ~ 0
+CI_LED
+Wire Wire Line
+	4200 9075 5400 9075
+Wire Wire Line
+	4200 9675 5400 9675
+Wire Wire Line
+	4650 9175 6150 9175
+Wire Wire Line
+	4650 9775 6150 9775
+Wire Wire Line
+	3450 5450 3750 5450
+Connection ~ 3750 5450
+Wire Wire Line
+	3750 5450 4350 5450
+Connection ~ 4350 5450
+Wire Wire Line
+	4350 5450 4950 5450
+Connection ~ 4950 5450
+Wire Wire Line
+	4950 5450 5550 5450
+Connection ~ 5550 5450
+Wire Wire Line
+	5550 5450 6150 5450
+Wire Wire Line
+	3450 6050 3750 6050
+Connection ~ 3750 6050
+Wire Wire Line
+	3750 6050 4350 6050
+Connection ~ 4350 6050
+Wire Wire Line
+	4350 6050 4950 6050
+Connection ~ 4950 6050
+Wire Wire Line
+	4950 6050 5550 6050
+Connection ~ 5550 6050
+Wire Wire Line
+	5550 6050 6150 6050
+$Comp
+L Connector_Generic:Conn_01x05 J?
+U 1 1 610998F9
+P 5200 1100
+F 0 "J?" H 5280 1142 50  0000 L CNN
+F 1 "Conn_01x05" H 5280 1051 50  0000 L CNN
+F 2 "" H 5200 1100 50  0001 C CNN
+F 3 "~" H 5200 1100 50  0001 C CNN
+	1    5200 1100
+	1    0    0    -1  
+$EndComp
+Text GLabel 5000 900  0    50   Input ~ 0
+5v
+$Comp
+L pspice:0 #GND?
+U 1 1 6109C13E
+P 5000 1000
+F 0 "#GND?" H 5000 900 50  0001 C CNN
+F 1 "0" V 5000 850 50  0000 L CNN
+F 2 "" H 5000 1000 50  0001 C CNN
+F 3 "~" H 5000 1000 50  0001 C CNN
+	1    5000 1000
+	0    1    1    0   
+$EndComp
+Text GLabel 5000 1200 0    50   Input ~ 0
+TX
+Text GLabel 5000 1300 0    50   Input ~ 0
+RX
+Text GLabel 5000 1100 0    50   Input ~ 0
+PM_EN
+Text GLabel 6500 4100 2    50   Input ~ 0
+PM_EN
+Wire Wire Line
+	6500 4200 6650 4200
+Text GLabel 6950 4200 2    50   Input ~ 0
+TX
+Text GLabel 6500 4300 2    50   Input ~ 0
+RX
 Wire Bus Line
 	9950 1100 9950 2950
 Wire Bus Line

@@ -1391,8 +1391,8 @@ Text Notes 1025 5275 1    50   ~ 0
 Red led Vf=1.56v
 Wire Wire Line
 	9400 3550 10750 3550
-Text Notes 5000 3575 0    50   ~ 0
-TODO:\n- remove R9\n- add 470R in serie withGPIO4 (IR input)
+Text Notes 5000 3600 0    50   ~ 0
+- remove R9\n- add 470R in serie withGPIO4 (IR input)
 Wire Notes Line
 	4975 3275 6850 3275
 Wire Notes Line
@@ -1401,4 +1401,6 @@ Wire Notes Line
 	6850 4025 4950 4025
 Wire Notes Line
 	4950 4025 4950 3275
+Text Notes 5000 3425 0    71   ~ 14
+>> TODO: neOSensor V5.2 <<
 $EndSCHEMATC

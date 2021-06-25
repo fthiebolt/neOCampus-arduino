@@ -908,5 +908,5 @@ Wire Notes Line
 Text Notes 3250 3025 0    71   ~ 14
 >>> TODO: LoRaWAN V2.1 <<<
 Text Notes 3250 3200 0    50   ~ 0
-- set battery connector JST xxx\n- M3 holes not aligned !!\n
+- set battery connector JST xxx\n- M3 holes not aligned !!\n- [done] R4 silk to move
 $EndSCHEMATC

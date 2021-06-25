@@ -11,6 +11,7 @@ All this work was undertaken at Université Toulouse 3 / IRIT laboratory in the 
 ![neOSensorv5](/images/neOSensorV5.jpg)
 
 ## NEWS ##
+ * **[Jun.21]** added KiCad PCB for LoRaWAN V2 (Heltec CubeCell)
  * **[Apr.21]** added support for 3 NTP servers + NTP from DHCP to lwip. Have a look to `arduinoIDE_esp32_boards/README.md`
                 added KiCad PCB for neOSensor v5.1 (ESP32 based)
  * **[Feb.21]** added KiCad PCB for neOSensor v5 (ESP32 based)
@@ -21,7 +22,7 @@ added suppport for boards configuration via sensOCampus JSON config\
 added Arduino IDE support for our various neOSensor boards
 
 ## neOSensor boards ##
-neOSensor first boards releases were based on esp8266. Nowadays, we added support for esp32 devices :)
+neOSensor first boards releases were based on esp8266. Nowadays, we added support for esp32 and CubeCell devices :)
 
 We added support to our neOCampus IoT management infrastructure named [sensOCampus](https://neocampus.univ-tlse3.fr "neOCampus's Wiki Home") to enable a central configuration for all of our neOSensor boards; these boards will then be able to publish their data to our infrastructure and to have those data stored in our databases.
 
@@ -42,7 +43,7 @@ Then, run script `./deploy.sh` and boards will get added to your Arduino boards 
 
 If not already installed, you'll need python-serial package; thus either you install it at the system level
 ```
-[fedora] dnf -y install python-serial
+[fedora] dnf -y install python3-pyserial
 [ubuntu] apt-get -y install python3-serial python-is-python3
 ```
 

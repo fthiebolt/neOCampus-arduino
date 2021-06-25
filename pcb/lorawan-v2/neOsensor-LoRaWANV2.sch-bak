@@ -897,4 +897,16 @@ Wire Wire Line
 Connection ~ 1750 1300
 Wire Wire Line
 	1750 1300 1700 1300
+Wire Notes Line
+	3200 2875 6125 2875
+Wire Notes Line
+	6125 2875 6125 4275
+Wire Notes Line
+	6125 4275 3200 4275
+Wire Notes Line
+	3200 4275 3200 2875
+Text Notes 3250 3025 0    71   ~ 14
+>>> TODO: LoRaWAN V2.1 <<<
+Text Notes 3250 3200 0    50   ~ 0
+- set battery connector JST xxx\n- M3 holes not aligned !!\n
 $EndSCHEMATC

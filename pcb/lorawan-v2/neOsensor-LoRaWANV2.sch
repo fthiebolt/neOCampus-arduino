@@ -908,5 +908,5 @@ Wire Notes Line
 Text Notes 3250 3025 0    71   ~ 14
 >>> TODO: LoRaWAN V2.1 <<<
 Text Notes 3275 3475 0    50   ~ 0
-- set battery connector JST xxx\n- M3 holes not aligned !!\n- [done] R4 silk to move\n- name Jx pins@PCB (e.g SDA, SCL ...)
+- set battery connector JST xxx\n- VS+ / GND to invert (JSTxxx connector)\n- M3 holes not aligned !!\n- [done] R4 silk to move\n- name Jx pins@PCB (e.g SDA, SCL ...)
 $EndSCHEMATC

@@ -1090,7 +1090,7 @@
   )
 
   (module Symbol:RoHS-Logo_6mm_SilkScreen (layer B.Cu) (tedit 0) (tstamp 60C29298)
-    (at 52.451 48.768 180)
+    (at 51.816 56.388 180)
     (descr "Restriction of Hazardous Substances Directive Logo")
     (tags "Logo RoHS")
     (attr virtual)
@@ -2691,7 +2691,7 @@
   (gr_text "RST / CLR" (at 72.644 28.702) (layer F.SilkS)
     (effects (font (size 1.5 1.5) (thickness 0.3)))
   )
-  (gr_text CubeCell (at 62.738 53.086) (layer B.SilkS)
+  (gr_text CubeCell (at 61.976 50.673) (layer B.SilkS)
     (effects (font (size 2 2) (thickness 0.3)) (justify mirror))
   )
   (gr_text OLED (at 46.609 35.814) (layer F.SilkS)

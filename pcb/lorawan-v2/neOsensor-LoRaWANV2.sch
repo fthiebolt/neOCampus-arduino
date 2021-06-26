@@ -907,6 +907,6 @@ Wire Notes Line
 	3200 4275 3200 2875
 Text Notes 3250 3025 0    71   ~ 14
 >>> TODO: LoRaWAN V2.1 <<<
-Text Notes 3225 3725 0    50   ~ 0
-- set battery connector JST xxx\n- VS+ / GND to invert (JSTxxx connector)\n- M3 holes not aligned !!\n- [done] R4 silk to move\n- @PCB C3: + sign bigger !!\n- J1 or J4: add INT pin\n- @PCB J1 or J4: flip (to have both config). Check TSL2561 fits to front\n- name Jx pins@PCB (e.g SDA, SCL ...)
+Text Notes 3200 3750 0    50   ~ 0
+- set battery connector JST xxx\n- VS+ / GND to invert (JSTxxx connector)\n- M3 holes not aligned !!\n- [done] R4 silk to move\n- @PCB C3: + sign bigger !!\n- J1 or J4: add INT pin\n- @PCB J1 or J4: flip (to have both config). Check TSL2561 fits to front\n- name Jx pins@PCB (e.g SDA, SCL ...)\n- add Conn_01x02 on GPIO0 (force bootloader enable)
 $EndSCHEMATC

@@ -286,8 +286,8 @@ Text Notes 1000 4825 0    100  ~ 0
 Display
 Text Notes 6250 4800 0    100  ~ 0
 Power supply
-Text Notes 3400 2150 0    50   ~ 0
-Notes:\n- ADC must be left floating to enable VBat reading\n  (onboard BR1 not removed)\n- to READ Vbat ==> activate GPIO7 but BEWARE NOT TO\n    PRESS USER button at the same time !!!\n- Panasonic IR sensor delivers upto 100µA, hence 47K\n- GPIO0 at powerup: if GND --> bootloader mode
+Text Notes 3275 2625 0    50   ~ 0
+Notes:\n- ADC must be left floating to enable VBat reading\n  (onboard BR1 not removed)\n- to READ Vbat ==> activate GPIO7 but BEWARE NOT TO\n    PRESS USER button at the same time !!!\n- Panasonic IR sensor delivers upto 100µA, hence 47K\n- GPIO0 at powerup: if GND --> bootloader mode\n    to enable: short INT to GND while powering\n- WARNING: HC-SR01 req. 5v ==> won't work on batteries
 $Comp
 L Device:C_Small C2
 U 1 1 60206A1D
@@ -853,18 +853,6 @@ Wire Wire Line
 Connection ~ 1750 1300
 Wire Wire Line
 	1750 1300 1700 1300
-Wire Notes Line
-	3200 2875 6125 2875
-Wire Notes Line
-	6125 2875 6125 4275
-Wire Notes Line
-	6125 4275 3200 4275
-Wire Notes Line
-	3200 4275 3200 2875
-Text Notes 3250 3025 0    71   ~ 14
->>> TODO: LoRaWAN V2.1 <<<
-Text Notes 3200 4050 0    50   ~ 0
-- set battery connector JST xxx\n- VS+ / GND to invert (JSTxxx connector)\n- M3 holes not aligned !!\n- [done] R4 silk to move\n- GPIO4 is also used to drive the onboard led\n- @PCB C3: + sign bigger !!\n- J1 or J4: add INT pin\n- J3: add INT pin\n- @PCB J1 or J4: flip (to have both config). Check TSL2561 fits to front\n- name Jx pins@PCB (e.g SDA, SCL ...)\n- ERROR GPIO4 and 5 swapped --> model corrected, apply to PCB\n- add Conn_01x02 on GPIO0 (force bootloader enable)
 Wire Wire Line
 	7000 2350 7125 2350
 Wire Wire Line
@@ -886,7 +874,6 @@ Wire Wire Line
 Text Label 9000 3300 2    50   ~ 0
 SW1
 NoConn ~ 8700 3200
-NoConn ~ 3750 3600
 $Comp
 L Connector_Generic:Conn_01x05 J3
 U 1 1 60E126AF

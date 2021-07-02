@@ -2,7 +2,7 @@
 
   (general
     (thickness 1.6)
-    (drawings 60)
+    (drawings 56)
     (tracks 0)
     (zones 0)
     (modules 0)
@@ -117,8 +117,6 @@
   )
 
   (gr_arc (start 40.132 136.017) (end 40.132 138.049) (angle 90) (layer Edge.Cuts) (width 0.05) (tstamp 60C0F6F6))
-  (gr_arc (start 90.551 90.551) (end 90.551 88.519) (angle -90) (layer Edge.Cuts) (width 0.05) (tstamp 60DEF8FC))
-  (gr_arc (start 85.598 90.551) (end 85.598 88.519) (angle 90) (layer Edge.Cuts) (width 0.05) (tstamp 60DEDECF))
   (gr_line (start 87.63 40.132) (end 88.519 40.132) (layer Edge.Cuts) (width 0.05) (tstamp 60C1F183))
   (gr_line (start 136.017 87.63) (end 136.017 88.519) (layer Edge.Cuts) (width 0.05) (tstamp 60C1F181))
   (gr_line (start 87.63 136.017) (end 88.519 136.017) (layer Edge.Cuts) (width 0.05) (tstamp 60C1F17E))
@@ -149,7 +147,6 @@
   (gr_line (start 40.132 117.475) (end 46.482 117.475) (layer Edge.Cuts) (width 0.05))
   (gr_line (start 40.132 138.049) (end 85.598 138.049) (layer Edge.Cuts) (width 0.05))
   (gr_arc (start 40.132 85.598) (end 38.1 85.598) (angle -90) (layer Edge.Cuts) (width 0.05) (tstamp 60C0F730))
-  (gr_arc (start 85.598 85.598) (end 85.598 87.63) (angle -90) (layer Edge.Cuts) (width 0.05) (tstamp 60C0F72B))
   (gr_arc (start 85.598 40.132) (end 87.63 40.132) (angle -90) (layer Edge.Cuts) (width 0.05) (tstamp 60C0F722))
   (gr_arc (start 40.132 40.132) (end 40.132 38.1) (angle -90) (layer Edge.Cuts) (width 0.05) (tstamp 60C0F6F6))
   (gr_arc (start 46.482 60.706) (end 48.514 60.706) (angle -90) (layer Edge.Cuts) (width 0.05) (tstamp 60C112E7))
@@ -163,7 +160,6 @@
   (gr_line (start 40.132 58.674) (end 46.482 58.674) (layer Edge.Cuts) (width 0.05))
   (gr_line (start 40.132 38.1) (end 85.598 38.1) (layer Edge.Cuts) (width 0.05))
   (gr_arc (start 136.017 85.598) (end 138.049 85.598) (angle 90) (layer Edge.Cuts) (width 0.05) (tstamp 60C0F730))
-  (gr_arc (start 90.551 85.598) (end 90.551 87.63) (angle 90) (layer Edge.Cuts) (width 0.05) (tstamp 60C0F72B))
   (gr_arc (start 90.551 40.132) (end 88.519 40.132) (angle 90) (layer Edge.Cuts) (width 0.05) (tstamp 60C0F722))
   (gr_arc (start 136.017 40.132) (end 136.017 38.1) (angle 90) (layer Edge.Cuts) (width 0.05) (tstamp 60C0F6F6))
   (gr_arc (start 129.667 60.706) (end 127.635 60.706) (angle 90) (layer Edge.Cuts) (width 0.05) (tstamp 60C112E7))

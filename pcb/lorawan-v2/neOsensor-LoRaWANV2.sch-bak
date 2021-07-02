@@ -853,18 +853,6 @@ Wire Wire Line
 Connection ~ 1750 1300
 Wire Wire Line
 	1750 1300 1700 1300
-Wire Notes Line
-	3200 2875 6125 2875
-Wire Notes Line
-	6125 2875 6125 4275
-Wire Notes Line
-	6125 4275 3200 4275
-Wire Notes Line
-	3200 4275 3200 2875
-Text Notes 3250 3025 0    71   ~ 14
->>> TODO: LoRaWAN V2.1 <<<
-Text Notes 3200 4050 0    50   ~ 0
-- set battery connector JST xxx\n- VS+ / GND to invert (JSTxxx connector)\n- M3 holes not aligned !!\n- [done] R4 silk to move\n- GPIO4 is also used to drive the onboard led\n- @PCB C3: + sign bigger !!\n- J1 or J4: add INT pin\n- J3: add INT pin\n- @PCB J1 or J4: flip (to have both config). Check TSL2561 fits to front\n- name Jx pins@PCB (e.g SDA, SCL ...)\n- ERROR GPIO4 and 5 swapped --> model corrected, apply to PCB\n- add Conn_01x02 on GPIO0 (force bootloader enable)
 Wire Wire Line
 	7000 2350 7125 2350
 Wire Wire Line
@@ -886,7 +874,6 @@ Wire Wire Line
 Text Label 9000 3300 2    50   ~ 0
 SW1
 NoConn ~ 8700 3200
-NoConn ~ 3750 3600
 $Comp
 L Connector_Generic:Conn_01x05 J3
 U 1 1 60E126AF
@@ -919,26 +906,4 @@ Wire Wire Line
 	4150 1400 4450 1400
 Text Label 4150 1400 0    50   ~ 0
 INT
-$Comp
-L Graphic:Logo_Open_Hardware_Small #LOGO1
-U 1 1 60DEC135
-P 900 7400
-F 0 "#LOGO1" H 900 7675 50  0001 C CNN
-F 1 "Logo_Open_Hardware_Small" H 900 7175 50  0001 C CNN
-F 2 "Symbol:OSHW-Logo_5.7x6mm_SilkScreen" H 900 7400 50  0001 C CNN
-F 3 "~" H 900 7400 50  0001 C CNN
-	1    900  7400
-	1    0    0    -1  
-$EndComp
-$Comp
-L Graphic:SYM_ESD_Small #SYM1
-U 1 1 60DF0002
-P 1300 7350
-F 0 "#SYM1" H 1300 7490 50  0001 C CNN
-F 1 "SYM_ESD_Small" H 1300 7225 50  0001 C CNN
-F 2 "" H 1300 7360 50  0001 C CNN
-F 3 "~" H 1300 7360 50  0001 C CNN
-	1    1300 7350
-	1    0    0    -1  
-$EndComp
 $EndSCHEMATC

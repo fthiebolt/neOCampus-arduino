@@ -353,7 +353,7 @@ Display
 Text Notes 8400 4800 0    100  ~ 0
 Power supply
 Text Notes 6050 3100 0    50   ~ 0
-Notes:\n- GPIO5 has a 10k pull-up on +3v3 on devkit V1 !!\n- GPIO5 reserved for Particule Meter ENable (3v3)\n- GPIOX reserved for LED + clear sw\n- GPIO13 reserved for noise sensor\n- GPIO4 reserved for IR sensor (input)\n- ADC2 pins cannot be used when WiFi in use\n- prefer ADC1 pins (GPIO32 --> 39)\n- GPIO1 & GPIO3 are serial0 (prog.)\n- GPIO2 onboard blue led @ devkit V1\n- EN must be floating !
+Notes:\n- GPIO5 has a 10k pull-up on +3v3 on devkit V1 !!\n- GPIO5 reserved for Particule Meter ENable (3v3)\n- GPIOX reserved for LED + clear sw\n- GPIO13 reserved for noise sensor\n- GPIO4 reserved for IR sensor (input)\n- GPIO15 is high at boot\n- ADC2 pins cannot be used when WiFi in use\n- prefer ADC1 pins (GPIO32 --> 39)\n- GPIO1 & GPIO3 are serial0 (prog.)\n- GPIO2 onboard blue led @ devkit V1\n- EN must be floating !
 $Comp
 L Device:C_Small C1
 U 1 1 60206A1D

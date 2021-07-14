@@ -1,5 +1,5 @@
 /*
- * neOCampus operation
+ * (c) neOCampus operation / Laboratoire IRIT / Université Toulouse 3
  * 
  * neOSensor ESP8266/ESP32 hardware board definitions
  * 
@@ -12,6 +12,9 @@
  *  - noise detector (8bits DAC MCP4706)
  * ---
  *
+ * F.Thiebolt   Jul.21  esp32 added PIR sensor @ GPIO4
+ *                      esp32 added switch INCR_SW @ GPIO18
+ *                      esp32 added switch DECR_SW @ GPIO23
  * F.Thiebolt   Mar.21  corrected leds definitions for neOSensor V5 :)
  * F.Thiebolt   Aug.20  added definitions for future ESP32 version (e.g LED PWM channel)
  *                      set default ADC resolution according to architecture
@@ -95,6 +98,12 @@
 #define CLEAR_SW            LED
 #endif
 
+// [jul.21] neOSensor V5 (esp32) and up feature two additional switches
+#ifdef ESP32
+#define INCR_SW             18
+#define DECR_SW             23
+#endif /* ESP32 */
+
 // i2c bus related definition
 /* [Jun.18] we observed some unusual values for temperature
  * ... probably glitches that may get corrected with PCB v4
@@ -131,7 +140,7 @@
   #ifdef ESP8266
     #define PIR_SENSOR      4       // infrared detector
   #elif defined(ESP32)
-    #define PIR_SENSOR      INVALID_GPIO
+    #define PIR_SENSOR      4       // [jul.21] neOSensor V5 added PIR
   #endif
 #endif
 

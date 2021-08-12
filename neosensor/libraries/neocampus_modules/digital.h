@@ -55,7 +55,8 @@ typedef struct {
   bool      _current;
   bool      _previous;
   bool      value;        // official value
-  uint16_t  coolDown;
+  uint16_t  coolDown;     // seconds to wait between two consecutives events
+  unsigned long _lastTX;  // elapsed ms since last message sent
   bool      mqttDisabled;
 } digitalGPIO_t;
 

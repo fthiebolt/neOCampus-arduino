@@ -74,9 +74,13 @@ boolean digital::add_gpio( uint8_t pin, digitalInputType_t type, digitalFrontDet
   _gpio[_gpio_count].front        = front;
   _gpio[_gpio_count].type         = type;
   _gpio[_gpio_count].coolDown     = coolDown;
+  _gpio[_gpio_count]._lastTX      = 0;
   _gpio[_gpio_count].mqttDisabled = mqttDisabled;
 
+  // initialize values. _previous field will get used in process()
   pinMode( pin, INPUT );
+  _gpio[_gpio_count]._current     = digitalRead( pin );
+  _gpio[_gpio_count].value        = _gpio[_gpio_count]._current;
 
   _gpio_count++;
   _gpio_added = true;
@@ -96,15 +100,13 @@ boolean digital::is_empty( ) {
 }
 
 
-TO BE CONTINUED
-
 
 /*
  * Module network startup procedure (MQTT)
  */
 bool digital::start( senso *sensocampus ) {
 
-    log_info(F("\n[airquality] starting module ..."));
+    log_info(F("\n[digital] starting module ..."));
     // initialize module's publish and subscribe topics
     snprintf( pubTopic, sizeof(pubTopic), "%s/%s", sensocampus->getBaseTopic(), MQTT_MODULE_NAME);
     snprintf( subTopic, sizeof(subTopic), "%s/%s", pubTopic, "command" );
@@ -116,8 +118,8 @@ bool digital::start( senso *sensocampus ) {
 /*
  * Handler for subscribed messages
  */
-void airquality::handle_msg( JsonObject root ) {
-  log_info(F("\n[airquality] received COMMAND to process ...")); log_flush();
+void digital::handle_msg( JsonObject root ) {
+  log_info(F("\n[digital] received COMMAND to process ...")); log_flush();
   
   const char *_key_order = NULL;    // current 'order'
   int _key_value;                   // current 'value'
@@ -157,15 +159,18 @@ void airquality::handle_msg( JsonObject root ) {
     }
 
     // unknown key ?!?!
-    log_error(F("\n[airquality][callback] unknown key: "));log_debug((const char*)(it->key().c_str())); log_flush();
+    log_error(F("\n[digital][callback] unknown key: "));log_debug((const char*)(it->key().c_str())); log_flush();
   }
 }
 
 
+
 /*
  * process module's activites
+ * [aug.21] unlike others sensors, digital sensor values are sent immediately
+ * according to their front type, coolDown and lastTX own value
  */
-bool airquality::process( void ) {
+bool digital::process( void ) {
 
   bool _ret = false;
   
@@ -177,6 +182,8 @@ bool airquality::process( void ) {
 
   /* sensors internal processing */
   _process_sensors();
+
+TO BE CONTINUED
 
   // reached time to transmit ?
   if( !isTXtime() ) return _ret;
@@ -356,17 +363,35 @@ boolean airquality::loadSensoConfig( senso *sp ) {
  */
 
 /*
- * sensors internal processing
+ * digital inputs internal processing
  * this function is called every lopp() call and leverages
  * the needs for (e.g) continuous integration.
  */
-void airquality::_process_sensors( void ) {
-  // process all valid sensors
-  for( uint8_t cur_sensor=0; cur_sensor<_sensors_count; cur_sensor++ ) {
-    _sensor[cur_sensor]->process();
+void digital::_process_sensors( void ) {
+  // process all digital inputs
+  for( uint8_t i=0; i < _gpio_count; i++ ) {
+    bool _xor, _new_gpio_value;
+    // first, save previous value
+    _gpio[i]._previous  = _gpio[i]._current;
+    // then read actual value
+    _gpio[i]._current = digitalRead( _gpio[i].pin );
+    // does pin value changed over last acquisition ?
+    _xor = _gpio[i]._current ^ _gpio[i]._previous;
+    /* Now let's compute new official digital input value:
+     * pin ought to get stable over two consecutives measure ...
+     * ==> hence if xor=1, we keep the previous official (stable) value, otherwise
+     * the current value WILL become the new official one.
+     */
+    _new_gpio_value = (_gpio[i].value & _xor) | (_gpio[i]._current & ~_xor);
+    // did the new official digital inputs changed from previous one ?
+    _xor = _new_gpio_value ^ _gpio[i].value;
+
+TO BE CONTINUED
+
   }
 }
 
+TO BE CONTINUED
 
 /*
  * send all sensors' values
@@ -445,31 +470,8 @@ bool airquality::_processOrder( const char *order, int *value ) {
       return sendmsg( root );
     }
   }
-  
-  {
-    const char *_order = PSTR("acquire");
-    if( strncmp_P(order, _order, strlen_P(_order))==0 ) {
-      // required to send values ... so publishing while in callback :)
-      return _sendValues();
-    }
-  }
 
-  {
-    const char *_order = PSTR("frequency");
-    if( strncmp_P(order, _order, strlen_P(_order))==0 ) {
-      if( value ) {
-        setFrequency( (uint16_t)(*value), AIRQUALITY_MIN_FREQUENCY, AIRQUALITY_MAX_FREQUENCY );
-        StaticJsonDocument<DATA_JSON_SIZE> _doc;
-        JsonObject root = _doc.to<JsonObject>();
-        status( root );
-        sendmsg(root);
-        return saveConfig();
-      }
-      else return false;
-    }
-  }
-
-  log_error(F("\n[airquality][callback] unknown order: ")); log_debug(order); log_flush();
+  log_error(F("\n[digital][callback] unknown order: ")); log_debug(order); log_flush();
   return false;
 }
 

@@ -47,7 +47,7 @@ class modulesMgt {
     bool add( base * );             // add a module to the list
     uint8_t count( void );          // send back number of registered modules
     bool processAll( void );        // process all modules
-    bool startAll( senso * ); // start all modules
+    bool startAll( senso * );       // start all modules
     bool stopAll( void );           // stop all modules
     
   private:

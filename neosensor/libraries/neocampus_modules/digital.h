@@ -69,7 +69,7 @@ class digital : public base {
     digital();
 
     // add a gpio
-    boolean add_gpio( uint8_t pin, digitalInputType_t type, digitalFrontDetect_t front = digitalFrontDetect_t::both, uint16_t cooldown = 0, bool mqttDisabled = false );
+    boolean add_gpio( uint8_t pin, digitalInputType_t type, digitalFrontDetect_t front = digitalFrontDetect_t::both, uint16_t coolDown = 0, bool mqttDisabled = false );
     boolean is_empty();
 
     // MQTT

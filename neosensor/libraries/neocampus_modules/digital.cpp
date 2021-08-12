@@ -63,40 +63,26 @@ digital::digital(): base()
 /*
  * add_device method
  */
-boolean digital::add_gpio( uint8_t pin, digitalInputType_t type, digitalFrontDetect_t front = digitalFrontDetect_t::both, uint16_t cooldown = 0, bool mqttDisabled = false );
+boolean digital::add_gpio( uint8_t pin, digitalInputType_t type, digitalFrontDetect_t front = digitalFrontDetect_t::both, uint16_t coolDown = 0, bool mqttDisabled = false );
   
   if( pin == INVALID_GPIO ) return false;
   if( _gpio_count>=_MAX_GPIOS ) return false;
 
   bool _gpio_added=false;
 
-TO BE CONTINUED
+  _gpio[_gpio_count].pin          = pin;
+  _gpio[_gpio_count].front        = front;
+  _gpio[_gpio_count].type         = type;
+  _gpio[_gpio_count].coolDown     = coolDown;
+  _gpio[_gpio_count].mqttDisabled = mqttDisabled;
 
-  /*
-   * check for XXXX
-   * TODO: add auto-detect for some air quality sensors !
-   *
-   * The following was left as an example:
-   * 
-  if( TSL2561::is_device( adr ) == true ) {
-    TSL2561 *cur_sensor = new TSL2561();
-    if( cur_sensor->begin( adr ) != true ) {
-      log_debug(F("\n[airquality] ###ERROR at TSL2561 startup ... removing instance ..."));log_flush();
-      free(cur_sensor);
-      cur_sensor = NULL;
-    }
-    else {
-      // TODO: set auto_gain ?
-      cur_sensor->powerOFF();
-      _sensor[_sensors_count++] = cur_sensor;
-      _sensor_added = true;
-    }
-  }
-   */
-  // add check for additional device here
+  pinMode( pin, INPUT );
+
+  _gpio_count++;
+  _gpio_added = true;
 
   // summary
-  if( !_sensor_added ) return false;
+  if( !_gpio_added ) return false;
 
   // everything is ok :)
   return true;
@@ -104,21 +90,19 @@ TO BE CONTINUED
 
 
 
-// TODO: boolean airquality::add_sensor( JsonObject obj ) {
-
-
-
 // check if at least one sensor exist
-boolean airquality::is_empty( ) {
-  return ( _sensors_count==0 ? true : false );
+boolean digital::is_empty( ) {
+  return ( _gpio_count==0 ? true : false );
 }
 
+
+TO BE CONTINUED
 
 
 /*
  * Module network startup procedure (MQTT)
  */
-bool airquality::start( senso *sensocampus ) {
+bool digital::start( senso *sensocampus ) {
 
     log_info(F("\n[airquality] starting module ..."));
     // initialize module's publish and subscribe topics

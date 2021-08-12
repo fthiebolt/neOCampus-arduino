@@ -25,6 +25,7 @@
  * - as the number of modules is increasing, implement a list of modules in the setup()
  * 
  * ---
+ * F.Thiebolt   aug.21  added digital inputs support (e;g PIR sensor)
  * F.Thiebolt   aug.20  initial port from neOSensor based on ESP8266
  *                      added esp32 adc calibration support
  *                      setupNTP called AFTER network setup
@@ -129,6 +130,7 @@ U8X8_SSD1306_128X64_NONAME_SW_I2C u8x8(/* clock=*/ SCL, /* data=*/ SDA, /* reset
 #include "noise.h"
 #include "neoclock.h"
 #include "airquality.h"
+#include "digital.h"
 
 // modules management
 #include "modulesMgt.h"
@@ -214,6 +216,10 @@ neoclock *clockModule               = nullptr;
 
 // airquality class module
 airquality *airqualityModule        = nullptr;
+
+// airquality class module
+digital *digitalModule              = nullptr;
+
 
 
 // time server related
@@ -582,11 +588,7 @@ void processWIFIparameters( wifiParametersMgt *wp=nullptr ) {
     
     // allocate display with TM1637 7 segment driver
     clockModule = new neoclock();
-    clockModule->add_display( NEOCLOCK_TM1637 );
-
-
-    // TODO: add local callback for getting luminosity, temperature, presence
-    
+    clockModule->add_display( NEOCLOCK_TM1637 );    
   }
   else if( !wp->isEnabled7segTM1637() and clockModule ) {
     log_info(F("\n[wifiParams] removing 7 segments neoclock (TM1637 driven) ...")); log_flush();
@@ -599,15 +601,14 @@ void processWIFIparameters( wifiParametersMgt *wp=nullptr ) {
  
   //
   // PIR sensor
-  if( wp->isEnabledPIR() ) {
-    log_error(F("\n[wifiParams] PIR sensor is not yet available ... stay tuned ;)")); log_flush();
-
-
-
-    // TODO: activate PIR sensor
-
-
+  if( wp->isEnabledPIR() and !digitalModule ) {
+    log_info(F("\n[wifiParams] start PIR sensor ...")); log_flush();
+    
+    // allocate digital module
+    digitalModule = new digital();
+    digitalModule->add_gpio( PIR_SENSOR, digitalInputType_t::presence, digitalFrontDetect_t::rising, 60 );  // 60s cooldown
   }
+
 
   /*
    * Add processing for additional options here !
@@ -882,6 +883,8 @@ void setup() {
       noiseModule       = new noise( NOISE_DETECT, &noiseDetectISR );
     #endif
     airqualityModule    = new airquality();
+    // [aug.21] digitalModule may get already instantiated through WiFiParameters management
+    if( !digitalModule ) digitalModule = new digitalModule();
     // add additional modules initialization here
   }
 
@@ -1040,6 +1043,19 @@ void setup() {
       log_debug(F("\n# either airquality module is empty or we've not been able to add it to the list of modules ... removing instance ..."));log_flush();
       free(airqualityModule);
       airqualityModule = NULL;
+    }
+  }
+
+
+  // check if digital module is ok
+  if( digitalModule ) {
+    // [aug.21] load an eventual sensOCampus configuration
+    digitalModule->loadSensoConfig( &sensocampus );
+
+    if( digitalModule->is_empty()==true or not modulesList.add(digitalModule) ) {
+      log_debug(F("\n# either digital module is empty or we've not been able to add it to the list of modules ... removing instance ..."));log_flush();
+      free(digitalModule);
+      digitalModule = nullptr;
     }
   }
 

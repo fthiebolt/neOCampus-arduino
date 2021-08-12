@@ -1,0 +1,103 @@
+/*
+ * neOCampus operation
+ * 
+ * Digital module to manage all kind of digital inputs/outputs.
+ * Unlike others module, this one does not feature automatic sending
+ * of sensors' data on a time interval basis
+ * 
+ * F.Thiebolt   Aug.21  initial release
+ * 
+ */
+
+
+#ifndef _DIGITAL_H_
+#define _DIGITAL_H_
+
+/*
+ * Includes
+ */
+
+#include <Arduino.h>
+
+// include base for all modules
+#include "base.h"
+
+// chips drivers
+//#include "driver_gpio"
+
+
+
+
+/*
+ * Definitions
+ */
+#define _MAX_GPIOS    8   // maximum number of managed GPIOs
+
+// Types of connected devices
+enum class digitalInputType_t : uint8_t {
+  undefined,
+  presence,               // PIR sensors
+  on_off                  // switches
+};
+
+// Fronts detection delcaration
+enum class digitalFrontDetect_t : int8_t {
+  both            = -1,   // both falling and rising edges
+  falling         = 0,    // only falling edges (i.e 1 --> 0)
+  rising                  // only rising edges (i.e 0 --> 1)
+};
+
+// digital_gpio typedef
+typedef struct {
+  uint8_t   pin;
+  digitalInputType_t    type;
+  digitalFrontDetect_t  front;
+  bool      _current;
+  bool      _previous;
+  bool      value;        // official value
+  uint16_t  coolDown;
+  bool      mqttDisabled;
+} digitalGPIO_t;
+
+
+
+/*
+ * Class
+ */
+class digital : public base {
+  public:
+    digital();
+
+    // add a gpio
+    boolean add_gpio( uint8_t pin, digitalInputType_t type, digitalFrontDetect_t front = digitalFrontDetect_t::both, uint16_t cooldown = 0, bool mqttDisabled = false );
+    boolean is_empty();
+
+    // MQTT
+    bool start( senso * );
+    bool process( void );     // process own module's activities
+
+    void handle_msg( JsonObject );
+
+    void status( JsonObject );
+    
+    // Module's config
+    bool saveConfig( void );
+    bool loadConfig( void );            // load an eventual module'specific config file
+    boolean loadSensoConfig( senso * ); // sensOCampus config to load (if any)
+
+  private:
+    // array of GPIOs
+    digitalGPIO_t *_gpio[_MAX_GPIOS];
+    uint8_t _gpio_count;    // current number of registered digital gpios
+
+    /*
+     * private membre functions
+     */
+    boolean _loadConfig( JsonObject );
+    boolean _processOrder( const char *, int * );   // an order to process with optional value
+    boolean _sendValues( void );                    // send all sensors' values
+    void _process_sensors( void );                  // sensors internal processing (optional)
+};
+
+
+#endif /* _DIGITAL_H_ */

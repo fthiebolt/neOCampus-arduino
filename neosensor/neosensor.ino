@@ -12,15 +12,14 @@
  * NOTES:
  * - you need to 'deploy' our boards definitions (run the deploy.sh script)
  * - select your board from the Arduino IDE boards menu (located end of list)
- * - NO MORE NEED TO PATCH standard libs ... we now have our own defines !!! :)
  * - a compilation flag tells which bord it is (i.e NEOSENSOR_AIRQUALITY)
  * - as of aug.20, CONFIG_LWIP_MAX_ACTIVE_TCP=16
  * 
  * ---
  * TODO:
+ * - check pin as output (HIGH), set mode input+read than switch back to output: still HIGH ?
  * - check sntp!=IPADDR_ANY works with ESP8266 (line 342)
  * - remove DISABLE_SSL compilation flag
- * - MQTT client --> have a look to https://github.com/xluthi/pulse_counter_esp8266
  * - test OTA feature
  * - as the number of modules is increasing, implement a list of modules in the setup()
  * 
@@ -257,7 +256,7 @@ void setupSerial( void ) {
 
 
 // ---
-// Setup system led (mostly led2 on ESP8266) i.e blud led on ESP12E/F near antenna
+// Setup system led (mostly led2 on ESP8266) i.e blue led on ESP12E/F near antenna
 // we then use serial link1 used to either core debugging or just to blink led2
 void setupSysLed( void ) {
 #if defined(ESP8266) && defined(SYS_LED)
@@ -883,8 +882,21 @@ void setup() {
       noiseModule       = new noise( NOISE_DETECT, &noiseDetectISR );
     #endif
     airqualityModule    = new airquality();
+
     // [aug.21] digitalModule may get already instantiated through WiFiParameters management
     if( !digitalModule ) digitalModule = new digitalModule();
+    // add switches
+    #ifdef INCR_SW
+    digitalModule->add_gpio( INCR_SW, digitalInputType_t::on_off, digitalFrontDetect_t::none );  // none ==> no MQTT sending
+    #endif
+    #ifdef DECR_SW
+    digitalModule->add_gpio( DECR_SW, digitalInputType_t::on_off, digitalFrontDetect_t::none );  // none ==> no MQTT sending
+    #endif
+    #ifdef CLEAR_SW
+    // WARNING: CLEAR_SW & LED share the same pin (setupLED clled with disable earlier, ok)
+    digitalModule->add_gpio( CLEAR_SW, digitalInputType_t::on_off, digitalFrontDetect_t::none );  // none ==> no MQTT sending
+    #endif
+
     // add additional modules initialization here
   }
 

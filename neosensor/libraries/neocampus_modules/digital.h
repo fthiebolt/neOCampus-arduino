@@ -42,22 +42,23 @@ enum class digitalInputType_t : uint8_t {
 
 // Fronts detection delcaration
 enum class digitalFrontDetect_t : int8_t {
-  both            = -1,   // both falling and rising edges
+  none            = -1,
   falling         = 0,    // only falling edges (i.e 1 --> 0)
-  rising                  // only rising edges (i.e 0 --> 1)
+  rising,                 // only rising edges (i.e 0 --> 1)
+  both                    // both falling and rising edges
 };
 
 // digital_gpio typedef
 typedef struct {
-  uint8_t   pin;
-  digitalInputType_t    type;
-  digitalFrontDetect_t  front;
+  uint8_t   pin;          // pin number
+  digitalInputType_t    type;           // type of sensor (e.g presence, on_off...)
+  digitalFrontDetect_t  front;          // kind of fronts to detect
+  bool      _trigger;     // detected front according to the 'front' field and the coolDown/_lastTX value
   bool      _current;
   bool      _previous;
   bool      value;        // official value
   uint16_t  coolDown;     // seconds to wait between two consecutives events
   unsigned long _lastTX;  // elapsed ms since last message sent
-  bool      mqttDisabled;
 } digitalGPIO_t;
 
 
@@ -70,7 +71,7 @@ class digital : public base {
     digital();
 
     // add a gpio
-    boolean add_gpio( uint8_t pin, digitalInputType_t type, digitalFrontDetect_t front = digitalFrontDetect_t::both, uint16_t coolDown = 0, bool mqttDisabled = false );
+    boolean add_gpio( uint8_t pin, digitalInputType_t type, digitalFrontDetect_t front = digitalFrontDetect_t::both, uint16_t coolDown = 0 );
     boolean is_empty();
 
     // MQTT
@@ -91,8 +92,11 @@ class digital : public base {
     digitalGPIO_t *_gpio[_MAX_GPIOS];
     uint8_t _gpio_count;    // current number of registered digital gpios
 
+    // flag to specifiy that at least one digital input trigger has been activated
+    boolean _trigger;
+
     /*
-     * private membre functions
+     * private member functions
      */
     boolean _loadConfig( JsonObject );
     boolean _processOrder( const char *, int * );   // an order to process with optional value

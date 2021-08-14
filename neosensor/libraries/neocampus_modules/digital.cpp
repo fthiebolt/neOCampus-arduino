@@ -43,16 +43,19 @@ digital::digital(): base()
   for( uint8_t i=0; i < _MAX_GPIOS; i++ ) {
     _gpio[i].pin          = INVALID_GPIO;
     _gpio[i].front        = digitalFrontDetect_t::both;
-    _gpio[i].type         = digitalInoutType_t::undefined;
+    _gpio[i].type         = digitalInputType_t::undefined;
+    _gpio[i]._trigger     = false;
     _gpio[i]._current     = false;
     _gpio[i]._previous    = false;
     _gpio[i].value        = false;
     _gpio[i].coolDown     = 0;
-    _gpio[i].mqttDisabled = false;
   }
 
   // initialize total count of registered GPIOs
-  _gpioCount = 0;
+  _gpio_count = 0;
+
+  // reset module trigger
+  _trigger = false;
 
   // load json config file (if any)
   loadConfig();
@@ -63,7 +66,7 @@ digital::digital(): base()
 /*
  * add_device method
  */
-boolean digital::add_gpio( uint8_t pin, digitalInputType_t type, digitalFrontDetect_t front = digitalFrontDetect_t::both, uint16_t coolDown = 0, bool mqttDisabled = false );
+boolean digital::add_gpio( uint8_t pin, digitalInputType_t type, digitalFrontDetect_t front, uint16_t coolDown ) {
   
   if( pin == INVALID_GPIO ) return false;
   if( _gpio_count>=_MAX_GPIOS ) return false;
@@ -71,11 +74,11 @@ boolean digital::add_gpio( uint8_t pin, digitalInputType_t type, digitalFrontDet
   bool _gpio_added=false;
 
   _gpio[_gpio_count].pin          = pin;
-  _gpio[_gpio_count].front        = front;
   _gpio[_gpio_count].type         = type;
+  _gpio[_gpio_count].front        = front;
+  _gpio[_gpio_count]._trigger     = digitalFrontDetect_t::none; // kind of event detected
   _gpio[_gpio_count].coolDown     = coolDown;
-  _gpio[_gpio_count]._lastTX      = 0;
-  _gpio[_gpio_count].mqttDisabled = mqttDisabled;
+  _gpio[_gpio_count]._lastTX      = millis() - ((unsigned long)coolDown*1000UL);
 
   // initialize values. _previous field will get used in process()
   pinMode( pin, INPUT );
@@ -183,16 +186,16 @@ bool digital::process( void ) {
   /* sensors internal processing */
   _process_sensors();
 
-TO BE CONTINUED
-
+  // [aug.21] TXtime is not based on timer but upon digital inputs events
   // reached time to transmit ?
-  if( !isTXtime() ) return _ret;
+  //if( !isTXtime() ) return _ret;
+  if( !_trigger ) return _ret;
 
   /*
    * Time to send a new message
    */
   // check that at least one sensor is available
-  if( _sensors_count==0 ) return false;
+  if( _gpio_count==0 ) return false;
   
   // send all sensors' values
   return _sendValues();
@@ -368,12 +371,14 @@ boolean airquality::loadSensoConfig( senso *sp ) {
  * the needs for (e.g) continuous integration.
  */
 void digital::_process_sensors( void ) {
+  unsigned long curTime = millis();
   // process all digital inputs
   for( uint8_t i=0; i < _gpio_count; i++ ) {
-    bool _xor, _new_gpio_value;
+    bool _xor, _value;
     // first, save previous value
     _gpio[i]._previous  = _gpio[i]._current;
     // then read actual value
+    pinMode( _gpio[i].pin, INPUT );
     _gpio[i]._current = digitalRead( _gpio[i].pin );
     // does pin value changed over last acquisition ?
     _xor = _gpio[i]._current ^ _gpio[i]._previous;
@@ -382,16 +387,29 @@ void digital::_process_sensors( void ) {
      * ==> hence if xor=1, we keep the previous official (stable) value, otherwise
      * the current value WILL become the new official one.
      */
-    _new_gpio_value = (_gpio[i].value & _xor) | (_gpio[i]._current & ~_xor);
+    _value = (_gpio[i].value & _xor) | (_gpio[i]._current & ~_xor);
     // did the new official digital inputs changed from previous one ?
-    _xor = _new_gpio_value ^ _gpio[i].value;
+    if( _value ^ _gpio[i].value ) {
+      bool _fdetect, _isTXtime;
+      // ok, a change has been officially detected ...
+      // but do we need to declare a trigger ?
+      _fdetect =  (_value && _gpio[i].front==digitalFrontDetect_t::rising) ||
+                  (~_value && _gpio[i].front==digitalFrontDetect_t::falling) ||
+                  _gpio[i].front==digitalFrontDetect_t::both;
+      // time to transmit ?
+      _isTXtime = (curTime - _gpio[i]._lastTX) >= ((unsigned long)_gpio[i].coolDown)*1000UL;
 
-TO BE CONTINUED
-
+      if( _fdetect && _isTXtime ) {
+        _gpio[i]._trigger = true;
+        _trigger = true;  // notify module's trigger
+      }
+      // ... and finally save the new official value :)
+      _gpio[i].value = _value;
+    }
   }
 }
 
-TO BE CONTINUED
+
 
 /*
  * send all sensors' values

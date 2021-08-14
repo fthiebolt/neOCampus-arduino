@@ -447,10 +447,20 @@ boolean noise::loadSensoConfig( senso *sp ) {
  * LED ON / OFF
  */
 void inline noise::_ledON( void ) {
-  if( _pinLed != INVALID_GPIO ) digitalWrite( _pinLed, HIGH );
+  if( _pinLed != INVALID_GPIO ) {
+    // [aug.21] NOISE_LED is shared with LED and CLEAR_SW that may change its mode
+    // hence we ensure that mode is output ;)
+    pinMode( _pinLed, OUTPUT );
+    digitalWrite( _pinLed, HIGH );
+  }
 }
 void inline noise::_ledOFF( void ) {
-  if( _pinLed != INVALID_GPIO ) digitalWrite( _pinLed, LOW );  
+  if( _pinLed != INVALID_GPIO ) {
+    // [aug.21] NOISE_LED is shared with LED and CLEAR_SW that may change its mode
+    // hence we ensure that mode is output ;)
+    pinMode( _pinLed, OUTPUT );
+    digitalWrite( _pinLed, LOW );
+  }
 }
 
 

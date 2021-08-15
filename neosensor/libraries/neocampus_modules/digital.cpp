@@ -65,6 +65,7 @@ digital::digital(): base()
 
 /*
  * add_device method
+ * Note: specifying front as 'none' will not send their value through MQTT
  */
 boolean digital::add_gpio( uint8_t pin, digitalInputType_t type, digitalFrontDetect_t front, uint16_t coolDown ) {
   
@@ -189,6 +190,9 @@ bool digital::process( void ) {
   // [aug.21] TXtime is not based on timer but upon digital inputs events
   // reached time to transmit ?
   //if( !isTXtime() ) return _ret;
+
+  // [aug.21] if global trigger has been activated, we'll parse all inputs
+  // to check for individual triggers
   if( !_trigger ) return _ret;
 
   /*
@@ -205,7 +209,7 @@ bool digital::process( void ) {
 /*
  * Status report sending
  */
-void airquality::status( JsonObject root ) {
+void digital::status( JsonObject root ) {
   
   // add base class status
   base::status( root );
@@ -213,6 +217,9 @@ void airquality::status( JsonObject root ) {
   /*
    * TODO: add list of sensors IDs
    */
+
+TO BE CONTINUED: add list of registered inputs with front detection and cooldown value
+
 }
 
 
@@ -388,8 +395,8 @@ void digital::_process_sensors( void ) {
      * the current value WILL become the new official one.
      */
     _value = (_gpio[i].value & _xor) | (_gpio[i]._current & ~_xor);
-    // did the new official digital inputs changed from previous one ?
-    if( _value ^ _gpio[i].value ) {
+    // if the new official digital inputs changed from previous one AND trigger is not already active
+    if( (_value ^ _gpio[i].value) && not(_gpio[i]._trigger) ) {
       bool _fdetect, _isTXtime;
       // ok, a change has been officially detected ...
       // but do we need to declare a trigger ?
@@ -401,7 +408,7 @@ void digital::_process_sensors( void ) {
 
       if( _fdetect && _isTXtime ) {
         _gpio[i]._trigger = true;
-        _trigger = true;  // notify module's trigger
+        _trigger = true;  // notify global module's trigger
       }
       // ... and finally save the new official value :)
       _gpio[i].value = _value;
@@ -414,40 +421,46 @@ void digital::_process_sensors( void ) {
 /*
  * send all sensors' values
  */
-boolean airquality::_sendValues( void ) {
+boolean digital::_sendValues( void ) {
   /* grab and send values from all sensors
    * each sensor will result in a MQTT message
    */
-  boolean _TXoccured = false;
+  bool _TXoccured = false;
 
-  for( uint8_t cur_sensor=0; cur_sensor<_sensors_count; cur_sensor++ ) {
+  for( uint8_t i=0; i<_gpio_count; i++ ) {
+
+    if( not _gpio[i]._trigger ) continue;
 
     StaticJsonDocument<DATA_JSON_SIZE> _doc;
     JsonObject root = _doc.to<JsonObject>();
 
     // retrieve data from current sensor
-    float value;
-    if( !_sensor[cur_sensor]->acquire(&value) ) {
-      log_warning(F("\n[airquality] unable to retrieve data from sensor: "));
-      log_warning(_sensor[cur_sensor]->subID()); log_flush();
-      continue;
+    bool _value = _gpio[i].value;
+    root[F("value")] = _value;
+    root[F("input")] = _gpio[i].pin;
+
+    if( _gpio[i].type == digitalInputType_t::presence ) { root[F("type")] = "presence"; }
+    else if( _gpio[i].type == digitalInputType_t::on_off ) { root[F("type")] = "on_off"; }
+    else if( _gpio[i].type == digitalInputType_t::open_close ) { root[F("type")] = "open_close"; }
+    else {
+      // last chance ...
+      log_warning(F("\n[digital] unsupported type :")); log_warning(_gpio[i].type,DEC); log_flush();
+      root[F("type")] = "unknown";
     }
-    root[F("value")] = serialized(String(value,FLOAT_RESOLUTION));   // [nov.20] force float encoding
-    //root[F("value")] = (float)( value );   // [may.20] force data as float (e.g ArduinoJson converts 20.0 to INT)
-                                                // this doesn't work since ArduinoJson converts to STRING withiout decimal!
-    root[F("value_units")] = _sensor[cur_sensor]->sensorUnits();
-    root[F("subID")] = _sensor[cur_sensor]->subID();
+    root[F("subID")] = String("gpio");  // fixed sudID field
 
     /*
     * send MQTT message
     */
     if( sendmsg(root) ) {
-      log_info(F("\n[airquality] successfully published msg :)")); log_flush();
+      log_debug(F("\n[digital] successfully published msg pin"));
+      log_debug(_gpio[i].pin,DEC); log_debug(F(" = ")); log_debug(_value,DEC); log_flush();
+      _gpio[i]._trigger = false;
       _TXoccured = true;
     }
     else {
       // we stop as soon as we've not been able to successfully send one message
-      log_error(F("\n[airquality] ERROR failure MQTT msg delivery :(")); log_flush();
+      log_error(F("\n[digital] ERROR failure MQTT msg delivery :(")); log_flush();
       return false;
     }
     
@@ -457,14 +470,19 @@ boolean airquality::_sendValues( void ) {
 
   /* do we need to postpone to next TX slot:
    * required when no data at all have been published
+   * [aug.21] useless for digital module ...
    */
   if( !_TXoccured ) {
-    /* DEBUG DEBUG DEBUG
-    log_debug(F("\n[airquality] postponed to next TX slot ...")); log_flush();
+    /* DEBUG DEBUG DEBUG */
+    log_debug(F("\n[digital] postponed to next TX slot ...")); log_flush();
     delay(100);
     #warning "remove me !!!"
-    */
+    
     cancelTXslot();
+  }
+  else {
+    // ... and cancel module's trigger
+  _ trigger = false;
   }
 
   return true;

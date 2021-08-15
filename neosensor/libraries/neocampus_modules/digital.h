@@ -3,7 +3,10 @@
  * 
  * Digital module to manage all kind of digital inputs/outputs.
  * Unlike others module, this one does not feature automatic sending
- * of sensors' data on a time interval basis
+ * of sensors' data on a time interval basis.
+ * 
+ * For switches inputs you don't want to send back through MQTT, just
+ * select the front detection type as 'none'.
  * 
  * F.Thiebolt   Aug.21  initial release
  * 
@@ -37,7 +40,8 @@
 enum class digitalInputType_t : uint8_t {
   undefined,
   presence,               // PIR sensors
-  on_off                  // switches
+  on_off,                 // switches, interrupteurs ...
+  open_close              // window, gate ...
 };
 
 // Fronts detection delcaration
@@ -92,7 +96,7 @@ class digital : public base {
     digitalGPIO_t *_gpio[_MAX_GPIOS];
     uint8_t _gpio_count;    // current number of registered digital gpios
 
-    // flag to specifiy that at least one digital input trigger has been activated
+    // module level flag to specifiy that at least one digital input trigger has been activated
     boolean _trigger;
 
     /*

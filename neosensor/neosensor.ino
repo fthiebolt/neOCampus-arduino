@@ -25,6 +25,8 @@
  * 
  * ---
  * F.Thiebolt   aug.21  added digital inputs support (e;g PIR sensor)
+ *                      added support for shared JSON document for data exchange 
+ *                      between modules
  * F.Thiebolt   aug.20  initial port from neOSensor based on ESP8266
  *                      added esp32 adc calibration support
  *                      setupNTP called AFTER network setup
@@ -97,6 +99,11 @@
   esp_adc_cal_characteristics_t *adc_chars  = new esp_adc_cal_characteristics_t;
 #endif /* ESP32 adcanced ADC */
 
+
+/*
+ * [aug.21] shared JSON document to allow modules to exchange data.
+ * ... mainly used by display module ;)
+ */
 
 
 

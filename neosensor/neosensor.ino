@@ -887,7 +887,7 @@ void setup() {
     if( !digitalModule ) digitalModule = new digital();
     // add switches
     #ifdef INCR_SW
-    digitalModule->add_gpio( INCR_SW, digitalInputType_t::on_off, digitalFrontDetect_t::rising, 10 );  // none ==> no MQTT sending
+    digitalModule->add_gpio( INCR_SW, digitalInputType_t::on_off, digitalFrontDetect_t::none );  // none ==> no MQTT sending
     #endif
     #ifdef DECR_SW
     digitalModule->add_gpio( DECR_SW, digitalInputType_t::on_off, digitalFrontDetect_t::none );  // none ==> no MQTT sending

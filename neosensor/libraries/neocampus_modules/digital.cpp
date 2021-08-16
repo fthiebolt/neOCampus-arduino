@@ -218,11 +218,11 @@ void digital::status( JsonObject root ) {
    * TODO: add list of sensors IDs
    */
 
-TO BE CONTINUED: add list of registered inputs with front detection and cooldown value
+//TO BE CONTINUED: add list of registered inputs with front detection and cooldown value
 
 }
 
-
+#if 0
 /*
  * load an eventual module'specific config file
  */
@@ -278,13 +278,14 @@ bool airquality::saveConfig( void ) {
   // call parent save
   return base::saveConfig( MODULE_CONFIG_FILE(MQTT_MODULE_NAME), root );
 }
-
+#endif /* 0 */
 
 /*
  * Module's sensOCampus config to load (if any)
  */
-boolean airquality::loadSensoConfig( senso *sp ) {
-
+boolean digital::loadSensoConfig( senso *sp ) {
+  return false;
+#if 0
   boolean _sensor_added = false;
 
   // [aug.20] ought to be >= of senso config Json ?!?!
@@ -365,6 +366,7 @@ boolean airquality::loadSensoConfig( senso *sp ) {
   loadConfig();
 
   return _sensor_added;
+#endif /* 0 */
 }
 
 
@@ -378,7 +380,9 @@ boolean airquality::loadSensoConfig( senso *sp ) {
  * the needs for (e.g) continuous integration.
  */
 void digital::_process_sensors( void ) {
+    // same time for all inputs ...
   unsigned long curTime = millis();
+
   // process all digital inputs
   for( uint8_t i=0; i < _gpio_count; i++ ) {
     bool _xor, _value;
@@ -492,7 +496,7 @@ boolean digital::_sendValues( void ) {
 /*
  * orders processing ...
  */
-bool airquality::_processOrder( const char *order, int *value ) {
+bool digital::_processOrder( const char *order, int *value ) {
 
   if( !order ) return false;
 
@@ -515,8 +519,9 @@ bool airquality::_processOrder( const char *order, int *value ) {
 /*
  * low-level load JSON config
  */
-boolean airquality::_loadConfig( JsonObject root ) {
-  
+boolean digital::_loadConfig( JsonObject root ) {
+  return false;
+#if 0  
   // check for 'frequency' field
   if( root.containsKey(F("frequency")) ) {
     setFrequency( (uint16_t)(root[F("frequency")].as<unsigned int>()), AIRQUALITY_MIN_FREQUENCY, AIRQUALITY_MAX_FREQUENCY );
@@ -527,6 +532,7 @@ boolean airquality::_loadConfig( JsonObject root ) {
    */
   
   return true;
+#endif /* 0 */
 }
 
 /*

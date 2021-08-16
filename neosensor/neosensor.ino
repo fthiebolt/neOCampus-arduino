@@ -884,7 +884,7 @@ void setup() {
     airqualityModule    = new airquality();
 
     // [aug.21] digitalModule may get already instantiated through WiFiParameters management
-    if( !digitalModule ) digitalModule = new digitalModule();
+    if( !digitalModule ) digitalModule = new digital();
     // add switches
     #ifdef INCR_SW
     digitalModule->add_gpio( INCR_SW, digitalInputType_t::on_off, digitalFrontDetect_t::none );  // none ==> no MQTT sending

@@ -39,16 +39,8 @@
 // constructor
 digital::digital(): base() 
 {
-  // a bit useless but hey, it's only at initialization time ;)
   for( uint8_t i=0; i < _MAX_GPIOS; i++ ) {
-    _gpio[i].pin          = INVALID_GPIO;
-    _gpio[i].front        = digitalFrontDetect_t::both;
-    _gpio[i].type         = digitalInputType_t::undefined;
-    _gpio[i]._trigger     = false;
-    _gpio[i]._current     = false;
-    _gpio[i]._previous    = false;
-    _gpio[i].value        = false;
-    _gpio[i].coolDown     = 0;
+    _gpio[i] = nullptr;
   }
 
   // initialize total count of registered GPIOs
@@ -74,17 +66,24 @@ boolean digital::add_gpio( uint8_t pin, digitalInputType_t type, digitalFrontDet
 
   bool _gpio_added=false;
 
-  _gpio[_gpio_count].pin          = pin;
-  _gpio[_gpio_count].type         = type;
-  _gpio[_gpio_count].front        = front;
-  _gpio[_gpio_count]._trigger     = digitalFrontDetect_t::none; // kind of event detected
-  _gpio[_gpio_count].coolDown     = coolDown;
-  _gpio[_gpio_count]._lastTX      = millis() - ((unsigned long)coolDown*1000UL);
+  // allocate structure
+  _gpio[_gpio_count] = new digitalGPIO_t;
+  if( _gpio[_gpio_count] == nullptr ) {
+    log_error(F("\n[digital] unable to allocate digitalGPIO_t instance ?!?!")); log_flush();
+    return false;
+  }
+
+  _gpio[_gpio_count]->pin         = pin;
+  _gpio[_gpio_count]->type        = type;
+  _gpio[_gpio_count]->front       = front;
+  _gpio[_gpio_count]->_trigger    = false;
+  _gpio[_gpio_count]->coolDown    = coolDown;
+  _gpio[_gpio_count]->_lastTX     = millis() - ((unsigned long)coolDown*1000UL);
 
   // initialize values. _previous field will get used in process()
   pinMode( pin, INPUT );
-  _gpio[_gpio_count]._current     = digitalRead( pin );
-  _gpio[_gpio_count].value        = _gpio[_gpio_count]._current;
+  _gpio[_gpio_count]->_current    = digitalRead( pin );
+  _gpio[_gpio_count]->value       = _gpio[_gpio_count]->_current;
 
   _gpio_count++;
   _gpio_added = true;
@@ -222,12 +221,14 @@ void digital::status( JsonObject root ) {
 
 }
 
-#if 0
+
+
 /*
  * load an eventual module'specific config file
  */
-bool airquality::loadConfig( void ) {
-  
+bool digital::loadConfig( void ) {
+  return false;
+#if 0  
   if( ! SPIFFS.exists( MODULE_CONFIG_FILE(MQTT_MODULE_NAME) ) ) return false;
 
   File configFile = SPIFFS.open( MODULE_CONFIG_FILE(MQTT_MODULE_NAME), "r");
@@ -256,14 +257,16 @@ bool airquality::loadConfig( void ) {
 
   // parse and apply JSON config
   return _loadConfig( root.as<JsonObject>() );
+#endif /* 0 */
 }
 
 
 /*
  * save module'specific config file
  */
-bool airquality::saveConfig( void ) {
-  
+bool digital::saveConfig( void ) {
+  return false;
+#if 0
   // static JSON buffer
   StaticJsonDocument<CONFIG_JSON_SIZE> _doc;
   JsonObject root = _doc.to<JsonObject>();
@@ -277,8 +280,10 @@ bool airquality::saveConfig( void ) {
   
   // call parent save
   return base::saveConfig( MODULE_CONFIG_FILE(MQTT_MODULE_NAME), root );
-}
 #endif /* 0 */
+}
+
+
 
 /*
  * Module's sensOCampus config to load (if any)
@@ -385,37 +390,40 @@ void digital::_process_sensors( void ) {
 
   // process all digital inputs
   for( uint8_t i=0; i < _gpio_count; i++ ) {
+
+    if( _gpio[i]==nullptr || _gpio[i]->pin==INVALID_GPIO ) continue;
+
     bool _xor, _value;
     // first, save previous value
-    _gpio[i]._previous  = _gpio[i]._current;
+    _gpio[i]->_previous = _gpio[i]->_current;
     // then read actual value
-    pinMode( _gpio[i].pin, INPUT );
-    _gpio[i]._current = digitalRead( _gpio[i].pin );
+    pinMode( _gpio[i]->pin, INPUT );
+    _gpio[i]->_current = digitalRead( _gpio[i]->pin );
     // does pin value changed over last acquisition ?
-    _xor = _gpio[i]._current ^ _gpio[i]._previous;
+    _xor = _gpio[i]->_current ^ _gpio[i]->_previous;
     /* Now let's compute new official digital input value:
      * pin ought to get stable over two consecutives measure ...
      * ==> hence if xor=1, we keep the previous official (stable) value, otherwise
      * the current value WILL become the new official one.
      */
-    _value = (_gpio[i].value & _xor) | (_gpio[i]._current & ~_xor);
+    _value = (_gpio[i]->value & _xor) | (_gpio[i]->_current & ~_xor);
     // if the new official digital inputs changed from previous one AND trigger is not already active
-    if( (_value ^ _gpio[i].value) && not(_gpio[i]._trigger) ) {
+    if( (_value ^ _gpio[i]->value) && not(_gpio[i]->_trigger) ) {
       bool _fdetect, _isTXtime;
       // ok, a change has been officially detected ...
       // but do we need to declare a trigger ?
-      _fdetect =  (_value && _gpio[i].front==digitalFrontDetect_t::rising) ||
-                  (~_value && _gpio[i].front==digitalFrontDetect_t::falling) ||
-                  _gpio[i].front==digitalFrontDetect_t::both;
+      _fdetect =  (_value && _gpio[i]->front==digitalFrontDetect_t::rising) ||
+                  (~_value && _gpio[i]->front==digitalFrontDetect_t::falling) ||
+                  _gpio[i]->front==digitalFrontDetect_t::both;
       // time to transmit ?
-      _isTXtime = (curTime - _gpio[i]._lastTX) >= ((unsigned long)_gpio[i].coolDown)*1000UL;
+      _isTXtime = (curTime - _gpio[i]->_lastTX) >= ((unsigned long)_gpio[i]->coolDown)*1000UL;
 
       if( _fdetect && _isTXtime ) {
-        _gpio[i]._trigger = true;
+        _gpio[i]->_trigger = true;
         _trigger = true;  // notify global module's trigger
       }
       // ... and finally save the new official value :)
-      _gpio[i].value = _value;
+      _gpio[i]->value = _value;
     }
   }
 }
@@ -433,22 +441,22 @@ boolean digital::_sendValues( void ) {
 
   for( uint8_t i=0; i<_gpio_count; i++ ) {
 
-    if( not _gpio[i]._trigger ) continue;
+    if( _gpio[i]==nullptr || not _gpio[i]->_trigger ) continue;
 
     StaticJsonDocument<DATA_JSON_SIZE> _doc;
     JsonObject root = _doc.to<JsonObject>();
 
     // retrieve data from current sensor
-    bool _value = _gpio[i].value;
+    bool _value = _gpio[i]->value;
     root[F("value")] = _value;
-    root[F("input")] = _gpio[i].pin;
+    root[F("input")] = _gpio[i]->pin;
 
-    if( _gpio[i].type == digitalInputType_t::presence ) { root[F("type")] = "presence"; }
-    else if( _gpio[i].type == digitalInputType_t::on_off ) { root[F("type")] = "on_off"; }
-    else if( _gpio[i].type == digitalInputType_t::open_close ) { root[F("type")] = "open_close"; }
+    if( _gpio[i]->type == digitalInputType_t::presence ) { root[F("type")] = "presence"; }
+    else if( _gpio[i]->type == digitalInputType_t::on_off ) { root[F("type")] = "on_off"; }
+    else if( _gpio[i]->type == digitalInputType_t::open_close ) { root[F("type")] = "open_close"; }
     else {
       // last chance ...
-      log_warning(F("\n[digital] unsupported type :")); log_warning(_gpio[i].type,DEC); log_flush();
+      log_warning(F("\n[digital] unsupported type :")); log_warning((uint8_t)_gpio[i]->type,DEC); log_flush();
       root[F("type")] = "unknown";
     }
     root[F("subID")] = String("gpio");  // fixed sudID field
@@ -458,8 +466,8 @@ boolean digital::_sendValues( void ) {
     */
     if( sendmsg(root) ) {
       log_debug(F("\n[digital] successfully published msg pin"));
-      log_debug(_gpio[i].pin,DEC); log_debug(F(" = ")); log_debug(_value,DEC); log_flush();
-      _gpio[i]._trigger = false;
+      log_debug(_gpio[i]->pin,DEC); log_debug(F(" = ")); log_debug(_value,DEC); log_flush();
+      _gpio[i]->_trigger = false;
       _TXoccured = true;
     }
     else {
@@ -486,7 +494,7 @@ boolean digital::_sendValues( void ) {
   }
   else {
     // ... and cancel module's trigger
-  _ trigger = false;
+    _trigger = false;
   }
 
   return true;

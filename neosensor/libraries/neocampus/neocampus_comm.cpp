@@ -180,9 +180,7 @@ boolean comm::reConnect( void ) {
   
     if( mqttClient.connect( (char*)clientID.c_str(), _sensoClient->getUser(), _sensoClient->getPassword() ) ) {
       yield();
-      
-      bool _ret;
-      
+
       // success :)
       log_debug(F("\n\t[comm] connected :)"));
       
@@ -192,7 +190,7 @@ boolean comm::reConnect( void ) {
 #if 0
 TODO: subscriptions      
       // ... and resubscribe
-      _ret = mqttClient.subscribe( subTopic );
+      bool _ret = mqttClient.subscribe( subTopic );
       yield();
       if( _ret ) {
         log_debug(F("\n\t[comm] topic subscribed: ")); log_debug( subTopic ); log_flush();

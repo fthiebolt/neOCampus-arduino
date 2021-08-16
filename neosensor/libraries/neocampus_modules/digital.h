@@ -7,7 +7,11 @@
  * 
  * For switches inputs you don't want to send back through MQTT, just
  * select the front detection type as 'none'.
- * 
+ *
+ * ----------------------------------------------------------------------------
+ * Notes:
+ * ----------------------------------------------------------------------------
+ *
  * F.Thiebolt   Aug.21  initial release
  * 
  */

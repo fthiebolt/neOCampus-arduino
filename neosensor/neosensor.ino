@@ -104,6 +104,21 @@
  * [aug.21] shared JSON document to allow modules to exchange data.
  * ... mainly used by display module ;)
  */
+#define MODULES_SHARED_JSON_SIZE  512
+StaticJsonDocument<MODULES_SHARED_JSON_SIZE> sharedRoot;
+/*
+JsonArray temperature = doc.createNestedArray("temperature");
+temperature.add(23.57);
+temperature.add(21.6);
+doc["time"] = 1351824120;
+doc["hygrometrie"][0] = 48.75608;
+
+JsonObject device = doc.createNestedObject("device");
+device["modules"] = 8;
+device["freeheap"] = 32768;
+
+serializeJson(doc, output);
+*/
 
 
 

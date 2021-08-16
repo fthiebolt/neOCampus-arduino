@@ -46,6 +46,7 @@ extern "C" modulesMgt modulesList;
 #define COMMAND_JSON_SIZE       (JSON_OBJECT_SIZE(5))
 
 
+
 // constructor
 base::base( void ) {
   // unitID: generate 'auto_xxxx' identity
@@ -54,6 +55,7 @@ base::base( void ) {
   // call low-level base constructor
   _base();
 }
+
 
 // constructor with unitID field provided and optional (default to yes)
 // mac addess append to this identity
@@ -74,6 +76,13 @@ base::base( const char *identity ) {
   _base();
 }
 
+
+// destructor
+base::~base( void ) {
+  // nothing to do as we do not allocate any structure on our own
+}
+
+
 // low-level base constructor
 void base::_base( void ) {
   _lastTX = 0;
@@ -83,6 +92,7 @@ void base::_base( void ) {
   pubTopic[0] = '\0';
   subTopic[0] = '\0';
 }
+
 
 /*
  * Module network startup procedure (MQTT)

@@ -76,7 +76,11 @@ typedef struct {
  */
 class digital : public base {
   public:
-    digital();
+    // constructors
+    digital( void );
+
+    // destructor
+    ~digital( void );
 
     // add a gpio
     boolean add_gpio( uint8_t pin, digitalInputType_t type, digitalFrontDetect_t front = digitalFrontDetect_t::both, uint16_t coolDown = 0 );

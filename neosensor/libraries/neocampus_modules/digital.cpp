@@ -54,6 +54,18 @@ digital::digital(): base()
 }
 
 
+// destructor
+digital::~digital()
+{
+  for( uint8_t i=0; i < _MAX_GPIOS; i++ ) {
+    if( _gpio[i] == nullptr ) continue;
+    free(_gpio[i]);
+    _gpio[i] = nullptr;
+  }
+
+}
+
+
 
 /*
  * add_device method
@@ -85,11 +97,20 @@ boolean digital::add_gpio( uint8_t pin, digitalInputType_t type, digitalFrontDet
   _gpio[_gpio_count]->_current    = digitalRead( pin );
   _gpio[_gpio_count]->value       = _gpio[_gpio_count]->_current;
 
-  _gpio_count++;
   _gpio_added = true;
 
   // summary
-  if( !_gpio_added ) return false;
+  if( !_gpio_added ) {
+    free(_gpio[_gpio_count]);
+    _gpio[_gpio_count] = nullptr;
+    return false;
+  }
+  log_debug(F("\n[digital] added GPIO"));log_debug(_gpio[_gpio_count]->pin);
+  log_debug(F(" front="));log_debug((uint8_t)_gpio[_gpio_count]->front);
+  log_debug(F(" coolDown="));log_debug(_gpio[_gpio_count]->coolDown,DEC);
+  log_flush();
+
+  _gpio_count++;
 
   // everything is ok :)
   return true;
@@ -412,9 +433,15 @@ void digital::_process_sensors( void ) {
       bool _fdetect, _isTXtime;
       // ok, a change has been officially detected ...
       // but do we need to declare a trigger ?
-      _fdetect =  (_value && _gpio[i]->front==digitalFrontDetect_t::rising) ||
-                  (~_value && _gpio[i]->front==digitalFrontDetect_t::falling) ||
+      _fdetect =  (_value==true && _gpio[i]->front==digitalFrontDetect_t::rising) ||
+                  (_value==false && _gpio[i]->front==digitalFrontDetect_t::falling) ||
                   _gpio[i]->front==digitalFrontDetect_t::both;
+
+      log_debug(F("\n[digital] event GPIO"));log_debug(_gpio[i]->pin);
+      log_debug(F("="));log_debug(_value);
+      log_debug(F(" _fdetect="));log_debug(_fdetect);
+      log_flush();
+
       // time to transmit ?
       _isTXtime = (curTime - _gpio[i]->_lastTX) >= ((unsigned long)_gpio[i]->coolDown)*1000UL;
 
@@ -468,6 +495,7 @@ boolean digital::_sendValues( void ) {
       log_debug(F("\n[digital] successfully published msg pin"));
       log_debug(_gpio[i]->pin,DEC); log_debug(F(" = ")); log_debug(_value,DEC); log_flush();
       _gpio[i]->_trigger = false;
+      _gpio[i]->_lastTX = millis();
       _TXoccured = true;
     }
     else {

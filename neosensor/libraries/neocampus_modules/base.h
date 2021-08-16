@@ -57,6 +57,9 @@ class base {
     base( void );           // base definition with unitID as 'auto_xxxx'
     base( const char* );    // base definition with unitID 'provided'
 
+    // destructor
+    ~base( void );
+
     // MQTT
     virtual bool start( senso * );
     virtual bool process( void );

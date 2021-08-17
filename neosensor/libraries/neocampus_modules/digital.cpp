@@ -37,8 +37,24 @@
 
 
 // constructor
-digital::digital(): base() 
-{
+digital::digital( void ): base() {
+  // call low-level constructor
+  _digital();
+}
+
+// constructor with reference to JSON global shared document
+digital::digital( JsonDocument &sharedRoot ): base() {
+  // create module's JSON structure to hold all of our data
+  // [aug.21] we create a dictionnary
+  variant = sharedRoot.createNestedObject(MQTT_MODULE_NAME);
+
+  // call low-level constructor
+  _digital();
+}
+
+// low-level constructor
+void digital::_digital( void ) {
+
   for( uint8_t i=0; i < _MAX_GPIOS; i++ ) {
     _gpio[i] = nullptr;
   }
@@ -442,6 +458,11 @@ void digital::_process_sensors( void ) {
       log_debug(F("="));log_debug(_value);
       log_debug(F(" _fdetect="));log_debug(_fdetect);
       log_flush();
+
+      // update sharedRoot
+      JsonObject _obj = variant.as<JsonObject>();
+      // TO BE CONTINUED: create a dynamic key !
+      // _obj["GPIO15"] = true;
 
       // time to transmit ?
       _isTXtime = (curTime - _gpio[i]->_lastTX) >= ((unsigned long)_gpio[i]->coolDown)*1000UL;

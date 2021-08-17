@@ -100,26 +100,6 @@
 #endif /* ESP32 adcanced ADC */
 
 
-/*
- * [aug.21] shared JSON document to allow modules to exchange data.
- * ... mainly used by display module ;)
- */
-#define MODULES_SHARED_JSON_SIZE  512
-StaticJsonDocument<MODULES_SHARED_JSON_SIZE> sharedRoot;
-/*
-JsonArray temperature = doc.createNestedArray("temperature");
-temperature.add(23.57);
-temperature.add(21.6);
-doc["time"] = 1351824120;
-doc["hygrometrie"][0] = 48.75608;
-
-JsonObject device = doc.createNestedObject("device");
-device["modules"] = 8;
-device["freeheap"] = 32768;
-
-serializeJson(doc, output);
-*/
-
 
 
 /* [Feb.21] test about binary whole size with graphic lib
@@ -242,12 +222,31 @@ airquality *airqualityModule        = nullptr;
 digital *digitalModule              = nullptr;
 
 
-
 // time server related
 bool cbtime_set = false;
 bool _cbtime_call = false;          // used to display things about time sync
 time_t cbtime_cur, cbtime_prev;     // time set in callback
 
+
+/*
+ * [aug.21] shared JSON document to allow modules to exchange data.
+ * ... mainly used by display module ;)
+ */
+#define MODULES_SHARED_JSON_SIZE  512
+StaticJsonDocument<MODULES_SHARED_JSON_SIZE> sharedRoot;
+/*
+JsonArray temperature = doc.createNestedArray("temperature");
+temperature.add(23.57);
+temperature.add(21.6);
+doc["time"] = 1351824120;
+doc["hygrometrie"][0] = 48.75608;
+
+JsonObject device = doc.createNestedObject("device");
+device["modules"] = 8;
+device["freeheap"] = 32768;
+
+serializeJson(doc, output);
+*/
 
 
 
@@ -626,7 +625,7 @@ void processWIFIparameters( wifiParametersMgt *wp=nullptr ) {
     log_info(F("\n[wifiParams] start PIR sensor ...")); log_flush();
     
     // allocate digital module
-    digitalModule = new digital();
+    digitalModule = new digital( sharedRoot );
     digitalModule->add_gpio( PIR_SENSOR, digitalInputType_t::presence, digitalFrontDetect_t::rising, 60 );  // 60s cooldown
   }
 
@@ -906,7 +905,7 @@ void setup() {
     airqualityModule    = new airquality();
 
     // [aug.21] digitalModule may get already instantiated through WiFiParameters management
-    if( !digitalModule ) digitalModule = new digital();
+    if( !digitalModule ) digitalModule = new digital( sharedRoot );
     // add switches
     #ifdef INCR_SW
     digitalModule->add_gpio( INCR_SW, digitalInputType_t::on_off, digitalFrontDetect_t::none );  // none ==> no MQTT sending

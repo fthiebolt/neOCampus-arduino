@@ -78,6 +78,7 @@ class digital : public base {
   public:
     // constructors
     digital( void );
+    digital( JsonDocument& );
 
     // destructor
     ~digital( void );
@@ -114,6 +115,7 @@ class digital : public base {
     boolean _processOrder( const char *, int * );   // an order to process with optional value
     boolean _sendValues( void );                    // send all sensors' values
     void _process_sensors( void );                  // sensors internal processing (optional)
+    void _digital( void );                          // low-level constructor
 };
 
 

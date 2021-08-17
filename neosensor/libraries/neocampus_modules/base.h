@@ -92,6 +92,7 @@ class base {
     char unitID[SENSO_UNITID_MAXSIZE];      // identity of the module
     char pubTopic[MQTT_BASE_TOPIC_LENGTH];  // topic to publish to
     char subTopic[MQTT_BASE_TOPIC_LENGTH];  // topic to subscribe to
+    JsonVariant variant;            // JSON structure (pointer to)
 
   private:
     /*
@@ -104,7 +105,7 @@ class base {
      * private attributes
      */
     unsigned long _lastTX;          // elapsed ms since last message sent
-    
+
     // MQTT
     senso *_sensoClient;
     WiFiClient _wifiClient;

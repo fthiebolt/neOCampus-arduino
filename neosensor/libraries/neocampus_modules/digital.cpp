@@ -461,8 +461,8 @@ void digital::_process_sensors( void ) {
 
       // update sharedRoot
       JsonObject _obj = variant.as<JsonObject>();
-      // TO BE CONTINUED: create a dynamic key !
-      // _obj["GPIO15"] = true;
+      String _key = "GPIO" + _gpio[i]->pin;
+      _obj[_key] = _value;
 
       // time to transmit ?
       _isTXtime = (curTime - _gpio[i]->_lastTX) >= ((unsigned long)_gpio[i]->coolDown)*1000UL;

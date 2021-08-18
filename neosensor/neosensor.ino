@@ -233,7 +233,8 @@ time_t cbtime_cur, cbtime_prev;     // time set in callback
  * ... mainly used by display module ;)
  */
 #define MODULES_SHARED_JSON_SIZE  512
-StaticJsonDocument<MODULES_SHARED_JSON_SIZE> sharedRoot;
+//StaticJsonDocument<MODULES_SHARED_JSON_SIZE> sharedRoot;    // stack allocation
+DynamicJsonDocument sharedRoot(MODULES_SHARED_JSON_SIZE);   // heap allocation
 /*
 JsonArray temperature = doc.createNestedArray("temperature");
 temperature.add(23.57);

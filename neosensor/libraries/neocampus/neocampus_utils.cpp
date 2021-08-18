@@ -367,12 +367,13 @@ bool setupSPIFFS( void ) {
 // --- utilities functions ----------------------------------------------------
 // hex dump of a buffer
 void hex_dump( const char *buf, size_t bufsize, bool ascii ) {
-  log_debug(F("\n### HEX DUMP "));log_debug(bufsize,DEC);log_debug(F(" bytes ###")); log_flush();
+  log_debug(F("\n### HEX DUMP "));log_debug(bufsize,DEC);log_debug(F(" bytes from address 0x"));
+  log_debug((unsigned long)buf,HEX); log_debug(F(" ###"));log_flush();
   uint8_t max_lines = bufsize/16;
   max_lines = ( max_lines==0 ? 1 : max_lines );
   for( uint8_t l=0; l < max_lines; l++ ) {
     log_debug(F("\n[0x"));log_debug(l,HEX);log_debug(F("]"));
-    for( uint8_t r=0; r+l*16 < (uint8_t)bufsize; r++ ) {
+    for( uint8_t r=0; (r<16) && (r+l*16 < (uint8_t)bufsize); r++ ) {
       char _byte[6];
       snprintf(_byte, sizeof(_byte)," 0x%02X", buf[l*16+r]);
       log_debug(_byte);

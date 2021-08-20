@@ -37,15 +37,43 @@
 #define FLOAT_RESOLUTION        3
 
 
-// constructor
-temperature::temperature(): base() 
+// constructors
+temperature::temperature( void ): base() 
 {
+  // call low-level constructor
+  _temperature();
+}
+
+// constructor with reference to JSON global shared document
+temperature::temperature( JsonDocument &sharedRoot ): base() {
+  // create module's JSON structure to hold all of our data
+  // [aug.21] we create a dictionnary
+  variant = sharedRoot.createNestedObject(MQTT_MODULE_NAME);
+
+  // call low-level constructor
+  _temperature();
+}
+
+// low-level constructor
+void temperature::_temperature( void ) {
+
   _freq = DEFL_TEMPERATURE_FREQUENCY;
   for( uint8_t i=0; i < _MAX_SENSORS; i++ )
     _sensor[i] = NULL;
 
   // load json config file (if any)
   loadConfig( );
+}
+
+// destructor
+temperature::~temperature( void )
+{
+  for( uint8_t i=0; i < _sensors_count; i++ ) {
+    if( _sensor[i] == NULL ) continue;
+    free( _sensor[i] );
+    _sensor[i] = nullptr;
+  }
+
 }
 
 
@@ -279,12 +307,22 @@ void temperature::_process_sensors( void ) {
 
 /*
  * send all sensors' values
+ * [aug.21] this function gets called every XXX_FREQ seconds but according
+ *  to sensors integration, a value may not be available (e.g it does not 
+ *  changed for a long time).
+ * However, there's some point over a period of time a data will get sent
+ *  even if if didn't change.
  */
 boolean temperature::_sendValues( void ) {
   /* grab and send values from all sensors
    * each sensor will result in a MQTT message
    */
   boolean _TXoccured = false;
+
+  // declare pointer to shared JSON
+  JsonObject _obj = variant.as<JsonObject>();
+
+//TO BE CONTINUED
 
   for( uint8_t cur_sensor=0; cur_sensor<_sensors_count; cur_sensor++ ) {
 

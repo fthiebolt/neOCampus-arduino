@@ -46,7 +46,12 @@
  */
 class temperature : public base {
   public:
-    temperature();
+    // constructors
+    temperature( void );
+    temperature( JsonDocument& );
+
+    // destructor
+    ~temperature( void );
 
     // add a sensor whose i2c adress is the parameter
     boolean add_sensor( uint8_t adr );
@@ -76,8 +81,8 @@ class temperature : public base {
     bool _processOrder( const char *, int * );  // an order to process with optional value
     boolean _sendValues( void );                // send all sensors' values
     void _process_sensors( void );              // sensors internal processing (optional)
+    void _temperature( void );                  // low-level constructor
 };
-
 
 #endif /* _TEMPERATURE_H_ */
 

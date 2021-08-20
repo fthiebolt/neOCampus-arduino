@@ -71,7 +71,7 @@ void digital::_digital( void ) {
 
 
 // destructor
-digital::~digital()
+digital::~digital( void )
 {
   for( uint8_t i=0; i < _MAX_GPIOS; i++ ) {
     if( _gpio[i] == nullptr ) continue;
@@ -426,6 +426,9 @@ void digital::_process_sensors( void ) {
     // same time for all inputs ...
   unsigned long curTime = millis();
 
+  // declare pointer to shared JSON
+  JsonObject _obj = variant.as<JsonObject>();
+
   // process all digital inputs
   for( uint8_t i=0; i < _gpio_count; i++ ) {
 
@@ -460,7 +463,6 @@ void digital::_process_sensors( void ) {
       log_flush();
 
       // update sharedRoot
-      JsonObject _obj = variant.as<JsonObject>();
       String _key = "GPIO" + _gpio[i]->pin;
       _obj[_key] = _value;
 

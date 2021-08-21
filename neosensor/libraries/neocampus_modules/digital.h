@@ -105,9 +105,6 @@ class digital : public base {
     digitalGPIO_t *_gpio[_MAX_GPIOS];
     uint8_t _gpio_count;    // current number of registered digital gpios
 
-    // module level flag to specifiy that at least one digital input trigger has been activated
-    boolean _trigger;
-
     /*
      * private member functions
      */

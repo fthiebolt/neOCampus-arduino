@@ -88,11 +88,13 @@ class base {
      * public attributes
      */
     uint8_t _sensors_count;         // nb of sensors registered
-    uint16_t _freq;                 // message ought to get sent every _freq seconds
+    uint16_t _freq;                 // seconds between two consecutives messages (i.e coolDown parameter)
     char unitID[SENSO_UNITID_MAXSIZE];      // identity of the module
     char pubTopic[MQTT_BASE_TOPIC_LENGTH];  // topic to publish to
     char subTopic[MQTT_BASE_TOPIC_LENGTH];  // topic to subscribe to
-    JsonVariant variant;            // JSON structure (pointer to)
+    JsonVariant variant;            // JSON structure (pointer to) part of the global shared JSON structure
+    // module level flag to specifiy that at least one digital input trigger has been activated
+    boolean _trigger;
 
   private:
     /*

@@ -43,9 +43,9 @@
  * If abs(new official value - valueSent) > resolution ==> activate _trigger
  * _trigger activation will generate a data sending
  */
-#define DEFL_READ_INTERVAL     1   // default second(s) between two consecutives read of sensor
-#define DEFL_THRESHOLD_CPT     5   // threshold counter to declare current value the new official one
-#define DEFL_THRESHOLD_PERCENT 2   // percent variation threshold to consider stable value
+#define DEFL_READ_MSINTERVAL   1250 // default ms between two consecutives read of sensor
+#define DEFL_THRESHOLD_CPT     5    // threshold counter to declare current value the new official one
+#define DEFL_THRESHOLD_PERCENT 2    // percent variation threshold to consider stable value
 
 #define DATA_SENDING_VARIATION_THRESHOLD  (float)(0.15) // new official value ought to differ more than this threshold to get sent
 
@@ -57,7 +57,7 @@
 class generic_driver {
   public:
     // constructor
-    generic_driver( uint8_t read_interval=DEFL_READ_INTERVAL,
+    generic_driver( uint8_t read_msinterval=DEFL_READ_MSINTERVAL,
                     uint8_t threshold_cpt=DEFL_THRESHOLD_CPT,
                     uint8_t threshold_percent=DEFL_THRESHOLD_PERCENT );
     
@@ -86,16 +86,16 @@ class generic_driver {
   // --- protected methods / attributes ---------------------
   // --- i.e subclass have direct access to
   protected:
-    uint8_t       _readInterval;      // seconds interval between two consective data acquisition
+    uint8_t       _readMsInterval;    // seconds interval between two consective data acquisition
     uint8_t       _thresholdCpt;      // threshold counter for stable data
     uint8_t       _thresholdPercent;  // max percent data variation to consider as stable
 
     bool          _trigger;       // stable official value ought to get sent according to variation constraints and the coolDown/_lastTX value
     float         _current;
     uint8_t       _currentCpt;    // nb iteration _current is stable (usually beteween 5 to 10 ---i.e 5s to 10s)
-    unsigned long _lastRead;      // last time data has been read from sensor (usually every 1s)
+    unsigned long _lastRead;      // (ms) last time data has been read from sensor (usually every 1s)
     float         value;          // official value
-    unsigned long _lastSet;       // last time official value has been set
+    unsigned long _lastSet;       // (ms) last time official value has been set
     float         valueSent;      // official value that has been sent
 };
 

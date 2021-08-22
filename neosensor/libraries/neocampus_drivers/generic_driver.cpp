@@ -26,11 +26,11 @@
 /******************************************
  * Default constructor
  */
-generic_driver::generic_driver( uint8_t read_interval,
+generic_driver::generic_driver( uint8_t read_msinterval,
                                 uint8_t threshold_cpt,
                                 uint8_t threshold_percent ) {
 
-  _readInterval     = read_interval;
+  _readMsInterval     = read_msinterval;
   _thresholdCpt     = threshold_cpt;
   _thresholdPercent = threshold_percent;
 
@@ -70,8 +70,8 @@ void generic_driver::process( uint16_t coolDown ) {
   unsigned long _curTime = millis();
 
   // check wether it's time to process or not
-  if( _curTime - _lastSet < coolDown ) return;
-  if( _curTime - _lastRead < _readInterval ) return;
+  if( _curTime - _lastSet < (unsigned long)coolDown*1000 ) return;
+  if( _curTime - _lastRead < _readMsInterval ) return;
 
   // acquire data
   float val;

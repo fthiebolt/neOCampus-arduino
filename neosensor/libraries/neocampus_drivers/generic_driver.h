@@ -1,16 +1,17 @@
 /**************************************************************************/
 /*! 
-    @file     generic_driver.h
-    @author   F. Thiebolt
-	  @license
+  @file     generic_driver.h
+  @author   F. Thiebolt
+	@license
 	
-    This is part of a the neOCampus drivers library.
-    Sensors generic driver
+  This is part of a the neOCampus drivers library.
+  Sensors generic driver
     
-    (c) Copyright 2020 Thiebolt F. <thiebolt@irit.fr>
+  (c) Copyright 2020 Thiebolt F. <thiebolt@irit.fr>
 
 	@section  HISTORY
 
+    aug.21  F.Thiebolt  added support for data integration
     aug.20  F.Thiebolt  added support for sensors' internal processing
                         used in continuous integration for example.
                         nowadays, only valid data will get sent
@@ -32,6 +33,22 @@
  * Definitions
  */
 
+/* 
+ * ANALOG DATA INTEGRATION
+ * 
+ * A sensor is read every 1s till value is stable over 'thresholdCpt' count,
+ *   then it becomes the new official value;
+ * If new value read < 2% vs _current ==> increase _currentCpt;
+ * If _currentCPT > 5 or 10 ==> it becomes the official value 'value'
+ * If abs(new official value - valueSent) > resolution ==> activate _trigger
+ * _trigger activation will generate a data sending
+ */
+#define DEFL_READ_INTERVAL     1   // default second(s) between two consecutives read of sensor
+#define DEFL_THRESHOLD_CPT     5   // threshold counter to declare current value the new official one
+#define DEFL_THRESHOLD_PERCENT 2   // percent variation threshold to consider stable value
+
+#define DATA_SENDING_VARIATION_THRESHOLD  (float)(0.15) // new official value ought to differ more than this threshold to get sent
+
 
 
 /*
@@ -39,7 +56,10 @@
  */
 class generic_driver {
   public:
-    generic_driver( void );
+    // constructor
+    generic_driver( uint8_t read_interval=DEFL_READ_INTERVAL,
+                    uint8_t threshold_cpt=DEFL_THRESHOLD_CPT,
+                    uint8_t threshold_percent=DEFL_THRESHOLD_PERCENT );
     
     // Power Modes
     virtual void powerON( void );         // switch ON
@@ -50,16 +70,33 @@ class generic_driver {
     virtual boolean begin( JsonVariant );   // Json senso config
 
     // Data
-    virtual void process( void );               // sensors internal processing (e.g for continuous integration)
-    virtual boolean acquire( float* )=0;        // pure virtual, acquire sensor value
-    virtual const char *sensorUnits( void )=0;  // pure virtual, retrieve units of actual sensors (e.g celsius, %r.H, lux ...)
+    virtual void process( uint16_t coolDown=0 );  // sensors internal processing with coolDown parameter (e.g for continuous integration)
+    virtual boolean acquire( float* )=0;          // pure virtual, acquire sensor value
+    virtual const char *sensorUnits( void )=0;    // pure virtual, retrieve units of actual sensors (e.g celsius, %r.H, lux ...)
 
     // Identity (i.e i2c addr)
     virtual String subID( void )=0;    // pure virtual, retrieve subID (i.e i2c addr)
 
+    // data integration
+    bool getTrigger( void ) { return _trigger; };   // local driver trigger that indicates a new official value needs to get sent
+    float getValue( void ) { return value; };       // get official value that has gone through the whole integration process
+
+    // public attributes
+
   // --- protected methods / attributes ---------------------
   // --- i.e subclass have direct access to
   protected:
+    uint8_t       _readInterval;      // seconds interval between two consective data acquisition
+    uint8_t       _thresholdCpt;      // threshold counter for stable data
+    uint8_t       _thresholdPercent;  // max percent data variation to consider as stable
+
+    bool          _trigger;       // stable official value ought to get sent according to variation constraints and the coolDown/_lastTX value
+    float         _current;
+    uint8_t       _currentCpt;    // nb iteration _current is stable (usually beteween 5 to 10 ---i.e 5s to 10s)
+    unsigned long _lastRead;      // last time data has been read from sensor (usually every 1s)
+    float         value;          // official value
+    unsigned long _lastSet;       // last time official value has been set
+    float         valueSent;      // official value that has been sent
 };
 
 #endif /* _GENERIC_DRIVER_H_ */

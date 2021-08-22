@@ -3,6 +3,12 @@
  * 
  * Temperature module to manage all temperature sensors
  * 
+ * ---
+ * Notes:
+ * ---
+ * TODO:
+ * - convert all 'frequency' parameters & define into 'cooldown' ones
+ * ---
  * Thiebolt.F nov.20  previous 'force data as float' didn't work! we need to
  *                    use serialized(String(1.0,6)); // 1.000000
  * https://arduinojson.org/v6/how-to/configure-the-serialization-of-floats/
@@ -57,7 +63,7 @@ temperature::temperature( JsonDocument &sharedRoot ): base() {
 // low-level constructor
 void temperature::_temperature( void ) {
 
-  _freq = DEFL_TEMPERATURE_FREQUENCY;
+  _freq = DEFL_TEMPERATURE_COOLDOWN;
   for( uint8_t i=0; i < _MAX_SENSORS; i++ )
     _sensor[i] = NULL;
 
@@ -232,8 +238,14 @@ bool temperature::process( void ) {
   /* sensors internal processing */
   _process_sensors();
 
+  // [aug.21] TXtime is not based on timer but upon data ready
+  // to get sent !
   // reached time to transmit ?
-  if( !isTXtime() ) return _ret;
+  //if( !isTXtime() ) return _ret;
+
+  // [aug.21] if global trigger has been activated, we'll parse all inputs
+  // to check for individual triggers
+  if( !_trigger ) return _ret;
 
   /*
    * Time to send a new message
@@ -300,7 +312,18 @@ boolean temperature::loadSensoConfig( senso *sp ) {
 void temperature::_process_sensors( void ) {
   // process all valid sensors
   for( uint8_t cur_sensor=0; cur_sensor<_sensors_count; cur_sensor++ ) {
-    _sensor[cur_sensor]->process();
+    // start sensor processing according to our coolDown parameter
+    // [aug.21] _freq is our coolDown parameter
+    _sensor[cur_sensor]->process( _freq );
+    // if data ready to get sent ==> activate module's trigger
+    if( _sensor[cur_sensor]->getTrigger()==true ) {
+      log_debug(F("\n[temperature][")); log_debug(_sensor[cur_sensor]->subID());
+      log_debug(F("] new official value = "));log_debug(_sensor[cur_sensor]->getValue()); log_flush();
+
+// DEBUG DEBUG DEBUG
+//      _trigger = true;  // activate module level trigger
+
+    }
   }
 }
 

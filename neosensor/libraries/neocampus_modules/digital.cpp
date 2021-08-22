@@ -62,8 +62,9 @@ void digital::_digital( void ) {
   // initialize total count of registered GPIOs
   _gpio_count = 0;
 
-  // reset module trigger
-  _trigger = false;
+  // [aug.21] reset module trigger
+  // ... ought to get done in base constructor
+  //_trigger = false;
 
   // load json config file (if any)
   loadConfig();
@@ -423,7 +424,7 @@ boolean digital::loadSensoConfig( senso *sp ) {
  * the needs for (e.g) continuous integration.
  */
 void digital::_process_sensors( void ) {
-    // same time for all inputs ...
+  // same time for all inputs ...
   unsigned long curTime = millis();
 
   // declare pointer to shared JSON

@@ -915,7 +915,7 @@ void setup() {
     digitalModule->add_gpio( DECR_SW, digitalInputType_t::on_off, digitalFrontDetect_t::none );  // none ==> no MQTT sending
     #endif
     #ifdef CLEAR_SW
-    // WARNING: CLEAR_SW & LED share the same pin (setupLED clled with disable earlier, ok)
+    // WARNING: CLEAR_SW & LED share the same pin (setupLED called with disable earlier, ok)
     digitalModule->add_gpio( CLEAR_SW, digitalInputType_t::on_off, digitalFrontDetect_t::none );  // none ==> no MQTT sending
     #endif
 
@@ -958,6 +958,8 @@ void setup() {
       log_debug(F("\n\t\tadded temperature sensor at i2c addr = 0x"));log_debug(res,HEX); log_flush();
       _known = true;
     }
+/* TESTS ONLY: disabling sensors ... */
+#if 0
     // is chip a luminosity sensor ?
     if( luminosityModule and luminosityModule->add_sensor(res) == true ) {
       log_debug(F("\n\t\tadded luminosity sensor at i2c addr = 0x"));log_debug(res,HEX); log_flush();
@@ -973,7 +975,7 @@ void setup() {
       log_debug(F("\n\t\tadded humidity sensor at i2c addr = 0x"));log_debug(res,HEX); log_flush();
       _known = true;
     }
-    
+#endif /* 0 */
     // add test for others modules ...
 
     // did the i2c deice has been identified ?

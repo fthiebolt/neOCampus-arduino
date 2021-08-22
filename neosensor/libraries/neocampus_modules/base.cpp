@@ -85,10 +85,11 @@ base::~base( void ) {
 
 // low-level base constructor
 void base::_base( void ) {
-  _lastTX = 0;
-  _sensors_count = 0;
-  _sensoClient = NULL;
-  
+  _lastTX         = 0;
+  _sensors_count  = 0;
+  _sensoClient    = nullptr;
+  _trigger        = false;
+
   pubTopic[0] = '\0';
   subTopic[0] = '\0';
 }

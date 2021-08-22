@@ -11,6 +11,7 @@
 
 	@section  HISTORY
 
+    F.Thiebolt  aug.21  added support for analog data integration
     2020-May    - First release, F. Thiebolt
     
     
@@ -25,7 +26,18 @@
 /******************************************
  * Default constructor
  */
-generic_driver::generic_driver() {
+generic_driver::generic_driver( uint8_t read_interval,
+                                uint8_t threshold_cpt,
+                                uint8_t threshold_percent ) {
+
+  _readInterval     = read_interval;
+  _thresholdCpt     = threshold_cpt;
+  _thresholdPercent = threshold_percent;
+
+  _trigger        = false;
+  _currentCpt     = (uint8_t)(-1);
+  _lastRead       = ULONG_MAX/2;
+  _lastSet        = ULONG_MAX/2;
 }
 
 /******************************************
@@ -51,7 +63,48 @@ void generic_driver::powerOFF( void ) {
 /******************************************
  * Sensors internal processing
  * used for continuous integration for example
+ * 
  */
-void generic_driver::process( void ) {
+void generic_driver::process( uint16_t coolDown ) {
+  // same time ref for all
+  unsigned long _curTime = millis();
+
+  // check wether it's time to process or not
+  if( _curTime - _lastSet < coolDown ) return;
+  if( _curTime - _lastRead < _readInterval ) return;
+
+  // acquire data
+  float val;
+  if( acquire(&val)==false ) return;   // data was not ready
+  _lastRead     = _curTime;
+
+  // data has been acquired :)
+  if( _currentCpt==(uint8_t)(-1) or
+      abs(_current - val) > abs((_current*(float)_thresholdPercent)/100.0) ) {
+    // (re)initializing either because it's first time or unstable value
+    _current    = val;
+    _currentCpt = 0;
+    return;
+  }
+
+  // value read from sensor is stable :)
+  if( ++_currentCpt < _thresholdCpt-1 ) return;
+
+  // new stable value :)
+  value       = _current;
+  _lastSet    = _curTime;
+
+  // do we need to sent the new value ?
+  if( abs(value - valueSent) > DATA_SENDING_VARIATION_THRESHOLD ) {
+    _trigger = true;
+  }
+
+  // new official value does not differ so much from the previously sent
+  // ... continuing after next cooldown period
 }
+
+
+/******************************************
+ * DATA integration related methods
+ */
 

@@ -8,6 +8,7 @@
  * -
  * 
  * ---
+ * F.Thiebolt   aug.21  added JSON variant and module level _trigger
  * F.Thiebolt   apr.21  removed BASE_MQTT_MSG_MAXLEN for MQTT_MAX_PACKET_SIZE
  * F.Thiebolt   Jul.17  initial release
  * 
@@ -93,7 +94,8 @@ class base {
     char pubTopic[MQTT_BASE_TOPIC_LENGTH];  // topic to publish to
     char subTopic[MQTT_BASE_TOPIC_LENGTH];  // topic to subscribe to
     JsonVariant variant;            // JSON structure (pointer to) part of the global shared JSON structure
-    // module level flag to specifiy that at least one digital input trigger has been activated
+    // module level flag to specifiy that at least one digital input trigger has been activated ot that one
+    // analog value need to get sent
     boolean _trigger;
 
   private:

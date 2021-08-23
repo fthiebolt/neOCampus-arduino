@@ -26,18 +26,18 @@
 /******************************************
  * Default constructor
  */
-generic_driver::generic_driver( uint8_t read_msinterval,
+generic_driver::generic_driver( uint16_t read_msinterval,
                                 uint8_t threshold_cpt,
                                 uint8_t threshold_percent ) {
 
-  _readMsInterval     = read_msinterval;
+  _readMsInterval   = read_msinterval;
   _thresholdCpt     = threshold_cpt;
   _thresholdPercent = threshold_percent;
 
   _trigger        = false;
   _currentCpt     = (uint8_t)(-1);
-  _lastRead       = ULONG_MAX/2;
-  _lastSet        = ULONG_MAX/2;
+  _lastMsRead     = ULONG_MAX/2;
+  _lastMsSet      = ULONG_MAX/2;
 }
 
 /******************************************
@@ -70,13 +70,13 @@ void generic_driver::process( uint16_t coolDown ) {
   unsigned long _curTime = millis();
 
   // check wether it's time to process or not
-  if( _curTime - _lastSet < (unsigned long)coolDown*1000 ) return;
-  if( _curTime - _lastRead < _readMsInterval ) return;
+  if( _curTime - _lastMsSet < ((unsigned long)coolDown)*1000 ) return;
+  if( _curTime - _lastMsRead < _readMsInterval ) return;
 
   // acquire data
   float val;
   if( acquire(&val)==false ) return;   // data was not ready
-  _lastRead     = _curTime;
+  _lastMsRead   = _curTime;
 
   // data has been acquired :)
   if( _currentCpt==(uint8_t)(-1) or
@@ -92,12 +92,14 @@ void generic_driver::process( uint16_t coolDown ) {
 
   // new stable value :)
   value       = _current;
-  _lastSet    = _curTime;
+  _lastMsSet  = _curTime;
 
   // do we need to sent the new value ?
   if( abs(value - valueSent) > DATA_SENDING_VARIATION_THRESHOLD ) {
     _trigger = true;
   }
+
+// TODO: add sending if it has not been sent for a long time
 
   // new official value does not differ so much from the previously sent
   // ... continuing after next cooldown period

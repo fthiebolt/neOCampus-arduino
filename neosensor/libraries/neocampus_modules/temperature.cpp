@@ -9,6 +9,7 @@
  * TODO:
  * - convert all 'frequency' parameters & define into 'cooldown' ones
  * ---
+ * F.Thiebolt aug.20  switched to intelligent data sending vs timer based data sending
  * Thiebolt.F nov.20  previous 'force data as float' didn't work! we need to
  *                    use serialized(String(1.0,6)); // 1.000000
  * https://arduinojson.org/v6/how-to/configure-the-serialization-of-floats/
@@ -47,7 +48,7 @@
 temperature::temperature( void ): base() 
 {
   // call low-level constructor
-  _temperature();
+  _constructor();
 }
 
 // constructor with reference to JSON global shared document
@@ -60,29 +61,26 @@ temperature::temperature( JsonDocument &sharedRoot ): base() {
   _obj[F("value_units")] = "°c";
 
   // call low-level constructor
-  _temperature();
+  _constructor();
 }
 
 // low-level constructor
-void temperature::_temperature( void ) {
-
+void temperature::_constructor( void ) {
   _freq = DEFL_TEMPERATURE_COOLDOWN;
   for( uint8_t i=0; i < _MAX_SENSORS; i++ )
-    _sensor[i] = NULL;
+    _sensor[i] = nullptr;
 
   // load json config file (if any)
   loadConfig( );
 }
 
 // destructor
-temperature::~temperature( void )
-{
+temperature::~temperature( void ) {
   for( uint8_t i=0; i < _sensors_count; i++ ) {
     if( _sensor[i] == NULL ) continue;
     free( _sensor[i] );
     _sensor[i] = nullptr;
   }
-
 }
 
 
@@ -315,6 +313,7 @@ boolean temperature::loadSensoConfig( senso *sp ) {
 void temperature::_process_sensors( void ) {
   // process all valid sensors
   for( uint8_t cur_sensor=0; cur_sensor<_sensors_count; cur_sensor++ ) {
+    if( _sensor[cur_sensor]==nullptr ) continue;
     // start sensor processing according to our coolDown parameter
     // [aug.21] _freq is our coolDown parameter
     _sensor[cur_sensor]->process( _freq );
@@ -346,7 +345,7 @@ boolean temperature::_sendValues( void ) {
   /* grab and send values from all sensors
    * each sensor will result in a MQTT message
    */
-  boolean _TXoccured = false;
+  // boolean _TXoccured = false;
 
   for( uint8_t cur_sensor=0; cur_sensor<_sensors_count; cur_sensor++ ) {
 

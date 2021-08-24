@@ -3,6 +3,13 @@
  * 
  * Luminosity module to manage all luminosity sensors
  * 
+ * ---
+ * Notes:
+ * ---
+ * TODO:
+ * - convert all 'frequency' parameters & define into 'cooldown' ones
+ * ---
+ * F.Thiebolt aug.20  switched to intelligent data sending vs timer based data sending
  * Thiebolt.F may.20  force data sent through MQTT as an int
  * Thiebolt.F may.18  send back status upon any change settings received order 
  * Thiebolt.F jul.17  initial release
@@ -32,15 +39,43 @@
 #define CONFIG_JSON_SIZE        (JSON_OBJECT_SIZE(3))   // config file contains: frequency
 
 
-// constructor
-luminosity::luminosity(): base() 
+// constructors
+luminosity::luminosity( void ): base() 
 {
+  // call low-level constructor
+  _constructor();
+}
+
+// constructor with reference to JSON global shared document
+luminosity::luminosity( JsonDocument &sharedRoot ): base() {
+  // create module's JSON structure to hold all of our data
+  // [aug.21] we create a dictionnary
+  variant = sharedRoot.createNestedObject(MQTT_MODULE_NAME);
+  // all sensors share the same units of values
+  JsonObject _obj = variant.as<JsonObject>();
+  _obj[F("value_units")] = "lux";
+
+  // call low-level constructor
+  _constructor();
+}
+
+// low-level constructor
+void luminosity::_constructor( void ) {
   _freq = DEFL_LUMINOSITY_FREQUENCY;
   for( uint8_t i=0; i < _MAX_SENSORS; i++ )
-    _sensor[i] = NULL;
+    _sensor[i] = nullptr;
   
   // load json config file (if any)
   loadConfig( );
+}
+
+// destructor
+luminosity::~luminosity( void ) {
+  for( uint8_t i=0; i < _sensors_count; i++ ) {
+    if( _sensor[i] == NULL ) continue;
+    free( _sensor[i] );
+    _sensor[i] = nullptr;
+  }
 }
 
 
@@ -181,8 +216,14 @@ bool luminosity::process( void ) {
   /* sensors internal processing */
   _process_sensors();
 
+  // [aug.21] TXtime is not based on timer but upon data ready
+  // to get sent !
   // reached time to transmit ?
-  if( !isTXtime() ) return _ret;
+  //if( !isTXtime() ) return _ret;
+
+  // [aug.21] if global trigger has been activated, we'll parse all inputs
+  // to check for individual triggers
+  if( !_trigger ) return _ret;
 
   /*
    * Time to send a new message
@@ -250,32 +291,50 @@ boolean luminosity::loadSensoConfig( senso *sp ) {
 void luminosity::_process_sensors( void ) {
   // process all valid sensors
   for( uint8_t cur_sensor=0; cur_sensor<_sensors_count; cur_sensor++ ) {
-    _sensor[cur_sensor]->process();
+    if( _sensor[cur_sensor]==nullptr ) continue;
+    // start sensor processing according to our coolDown parameter
+    // [aug.21] _freq is our coolDown parameter
+    _sensor[cur_sensor]->process( _freq );
+    if( _sensor[cur_sensor]->getTrigger()!=true ) continue;
+
+    // new data ready to get sent ==> activate module's trigger
+    log_debug(F("\n[luminosity][")); log_debug(_sensor[cur_sensor]->subID());
+    log_debug(F("] new official value = "));log_debug(_sensor[cur_sensor]->getValue()); log_flush();
+    _trigger = true;  // activate module level trigger
+
+    /*
+     * update shared JSON
+     */
+    JsonObject _obj = variant.as<JsonObject>();
+    _obj[_sensor[cur_sensor]->subID()] = _sensor[cur_sensor]->getValue();
   }
 }
 
 
 /*
  * send all sensors' values
- */
+ * [aug.21] this function gets called every XXX_FREQ seconds but according
+ *  to sensors integration, a value may not be available (e.g it does not 
+ *  changed for a long time).
+ * However, there's some point over a period of time a data will get sent
+ *  even if if didn't change.
+*/
 boolean luminosity::_sendValues( void ) {
   /* grab and send values from all sensors
    * each sensor will result in a MQTT message
    */
-  boolean _TXoccured = false;
+  // boolean _TXoccured = false;
 
   for( uint8_t cur_sensor=0; cur_sensor<_sensors_count; cur_sensor++ ) {
+
+    if( _sensor[cur_sensor]==nullptr || _sensor[cur_sensor]->getTrigger()!=true ) continue;
 
     StaticJsonDocument<DATA_JSON_SIZE> _doc;
     JsonObject root = _doc.to<JsonObject>();
 
     // retrieve data from current sensor
-    float value;
-    if( !_sensor[cur_sensor]->acquire(&value) ) {
-      log_warning(F("\n[luminosity] unable to retrieve data from sensor "));
-      log_warning(_sensor[cur_sensor]->subID()); log_flush();
-      continue;
-    }
+    float value = _sensor[cur_sensor]->getValue();
+
     root[F("value")] = (int)( value );   // [may.20] force value as INT
     root[F("value_units")] = _sensor[cur_sensor]->sensorUnits();
     root[F("subID")] = _sensor[cur_sensor]->subID();
@@ -285,7 +344,7 @@ boolean luminosity::_sendValues( void ) {
     */
     if( sendmsg(root) ) {
       log_info(F("\n[luminosity] successfully published msg :)")); log_flush();
-      _TXoccured = true;
+      // _TXoccured = true;
     }
     else {
       // we stop as soon as we've not been able to successfully send one message
@@ -293,14 +352,19 @@ boolean luminosity::_sendValues( void ) {
       return false;
     }
     
+    // mark data as sent
+    _sensor[cur_sensor]->setDataSent();
+
     // delay between two successives values to send
-    delay(20); 
+    delay(20);
   }
 
   /* do we need to postpone to next TX slot:
    * required when no data at all have been published
-   */
+   * [aug.21] useless since we don not rely anymore on periodic sending !
+   *
   if( !_TXoccured ) cancelTXslot();
+   */
 
   return true;
 }

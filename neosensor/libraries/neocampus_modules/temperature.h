@@ -89,7 +89,7 @@ class temperature : public base {
     bool _processOrder( const char *, int * );  // an order to process with optional value
     boolean _sendValues( void );                // send all sensors' values
     void _process_sensors( void );              // sensors internal processing (optional)
-    void _temperature( void );                  // low-level constructor
+    void _constructor( void );                  // low-level constructor
 };
 
 #endif /* _TEMPERATURE_H_ */

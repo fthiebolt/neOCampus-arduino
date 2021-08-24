@@ -3,6 +3,7 @@
  * 
  * Luminosity module to manage all luminosity sensors
  * 
+ * F.Thiebolt   aug.21  added support for analog data integration and cooldown feature
  * Thiebolt F. Dec.17   added polymorphism with support for multiple sensors
  * Thiebolt F. July 17  initial release
  * 
@@ -33,11 +34,18 @@
 
 /*
  * Definitions
+ * [aug.21] we're now following a 'cooldown' approach about data sending:
+ * - new data (i.e that changed from previous sent) won't get sent before 'cooldown' seconds
+ * - if _MAX_COOLDOWN_SENSOR is reached, data will get sent even if it' not a new one
  */
 #define _MAX_SENSORS                  4
-#define LUMINOSITY_MIN_FREQUENCY     15      // may go up to every 15 seconds ...
-#define LUMINOSITY_MAX_FREQUENCY     300     // or cool down to every every 5mn
-#define DEFL_LUMINOSITY_FREQUENCY    (LUMINOSITY_MIN_FREQUENCY*2)     // luminosity message every 20 seconds by default ...
+#define LUMINOSITY_MIN_FREQUENCY      15      // may go up to every 15 seconds ...
+#define LUMINOSITY_MAX_FREQUENCY      _MAX_COOLDOWN_SENSOR
+#define DEFL_LUMINOSITY_FREQUENCY     (LUMINOSITY_MIN_FREQUENCY*2)    // luminosity message every 20 seconds by default ...
+/* [aug.21] now considering COOLDOWN parameters */
+#define LUMINOSITY_MIN_COOLDOWN       LUMINOSITY_MIN_FREQUENCY        // min delay between two consecutives sending
+#define LUMINOSITY_MAX_COOLDOWN       LUMINOSITY_MAX_FREQUENCY        // max delay between two consecutives sending
+#define DEFL_LUMINOSITY_COOLDOWN      (LUMINOSITY_MIN_COOLDOWN*2)     // luminosity message 60 seconds cooldown by default ...
 
 
 
@@ -47,7 +55,11 @@
  */
 class luminosity : public base {
   public:
-    luminosity();
+    luminosity( void );
+    luminosity( JsonDocument& );
+
+    // destructor
+    ~luminosity( void );
 
     // add a sensor whose i2c adress is the parameter
     boolean add_sensor( uint8_t adr );
@@ -77,6 +89,7 @@ class luminosity : public base {
     bool _processOrder( const char *, int * );  // an order to process with optional value
     boolean _sendValues( void );                // send all sensors' values
     void _process_sensors( void );              // sensors internal processing (optional)
+    void _constructor( void );                  // low-level constructor
 };
 
 

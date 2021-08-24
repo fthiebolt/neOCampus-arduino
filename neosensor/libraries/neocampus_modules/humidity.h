@@ -3,6 +3,7 @@
  * 
  * Humidity module to manage all hygro sensors
  * 
+ * F.Thiebolt   aug.21  added support for analog data integration and cooldown feature
  * Thiebolt F.  May.20  initial release
  * 
  */
@@ -29,11 +30,18 @@
 
 /*
  * Definitions
+ * [aug.21] we're now following a 'cooldown' approach about data sending:
+ * - new data (i.e that changed from previous sent) won't get sent before 'cooldown' seconds
+ * - if _MAX_COOLDOWN_SENSOR is reached, data will get sent even if it' not a new one
  */
 #define _MAX_SENSORS                4
 #define HUMIDITY_MIN_FREQUENCY      30      // may go up to every 30 seconds ...
-#define HUMIDITY_MAX_FREQUENCY      1800    // or cool down to every every 30mn
-#define DEFL_HUMIDITY_FREQUENCY     (HUMIDITY_MIN_FREQUENCY*2)     // message every 60 seconds by default ...
+#define HUMIDITY_MAX_FREQUENCY      _MAX_COOLDOWN_SENSOR
+#define DEFL_HUMIDITY_FREQUENCY     (HUMIDITY_MIN_FREQUENCY*2)    // message every 60 seconds by default ...
+/* [aug.21] now considering COOLDOWN parameters */
+#define HUMIDITY_MIN_COOLDOWN       HUMIDITY_MIN_FREQUENCY        // min delay between two consecutives sending
+#define HUMIDITY_MAX_COOLDOWN       HUMIDITY_MAX_FREQUENCY        // max delay between two consecutives sending
+#define DEFL_HUMIDITY_COOLDOWN      (HUMIDITY_MIN_COOLDOWN*2)     // temperature message 60 seconds cooldown by default ...
 
 
 
@@ -42,7 +50,12 @@
  */
 class humidity : public base {
   public:
-    humidity();
+    // constructors
+    humidity( void );
+    humidity( JsonDocument& );
+
+    // destructor
+    ~humidity( void );
 
     // add a sensor whose i2c adress is the parameter
     boolean add_sensor( uint8_t adr );
@@ -72,6 +85,7 @@ class humidity : public base {
     bool _processOrder( const char *, int * );  // an order to process with optional value
     boolean _sendValues( void );                // send all sensors' values
     void _process_sensors( void );              // sensors internal processing (optional)
+    void _constructor( void );                  // low-level constructor
 };
 
 

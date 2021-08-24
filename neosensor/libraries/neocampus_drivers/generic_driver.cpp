@@ -37,7 +37,10 @@ generic_driver::generic_driver( uint16_t read_msinterval,
   _trigger        = false;
   _currentCpt     = (uint8_t)(-1);
   _lastMsRead     = ULONG_MAX/2;
-  _lastMsSet      = ULONG_MAX/2;
+  _lastMsWrite    = ULONG_MAX/2;
+  _lastMsSent     = ULONG_MAX/2;
+
+  value           = -1.0; // fool guard
 }
 
 /******************************************
@@ -70,7 +73,7 @@ void generic_driver::process( uint16_t coolDown ) {
   unsigned long _curTime = millis();
 
   // check wether it's time to process or not
-  if( _curTime - _lastMsSet < ((unsigned long)coolDown)*1000 ) return;
+  if( _curTime - _lastMsWrite < ((unsigned long)coolDown)*1000 ) return;
   if( _curTime - _lastMsRead < _readMsInterval ) return;
 
   // acquire data
@@ -91,12 +94,14 @@ void generic_driver::process( uint16_t coolDown ) {
   if( ++_currentCpt < _thresholdCpt-1 ) return;
 
   // new stable value :)
-  value       = _current;
-  _lastMsSet  = _curTime;
+  _currentCpt   = -1;
+  value         = _current;
+  _lastMsWrite  = _curTime;
 
   // do we need to sent the new value ?
   if( abs(value - valueSent) > DATA_SENDING_VARIATION_THRESHOLD ) {
     _trigger = true;
+    return;
   }
 
 // TODO: add sending if it has not been sent for a long time
@@ -109,4 +114,8 @@ void generic_driver::process( uint16_t coolDown ) {
 /******************************************
  * DATA integration related methods
  */
-
+void generic_driver::setDataSent( void ) {
+  _trigger = false;
+  valueSent = value;
+  _lastMsSent = millis();
+}

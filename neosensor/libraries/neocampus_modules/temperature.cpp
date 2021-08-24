@@ -55,6 +55,9 @@ temperature::temperature( JsonDocument &sharedRoot ): base() {
   // create module's JSON structure to hold all of our data
   // [aug.21] we create a dictionnary
   variant = sharedRoot.createNestedObject(MQTT_MODULE_NAME);
+  // all sensors share the same units of values
+  JsonObject _obj = variant.as<JsonObject>();
+  _obj[F("value_units")] = "°c";
 
   // call low-level constructor
   _temperature();
@@ -315,15 +318,18 @@ void temperature::_process_sensors( void ) {
     // start sensor processing according to our coolDown parameter
     // [aug.21] _freq is our coolDown parameter
     _sensor[cur_sensor]->process( _freq );
-    // if data ready to get sent ==> activate module's trigger
-    if( _sensor[cur_sensor]->getTrigger()==true ) {
-      log_debug(F("\n[temperature][")); log_debug(_sensor[cur_sensor]->subID());
-      log_debug(F("] new official value = "));log_debug(_sensor[cur_sensor]->getValue()); log_flush();
+    if( _sensor[cur_sensor]->getTrigger()!=true ) continue;
 
-// DEBUG DEBUG DEBUG
-//      _trigger = true;  // activate module level trigger
+    // new data ready to get sent ==> activate module's trigger
+    log_debug(F("\n[temperature][")); log_debug(_sensor[cur_sensor]->subID());
+    log_debug(F("] new official value = "));log_debug(_sensor[cur_sensor]->getValue()); log_flush();
+    _trigger = true;  // activate module level trigger
 
-    }
+    /*
+     * update shared JSON
+     */
+    JsonObject _obj = variant.as<JsonObject>();
+    _obj[_sensor[cur_sensor]->subID()] = _sensor[cur_sensor]->getValue();
   }
 }
 
@@ -342,51 +348,48 @@ boolean temperature::_sendValues( void ) {
    */
   boolean _TXoccured = false;
 
-  // declare pointer to shared JSON
-  JsonObject _obj = variant.as<JsonObject>();
-
-//TO BE CONTINUED
-
   for( uint8_t cur_sensor=0; cur_sensor<_sensors_count; cur_sensor++ ) {
+
+    if( _sensor[cur_sensor]==nullptr || _sensor[cur_sensor]->getTrigger()!=true ) continue;
 
     StaticJsonDocument<DATA_JSON_SIZE> _doc;
     JsonObject root = _doc.to<JsonObject>();
 
-    // retrieve data from current sensor
-    float value;
-    if( !_sensor[cur_sensor]->acquire(&value) ) {
-      log_warning(F("\n[temperature] unable to retrieve data from sensor "));
-      log_warning(_sensor[cur_sensor]->subID()); log_flush();
-      continue;
-    }
+    // retrieve official value
+    float value = _sensor[cur_sensor]->getValue();
+
     root[F("value")] = serialized(String(value,FLOAT_RESOLUTION));   // [nov.20] force float encoding
     //root[F("value")] = (float)( value );   // [may.20] force data as float (e.g ArduinoJson converts 20.0 to INT)
                                             // this doesn't work since ArduinoJson converts to STRING withiout decimal!
-    root[F("value")] = (float)( value );   // [may.20] force data as float (e.g ArduinoJson converts 20.0 to INT)
     root[F("value_units")] = _sensor[cur_sensor]->sensorUnits();
     root[F("subID")] = _sensor[cur_sensor]->subID();
 
     /*
-    * send MQTT message
-    */
+     * send MQTT message
+     */
     if( sendmsg( root ) ) {
       log_info(F("\n[temperature] successfully published msg :)")); log_flush();
-      _TXoccured = true;
+      // _TXoccured = true;
     }
     else {
       // we stop as soon as we've not been able to successfully send one message
       log_error(F("\n[temperature] ERROR failure MQTT msg delivery :(")); log_flush();
       return false;
     }
-    
+
+    // mark data as sent
+    _sensor[cur_sensor]->setDataSent();
+
     // delay between two successives values to send
-    delay(20); 
+    delay(20);
   }
 
   /* do we need to postpone to next TX slot:
    * required when no data at all have been published
-   */
+   * [aug.21] useless since we don not rely anymore on periodic sending !
+   *
   if( !_TXoccured ) cancelTXslot();
+   */
 
   return true;
 }

@@ -56,6 +56,20 @@ typedef uint32_t firmwareRev_t;
 
 
 /*
+ * Cooldown settings (seconds)
+ *  is the maximum delay between two consecutive sending event if there's 
+ *  nothing new to send: this is a health check of the whole sensor
+ */
+#ifndef _MAX_COOLDOWN_DEVICE
+#define _MAX_COOLDOWN_DEVICE      (3600*6)  // seconds --> 6 hours
+#endif /* _MAX_COOLDOWN_DEVICE */
+
+#ifndef _MAX_COOLDOWN_SENSOR
+#define _MAX_COOLDOWN_SENSOR      1800      // seconds --> 30mn
+#endif /* _MAX_COOLDOWN_SENSOR */
+
+
+/*
  * >>>                 <<<
  * >>> BOARD SELECTION <<<
  * >>>                 <<<

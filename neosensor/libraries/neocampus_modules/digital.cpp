@@ -463,7 +463,7 @@ void digital::_process_sensors( void ) {
       log_debug(F(" _fdetect="));log_debug(_fdetect);
       log_flush();
 
-      // update sharedRoot
+      // update shared JSON structure
       String _key = "GPIO" + _gpio[i]->pin;
       _obj[_key] = _value;
 

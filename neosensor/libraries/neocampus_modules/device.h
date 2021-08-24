@@ -29,8 +29,8 @@
  * Definitions
  */
 #define DEVICE_MIN_FREQUENCY    900       // may go up to every 15 minutes ...
-#define DEVICE_MAX_FREQUENCY    (3600*6)  // or cool down to every every 6hours
-#define DEFL_DEVICE_FREQUENCY   (DEVICE_MIN_FREQUENCY*2)      // end-device status report every 30mn
+#define DEVICE_MAX_FREQUENCY    _MAX_COOLDOWN_DEVICE        // or cool down to every every 6hours
+#define DEFL_DEVICE_FREQUENCY   (DEVICE_MIN_FREQUENCY*2)    // end-device status report every 30mn
 
 
 

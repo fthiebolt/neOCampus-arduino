@@ -78,8 +78,9 @@ class generic_driver {
     virtual String subID( void )=0;    // pure virtual, retrieve subID (i.e i2c addr)
 
     // data integration
-    bool getTrigger( void ) { return _trigger; };   // local driver trigger that indicates a new official value needs to get sent
-    float getValue( void ) { return value; };       // get official value that has gone through the whole integration process
+    inline bool getTrigger( void ) { return _trigger; };  // local driver trigger that indicates a new official value needs to get sent
+    inline float getValue( void ) { return value; };      // get official value that has gone through the whole integration process
+    void setDataSent( void );                             // data has been sent, reset the 'new official data' trigger
 
     // public attributes
 
@@ -91,12 +92,16 @@ class generic_driver {
     uint8_t       _thresholdPercent;  // max percent data variation to consider as stable
 
     bool          _trigger;       // stable official value ought to get sent according to variation constraints and the coolDown/_lastTX value
+
     float         _current;
     uint8_t       _currentCpt;    // nb iteration _current is stable (usually beteween 5 to 10 ---i.e 5s to 10s)
     unsigned long _lastMsRead;    // (ms) last time data has been read from sensor (usually every 1s)
+
     float         value;          // official value
-    unsigned long _lastMsSet;     // (ms) last time official value has been set
+    unsigned long _lastMsWrite;   // (ms) last time official value has been written
+
     float         valueSent;      // official value that has been sent
+    unsigned long _lastMsSent;    // (ms) time the official value has been sent
 };
 
 #endif /* _GENERIC_DRIVER_H_ */

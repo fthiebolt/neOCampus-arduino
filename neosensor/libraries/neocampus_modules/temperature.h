@@ -34,10 +34,13 @@
 
 /*
  * Definitions
+ * [aug.21] we're now following a 'cooldown' approach about data sending:
+ * - new data (i.e that changed from previous sent) won't get sent before 'cooldown' seconds
+ * - if _MAX_COOLDOWN_SENSOR is reached, data will get sent even if it' not a new one
  */
 #define _MAX_SENSORS                  4
 #define TEMPERATURE_MIN_FREQUENCY     30      // (i.e coolDown) may go down to 30 seconds ...
-#define TEMPERATURE_MAX_FREQUENCY     1800    // or cool down to every every 30mn
+#define TEMPERATURE_MAX_FREQUENCY     _MAX_COOLDOWN_SENSOR
 #define DEFL_TEMPERATURE_FREQUENCY    (TEMPERATURE_MIN_FREQUENCY*2)     // temperature message every 60 seconds by default ...
 /* [aug.21] now considering COOLDOWN parameters */
 #define TEMPERATURE_MIN_COOLDOWN      TEMPERATURE_MIN_FREQUENCY         // min delay between two consecutives sending

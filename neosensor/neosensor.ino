@@ -877,6 +877,7 @@ void setup() {
 
   /*
    * Manage WiFi parameters options
+   * WARNING: second call to process WiFi parameters
    */
   processWIFIparameters( &wifiParameters );
   delay(250);  // to avoid race condition between I2C clock and TM1637 CLOCK (shared pin)
@@ -958,8 +959,6 @@ void setup() {
       log_debug(F("\n\t\tadded temperature sensor at i2c addr = 0x"));log_debug(res,HEX); log_flush();
       _known = true;
     }
-/* TESTS ONLY: disabling sensors ... */
-#if 0
     // is chip a luminosity sensor ?
     if( luminosityModule and luminosityModule->add_sensor(res) == true ) {
       log_debug(F("\n\t\tadded luminosity sensor at i2c addr = 0x"));log_debug(res,HEX); log_flush();
@@ -975,7 +974,7 @@ void setup() {
       log_debug(F("\n\t\tadded humidity sensor at i2c addr = 0x"));log_debug(res,HEX); log_flush();
       _known = true;
     }
-#endif /* 0 */
+
     // add test for others modules ...
 
     // did the i2c deice has been identified ?

@@ -93,38 +93,57 @@ boolean digital::add_gpio( uint8_t pin, digitalInputType_t type, digitalFrontDet
   if( pin == INVALID_GPIO ) return false;
   if( _gpio_count>=_MAX_GPIOS ) return false;
 
-  bool _gpio_added=false;
+//  bool _gpio_added=false;
+  digitalGPIO_t *_cur_gpio = nullptr;
 
-  // allocate structure
-  _gpio[_gpio_count] = new digitalGPIO_t;
-  if( _gpio[_gpio_count] == nullptr ) {
-    log_error(F("\n[digital] unable to allocate digitalGPIO_t instance ?!?!")); log_flush();
-    return false;
+  // search for already existing structure
+  for( uint8_t i=0; i < _gpio_count; i++ ) {
+    if( _gpio[i]==nullptr || _gpio[i]->pin!=pin ) continue;
+    // gpio already exists
+    _cur_gpio = _gpio[i];
+    break;
   }
 
-  _gpio[_gpio_count]->pin         = pin;
-  _gpio[_gpio_count]->type        = type;
-  _gpio[_gpio_count]->front       = front;
-  _gpio[_gpio_count]->_trigger    = false;
-  _gpio[_gpio_count]->coolDown    = coolDown;
-  _gpio[_gpio_count]->_lastTX     = millis() - ((unsigned long)coolDown*1000UL);
+  // allocate structure if needed
+  if( _cur_gpio == nullptr ) {
+    _gpio[_gpio_count] = new digitalGPIO_t;
+    if( _gpio[_gpio_count] == nullptr ) {
+      log_error(F("\n[digital] unable to allocate digitalGPIO_t instance ?!?!")); log_flush();
+      return false;
+    }
+    _cur_gpio = _gpio[_gpio_count];
+  }
+  else {
+    log_warning(F("\n[digital] GPIO"));log_warning(pin);
+    log_warning(F(" already exists! >>>> UPDATING <<<< ...")); log_flush();
+    delay(500);
+  }
+
+  _cur_gpio->pin         = pin;
+  _cur_gpio->type        = type;
+  _cur_gpio->front       = front;
+  _cur_gpio->_trigger    = false;
+  _cur_gpio->coolDown    = coolDown;
+  _cur_gpio->_lastTX     = millis() - ((unsigned long)coolDown*1000UL);
 
   // initialize values. _previous field will get used in process()
   pinMode( pin, INPUT );
-  _gpio[_gpio_count]->_current    = digitalRead( pin );
-  _gpio[_gpio_count]->value       = _gpio[_gpio_count]->_current;
-
+  _cur_gpio->_current    = digitalRead( pin );
+  _cur_gpio->value       = _cur_gpio->_current;
+/*
   _gpio_added = true;
 
   // summary
   if( !_gpio_added ) {
     free(_gpio[_gpio_count]);
     _gpio[_gpio_count] = nullptr;
+    _cur_gpio = nullptr;
     return false;
   }
-  log_debug(F("\n[digital] added GPIO"));log_debug(_gpio[_gpio_count]->pin);
-  log_debug(F(" front="));log_debug((uint8_t)_gpio[_gpio_count]->front);
-  log_debug(F(" coolDown="));log_debug(_gpio[_gpio_count]->coolDown,DEC);
+*/
+  log_debug(F("\n[digital] added GPIO"));log_debug(_cur_gpio->pin);
+  log_debug(F(" front="));log_debug((uint8_t)_cur_gpio->front);
+  log_debug(F(" coolDown="));log_debug(_cur_gpio->coolDown,DEC);
   log_flush();
 
   _gpio_count++;

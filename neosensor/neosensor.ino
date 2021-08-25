@@ -953,7 +953,7 @@ void setup() {
     log_debug(F("\n\t... detected device at i2c_addr=0x"));log_debug(res,HEX);log_flush();
 
     bool _known = false;
-
+#if 0
     // is chip a temperature sensor ?
     if( temperatureModule and temperatureModule->add_sensor(res) == true ) {
       log_debug(F("\n\t\tadded temperature sensor at i2c addr = 0x"));log_debug(res,HEX); log_flush();
@@ -969,6 +969,7 @@ void setup() {
       log_debug(F("\n\t\tadded DAC to noise module whose i2c addr = 0x"));log_debug(res,HEX); log_flush();      
       _known = true;
     }
+#endif /* 0 */
     // is chip a humidity sensor ?
     if( humidityModule and humidityModule->add_sensor(res) == true ) {
       log_debug(F("\n\t\tadded humidity sensor at i2c addr = 0x"));log_debug(res,HEX); log_flush();

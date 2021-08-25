@@ -26,6 +26,7 @@
 
 #include <Arduino.h>
 #include <ArduinoJson.h>
+#include <limits.h>
 
 
 

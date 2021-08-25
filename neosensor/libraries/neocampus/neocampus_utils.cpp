@@ -9,6 +9,8 @@
  * - ...
  * 
  * ---
+ * F.Thiebolt   aug.21  extended checkCLEAR to 5000ms (some ESP32 have huge
+ *                      internal capacitor enabled@starup ?!?!)
  * F.Thiebolt   apr.21  removed DNS related includes
  * F.Thiebolt   aug.20  removed EEPROM support
  * F.Thiebolt   Nov.19  set 30s WiFi connexion timeout with previous credentials
@@ -83,11 +85,11 @@ bool checkCLEARswitch( uint8_t sw_pin ) {
   // ... then read input for a specific time
   for( uint8_t cpt=10; cpt > 0; cpt-- ) {
     if ( digitalRead( sw_pin ) != HIGH ) {
-      // at least read as LOW one time --> cancel clear operation
+      // at least read 'LOW' one time --> cancel clear operation
       _res = false;
       break;
     }
-    delay(50);  // sleep for 50ms (allowing ESP to manage internals)
+    delay(500);  // sleep for 500ms (allowing ESP to manage internals)
   }
   
   /* okay, delay for clear switch acquisition is now over.

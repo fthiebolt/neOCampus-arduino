@@ -90,13 +90,14 @@ digital::~digital( void )
  */
 boolean digital::add_gpio( const char* subID, uint8_t pin, digitalInputType_t type, digitalFrontDetect_t front, uint16_t coolDown ) {
   
+  if( subID==nullptr or strlen(subID)==0 ) return false;
   if( pin == INVALID_GPIO ) return false;
   if( _gpio_count>=_MAX_GPIOS ) return false;
 
 //  bool _gpio_added=false;
   digitalGPIO_t *_cur_gpio = nullptr;
 
-  // search for already existing structure
+  // search for an already existing structure
   for( uint8_t i=0; i < _gpio_count; i++ ) {
     if( _gpio[i]==nullptr || _gpio[i]->pin!=pin ) continue;
     // gpio already exists
@@ -174,31 +175,34 @@ boolean digital::add_gpio( JsonVariant root ) {
   //log_debug(F("\n[lcc_sensor] params found :)\n")); log_flush();
   //serializeJsonPretty( root, Serial );
 
-  boolean _param_subID = false;
-  boolean _param_input = false;   // pin number ---i.e GPIO
-  boolean _param_type = false;    // type of sensor (presence, open_close ...)
+  String _subID             = "";
+  uint8_t _input            = INVALID_GPIO;
+  digitalInputType_t _type  = digitalInputType_t::undefined;
+  uint16_t _cooldown        = 0;
+  bool _front_param         = false;
+  digitalFrontDetect_t _front;
 
   /* parse all parameters of our sensor:
   [
     {
-      "param": "subIDs",
-      "value": "IR_SENSOR"
+      "param": "subID",
+      "value": "IRsensor"
     },
     {
-      "param": "inputs",
+      "param": "input",
       "value": 4
     },
     {
-      "param": "types",
-      "value": "presence"
+      "param": "type",
+      "value": 1
     },
     {
-      "param": "cooldowns",
+      "param": "cooldown",
       "value": 60
     },
     {
-      "param": "fronts",
-      "value": "rising"
+      "param": "front",
+      "value": 1
     }
   ]
   */
@@ -214,8 +218,7 @@ boolean digital::add_gpio( JsonVariant root ) {
     {
       const char *_param = PSTR("subID");
       if( strncmp_P(item[F("param")], _param, strlen_P(_param))==0 ) {
-        snprintf( _subID, sizeof(_subID), item[F("value")]);
-        _param_subID = true;
+        _subID = item[F("value")].as<String>();
       }
     }
 
@@ -223,23 +226,32 @@ boolean digital::add_gpio( JsonVariant root ) {
     {
       const char *_param = PSTR("input");
       if( strncmp_P(item[F("param")], _param, strlen_P(_param))==0 ) {
-        if( ! item[F("value")].is<JsonArray>() ) {
-          log_error(F("\n[lcc_sensor] expecting inputs as a JSON array (of int) ?!")); log_flush();
-          continue;
-        }
-        JsonArray gpio_root = item[F("value")];
-        for( uint8_t i=0; i < min(sizeof(_inputs),gpio_root.size()); i++ ) {
-          _inputs[i] = (uint8_t)gpio_root[i].as<int>();   // to force -1 to get converted to (uint8_t)255
-        }
-        _param_input = true;
+        _input = (uint8_t)item[F("value")].as<int>();   // to force -1 to get converted to (uint8_t)255
       }
     }
 
-    // OUTPUT(S)
+    // TYPE
     {
-      const char *_param = PSTR("output");
+      const char *_param = PSTR("type");
       if( strncmp_P(item[F("param")], _param, strlen_P(_param))==0 ) {
-        _heater_gpio = (uint8_t)item[F("value")].as<int>();    // to force -1 to get converted to (uint8_t)255
+        _type = (digitalInputType_t)item[F("value")].as<int>();
+      }
+    }
+
+    // COOLDOWN
+    {
+      const char *_param = PSTR("cooldown");
+      if( strncmp_P(item[F("param")], _param, strlen_P(_param))==0 ) {
+        _cooldown = (uint16_t)item[F("value")].as<int>();
+      }
+    }
+
+    // FRONT
+    {
+      const char *_param = PSTR("front");
+      if( strncmp_P(item[F("param")], _param, strlen_P(_param))==0 ) {
+        _front = (digitalFrontDetect_t)item[F("value")].as<int>();
+        _front_param = true;
       }
     }
 
@@ -247,25 +259,23 @@ boolean digital::add_gpio( JsonVariant root ) {
 
 
   /* DEBUG DEBUG DEBUG
-  log_debug(F("\n[lcc_sensor] driver created with subID: ")); log_debug(_subID);
-  log_debug(F("\n[lcc_sensor] heater: ")); log_debug(_heater_gpio,DEC);
-  log_debug(F("\n[lcc_sensor] inputs: "));
-  for( uint8_t i=0; i < sizeof(_inputs); i++ ) {
-    log_debug(_inputs[i],DEC);log_debug(F(" "));
-  }
+  log_debug(F("\n[digital][sensOCampus] add gpio with subID: ")); log_debug(_subID);
+  log_debug(F(" GPIO")); log_debug(_input,DEC);
+  log_debug(F(" type: ")); log_debug((uint8_t)_type,DEC);
+  log_debug(F(" front: ")); log_debug((uint8_t)_front,DEC);
+  log_debug(F(" cooldown: ")); log_debug(_cooldown,DEC);
   log_flush();
+  return false;
   */
 
   /* check whether all parameters are set ...
-   * note: param_output is optional
    */
-  if( !_param_subID or !_param_input ) return false;
+  if( !_front_param ) return false;
 
   /*
    * sensor HW initialisation
    */
-  return _init();
-#endif /* 0 */
+  return add_gpio( _subID.c_str(), _input, _type, _front, _cooldown );
 }
 
 
@@ -502,7 +512,6 @@ boolean digital::loadSensoConfig( senso *sp ) {
       if( (item[F("driver")] and strncmp_P(item[F("driver")], _unit, strlen_P(_unit))==0) or
            strncmp_P(item[F("unit")], _unit, strlen_P(_unit))==0 ) {
         // add gpio
-to be continued        
         if( add_gpio( item[F("params")] )!= true ) {
           log_debug(F("\n[digital] unable to add_gpio from sensOCampus config ..."));log_flush();
         }
@@ -570,6 +579,14 @@ void digital::_process_sensors( void ) {
      * the current value WILL become the new official one.
      */
     _value = (_gpio[i]->value & _xor) | (_gpio[i]->_current & ~_xor);
+
+    // update shared JSON structure if new official value (trigger independant)
+    if( _value ^ _gpio[i]->value ) {
+      //String _key = "GPIO" + _gpio[i]->pin;
+      //_obj[_key] = _value;
+      _obj[_gpio[i]->subID] = _value;
+    }
+
     // if the new official digital inputs changed from previous one AND trigger is not already active
     if( (_value ^ _gpio[i]->value) && not(_gpio[i]->_trigger) ) {
       bool _fdetect, _isTXtime;
@@ -579,15 +596,11 @@ void digital::_process_sensors( void ) {
                   (_value==false && _gpio[i]->front==digitalFrontDetect_t::falling) ||
                   _gpio[i]->front==digitalFrontDetect_t::both;
 
-      log_debug(F("\n[digital] event GPIO"));log_debug(_gpio[i]->pin);
-      log_debug(F("="));log_debug(_value);
+      log_debug(F("\n[digital] event "));log_debug(_gpio[i]->subID);
+      log_debug(F("\n(GPIO"));log_debug(_gpio[i]->pin);
+      log_debug(F(")="));log_debug(_value);
       log_debug(F(" _fdetect="));log_debug(_fdetect);
       log_flush();
-
-      // update shared JSON structure
-      //String _key = "GPIO" + _gpio[i]->pin;
-      //_obj[_key] = _value;
-      _obj[_gpio[i]->subID] = _value;
 
       // time to transmit ?
       _isTXtime = (curTime - _gpio[i]->_lastTX) >= ((unsigned long)_gpio[i]->coolDown)*1000UL;
@@ -733,50 +746,24 @@ boolean digital::_loadConfig( JsonObject root ) {
 				"params":
 				[
 					{
-						"param": "subIDs",
-						"value": 	"IR_SENSOR"
+						"param": "subID",
+						"value": 	"IRsensor"
 					},
 					{
-						"param": "inputs",
+						"param": "input",
 						"value": 	4
 					},
 					{
-						"param": "types",
-						"value": "presence"
+						"param": "type",
+						"value": 1
 					},
 					{
-						"param": "cooldowns",
+						"param": "cooldown",
 						"value": 60
 					},
 					{
-						"param": "fronts",
-						"value": "rising"
-					}
-				]
-			}
-		],
-		[
-			{
-				"module": "digital",
-        "unit": "inside",
-        "driver": "gpio",
-				"params":
-				[
-					{
-						"param": "subIDs",
-						"value": 	"DOOR"
-					},
-					{
-						"param": "inputs",
-						"value": 	64
-					},
-					{
-						"param": "types",
-						"value": "open_close"
-					},
-					{
-						"param": "fronts",
-						"value": "both"
+						"param": "front",
+						"value": 1
 					}
 				]
 			}

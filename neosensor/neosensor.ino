@@ -263,7 +263,7 @@ void setupSerial( void ) {
   Serial.setDebugOutput( true );
   
   char tmp[96];
-  snprintf(tmp,sizeof(tmp),"\n# %s firmware rev %d for neOCampus is starting ... ",getBoardName(),getFirmwareRev());
+  snprintf(tmp,sizeof(tmp),"\n\n\n\n# %s firmware rev %d for neOCampus is starting ... ",getBoardName(),getFirmwareRev());
   log_info(tmp);
   log_info(F("\n#\tMac address is ")); log_info(getMacAddress());
   log_info(F("\n#\tlog level is ")); log_info(LOG_LEVEL,DEC);

@@ -68,7 +68,7 @@ void generic_driver::powerOFF( void ) {
  * used for continuous integration for example
  * 
  */
-void generic_driver::process( uint16_t coolDown ) {
+void generic_driver::process( uint16_t coolDown, uint8_t decimals ) {
   // same time ref for all
   unsigned long _curTime = millis();
 
@@ -80,6 +80,16 @@ void generic_driver::process( uint16_t coolDown ) {
   float val;
   if( acquire(&val)==false ) return;   // data was not ready
   _lastMsRead   = _curTime;
+
+  // round acquired value
+  decimals = ( decimals > _MAX_DATA_DECIMALS ? _MAX_DATA_DECIMALS : decimals );
+  if( decimals==0 ) {
+    val = (float)round(val);
+  }
+  else {
+    float _pow = pow(10,decimals);
+    val = (float)round(val*_pow)/_pow;
+  }
 
   // data has been acquired :)
   if( _currentCpt==(uint8_t)(-1) or

@@ -316,12 +316,12 @@ void temperature::_process_sensors( void ) {
     if( _sensor[cur_sensor]==nullptr ) continue;
     // start sensor processing according to our coolDown parameter
     // [aug.21] _freq is our coolDown parameter
-    _sensor[cur_sensor]->process( _freq );
+    _sensor[cur_sensor]->process( _freq, FLOAT_RESOLUTION );
     if( _sensor[cur_sensor]->getTrigger()!=true ) continue;
 
     // new data ready to get sent ==> activate module's trigger
     log_debug(F("\n[temperature][")); log_debug(_sensor[cur_sensor]->subID());
-    log_debug(F("] new official value = "));log_debug(_sensor[cur_sensor]->getValue()); log_flush();
+    log_debug(F("] new official value = "));log_debug(_sensor[cur_sensor]->getValue(),FLOAT_RESOLUTION); log_flush();
     _trigger = true;  // activate module level trigger
 
     /*

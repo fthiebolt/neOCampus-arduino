@@ -43,10 +43,11 @@
  * If abs(new official value - valueSent) > resolution ==> activate _trigger
  * _trigger activation will generate a data sending
  */
-#define DEFL_READ_MSINTERVAL   1250 // default ms between two consecutives read of sensor
-#define DEFL_THRESHOLD_CPT     5    // threshold counter to declare current value the new official one
-#define DEFL_THRESHOLD_PERCENT 2    // percent variation threshold to consider stable value
+#define DEFL_READ_MSINTERVAL    1250  // default ms between two consecutives read of sensor
+#define DEFL_THRESHOLD_CPT      5     // threshold counter to declare current value the new official one
+#define DEFL_THRESHOLD_PERCENT  2     // percent variation threshold to consider stable value
 
+#define _MAX_DATA_DECIMALS      3     // we won't support more than decimals in data from sensors
 #define DATA_SENDING_VARIATION_THRESHOLD  (float)(0.15) // new official value ought to differ more than this threshold to get sent
 
 
@@ -70,7 +71,9 @@ class generic_driver {
     virtual boolean begin( JsonVariant );   // Json senso config
 
     // Data
-    virtual void process( uint16_t coolDown=0 );  // sensors internal processing with coolDown parameter (e.g for continuous integration)
+    virtual void process( uint16_t coolDown=0,
+                          uint8_t decimals=0 );   // sensors internal processing with coolDown parameter (e.g for continuous integration)
+                                                  // The 'decimals' parameter is the number of digits after comma ==> 0 means integer !
     virtual boolean acquire( float* )=0;          // pure virtual, acquire sensor value
     virtual const char *sensorUnits( void )=0;    // pure virtual, retrieve units of actual sensors (e.g celsius, %r.H, lux ...)
 

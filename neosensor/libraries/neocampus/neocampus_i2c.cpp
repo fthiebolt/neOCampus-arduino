@@ -1,8 +1,19 @@
 /*
- * neOCampus library
+ * neOCampus library / i2c functions
  * 
+ * (c) Copyright 2021 Thiebolt F. <thiebolt@irit.fr> for neOCampus
+ *
+ * ---
+ * Notes:
  * - I2C synchronous functions read/write 8 and 16bits
+ * ---
+ * TODO:
+ * ---
+ * F.Thiebolt aug.21  i2c scan now reads two times to augment detection
+ *                    capabilities
+ * F.Thiebolt 2015    initial release
  */
+
 
 
 /*
@@ -21,8 +32,9 @@
 /* I2C scanner: it starts to scan I2C bus according to specified start parameter
  *  Scan stops whenever a device respond and we send back it address. You can continue scanning 
  *  giving previous answered addr+1
+ * [aug.21] now trying each address multiple times !
  */
-uint8_t i2c_scan(uint8_t start) {
+uint8_t i2c_scan( uint8_t start ) {
 
   // check that i2c addr is within range ...
   if( (start < I2C_ADDR_START) || (start > I2C_ADDR_STOP) ) {
@@ -31,18 +43,21 @@ uint8_t i2c_scan(uint8_t start) {
   }
   
   // ... then let's start to scan i2c bus :)
-  int res;
   for( uint8_t _addr=start; _addr <= I2C_ADDR_STOP; _addr++ ) {
+    int res;
+    uint8_t _scan_try=1;
 
-    // i2c quick_write :)
-    res = i2c_quick_write( _addr );
-    delay(20);  // usefull ?  
- 
-    if( res==0 ) return _addr;
-    else if( res==4 ) {
-      log_debug("\n###ERROR I2C scan err="); log_debug(DEC,res);log_flush();
-      return -1;
-    }
+    while( _scan_try < 3 ) {
+      delay(20*_scan_try);
+      _scan_try++;
+      // i2c quick_write :)
+      res = i2c_quick_write( _addr );
+      if( res==0 ) return _addr;
+      else if( res==4 ) {
+        log_debug("\n###ERROR I2C scan err="); log_debug(DEC,res);log_flush();
+        return -1;
+      }
+    }  
   }
 
   // nothing detected

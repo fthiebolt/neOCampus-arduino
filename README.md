@@ -11,6 +11,9 @@ All this work was undertaken at Université Toulouse 3 / IRIT laboratory in the 
 ![neOSensorv5](/images/neOSensorV5.jpg)
 
 ## NEWS ##
+ * **[Aug.21]** added support for digital inputs (PIR & switches)
+introduced the cooldown approach and data integration
+... means that we'll only send data when they differ from the previously sent
  * **[Jun.21]** added KiCad PCB for LoRaWAN V2 (Heltec CubeCell)
  * **[Apr.21]** added support for 3 NTP servers + NTP from DHCP to lwip. Have a look to `arduinoIDE_esp32_boards/README.md`
                 added KiCad PCB for neOSensor v5.1 (ESP32 based)
@@ -33,11 +36,11 @@ The board features four specific sensors able to measure NO2, CO, CH20, NO2 alte
 ## Getting started ##
 First of all, you ought to install esp32, esp8266 or CubeCell support in your Arduino IDE.
 
-| Device   | Arduino Board Manager json file                                                             |
-|----------|---------------------------------------------------------------------------------------------|
-| esp8266  | https://arduino.esp8266.com/stable/package_esp8266com_index.json                            |
-| esp32    | https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json |
-| CubeCell | https://resource.heltec.cn/download/package_CubeCell_index.json                             |
+| Device   | Arduino Board Manager json file                                                                            |
+|----------|------------------------------------------------------------------------------------------------------------|
+| esp8266  | https://arduino.esp8266.com/stable/package_esp8266com_index.json                                           |
+| esp32    | https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json                |
+| CubeCell | https://github.com/HelTecAutomation/CubeCell-Arduino/releases/download/V1.3.0/package_CubeCell_index.json  |
 
 Then, run script `./deploy.sh` and boards will get added to your Arduino boards list :)
 

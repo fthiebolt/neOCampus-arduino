@@ -12,7 +12,7 @@
 # Global defs
 ESP32_REV=${ESP32_REV:-"1.0.6"}
 ESP8266_REV=${ESP8266_REV:-"2.7.1"}
-CUBECELL_REV=${CUBECELL_REV:-"1.2.0"}
+CUBECELL_REV=${CUBECELL_REV:-"1.3.0"}
 
 
 #
@@ -79,6 +79,15 @@ function boards_install() {
         [ $? -ne 0 ] && { echo -e "\n### ERROR while copying '${local_file}' file to '${SDK_DIR}' directory ... aborting!" >&2; exit 1; }
         echo -e "\tsuccessfully installed local file '${_local_file}'"
     done
+
+    #
+    # execute local_deploy script if any
+    if [ -x ${SRC_DIR}/local_deploy.sh ]; then
+        echo -e "#         execute local_deploy script                      #"
+        echo -e "#                                                          #"
+        ( cd ${SRC_DIR}; source local_deploy.sh ${SDK_DIR}/tools/sdk; )
+    fi
+
     echo -e "#                                                          #"
     echo -e "# -------------------------------------------------------- #"
 

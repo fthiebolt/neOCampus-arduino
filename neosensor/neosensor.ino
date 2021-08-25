@@ -975,6 +975,7 @@ void setup() {
       _known = true;
     }
 
+
     // add test for others modules ...
 
     // did the i2c deice has been identified ?

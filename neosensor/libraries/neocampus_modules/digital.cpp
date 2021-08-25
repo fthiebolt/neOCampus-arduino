@@ -85,10 +85,10 @@ digital::~digital( void )
 
 
 /*
- * add_device method
+ * add_gpio method
  * Note: specifying front as 'none' will not send their value through MQTT
  */
-boolean digital::add_gpio( uint8_t pin, digitalInputType_t type, digitalFrontDetect_t front, uint16_t coolDown ) {
+boolean digital::add_gpio( const char* subID, uint8_t pin, digitalInputType_t type, digitalFrontDetect_t front, uint16_t coolDown ) {
   
   if( pin == INVALID_GPIO ) return false;
   if( _gpio_count>=_MAX_GPIOS ) return false;
@@ -119,6 +119,9 @@ boolean digital::add_gpio( uint8_t pin, digitalInputType_t type, digitalFrontDet
     delay(500);
   }
 
+  strncpy( _cur_gpio->subID, subID, sizeof(_cur_gpio->subID));
+  _cur_gpio->subID[sizeof(_cur_gpio->subID)-1] = '\0';
+
   _cur_gpio->pin         = pin;
   _cur_gpio->type        = type;
   _cur_gpio->front       = front;
@@ -141,7 +144,8 @@ boolean digital::add_gpio( uint8_t pin, digitalInputType_t type, digitalFrontDet
     return false;
   }
 */
-  log_debug(F("\n[digital] added GPIO"));log_debug(_cur_gpio->pin);
+  log_debug(F("\n[digital] added '"));log_debug(_cur_gpio->subID);
+  log_debug(F("' GPIO"));log_debug(_cur_gpio->pin);
   log_debug(F(" front="));log_debug((uint8_t)_cur_gpio->front);
   log_debug(F(" coolDown="));log_debug(_cur_gpio->coolDown,DEC);
   log_flush();
@@ -150,6 +154,121 @@ boolean digital::add_gpio( uint8_t pin, digitalInputType_t type, digitalFrontDet
 
   // everything is ok :)
   return true;
+}
+
+
+/**************************************************************************/
+/*! 
+    @brief  Extract JSON config parameters to initialize the GPIO
+    @note   may get called as many times as modules specified
+*/
+/**************************************************************************/
+boolean digital::add_gpio( JsonVariant root ) {
+
+  // check input(s)
+  if( root.isNull() or not root.is<JsonArray>() ) {
+    log_error(F("\n[digital] either empty JSON or wrong JSON type (array expected)!")); log_flush();
+    return false;
+  }
+
+  //log_debug(F("\n[lcc_sensor] params found :)\n")); log_flush();
+  //serializeJsonPretty( root, Serial );
+
+  boolean _param_subID = false;
+  boolean _param_input = false;   // pin number ---i.e GPIO
+  boolean _param_type = false;    // type of sensor (presence, open_close ...)
+
+  /* parse all parameters of our sensor:
+  [
+    {
+      "param": "subIDs",
+      "value": "IR_SENSOR"
+    },
+    {
+      "param": "inputs",
+      "value": 4
+    },
+    {
+      "param": "types",
+      "value": "presence"
+    },
+    {
+      "param": "cooldowns",
+      "value": 60
+    },
+    {
+      "param": "fronts",
+      "value": "rising"
+    }
+  ]
+  */
+
+  return false;
+#if 0
+
+  for( JsonVariant item : root.as<JsonArray>() ) {
+
+    if( item.isNull() or not item.is<JsonObject>() ) {
+      log_warning(F("\n[digital] format error while parsing parameters !")); log_flush();
+      continue;
+    }
+
+    // SUBID
+    {
+      const char *_param = PSTR("subID");
+      if( strncmp_P(item[F("param")], _param, strlen_P(_param))==0 ) {
+        snprintf( _subID, sizeof(_subID), item[F("value")]);
+        _param_subID = true;
+      }
+    }
+
+    // INPUT(S)
+    {
+      const char *_param = PSTR("input");
+      if( strncmp_P(item[F("param")], _param, strlen_P(_param))==0 ) {
+        if( ! item[F("value")].is<JsonArray>() ) {
+          log_error(F("\n[lcc_sensor] expecting inputs as a JSON array (of int) ?!")); log_flush();
+          continue;
+        }
+        JsonArray gpio_root = item[F("value")];
+        for( uint8_t i=0; i < min(sizeof(_inputs),gpio_root.size()); i++ ) {
+          _inputs[i] = (uint8_t)gpio_root[i].as<int>();   // to force -1 to get converted to (uint8_t)255
+        }
+        _param_input = true;
+      }
+    }
+
+    // OUTPUT(S)
+    {
+      const char *_param = PSTR("output");
+      if( strncmp_P(item[F("param")], _param, strlen_P(_param))==0 ) {
+        _heater_gpio = (uint8_t)item[F("value")].as<int>();    // to force -1 to get converted to (uint8_t)255
+      }
+    }
+
+  }
+
+
+  /* DEBUG DEBUG DEBUG
+  log_debug(F("\n[lcc_sensor] driver created with subID: ")); log_debug(_subID);
+  log_debug(F("\n[lcc_sensor] heater: ")); log_debug(_heater_gpio,DEC);
+  log_debug(F("\n[lcc_sensor] inputs: "));
+  for( uint8_t i=0; i < sizeof(_inputs); i++ ) {
+    log_debug(_inputs[i],DEC);log_debug(F(" "));
+  }
+  log_flush();
+  */
+
+  /* check whether all parameters are set ...
+   * note: param_output is optional
+   */
+  if( !_param_subID or !_param_input ) return false;
+
+  /*
+   * sensor HW initialisation
+   */
+  return _init();
+#endif /* 0 */
 }
 
 
@@ -347,8 +466,7 @@ bool digital::saveConfig( void ) {
  * Module's sensOCampus config to load (if any)
  */
 boolean digital::loadSensoConfig( senso *sp ) {
-  return false;
-#if 0
+
   boolean _sensor_added = false;
 
   // [aug.20] ought to be >= of senso config Json ?!?!
@@ -356,15 +474,15 @@ boolean digital::loadSensoConfig( senso *sp ) {
   JsonArray root = _doc.to<JsonArray>();
 
   if( !sp->getModuleConf(MQTT_MODULE_NAME, &root) ) {
-    //log_debug(F("\n[airquality] no sensOCampus config found")); log_flush();
+    //log_debug(F("\n[digital] no sensOCampus config found")); log_flush();
     return false;
   }
   if( root.isNull() ) {
-    log_error(F("\n[airquality] error JsonArray is null while it ought to be non empty ?!?!")); log_flush();
+    log_error(F("\n[digital] error JsonArray is null while it ought to be non empty ?!?!")); log_flush();
     return false;
   }
 
-  //log_debug(F("\n[airquality] modulesArray was found :)\n")); log_flush();
+  //log_debug(F("\n[digital] modulesArray was found :)\n")); log_flush();
   //serializeJsonPretty( root, Serial );
 
   // now parse items from array
@@ -372,31 +490,25 @@ boolean digital::loadSensoConfig( senso *sp ) {
     // check things ...
     if( not item.is<JsonObject>() or not item.containsKey(F("module")) or
         strcmp( MQTT_MODULE_NAME, item[F("module")])!=0 ) {
-      log_warning(F("\n[airquality] strange ... we found a sensOCampus config that does not match our module ?!?! ... continuing")); log_flush();
+      log_warning(F("\n[digital] strange ... we found a sensOCampus config that does not match our module ?!?! ... continuing")); log_flush();
     }
 
-    // already reached MAX_SENSORS ?
-    if( _sensors_count>=_MAX_SENSORS ) {
-      log_warning(F("\n[airquality] already reached maximum number of sensors: ")); log_debug(_sensors_count); log_flush();
+    // already reached MAX_GPIO ?
+    if( _gpio_count>=_MAX_GPIOS ) {
+      log_warning(F("\n[digital] already reached maximum number of sensors: ")); log_debug(_gpio_count); log_flush();
       continue;
     }
 
-    // LCC_SENSOR
+    // GPIO driver
     {
-      const char *_unit = PSTR("lcc_sensor");
+      const char *_unit = PSTR("gpio");
       if( (item[F("driver")] and strncmp_P(item[F("driver")], _unit, strlen_P(_unit))==0) or
            strncmp_P(item[F("unit")], _unit, strlen_P(_unit))==0 ) {
-        // instantiate sensor
-        lcc_sensor *cur_sensor = new lcc_sensor();
-        if( cur_sensor->begin( item[F("params")] ) != true ) {
-          log_debug(F("\n[airquality] ###ERROR at lcc_sensor startup ... removing instance ..."));log_flush();
-          free(cur_sensor);
-          cur_sensor = NULL;
+        // add gpio
+        if( add_gpio( item[F("params")] )!= true ) {
+          log_debug(F("\n[digital] unable to add_gpio from sensOCampus config ..."));log_flush();
         }
         else {
-          // TODO: set auto_gain ?
-          cur_sensor->powerOFF();
-          _sensor[_sensors_count++] = cur_sensor;
           _sensor_added = true;
         }
       }
@@ -415,21 +527,13 @@ boolean digital::loadSensoConfig( senso *sp ) {
         setIdentity( item[F("unit")] );
       }
     }
-
-    {
-      if( item.containsKey(F("frequency")) ) {
-        setFrequency( item[F("frequency")].as<unsigned int>(), AIRQUALITY_MIN_FREQUENCY, AIRQUALITY_MAX_FREQUENCY );
-      }
-    }
-
   }
 
   // (re)load the local config file (to override default parameters values from sensOCampus)
-  log_debug(F("\n[airquality] (re)loading locale config file (if any)")); log_flush();
+  log_debug(F("\n[digital] (re)loading locale config file (if any)")); log_flush();
   loadConfig();
 
   return _sensor_added;
-#endif /* 0 */
 }
 
 
@@ -483,8 +587,9 @@ void digital::_process_sensors( void ) {
       log_flush();
 
       // update shared JSON structure
-      String _key = "GPIO" + _gpio[i]->pin;
-      _obj[_key] = _value;
+      //String _key = "GPIO" + _gpio[i]->pin;
+      //_obj[_key] = _value;
+      _obj[_gpio[i]->subID] = _value;
 
       // time to transmit ?
       _isTXtime = (curTime - _gpio[i]->_lastTX) >= ((unsigned long)_gpio[i]->coolDown)*1000UL;
@@ -530,7 +635,7 @@ boolean digital::_sendValues( void ) {
       log_warning(F("\n[digital] unsupported type :")); log_warning((uint8_t)_gpio[i]->type,DEC); log_flush();
       root[F("type")] = "unknown";
     }
-    root[F("subID")] = String("gpio");  // fixed sudID field
+    root[F("subID")] = _gpio[i]->subID;
 
     /*
     * send MQTT message
@@ -614,3 +719,70 @@ boolean digital::_loadConfig( JsonObject root ) {
   return true;
 #endif /* 0 */
 }
+
+/*
+ * sensOCampus sample module config (see end of file sensocampus.cpp for full config)
+ *
+[
+	{
+		"topic": "irit2/366",
+		"modules":
+		[
+			{
+				"module": "digital",
+        "unit": "inside",
+        "driver": "gpio",
+				"params":
+				[
+					{
+						"param": "subIDs",
+						"value": 	"IR_SENSOR"
+					},
+					{
+						"param": "inputs",
+						"value": 	4
+					},
+					{
+						"param": "types",
+						"value": "presence"
+					},
+					{
+						"param": "cooldowns",
+						"value": 60
+					},
+					{
+						"param": "fronts",
+						"value": "rising"
+					}
+				]
+			}
+		],
+		[
+			{
+				"module": "digital",
+        "unit": "inside",
+        "driver": "gpio",
+				"params":
+				[
+					{
+						"param": "subIDs",
+						"value": 	"DOOR"
+					},
+					{
+						"param": "inputs",
+						"value": 	64
+					},
+					{
+						"param": "types",
+						"value": "open_close"
+					},
+					{
+						"param": "fronts",
+						"value": "both"
+					}
+				]
+			}
+		]
+	}
+]
+*/

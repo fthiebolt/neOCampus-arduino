@@ -58,15 +58,16 @@ enum class digitalFrontDetect_t : int8_t {
 
 // digital_gpio typedef
 typedef struct {
-  uint8_t   pin;          // pin number
-  digitalInputType_t    type;           // type of sensor (e.g presence, on_off...)
-  digitalFrontDetect_t  front;          // kind of fronts to detect
-  bool      _trigger;     // detected front according to the 'front' field and the coolDown/_lastTX value
+  uint8_t   pin;                // pin number
+  digitalInputType_t    type;   // type of sensor (e.g presence, on_off...)
+  digitalFrontDetect_t  front;  // kind of fronts to detect
+  bool      _trigger;           // detected front according to the 'front' field and the coolDown/_lastTX value
   bool      _current;
   bool      _previous;
-  bool      value;        // official value
-  uint16_t  coolDown;     // seconds to wait between two consecutives events
-  unsigned long _lastTX;  // elapsed ms since last message sent
+  bool      value;              // official value
+  uint16_t  coolDown;           // seconds to wait between two consecutives events
+  unsigned long _lastTX;        // elapsed ms since last message sent
+  char subID[SENSO_SUBID_MAXSIZE];  // short description
 } digitalGPIO_t;
 
 
@@ -84,7 +85,12 @@ class digital : public base {
     ~digital( void );
 
     // add a gpio
-    boolean add_gpio( uint8_t pin, digitalInputType_t type, digitalFrontDetect_t front = digitalFrontDetect_t::both, uint16_t coolDown = 0 );
+    boolean add_gpio( const char *subID,
+                      uint8_t pin,
+                      digitalInputType_t type,
+                      digitalFrontDetect_t front = digitalFrontDetect_t::both,
+                      uint16_t coolDown = 0 );
+    boolean add_gpio( JsonVariant );
     boolean is_empty();
 
     // MQTT

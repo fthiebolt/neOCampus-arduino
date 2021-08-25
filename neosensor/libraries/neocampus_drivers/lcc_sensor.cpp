@@ -93,7 +93,7 @@ boolean lcc_sensor::begin( JsonVariant root ) {
   boolean _param_subID = false;
   boolean _param_input = false;
 
-  /* parse all parameters of  our sensor:
+  /* parse all parameters of our sensor:
   [
     {
       "param": "subIDs",

@@ -627,7 +627,7 @@ void processWIFIparameters( wifiParametersMgt *wp=nullptr ) {
     
     // allocate digital module
     digitalModule = new digital( sharedRoot );
-    digitalModule->add_gpio( PIR_SENSOR, digitalInputType_t::presence, digitalFrontDetect_t::rising, 60 );  // 60s cooldown
+    digitalModule->add_gpio( "IRsensor", PIR_SENSOR, digitalInputType_t::presence, digitalFrontDetect_t::rising, 60 );  // 60s cooldown
   }
 
 
@@ -910,14 +910,14 @@ void setup() {
     if( !digitalModule ) digitalModule = new digital( sharedRoot );
     // add switches
     #ifdef INCR_SW
-    digitalModule->add_gpio( INCR_SW, digitalInputType_t::on_off, digitalFrontDetect_t::none );  // none ==> no MQTT sending
+    digitalModule->add_gpio( "SW+", INCR_SW, digitalInputType_t::on_off, digitalFrontDetect_t::none );  // none ==> no MQTT sending
     #endif
     #ifdef DECR_SW
-    digitalModule->add_gpio( DECR_SW, digitalInputType_t::on_off, digitalFrontDetect_t::none );  // none ==> no MQTT sending
+    digitalModule->add_gpio( "SW-", DECR_SW, digitalInputType_t::on_off, digitalFrontDetect_t::none );  // none ==> no MQTT sending
     #endif
     #ifdef CLEAR_SW
     // WARNING: CLEAR_SW & LED share the same pin (setupLED called with disable earlier, ok)
-    digitalModule->add_gpio( CLEAR_SW, digitalInputType_t::on_off, digitalFrontDetect_t::none );  // none ==> no MQTT sending
+    digitalModule->add_gpio( "OK", CLEAR_SW, digitalInputType_t::on_off, digitalFrontDetect_t::none );  // none ==> no MQTT sending
     #endif
 
     // add additional modules initialization here

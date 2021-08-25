@@ -203,9 +203,6 @@ boolean digital::add_gpio( JsonVariant root ) {
   ]
   */
 
-  return false;
-#if 0
-
   for( JsonVariant item : root.as<JsonArray>() ) {
 
     if( item.isNull() or not item.is<JsonObject>() ) {
@@ -222,7 +219,7 @@ boolean digital::add_gpio( JsonVariant root ) {
       }
     }
 
-    // INPUT(S)
+    // INPUT
     {
       const char *_param = PSTR("input");
       if( strncmp_P(item[F("param")], _param, strlen_P(_param))==0 ) {
@@ -505,6 +502,7 @@ boolean digital::loadSensoConfig( senso *sp ) {
       if( (item[F("driver")] and strncmp_P(item[F("driver")], _unit, strlen_P(_unit))==0) or
            strncmp_P(item[F("unit")], _unit, strlen_P(_unit))==0 ) {
         // add gpio
+to be continued        
         if( add_gpio( item[F("params")] )!= true ) {
           log_debug(F("\n[digital] unable to add_gpio from sensOCampus config ..."));log_flush();
         }

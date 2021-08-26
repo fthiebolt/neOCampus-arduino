@@ -114,7 +114,7 @@ void generic_driver::process( uint16_t coolDown, uint8_t decimals ) {
    * - we reached the _MAX_COOLDOWN_SENSOR delay regarding our last sending
    */
   if( abs(value - valueSent) > DATA_SENDING_VARIATION_THRESHOLD ||
-      (_curTime - _lastMsSent >= _MAX_COOLDOWN_SENSOR) ) {
+      (_curTime - _lastMsSent >= ((unsigned long)_MAX_COOLDOWN_SENSOR)*1000) ) {
     _trigger = true;
     return;
   }

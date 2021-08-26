@@ -28,6 +28,15 @@
 /*
  * Definitions
  */
+// Device's status
+enum class deviceStatus_t : uint8_t {
+  setup             = 0,  // we're in the setup()
+  running,                // we're in the loop()
+  reboot,                 // on way to reboot
+  
+  undefined         = (uint8_t)(-1),
+};
+
 #define DEVICE_MIN_FREQUENCY    900       // may go up to every 15 minutes ...
 #define DEVICE_MAX_FREQUENCY    _MAX_COOLDOWN_DEVICE        // or cool down to every every 6hours
 #define DEFL_DEVICE_FREQUENCY   (DEVICE_MIN_FREQUENCY*2)    // end-device status report every 30mn
@@ -55,6 +64,7 @@ class device : public base {
     boolean loadSensoConfig( senso * ); // sensOCampus config to load (if any)
 
   private:
+    deviceStatus_t _status;
     
     /*
      * private membre functions

@@ -761,6 +761,7 @@ void setup() {
    * if micro-switch active at startup for a specified delay, then clear all configurations.
    */
 #ifdef CLEAR_SW
+
   if( checkCLEARswitch(CLEAR_SW) == true ) {
     // CLEAR sensor parameters (WiFi, modules, EEPROM etc)
     clearSensor();

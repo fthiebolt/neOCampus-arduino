@@ -79,8 +79,11 @@ bool checkCLEARswitch( uint8_t sw_pin ) {
   // set pin as input
   pinMode( sw_pin, INPUT );
   
+  log_debug(F("\n[CLEAR] Press CLR switch for 5s to activate FACTORY RESET ...")); log_flush();
+  delay(500);
   log_debug(F("\n[CLEAR] check for clear_switch activation ...")); log_flush();
-  
+  delay(250);
+
   bool _res = true;
   // ... then read input for a specific time
   for( uint8_t cpt=10; cpt > 0; cpt-- ) {

@@ -175,7 +175,7 @@ boolean digital::add_gpio( JsonVariant root ) {
   //log_debug(F("\n[lcc_sensor] params found :)\n")); log_flush();
   //serializeJsonPretty( root, Serial );
 
-  String _subID             = "";
+  const char *_subID        = nullptr;
   uint8_t _input            = INVALID_GPIO;
   digitalInputType_t _type  = digitalInputType_t::undefined;
   uint16_t _cooldown        = 0;
@@ -218,7 +218,8 @@ boolean digital::add_gpio( JsonVariant root ) {
     {
       const char *_param = PSTR("subID");
       if( strncmp_P(item[F("param")], _param, strlen_P(_param))==0 ) {
-        _subID = item[F("value")].as<String>();
+        _subID = item[F("value")];
+        // _subID = item[F("value")].as<String>();
       }
     }
 
@@ -275,7 +276,7 @@ boolean digital::add_gpio( JsonVariant root ) {
   /*
    * sensor HW initialisation
    */
-  return add_gpio( _subID.c_str(), _input, _type, _front, _cooldown );
+  return add_gpio( _subID, _input, _type, _front, _cooldown );
 }
 
 

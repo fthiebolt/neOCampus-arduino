@@ -56,7 +56,7 @@ class base {
   public:
     // constructors
     base( void );           // base definition with unitID as 'auto_xxxx'
-    base( const char* );    // base definition with unitID 'provided'
+    base( const char* );    // base definition with unitID 'provided' (e.g mac addr for the device module)
 
     // destructor
     ~base( void );

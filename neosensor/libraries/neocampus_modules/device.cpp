@@ -3,8 +3,9 @@
  * 
  * Device module for high-level end-device management
  *
- * Thiebolt F. Nov.19   migrate to Arduino Json 6
- * Thiebolt F. July 17
+ * F.Thiebolt   aug.21  implement correct device own status
+ * Thiebolt F.  Nov.19  migrate to Arduino Json 6
+ * Thiebolt F.  July 17 initial release
  * 
  */
 
@@ -27,6 +28,13 @@
 
 
 /*
+ * Global shared variables/functions
+ */
+#include "modulesMgt.h"
+extern "C" modulesMgt modulesList;
+
+
+/*
  * Definitions
  */
 #define MQTT_MODULE_NAME        "device"  // used to build module's base topic
@@ -36,9 +44,10 @@
 
 
 // constructor
-device::device(): base( getMacAddress() )
+device::device( void ): base( getMacAddress() )
 {
-  _freq = DEFL_DEVICE_FREQUENCY;
+  _freq   = DEFL_DEVICE_FREQUENCY;
+  _status = deviceStatus_t::undefined;
 
   // load json config file (if any)
   loadConfig();
@@ -54,6 +63,7 @@ bool device::start( senso *sensocampus ) {
     // initialize module's publish & subscribe topics
     snprintf( pubTopic, sizeof(pubTopic), "%s/%s", sensocampus->getBaseTopic(), MQTT_MODULE_NAME);
     snprintf( subTopic, sizeof(subTopic), "%s/%s", pubTopic, "command" );
+    _status = deviceStatus_t::start;
     return base::start( sensocampus );
 }
 
@@ -133,6 +143,9 @@ bool device::process( void ) {
   /*
    * Time to send a new message
    */
+  // update module's own status if needed
+  if( _status!=deviceStatus_t::run ) _status = deviceStatus_t::run;
+
   StaticJsonDocument<DATA_JSON_SIZE> _doc;
   JsonObject root = _doc.to<JsonObject>();
 
@@ -159,14 +172,29 @@ void device::status( JsonObject root ) {
   
   // add base class status
   base::status( root );
-    
-  /*
-   * TODO:
-   * - active modules list
-   * - uptime
-   * - time (ntp)
-   * - CPU core's temperature
-   */
+  
+  // add module's own specific info
+  switch( _status ) {
+    case deviceStatus_t::start :
+      root[F("status")] = "starting";
+      break;
+    case deviceStatus_t::run :
+      root[F("status")] = "running";
+      break;
+    case deviceStatus_t::upgrade :
+      root[F("status")] = "upgrading";
+      break;
+    case deviceStatus_t::reboot :
+      root[F("status")] = "rebooting";
+      break;
+    default:
+      log_error(F("\n[device] unknown status ?!?!")); log_flush();
+      root[F("status")] = "unknown";
+      break;
+  }
+  
+  root[F("modules")] = modulesList.count(); // remember that device is NOT a sensor (while it adds 1 to the number of modules)
+
   root[F("heap")] = ESP.getFreeHeap();
 #ifdef ESP8266
   root[F("hardware")] = F("esp8266");
@@ -178,7 +206,13 @@ void device::status( JsonObject root ) {
   root[F("firmware")] = getFirmwareRev();
   root[F("board")] = BOARD_NAME;
   root[F("board_rev")] = BOARD_REVISION;
-  
+
+  /*
+   * TODO:
+   * - active modules list
+   * - uptime
+   * - CPU core's temperature
+   */  
 }
 
 
@@ -251,44 +285,61 @@ bool device::_processOrder( const char *order, int *value, const char *svalue ) 
   {
     const char *_order = PSTR("restart");
     if( strncmp_P(order, _order, strlen_P(_order))==0 ) {
-        log_debug(F("\n[device] ORDER to restart application (will reboot in fact)... please wait ..."));
-        _need2reboot = true;
+      log_debug(F("\n[device] ORDER to restart application (will reboot in fact)... please wait ..."));
+      _status = deviceStatus_t::reboot;
+      StaticJsonDocument<DATA_JSON_SIZE> _doc;
+      JsonObject root = _doc.to<JsonObject>();
+      status( root );
+      sendmsg( root );
+      _need2reboot = true;
+      return true;
     }
   }
 
   {
     const char *_order = PSTR("reboot");
     if( strncmp_P(order, _order, strlen_P(_order))==0 ) {
-        log_debug(F("\n[device] ORDER to reboot whole device ... please wait ..."));
-        _need2reboot = true;
+      log_debug(F("\n[device] ORDER to reboot whole device ... please wait ..."));
+      _status = deviceStatus_t::reboot;
+      StaticJsonDocument<DATA_JSON_SIZE> _doc;
+      JsonObject root = _doc.to<JsonObject>();
+      status( root );
+      sendmsg( root );
+      _need2reboot = true;
+      return true;
     }
   }
 
   {
     const char *_order = PSTR("update");
     if( strncmp_P(order, _order, strlen_P(_order))==0 ) {
-        log_debug(F("\n[device] ORDER to update json configuration from sensocampus ... please wait ..."));
-        // retrieve JSON config from sensOCampus
-        // TODO
-        log_info(F("\nTODO: fetch latest JSON config from sensOCampus ..."));
-        delay(1000);
+      log_debug(F("\n[device] ORDER to update json configuration from sensocampus ... please wait ..."));
+      // retrieve JSON config from sensOCampus
+      // TODO
+      log_info(F("\nTODO: fetch latest JSON config from sensOCampus ..."));
+      delay(1000);
+      return false;
     }
   }
 
   {
     const char *_order = PSTR("upgrade");
     if( strncmp_P(order, _order, strlen_P(_order))==0 ) {
-        log_debug(F("\n[device] ORDER for a firmware upgrade ... please wait ..."));
-        
-        // any 'http' (url) included ??
-        //char *url = strstr(svalue,"http");
-        //if( url ) {
-        if( svalue ) {
-          return neOCampusOTA_url( svalue );
-        }
-        else {
-          return neOCampusOTA();
-        }
+      log_debug(F("\n[device] ORDER for a firmware upgrade ... please wait ..."));
+      _status = deviceStatus_t::upgrade;
+      StaticJsonDocument<DATA_JSON_SIZE> _doc;
+      JsonObject root = _doc.to<JsonObject>();
+      status( root );
+      sendmsg( root );
+      // any 'http' (url) included ??
+      //char *url = strstr(svalue,"http");
+      //if( url ) {
+      if( svalue ) {
+        return neOCampusOTA_url( svalue );
+      }
+      else {
+        return neOCampusOTA();
+      }
     }
   }
 

@@ -30,11 +30,12 @@
  */
 // Device's status
 enum class deviceStatus_t : uint8_t {
-  setup             = 0,  // we're in the setup()
-  running,                // we're in the loop()
-  reboot,                 // on way to reboot
+  start       = 0,  // we're in the setup()
+  run,              // we're in the loop()
+  upgrade,          // firmware upgrade
+  reboot,           // on way to reboot
   
-  undefined         = (uint8_t)(-1),
+  undefined   = (uint8_t)(-1)
 };
 
 #define DEVICE_MIN_FREQUENCY    900       // may go up to every 15 minutes ...
@@ -48,7 +49,8 @@ enum class deviceStatus_t : uint8_t {
  */
 class device : public base {
   public:
-    device();
+    // constructor
+    device( void );
 
     // MQTT
     bool start( senso * );

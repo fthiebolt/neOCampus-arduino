@@ -10,6 +10,7 @@
  * ---
  * F.Thiebolt   apr.21  added MQTT client settings through API (buffer_size,
  *                      socker_timeout ...)
+ *                      moved to own modules their intrinsic status() description
  * F.Thiebolt   Jul.17  initial release
  * 
  */
@@ -30,13 +31,6 @@
 #include "base.h"
 
 #include "neocampus_utils.h"
-#include "modulesMgt.h"
-
-
-/*
- * Global shared variables/functions
- */
-extern "C" modulesMgt modulesList;
 
 
 
@@ -181,10 +175,12 @@ void base::callback(char* topic, byte* payload, unsigned int length) {
   /* ok, there's a dest, does it matches us 
    * (i.e dest='all' or dest=<our unitID> ??)
    */
-  // warning, we have a pointer to an inner part of a json message ...
-  char *_dest = (char*)(root[F("dest")].as<char*>());
+  // warning, we have a pointer to an inner part of a json message ... that is not supposed to get modified :s
+  //char *_dest = (char*)(root[F("dest")].as<char*>());
+  const char *_dest = root[F("dest")];
   // ... then convert to lowercase :)
-  for( uint8_t i=0; i<strlen(_dest); i++ ) _dest[i] = tolower(_dest[i]);
+  char *_tmp = (char*)_dest;  // intermediate pointer to enable mods of a const char array ;)
+  for( uint8_t i=0; i<strlen(_dest); i++ ) _tmp[i] = tolower(_dest[i]);
 
   const char *generic_dest = PSTR("all");
   if( strncmp_P(_dest, generic_dest, strlen_P(generic_dest))!=0 and
@@ -410,23 +406,21 @@ bool base::sendmsg( JsonObject root ) {
  * Status report sending
  */
 void base::status( JsonObject root ) {
-  
-  // upto now, everything is OK :)
-  root[F("status")] = "OK";
-  
+
   // frequency
   root[F("frequency")] = _freq;
-  
-  /* number of sensors
-   * [jun.18] for a device, sensr count is the number of active modules ...
+
+  /* number of sensors / modules
+   * [aug.21] device has no sensor (i.e sensors_count==0)
+   * ... but it will send the modules count from its own status()
    */
-  //root[F("sensors")] = _sensors_count;
-  root[F("sensors")] = modulesList.count(); // remember that device is NOT a sensor (while it adds 1 to the number of modules)
-  
+  if( _sensors_count ) {
+    root[F("sensors")] = _sensors_count;
+  }
+
   // current time
   root[F("time")] = getCurTime(); // warning: not reentrant function ...
-  
-  
+
 }
 
 

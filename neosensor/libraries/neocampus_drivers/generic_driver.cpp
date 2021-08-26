@@ -19,6 +19,7 @@
 /**************************************************************************/
 
 
+#include "neocampus.h"        // _MAX_COOLDOWN_SENSOR
 #include "generic_driver.h"
 
 
@@ -108,13 +109,15 @@ void generic_driver::process( uint16_t coolDown, uint8_t decimals ) {
   value         = _current;
   _lastMsWrite  = _curTime;
 
-  // do we need to sent the new value ?
-  if( abs(value - valueSent) > DATA_SENDING_VARIATION_THRESHOLD ) {
+  /* We need to send the new value either because:
+   * - its own value evolved above threshold
+   * - we reached the _MAX_COOLDOWN_SENSOR delay regarding our last sending
+   */
+  if( abs(value - valueSent) > DATA_SENDING_VARIATION_THRESHOLD ||
+      (_curTime - _lastMsSent >= _MAX_COOLDOWN_SENSOR) ) {
     _trigger = true;
     return;
   }
-
-// TODO: add sending if it has not been sent for a long time
 
   // new official value does not differ so much from the previously sent
   // ... continuing after next cooldown period

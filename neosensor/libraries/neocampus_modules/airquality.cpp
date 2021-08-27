@@ -278,7 +278,7 @@ boolean airquality::loadSensoConfig( senso *sp ) {
   StaticJsonDocument<SENSO_JSON_SIZE> _doc;
   JsonArray root = _doc.to<JsonArray>();
 
-  if( !sp->getModuleConf(MQTT_MODULE_NAME, &root) ) {
+  if( !sp->getModuleConf(MQTT_MODULE_NAME, root) ) {
     //log_debug(F("\n[airquality] no sensOCampus config found")); log_flush();
     return false;
   }

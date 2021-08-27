@@ -175,12 +175,12 @@ boolean digital::add_gpio( JsonVariant root ) {
   //log_debug(F("\n[lcc_sensor] params found :)\n")); log_flush();
   //serializeJsonPretty( root, Serial );
 
-  const char *_subID        = nullptr;
-  uint8_t _input            = INVALID_GPIO;
-  digitalInputType_t _type  = digitalInputType_t::undefined;
-  uint16_t _cooldown        = 0;
-  bool _front_param         = false;
-  digitalFrontDetect_t _front;
+  const char *_subID          = nullptr;
+  uint8_t _input              = INVALID_GPIO;
+  digitalInputType_t _type    = digitalInputType_t::undefined;
+  uint16_t _cooldown          = 0;
+  bool _front_param           = false;
+  digitalFrontDetect_t _front = digitalFrontDetect_t::none;
 
   /* parse all parameters of our sensor:
   [
@@ -481,10 +481,15 @@ boolean digital::loadSensoConfig( senso *sp ) {
   StaticJsonDocument<SENSO_JSON_SIZE> _doc;
   JsonArray root = _doc.to<JsonArray>();
 
-  if( !sp->getModuleConf(MQTT_MODULE_NAME, &root) ) {
+log_debug(F("\nSTEP1 !!")); log_flush(); delay(1000);
+
+  if( !sp->getModuleConf(MQTT_MODULE_NAME, root) ) {
     //log_debug(F("\n[digital] no sensOCampus config found")); log_flush();
     return false;
   }
+
+log_debug(F("\nSTEP2 !!")); log_flush(); delay(1000);
+
   if( root.isNull() ) {
     log_error(F("\n[digital] error JsonArray is null while it ought to be non empty ?!?!")); log_flush();
     return false;
@@ -492,6 +497,8 @@ boolean digital::loadSensoConfig( senso *sp ) {
 
   //log_debug(F("\n[digital] modulesArray was found :)\n")); log_flush();
   //serializeJsonPretty( root, Serial );
+
+log_debug(F("\nSTEP3 !!")); log_flush(); delay(1000);
 
   // now parse items from array
   for( JsonVariant item : root ) {

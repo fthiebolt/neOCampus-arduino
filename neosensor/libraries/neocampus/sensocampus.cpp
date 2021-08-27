@@ -588,9 +588,9 @@ bool senso::_parseConfig( const char *json ) {
  * won't have configuration related to modules others than 'module_name'.
  * Note: JsonArray is only a set of pointers
  */
-boolean senso::getModuleConf( const char* name, JsonArray* array ) {
+boolean senso::getModuleConf( const char* name, JsonArray& array ) {
 
-  if( !name or !array ) return false;
+  if( !name or array.isNull() ) return false;
   if( _modulesJSON.isNull() or (_modulesJSON.containsKey(F("zones"))==false) ) return false;
 
   log_debug(F("\n[senso] start to search JSON config for module ")); log_debug(name); log_flush();
@@ -634,7 +634,7 @@ boolean senso::getModuleConf( const char* name, JsonArray* array ) {
     if( strcmp( name, item["module"])==0 ) {
       //log_debug(F("\n[senso] found JSON configuration for module: ")); log_debug(name); log_flush();
       _found = true;
-      if( ! array->add(item) ) {
+      if( ! array.add(item) ) {
         log_error(F("\n[senso] failed to add item ?!?! ... cancel whole operation!")); log_flush();
         return false;
       }

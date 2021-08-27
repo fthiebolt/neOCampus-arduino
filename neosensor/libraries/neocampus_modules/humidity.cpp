@@ -257,7 +257,7 @@ void humidity::status( JsonObject root ) {
 boolean humidity::loadSensoConfig( senso *sp ) {
 
   JsonArray _array;
-  if( ! sp->getModuleConf( MQTT_MODULE_NAME, &_array ) ) {
+  if( ! sp->getModuleConf( MQTT_MODULE_NAME, _array ) ) {
     //log_debug(F("\n[humidity] no sensOCampus config found")); log_flush();
     return false;
   }

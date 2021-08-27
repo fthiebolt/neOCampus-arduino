@@ -256,7 +256,7 @@ void luminosity::status( JsonObject root ) {
 boolean luminosity::loadSensoConfig( senso *sp ) {
 
   JsonArray _array;
-  if( ! sp->getModuleConf( MQTT_MODULE_NAME, &_array ) ) {
+  if( ! sp->getModuleConf( MQTT_MODULE_NAME, _array ) ) {
     //log_debug(F("\n[luminosity] no sensOCampus config found")); log_flush();
     return false;
   }

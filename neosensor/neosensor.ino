@@ -1087,9 +1087,9 @@ void setup() {
   // check if digital module is ok
   if( digitalModule ) {
     // [aug.21] load an eventual sensOCampus configuration
-#ifndef ESP8266 // [aug.21] bug workaround for this target
+//#ifndef ESP8266 // [aug.21] bug workaround for this target
     digitalModule->loadSensoConfig( &sensocampus );
-#endif /* ESP8266 */
+//#endif /* ESP8266 */
 
     if( digitalModule->is_empty()==true or not modulesList.add(digitalModule) ) {
       log_debug(F("\n# either digital module is empty or we've not been able to add it to the list of modules ... removing instance ..."));log_flush();

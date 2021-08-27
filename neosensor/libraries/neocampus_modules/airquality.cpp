@@ -4,6 +4,8 @@
  * AirQuality module to manage all kind of air quality sensors that does not
  * fit within the existing sensOCampus classes.
  * 
+ * F.Thiebolt aug.21  in loadSensoConfig, replaced StaticJsonDocument (stack)
+ *                    whith DynamicJsonDocument because it crashes on ESP8266
  * Thiebolt.F nov.20  previous 'force data as float' didn't work! we need to
  *                    use serialized(String(1.0,6)); // 1.000000
  * https://arduinojson.org/v6/how-to/configure-the-serialization-of-floats/
@@ -298,7 +300,8 @@ boolean airquality::loadSensoConfig( senso *sp ) {
   boolean _sensor_added = false;
 
   // [aug.20] ought to be >= of senso config Json ?!?!
-  StaticJsonDocument<SENSO_JSON_SIZE> _doc;
+  //StaticJsonDocument<SENSO_JSON_SIZE> _doc;   // [aug.21] crash on esp8266 due to stack overflow!
+  DynamicJsonDocument _doc(SENSO_JSON_SIZE);  
   JsonArray root = _doc.to<JsonArray>();
 
   if( !sp->getModuleConf(MQTT_MODULE_NAME, root) ) {

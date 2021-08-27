@@ -644,6 +644,65 @@ bool senso::getModuleConf( const char* name, JsonArray array ) {
   return _found;
 }
 
+#if 0
+/*
+ * Iterator based version for modules to obtain their sensOCampus Json
+ * configuration.
+ * This time, no more huge allocated structure that duplicate data,
+ * instead we update the iterator and we send back JsonArray
+ */
+bool senso::getModuleConf2( const char* name, JsonObject *obj, JsonArray::iterator *iter ) {
+
+  if( name==nullptr ) return false;
+  if( _modulesJSON.isNull() or (_modulesJSON.containsKey(F("zones"))==false) ) return false;
+
+  log_debug(F("\n[senso][getModuleConf2] start to search JSON config for module ")); log_debug(name); log_flush();
+
+  bool _found = false;
+
+  // try to find array of "modules" inside zone ...
+  JsonArray modulesArray = _modulesJSON["zones"][0]["modules"];
+  if( modulesArray.isNull() ) return false;
+
+  if( obj->isNull() ) {
+    log_debug(F("\n[senso][getModuleConf2] ITERATOR set to BEGIN ...")); log_flush();
+    *iter = modulesArray.begin();
+  }
+
+  do {
+    *obj = *iter->as<JsonObject>();
+    // if( not obj.is<JsonObject>() ) continue;
+    if( not obj->containsKey(F("module")) ) continue;
+    if( strcmp( name, obj->getMember("module")!=0 ) continue;
+    //log_debug(F("\n[senso][getModuleConf2] found a key module named: ")); log_debug(obj->getMember("module").as<char*>()); log_flush();
+    ++iter;
+    return true;
+  } while( ++(*iter)!=modulesArray.end() );
+
+/*
+  for( JsonVariant item : modulesArray ) {
+
+    //log_debug(F("\n[senso] an array item was found :)\n")); log_flush();
+    //serializeJsonPretty( item, Serial );
+
+    if( not item.is<JsonObject>() ) continue;
+    if( not item.containsKey(F("module")) ) continue;
+    
+    //log_debug(F("\n[senso] inside iterator: ")); log_flush();
+    //serializeJsonPretty( item, Serial );
+    if( strcmp( name, item["module"])==0 ) {
+      //log_debug(F("\n[senso] found JSON configuration for module: ")); log_debug(name); log_flush();
+      _found = true;
+      if( ! array.add(item) ) {
+        log_error(F("\n[senso] failed to add item ?!?! ... cancel whole operation!")); log_flush();
+        return false;
+      }
+    }
+  }
+*/
+  return _found;
+}
+#endif /* 0 */
 
 // Send back server name
 const char * senso::getServer( void ) const {

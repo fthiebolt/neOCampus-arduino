@@ -17,10 +17,9 @@
  * 
  * ---
  * TODO:
- * - check pin as output (HIGH), set mode input+read than switch back to output: still HIGH ?
+ * - loadSensoConfig --> avoid data duplication, implement an iterator
  * - check sntp!=IPADDR_ANY works with ESP8266 (line 342)
  * - remove DISABLE_SSL compilation flag
- * - test OTA feature
  * - as the number of modules is increasing, implement a list of modules in the setup()
  * 
  * ---
@@ -1085,6 +1084,7 @@ void setup() {
   if( airqualityModule ) {
     // [aug.20] load an eventual sensOCampus configuration
     airqualityModule->loadSensoConfig( &sensocampus );
+
 
     if( airqualityModule->is_empty()==true or not modulesList.add(airqualityModule) ) {
       log_debug(F("\n# either airquality module is empty or we've not been able to add it to the list of modules ... removing instance ..."));log_flush();

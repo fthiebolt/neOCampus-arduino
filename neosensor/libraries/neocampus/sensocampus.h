@@ -67,6 +67,7 @@ class senso {
     const char *getUser( void ) const;
     const char *getPassword( void ) const;
     bool getModuleConf( const char*, JsonArray );
+    //bool getModuleConf2( const char*, JsonObject*, JsonArray::iterator* );  iterator version ... one day maybe :|
 
 private:
     /*

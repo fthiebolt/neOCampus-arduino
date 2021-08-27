@@ -468,7 +468,28 @@ bool digital::saveConfig( void ) {
  * Note: only called ONE TIME ... hence we support dynamic allocation :)
  */
 boolean digital::loadSensoConfig( senso *sp ) {
+#if 0
+  // [aug.21] experiment without data duplication
+  JsonObject _obj;
+  JsonArray::iterator _iter;
 
+  // initialize iterator
+  if( !sp->getModuleConf2(MQTT_MODULE_NAME, &_obj, &_iter) ) {
+    log_debug(F("\n[digital] no sensOCampus config found")); log_flush();
+    return false;
+  }
+
+  // loop to iterate over all of our modules' config
+  //while( !sp->getModuleConf2(MQTT_MODULE_NAME, _array, _iter) )
+
+  if( _obj.isNull() ) {
+    log_error(F("\n[digital] error JsonArray is null while it ought to be non empty ?!?!")); log_flush();
+    return false;
+  }
+
+  log_info(F("\n[digital] FOUND SENSOCAMPUS config to parse :) ... CONTINUING")); log_flush();
+  return false;
+#endif /* 0 */
   boolean _sensor_added = false;
 
   // [aug.20] ought to be >= of senso config Json ?!?!

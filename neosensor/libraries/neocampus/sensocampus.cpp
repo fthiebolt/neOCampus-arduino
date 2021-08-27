@@ -588,9 +588,9 @@ bool senso::_parseConfig( const char *json ) {
  * won't have configuration related to modules others than 'module_name'.
  * Note: JsonArray is only a set of pointers
  */
-boolean senso::getModuleConf( const char* name, JsonArray array ) {
+bool senso::getModuleConf( const char* name, JsonArray array ) {
 
-  if( !name or array.isNull() ) return false;
+  if( name==nullptr or array.isNull() ) return false;
   if( _modulesJSON.isNull() or (_modulesJSON.containsKey(F("zones"))==false) ) return false;
 
   log_debug(F("\n[senso] start to search JSON config for module ")); log_debug(name); log_flush();

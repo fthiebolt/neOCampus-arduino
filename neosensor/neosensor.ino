@@ -367,7 +367,8 @@ inline void blinkSysLed( void ) {
 void endLoop( void ) {
   static unsigned long _lastCheck = 0;    // elapsed ms since last check
 
-
+#if 0
+  // ONY FOR DEBUGGING
   static unsigned long _lastJSONdisplay = 0;    // elapsed ms since last displying shared JSON
   // 90s second elapsed ?
   if( ((millis() - _lastJSONdisplay) >= (unsigned long)90*1000UL) == true ) {
@@ -375,7 +376,7 @@ void endLoop( void ) {
     log_debug(F("\nGlobal sharedJSON:\n")); log_flush();
     serializeJsonPretty( sharedRoot, Serial );
   }
-
+#endif /* 0 */
 
   // check if a reboot has been requested ...
   if( _need2reboot ) {
@@ -1083,9 +1084,7 @@ void setup() {
   // check if airquality module is ok
   if( airqualityModule ) {
     // [aug.20] load an eventual sensOCampus configuration
-#ifndef ESP8266 // [aug.21] bug workaround for this target
     airqualityModule->loadSensoConfig( &sensocampus );
-#endif /* ESP8266 */
 
     if( airqualityModule->is_empty()==true or not modulesList.add(airqualityModule) ) {
       log_debug(F("\n# either airquality module is empty or we've not been able to add it to the list of modules ... removing instance ..."));log_flush();
@@ -1097,9 +1096,7 @@ void setup() {
   // check if digital module is ok
   if( digitalModule ) {
     // [aug.21] load an eventual sensOCampus configuration
-//#ifndef ESP8266 // [aug.21] bug workaround for this target
     digitalModule->loadSensoConfig( &sensocampus );
-//#endif /* ESP8266 */
 
     if( digitalModule->is_empty()==true or not modulesList.add(digitalModule) ) {
       log_debug(F("\n# either digital module is empty or we've not been able to add it to the list of modules ... removing instance ..."));log_flush();

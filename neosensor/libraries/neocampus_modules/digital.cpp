@@ -465,23 +465,21 @@ bool digital::saveConfig( void ) {
 
 /*
  * Module's sensOCampus config to load (if any)
+ * Note: only called ONE TIME ... hence we support dynamic allocation :)
  */
 boolean digital::loadSensoConfig( senso *sp ) {
 
   boolean _sensor_added = false;
 
   // [aug.20] ought to be >= of senso config Json ?!?!
-  StaticJsonDocument<SENSO_JSON_SIZE> _doc;
+  //StaticJsonDocument<SENSO_JSON_SIZE> _doc;   // [aug.21] crash on esp8266 !
+  DynamicJsonDocument _doc(SENSO_JSON_SIZE);  
   JsonArray root = _doc.to<JsonArray>();
-
-log_debug(F("\nSTEP1 !!")); log_flush(); delay(1000);
 
   if( !sp->getModuleConf(MQTT_MODULE_NAME, root) ) {
     //log_debug(F("\n[digital] no sensOCampus config found")); log_flush();
     return false;
   }
-
-log_debug(F("\nSTEP2 !!")); log_flush(); delay(1000);
 
   if( root.isNull() ) {
     log_error(F("\n[digital] error JsonArray is null while it ought to be non empty ?!?!")); log_flush();
@@ -490,8 +488,6 @@ log_debug(F("\nSTEP2 !!")); log_flush(); delay(1000);
 
   //log_debug(F("\n[digital] modulesArray was found :)\n")); log_flush();
   //serializeJsonPretty( root, Serial );
-
-log_debug(F("\nSTEP3 !!")); log_flush(); delay(1000);
 
   // now parse items from array
   for( JsonVariant item : root ) {

@@ -184,33 +184,37 @@ bool noise::setThreshold( uint16_t threshold ) {
 /*
  * Module network startup procedure (MQTT)
  */
-bool noise::start( senso *sensocampus ) {
+bool noise::start( senso *sensocampus, JsonDocument &sharedRoot ) {
 
-    log_info(F("\n[noise] starting module ..."));
-    // initialize module's publish & subscribe topics
-    snprintf( pubTopic, sizeof(pubTopic), "%s/%s", sensocampus->getBaseTopic(), MQTT_MODULE_NAME);
-    snprintf( subTopic, sizeof(subTopic), "%s/%s", pubTopic, "command" );
-    
-    // start timer and pulse count interrupt handler 
-    pulseT.attach( 1, timerHandler, this );
-    
-    //mqttClient.setCallback( [this] (char* topic, byte* payload, unsigned int length) { this->callback(topic, payload, length); });
-    //attachInterrupt(digitalPinToInterrupt(_pinSensor), noiseDetectISR, FALLING);
-    //attachInterrupt(digitalPinToInterrupt(_pinSensor), [this] ( void ) { this->noiseDetectISR(void); }, FALLING);
-    //attachInterrupt(digitalPinToInterrupt(_pinSensor), std::bind(&noise::noiseDetectISR,[this]), FALLING);
-    //attachInterrupt(digitalPinToInterrupt(_pinSensor), std::function<void(void)> f = std::bind(&noise::noiseDetectISR, this), FALLING);
-    //std::function<void(int,int)> f = [this](int a, int b) { this->noiseDetectISR(); }
-    //std::function<void(void)> f = [this](void) { this->noiseDetect2ISR(void); };
-    //attachInterrupt(digitalPinToInterrupt(_pinSensor), f, FALLING);
-    
-    //std::function<void()> func = [&]{noiseModule->noiseDetectISR();};
+  log_info(F("\n[noise] starting module ..."));
+  // create module's JSON structure to hold all of our data
+  // [aug.21] we create a dictionnary
+  variant = sharedRoot.createNestedObject(MQTT_MODULE_NAME);
 
-    attachInterrupt(digitalPinToInterrupt(_pinSensor),
-                    _noiseDetectISR,
-                    FALLING);
-    
-    // call to start from base class
-    return base::start( sensocampus );
+  // initialize module's publish & subscribe topics
+  snprintf( pubTopic, sizeof(pubTopic), "%s/%s", sensocampus->getBaseTopic(), MQTT_MODULE_NAME);
+  snprintf( subTopic, sizeof(subTopic), "%s/%s", pubTopic, "command" );
+  
+  // start timer and pulse count interrupt handler 
+  pulseT.attach( 1, timerHandler, this );
+  
+  //mqttClient.setCallback( [this] (char* topic, byte* payload, unsigned int length) { this->callback(topic, payload, length); });
+  //attachInterrupt(digitalPinToInterrupt(_pinSensor), noiseDetectISR, FALLING);
+  //attachInterrupt(digitalPinToInterrupt(_pinSensor), [this] ( void ) { this->noiseDetectISR(void); }, FALLING);
+  //attachInterrupt(digitalPinToInterrupt(_pinSensor), std::bind(&noise::noiseDetectISR,[this]), FALLING);
+  //attachInterrupt(digitalPinToInterrupt(_pinSensor), std::function<void(void)> f = std::bind(&noise::noiseDetectISR, this), FALLING);
+  //std::function<void(int,int)> f = [this](int a, int b) { this->noiseDetectISR(); }
+  //std::function<void(void)> f = [this](void) { this->noiseDetect2ISR(void); };
+  //attachInterrupt(digitalPinToInterrupt(_pinSensor), f, FALLING);
+  
+  //std::function<void()> func = [&]{noiseModule->noiseDetectISR();};
+
+  attachInterrupt(digitalPinToInterrupt(_pinSensor),
+                  _noiseDetectISR,
+                  FALLING);
+  
+  // call to start from base class
+  return base::start( sensocampus, sharedRoot );
 }
 
 

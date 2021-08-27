@@ -92,7 +92,7 @@ void base::_base( void ) {
 /*
  * Module network startup procedure (MQTT)
  */
-bool base::start( senso *sensocampus ) {
+bool base::start( senso *sensocampus, JsonDocument &sharedRoot ) {
 
   bool _ret;
   

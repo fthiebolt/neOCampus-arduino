@@ -367,6 +367,16 @@ inline void blinkSysLed( void ) {
 void endLoop( void ) {
   static unsigned long _lastCheck = 0;    // elapsed ms since last check
 
+
+  static unsigned long _lastJSONdisplay = 0;    // elapsed ms since last displying shared JSON
+  // 90s second elapsed ?
+  if( ((millis() - _lastJSONdisplay) >= (unsigned long)90*1000UL) == true ) {
+    _lastJSONdisplay = millis();
+    log_debug(F("\nGlobal sharedJSON:\n")); log_flush();
+    serializeJsonPretty( sharedRoot, Serial );
+  }
+
+
   // check if a reboot has been requested ...
   if( _need2reboot ) {
     log_info(F("\n[REBOOT] a reboot has been asked ..."));log_flush();
@@ -626,7 +636,7 @@ void processWIFIparameters( wifiParametersMgt *wp=nullptr ) {
     log_info(F("\n[wifiParams] start PIR sensor ...")); log_flush();
     
     // allocate digital module
-    digitalModule = new digital( sharedRoot );
+    digitalModule = new digital();
     digitalModule->add_gpio( "IRsensor", PIR_SENSOR, digitalInputType_t::presence, digitalFrontDetect_t::rising, 60 );  // 60s cooldown
   }
 
@@ -908,7 +918,7 @@ void setup() {
     airqualityModule    = new airquality();
 
     // [aug.21] digitalModule may get already instantiated through WiFiParameters management
-    if( !digitalModule ) digitalModule = new digital( sharedRoot );
+    if( !digitalModule ) digitalModule = new digital();
     // add switches
     #ifdef INCR_SW
     digitalModule->add_gpio( "SW+", INCR_SW, digitalInputType_t::on_off, digitalFrontDetect_t::none );  // none ==> no MQTT sending
@@ -1110,7 +1120,7 @@ void setup() {
   /*
    * start all modules ...
    */
-  modulesList.startAll( &sensocampus );
+  modulesList.startAll( &sensocampus, sharedRoot );
 
 
   /*

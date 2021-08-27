@@ -3,8 +3,8 @@
  * 
  * Modules management class for high-level modules management
  *
- * 
- * Thiebolt F. June 18
+ * F.Thiebolt aug.21  added support for shared JSON
+ * Thiebolt F. June 18  initial release
  * 
  */
 
@@ -17,6 +17,7 @@
  */
 
 #include <Arduino.h>
+#include <ArduinoJson.h>
 
 #include "neocampus.h"
 #include "sensocampus.h"
@@ -42,12 +43,13 @@
 class modulesMgt {
   public:
     modulesMgt( void );
+    ~modulesMgt( void );
 
     // methods
     bool add( base * );             // add a module to the list
     uint8_t count( void );          // send back number of registered modules
     bool processAll( void );        // process all modules
-    bool startAll( senso * );       // start all modules
+    bool startAll( senso *, JsonDocument& );  // start all modules with added shared JSON
     bool stopAll( void );           // stop all modules
     
   private:

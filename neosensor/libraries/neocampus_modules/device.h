@@ -4,7 +4,8 @@
  * Device module for high-level end-device management
  *
  * 
- * Thiebolt F. July 17
+ * F.Thiebolt aug.21  added JsonDocument to enable global shared JSON
+ * Thiebolt F. July 17  initial release
  * 
  */
 
@@ -49,11 +50,14 @@ enum class deviceStatus_t : uint8_t {
  */
 class device : public base {
   public:
-    // constructor
+    // constructors
     device( void );
 
+    // destructor
+    ~device( void );
+
     // MQTT
-    bool start( senso * );
+    bool start( senso *, JsonDocument& );
     bool process( void );     // process own module's activities
     
     void handle_msg( JsonObject );
@@ -72,8 +76,8 @@ class device : public base {
      * private membre functions
      */
     bool _loadConfig( JsonObject );
-    bool _processOrder( const char *, int *, const char * );   // an order to process with optional value
-
+    bool _processOrder( const char *, int *, const char * );  // an order to process with optional value
+    void _constructor( void );                                // low-level constructor
 };
 
 

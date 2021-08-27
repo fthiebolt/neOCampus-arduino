@@ -46,19 +46,6 @@ luminosity::luminosity( void ): base()
   _constructor();
 }
 
-// constructor with reference to JSON global shared document
-luminosity::luminosity( JsonDocument &sharedRoot ): base() {
-  // create module's JSON structure to hold all of our data
-  // [aug.21] we create a dictionnary
-  variant = sharedRoot.createNestedObject(MQTT_MODULE_NAME);
-  // all sensors share the same units of values
-  JsonObject _obj = variant.as<JsonObject>();
-  _obj[F("value_units")] = "lux";
-
-  // call low-level constructor
-  _constructor();
-}
-
 // low-level constructor
 void luminosity::_constructor( void ) {
   _freq = DEFL_LUMINOSITY_FREQUENCY;
@@ -72,7 +59,7 @@ void luminosity::_constructor( void ) {
 // destructor
 luminosity::~luminosity( void ) {
   for( uint8_t i=0; i < _sensors_count; i++ ) {
-    if( _sensor[i] == NULL ) continue;
+    if( _sensor[i] == nullptr ) continue;
     free( _sensor[i] );
     _sensor[i] = nullptr;
   }
@@ -140,13 +127,20 @@ boolean luminosity::is_empty( ) {
 /*
  * Module network startup procedure (MQTT)
  */
-bool luminosity::start( senso *sensocampus ) {
+bool luminosity::start( senso *sensocampus, JsonDocument &sharedRoot ) {
 
-    log_info(F("\n[luminosity] starting module ..."));
-    // initialize module's publish and subscribe topics
-    snprintf( pubTopic, sizeof(pubTopic), "%s/%s", sensocampus->getBaseTopic(), MQTT_MODULE_NAME);
-    snprintf( subTopic, sizeof(subTopic), "%s/%s", pubTopic, "command" );
-    return base::start( sensocampus );
+  log_info(F("\n[luminosity] starting module ..."));
+  // create module's JSON structure to hold all of our data
+  // [aug.21] we create a dictionnary
+  variant = sharedRoot.createNestedObject(MQTT_MODULE_NAME);
+  // all sensors share the same units of values
+  JsonObject _obj = variant.as<JsonObject>();
+  _obj[F("value_units")] = "lux";
+
+  // initialize module's publish and subscribe topics
+  snprintf( pubTopic, sizeof(pubTopic), "%s/%s", sensocampus->getBaseTopic(), MQTT_MODULE_NAME);
+  snprintf( subTopic, sizeof(subTopic), "%s/%s", pubTopic, "command" );
+  return base::start( sensocampus, sharedRoot );
 }
 
 

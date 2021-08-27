@@ -56,7 +56,6 @@
 class luminosity : public base {
   public:
     luminosity( void );
-    luminosity( JsonDocument& );
 
     // destructor
     ~luminosity( void );
@@ -66,7 +65,7 @@ class luminosity : public base {
     boolean is_empty();
 
     // MQTT
-    bool start( senso * );
+    bool start( senso *, JsonDocument& );
     bool process( void );     // process own module's activities
 
     void handle_msg( JsonObject );

@@ -44,14 +44,19 @@
  */
 class airquality : public base {
   public:
-    airquality();
+    // constructor
+    airquality( void );
+
+    // destructor
+    ~airquality( void );
+
 
     // add a sensor whose i2c adress is the parameter
     boolean add_sensor( uint8_t adr );
     boolean is_empty();
 
     // MQTT
-    bool start( senso * );
+    bool start( senso *, JsonDocument& );
     bool process( void );     // process own module's activities
 
     void handle_msg( JsonObject );
@@ -74,6 +79,7 @@ class airquality : public base {
     boolean _processOrder( const char *, int * );   // an order to process with optional value
     boolean _sendValues( void );                    // send all sensors' values
     void _process_sensors( void );                  // sensors internal processing (optional)
+    void _constructor( void );                      // low-level constructor
 };
 
 

@@ -62,7 +62,7 @@ class base {
     ~base( void );
 
     // MQTT
-    virtual bool start( senso * );
+    virtual bool start( senso *, JsonDocument& );
     virtual bool process( void );
     virtual bool stop( void );
     

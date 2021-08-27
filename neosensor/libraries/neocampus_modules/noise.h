@@ -80,7 +80,7 @@ class noise : public base {
     void ICACHE_RAM_ATTR noiseDetectISR( void );
     
     // MQTT
-    bool start( senso * );
+    bool start( senso *, JsonDocument& );
     bool process( void );     // process own module's activities
 
     void handle_msg( JsonObject );

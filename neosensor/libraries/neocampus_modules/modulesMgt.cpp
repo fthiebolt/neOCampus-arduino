@@ -4,6 +4,7 @@
  * Modules management class for high-level modules management
  *
  * 
+ * F.Thiebolt aug.21  added support for shared JSON
  * Thiebolt F. Nov.19   cancel modules startALL if need2reboot flag is active
  * Thiebolt F. June 18
  * 
@@ -31,11 +32,17 @@ extern bool _need2reboot;
 
 
 // constructor
-modulesMgt::modulesMgt() {
+modulesMgt::modulesMgt( void ) {
   
   // clean modules list
   _clearList();
 }
+
+// destructor
+modulesMgt::~modulesMgt( void ) {
+  // nothing todo as we do not allocate anything on our own
+}
+
 
 /*
  * add a module to the list
@@ -68,7 +75,8 @@ uint8_t modulesMgt::count( void ) {
 /*
  * Start ALL modules
  */
-bool modulesMgt::startAll( senso *sensocampus ) {
+bool modulesMgt::startAll( senso *sensocampus, JsonDocument &sharedRoot ) {
+
   if( _need2reboot or not sensocampus ) return false;
   
   bool _ret = true;
@@ -82,7 +90,7 @@ bool modulesMgt::startAll( senso *sensocampus ) {
     }
     
     if( modulesList[i] ) {
-      if( not modulesList[i]->start(sensocampus) ) _ret=false;
+      if( not modulesList[i]->start(sensocampus,sharedRoot) ) _ret=false;
     }
     yield();
   }

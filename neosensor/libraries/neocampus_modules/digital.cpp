@@ -39,21 +39,11 @@
 // constructor
 digital::digital( void ): base() {
   // call low-level constructor
-  _digital();
-}
-
-// constructor with reference to JSON global shared document
-digital::digital( JsonDocument &sharedRoot ): base() {
-  // create module's JSON structure to hold all of our data
-  // [aug.21] we create a dictionnary
-  variant = sharedRoot.createNestedObject(MQTT_MODULE_NAME);
-
-  // call low-level constructor
-  _digital();
+  _constructor();
 }
 
 // low-level constructor
-void digital::_digital( void ) {
+void digital::_constructor( void ) {
 
   for( uint8_t i=0; i < _MAX_GPIOS; i++ ) {
     _gpio[i] = nullptr;
@@ -79,7 +69,6 @@ digital::~digital( void )
     free(_gpio[i]);
     _gpio[i] = nullptr;
   }
-
 }
 
 
@@ -291,13 +280,17 @@ boolean digital::is_empty( ) {
 /*
  * Module network startup procedure (MQTT)
  */
-bool digital::start( senso *sensocampus ) {
+bool digital::start( senso *sensocampus, JsonDocument &sharedRoot ) {
 
-    log_info(F("\n[digital] starting module ..."));
-    // initialize module's publish and subscribe topics
-    snprintf( pubTopic, sizeof(pubTopic), "%s/%s", sensocampus->getBaseTopic(), MQTT_MODULE_NAME);
-    snprintf( subTopic, sizeof(subTopic), "%s/%s", pubTopic, "command" );
-    return base::start( sensocampus );
+  log_info(F("\n[digital] starting module ..."));
+  // create module's JSON structure to hold all of our data
+  // [aug.21] we create a dictionnary
+  variant = sharedRoot.createNestedObject(MQTT_MODULE_NAME);
+
+  // initialize module's publish and subscribe topics
+  snprintf( pubTopic, sizeof(pubTopic), "%s/%s", sensocampus->getBaseTopic(), MQTT_MODULE_NAME);
+  snprintf( subTopic, sizeof(subTopic), "%s/%s", pubTopic, "command" );
+  return base::start( sensocampus, sharedRoot );
 }
 
 

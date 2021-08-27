@@ -66,7 +66,7 @@ class senso {
     const char *getBaseTopic( void ) const;
     const char *getUser( void ) const;
     const char *getPassword( void ) const;
-    boolean getModuleConf( const char*, JsonArray& );
+    boolean getModuleConf( const char*, JsonArray );
 
 private:
     /*

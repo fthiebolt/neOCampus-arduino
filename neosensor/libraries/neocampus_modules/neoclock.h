@@ -52,7 +52,7 @@ class neoclock : public base {
     bool is_empty( void ) { return (_display ? false : true); };
     
     // MQTT
-    bool start( senso * );    // note: neOClock does not communicate with MQTT
+    bool start( senso *, JsonDocument& );   // note: neOClock does not communicate with MQTT
     bool stop( void );
     bool process( void );     // process own module's activities
 

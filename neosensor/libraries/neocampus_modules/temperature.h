@@ -56,7 +56,6 @@ class temperature : public base {
   public:
     // constructors
     temperature( void );
-    temperature( JsonDocument& );
 
     // destructor
     ~temperature( void );
@@ -66,7 +65,7 @@ class temperature : public base {
     boolean is_empty( void );
     
     // MQTT
-    bool start( senso * );
+    bool start( senso *, JsonDocument& );
     bool process( void );     // process own module's activities
 
     void handle_msg( JsonObject );

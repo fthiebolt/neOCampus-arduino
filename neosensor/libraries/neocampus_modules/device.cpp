@@ -4,6 +4,7 @@
  * Device module for high-level end-device management
  *
  * F.Thiebolt   aug.21  implement correct device own status
+ *                      added JsonDocument to enable global shared JSON
  * Thiebolt F.  Nov.19  migrate to Arduino Json 6
  * Thiebolt F.  July 17 initial release
  * 
@@ -43,9 +44,14 @@ extern "C" modulesMgt modulesList;
 
 
 
-// constructor
-device::device( void ): base( getMacAddress() )
-{
+// constructors
+device::device( void ): base( getMacAddress() ) {
+  // call low-level constructor
+  _constructor();
+}
+
+// low-level constructor
+void device::_constructor( void ) {
   _freq   = DEFL_DEVICE_FREQUENCY;
   _status = deviceStatus_t::undefined;
 
@@ -53,18 +59,28 @@ device::device( void ): base( getMacAddress() )
   loadConfig();
 }
 
+// destructor
+device::~device( void ) {
+  // nothing todo since no dynamically allocated structure
+}
+
+
 
 /*
  * Module network startup procedure (MQTT)
  */
-bool device::start( senso *sensocampus ) {
+bool device::start( senso *sensocampus, JsonDocument &sharedRoot ) {
 
-    log_info(F("\n[device] starting module ..."));
-    // initialize module's publish & subscribe topics
-    snprintf( pubTopic, sizeof(pubTopic), "%s/%s", sensocampus->getBaseTopic(), MQTT_MODULE_NAME);
-    snprintf( subTopic, sizeof(subTopic), "%s/%s", pubTopic, "command" );
-    _status = deviceStatus_t::start;
-    return base::start( sensocampus );
+  log_info(F("\n[device] starting module ..."));
+  // create module's JSON structure to hold all of our data
+  // [aug.21] we create a dictionnary
+  variant = sharedRoot.createNestedObject(MQTT_MODULE_NAME);
+
+  // initialize module's publish & subscribe topics
+  snprintf( pubTopic, sizeof(pubTopic), "%s/%s", sensocampus->getBaseTopic(), MQTT_MODULE_NAME);
+  snprintf( subTopic, sizeof(subTopic), "%s/%s", pubTopic, "command" );
+  _status = deviceStatus_t::start;
+  return base::start( sensocampus, sharedRoot );
 }
 
 

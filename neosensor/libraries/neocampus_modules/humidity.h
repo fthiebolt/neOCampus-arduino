@@ -52,7 +52,6 @@ class humidity : public base {
   public:
     // constructors
     humidity( void );
-    humidity( JsonDocument& );
 
     // destructor
     ~humidity( void );
@@ -62,7 +61,7 @@ class humidity : public base {
     boolean is_empty( void );
     
     // MQTT
-    bool start( senso * );
+    bool start( senso *, JsonDocument& );
     bool process( void );     // process own module's activities
 
     void handle_msg( JsonObject );

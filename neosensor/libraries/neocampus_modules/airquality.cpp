@@ -39,15 +39,29 @@
 
 
 
-// constructor
-airquality::airquality(): base() 
-{
+// constructors
+airquality::airquality( void ): base() {
+  // call low-level constructor
+  _constructor();
+}
+
+// low-level constructor
+void airquality::_constructor( void ) {
   _freq = DEFL_AIRQUALITY_FREQUENCY;
   for( uint8_t i=0; i < _MAX_SENSORS; i++ )
-    _sensor[i] = NULL;
+    _sensor[i] = nullptr;
   
   // load json config file (if any)
   loadConfig();
+}
+
+// destructor
+airquality::~airquality( void ) {
+  for( uint8_t i=0; i < _sensors_count; i++ ) {
+    if( _sensor[i] == nullptr ) continue;
+    free( _sensor[i] );
+    _sensor[i] = nullptr;
+  }
 }
 
 
@@ -106,13 +120,22 @@ boolean airquality::is_empty( ) {
 /*
  * Module network startup procedure (MQTT)
  */
-bool airquality::start( senso *sensocampus ) {
+bool airquality::start( senso *sensocampus,  JsonDocument &sharedRoot ) {
 
-    log_info(F("\n[airquality] starting module ..."));
-    // initialize module's publish and subscribe topics
-    snprintf( pubTopic, sizeof(pubTopic), "%s/%s", sensocampus->getBaseTopic(), MQTT_MODULE_NAME);
-    snprintf( subTopic, sizeof(subTopic), "%s/%s", pubTopic, "command" );
-    return base::start( sensocampus );
+  log_info(F("\n[airquality] starting module ..."));
+  // create module's JSON structure to hold all of our data
+  // [aug.21] we create a dictionnary
+  variant = sharedRoot.createNestedObject(MQTT_MODULE_NAME);
+  // all sensors share the same units of values
+  JsonObject _obj = variant.as<JsonObject>();
+  _obj[F("value_units")] = "ppm"; // as of aug.21, lcc_sensor send back ohm values ...
+                                  // The shared Json may specify a specific per sensor 'value_units'
+                                  // e.g CP1="10042" CP1_value_units="ohm"
+
+  // initialize module's publish and subscribe topics
+  snprintf( pubTopic, sizeof(pubTopic), "%s/%s", sensocampus->getBaseTopic(), MQTT_MODULE_NAME);
+  snprintf( subTopic, sizeof(subTopic), "%s/%s", pubTopic, "command" );
+  return base::start( sensocampus, sharedRoot );
 }
 
 

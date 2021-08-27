@@ -72,10 +72,14 @@ bool neoclock::add_display( uint8_t id ) {
  * Module startup (MQTT)
  * Note: neOClock module is not involved with MQTT protocol
  */
-bool neoclock::start( senso *sensocampus ) {
+bool neoclock::start( senso *sensocampus, JsonDocument &sharedRoot ) {
 
   log_info(F("\n[neoclock] starting module ..."));
   /*
+  // create module's JSON structure to hold all of our data
+  // [aug.21] we create a dictionnary
+  variant = sharedRoot.createNestedObject(MQTT_MODULE_NAME);
+
   // initialize module's publish & subscribe topics
   snprintf( pubTopic, sizeof(pubTopic), "%s/%s", sensocampus->getBaseTopic(), MQTT_MODULE_NAME);
   snprintf( subTopic, sizeof(subTopic), "%s/%s", pubTopic, "command" );
@@ -96,7 +100,7 @@ bool neoclock::start( senso *sensocampus ) {
   // start timer with associated 1s interrupt handler 
   _timer1s.attach( 1, timerHandler, this );
 
-  // return base::start( sensocampus );
+  // return base::start( sensocampus, sharedRoot );   // not MQTT communications !
   return true;
 }
 

@@ -4,6 +4,12 @@
  * sensOCampus client class for interactions with sensOCampus server
  *
  * ---
+ * TODO:
+ * - implement iterator or any other solution to avoid large JsonDocument
+ *  duplication in 'loadSensoConfig()
+ * ---
+ * Notes:
+ * ---
  * F.Thiebolt  aug.20   removed EEPROM support
  *                      added SPIFFS support to load/save config file
  * Thiebolt F. Nov.19   migrate to Arduino Json 6

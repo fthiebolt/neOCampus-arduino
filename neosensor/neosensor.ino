@@ -226,6 +226,9 @@ airquality *airqualityModule        = nullptr;
 // digital class module
 digital *digitalModule              = nullptr;
 
+// display class module
+display *displayModule              = nullptr;
+
 
 // time server related
 bool cbtime_set = false;
@@ -937,6 +940,8 @@ void setup() {
     digitalModule->add_gpio( "OK", CLEAR_SW, digitalInputType_t::on_off, digitalFrontDetect_t::none );  // none ==> no MQTT sending
     #endif
 
+    displayModule       = new display();
+
     // add additional modules initialization here
   }
 
@@ -991,11 +996,16 @@ void setup() {
       log_debug(F("\n\t\tadded humidity sensor at i2c addr = 0x"));log_debug(res,HEX); log_flush();
       _known = true;
     }
+    // is chip a display ?
+    if( displayModule and displayModule->add_display(res) == true ) {
+      log_debug(F("\n\t\tadded display at i2c addr = 0x"));log_debug(res,HEX); log_flush();
+      _known = true;
+    }
 
 
     // add test for others modules ...
 
-    // did the i2c deice has been identified ?
+    // did the i2c device has been identified ?
     if( not _known ) {
       log_warning(F("\n[WARNING] unknwown i2c device with i2c addr = 0x"));log_debug(res,HEX); log_flush();
     }
@@ -1108,6 +1118,18 @@ void setup() {
       log_debug(F("\n# either digital module is empty or we've not been able to add it to the list of modules ... removing instance ..."));log_flush();
       free(digitalModule);
       digitalModule = nullptr;
+    }
+  }
+
+  // check if display module is ok
+  if( displayModule ) {
+    // [aug.21] load an eventual sensOCampus configuration
+    displayModule->loadSensoConfig( &sensocampus );
+
+    if( displayModule->is_empty()==true or not modulesList.add(displayModule) ) {
+      log_debug(F("\n# either display module is empty or we've not been able to add it to the list of modules ... removing instance ..."));log_flush();
+      free(displayModule);
+      displayModule = nullptr;
     }
   }
 

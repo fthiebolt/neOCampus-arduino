@@ -71,12 +71,12 @@ display::~display( void ) {
 /*
  * add_device method
  */
-boolean display::add_sensor( uint8_t adr ) {
+boolean display::add_display( uint8_t adr ) {
   // check if it is possible to add a sensor
   if( _displays_count>=_MAX_DISPLAYS ) return false;
 
   bool _display_added=false;
-
+#if 0
   // check for OLED 1.3 inch (SH1106)
   if( oled1.3inches::is_device( adr ) == true ) {
     oled1.3inches *cur_display = new oled1.3inches();
@@ -92,7 +92,7 @@ boolean display::add_sensor( uint8_t adr ) {
     }
   }
   //else if( SK9822::is_device( adr ) == true ) {
-
+#endif /* 0 */
   // add check for additional device here
 
   // summary
@@ -237,7 +237,7 @@ boolean display::loadSensoConfig( senso *sp ) {
 
   JsonArray _array;
   if( ! sp->getModuleConf( MQTT_MODULE_NAME, _array ) ) {
-    //log_debug(F("\n[temperature] no sensOCampus config found")); log_flush();
+    //log_debug(F("\n[display] no sensOCampus config found")); log_flush();
     return false;
   }
 
@@ -270,7 +270,7 @@ boolean display::loadSensoConfig( senso *sp ) {
 void display::_process_sensors( void ) {
   // process all valid sensors
   for( uint8_t cur_display=0; cur_display<_displays_count; cur_display++ ) {
-    if( _sensor[cur_display]==nullptr ) continue;
+    if( _display[cur_display]==nullptr ) continue;
     // start display processing
     // [aug.21] _freq is our coolDown parameter
     _display[cur_display]->process( _freq );
@@ -305,34 +305,30 @@ boolean display::_sendValues( void ) {
     StaticJsonDocument<DATA_JSON_SIZE> _doc;
     JsonObject root = _doc.to<JsonObject>();
 
-
-TO BE CONTINUED
-
-
     // retrieve official value
-    float value = _sensor[cur_sensor]->getValue();
+    float value = _display[cur_display]->getValue();
 
-    root[F("value")] = serialized(String(value,FLOAT_RESOLUTION));   // [nov.20] force float encoding
+    root[F("value")] = serialized(String(value));   // [nov.20] force float encoding
     //root[F("value")] = (float)( value );   // [may.20] force data as float (e.g ArduinoJson converts 20.0 to INT)
                                             // this doesn't work since ArduinoJson converts to STRING withiout decimal!
-    root[F("value_units")] = _sensor[cur_sensor]->sensorUnits();
-    root[F("subID")] = _sensor[cur_sensor]->subID();
+    root[F("value_units")] = _display[cur_display]->sensorUnits();
+    root[F("subID")] = _display[cur_display]->subID();
 
     /*
      * send MQTT message
      */
     if( sendmsg( root ) ) {
-      log_info(F("\n[temperature] successfully published msg :)")); log_flush();
+      log_info(F("\n[display] successfully published msg :)")); log_flush();
       // _TXoccured = true;
     }
     else {
       // we stop as soon as we've not been able to successfully send one message
-      log_error(F("\n[temperature] ERROR failure MQTT msg delivery :(")); log_flush();
+      log_error(F("\n[display] ERROR failure MQTT msg delivery :(")); log_flush();
       return false;
     }
 
     // mark data as sent
-    _sensor[cur_sensor]->setDataSent();
+    _display[cur_display]->setDataSent();
 
     // delay between two successives values to send
     delay(20);
@@ -352,7 +348,7 @@ TO BE CONTINUED
 /*
  * orders processing ...
  */
-bool temperature::_processOrder( const char *order, int *value ) {
+bool display::_processOrder( const char *order, int *value ) {
 
   if( !order ) return false;
   
@@ -379,7 +375,7 @@ bool temperature::_processOrder( const char *order, int *value ) {
     const char *_order = PSTR("frequency");
     if( strncmp_P(order, _order, strlen_P(_order))==0 ) {
       if( value ) {
-        setFrequency( (uint16_t)(*value), TEMPERATURE_MIN_FREQUENCY, TEMPERATURE_MAX_FREQUENCY );
+        setFrequency( (uint16_t)(*value), DISPLAY_MIN_COOLDOWN, DISPLAY_MAX_COOLDOWN );
         StaticJsonDocument<DATA_JSON_SIZE> _doc;
         JsonObject root = _doc.to<JsonObject>();
         status( root );
@@ -390,21 +386,21 @@ bool temperature::_processOrder( const char *order, int *value ) {
     }
   }
 
-  log_error(F("\n[temperature][callback] unknown order: ")); log_debug(order); log_flush();
+  log_error(F("\n[display][callback] unknown order: ")); log_debug(order); log_flush();
   return false;
 }
 
 /*
  * load an eventual module'specific config file
  */
-bool temperature::loadConfig( void ) {
+bool display::loadConfig( void ) {
   
   if( ! SPIFFS.exists( MODULE_CONFIG_FILE(MQTT_MODULE_NAME) ) ) return false;
 
   File configFile = SPIFFS.open( MODULE_CONFIG_FILE(MQTT_MODULE_NAME), "r");
   if( !configFile ) return false;
 
-  log_info(F("\n[temperature] load JSON config file")); log_flush();
+  log_info(F("\n[display] load JSON config file")); log_flush();
   size_t size = configFile.size();
   // Allocate a buffer to store contents of the file.
   std::unique_ptr<char[]> buf(new char[size]);
@@ -416,8 +412,8 @@ bool temperature::loadConfig( void ) {
 
   auto err = deserializeJson( root, buf.get() );
   if( err ) {
-    log_error(F("\n[temperature] ERROR parsing module JSON config file!"));
-    log_error(F("\n[temperature] ERROR msg: ")); log_error(err.c_str()); log_flush();
+    log_error(F("\n[display] ERROR parsing module JSON config file!"));
+    log_error(F("\n[display] ERROR msg: ")); log_error(err.c_str()); log_flush();
     SPIFFS.remove( MODULE_CONFIG_FILE(MQTT_MODULE_NAME) );
     return false;
   }
@@ -432,11 +428,11 @@ bool temperature::loadConfig( void ) {
 /*
  * low-level load JSON config
  */
-bool temperature::_loadConfig( JsonObject root ) {
+bool display::_loadConfig( JsonObject root ) {
   
   // check for 'frequency' field
   if( root.containsKey(F("frequency")) ) {
-    setFrequency( (uint16_t)(root[F("frequency")].as<unsigned int>()), TEMPERATURE_MIN_FREQUENCY, TEMPERATURE_MAX_FREQUENCY );
+    setFrequency( (uint16_t)(root[F("frequency")].as<unsigned int>()), DISPLAY_MIN_COOLDOWN, DISPLAY_MAX_COOLDOWN );
   }
 
   /*
@@ -449,14 +445,14 @@ bool temperature::_loadConfig( JsonObject root ) {
 /*
  * save module'specific config file
  */
-bool temperature::saveConfig( void ) {
+bool display::saveConfig( void ) {
   
   // static JSON buffer
   StaticJsonDocument<CONFIG_JSON_SIZE> _doc;
   JsonObject root = _doc.to<JsonObject>();
 
   // frequency
-  if( _freq != (uint16_t)DEFL_TEMPERATURE_FREQUENCY )
+  if( _freq != (uint16_t)DEFL_DISPLAY_COOLDOWN )
     root[F("frequency")] = _freq;
 
   // add additional parameters to save here

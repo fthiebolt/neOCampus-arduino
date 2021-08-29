@@ -28,8 +28,8 @@
 #include "base.h"
 
 // chips drivers
-#include "driver.h_display"     // virtual class for all displays drivers
-#include "oled1.3inches.h"      // 1.3 inches oled display based on SH1106
+#include "driver_display.h"       // virtual class for all displays drivers
+//#include "oled1.3inches.h"      // 1.3 inches oled display based on SH1106
 //#include "TM1637.h"             // neOClock driver
 //#include "SK9822.h"             // strip leds (APA102 compatible)
 

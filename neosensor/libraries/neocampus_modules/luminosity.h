@@ -78,7 +78,7 @@ class luminosity : public base {
     boolean loadSensoConfig( senso * ); // sensOCampus config to load (if any)
     
   private:
-    // supported devices (only one of one kind at this time :(
+    // supported devices
     generic_driver *_sensor[_MAX_SENSORS];
     
     /*

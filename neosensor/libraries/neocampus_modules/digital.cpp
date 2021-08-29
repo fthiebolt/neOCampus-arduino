@@ -69,6 +69,7 @@ digital::~digital( void )
     free(_gpio[i]);
     _gpio[i] = nullptr;
   }
+  _gpio_count = 0;
 }
 
 

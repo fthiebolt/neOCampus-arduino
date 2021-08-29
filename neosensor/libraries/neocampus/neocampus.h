@@ -8,6 +8,7 @@
  * - remove MAX_TCP_CONNECTIONS once we switched to MQTTs with a single connect
  *
  * ---
+ * F.Thiebolt   aug.21  added support for COOLDOWN approach
  * F.Thiebolt   Aug.20  automatic board selection according to the compilation flag
  *                      named XXX_BOARD (e.g NEOSENSOR_BOARD)
  * F.Thiebolt   Nov.19  add MQTT socket timeout definition
@@ -67,6 +68,11 @@ typedef uint32_t firmwareRev_t;
 #ifndef _MAX_COOLDOWN_SENSOR
 #define _MAX_COOLDOWN_SENSOR      1800      // seconds --> 30mn
 #endif /* _MAX_COOLDOWN_SENSOR */
+
+#ifndef _MAX_COOLDOWN_ACTUATOR
+#define _MAX_COOLDOWN_ACTUATOR    1800      // seconds --> 30mn
+#endif /* _MAX_COOLDOWN_ACTUATOR */
+
 
 
 /*

@@ -6,6 +6,7 @@
  * Note: intended to 7 segments based clock featuring HOURS:MINUTES
  * (i.e not seconds)
  * 
+ * F.Thiebolt aug.21  DEPRECATION notice ... will get replaced by the 'display' module
  * F.Thiebolt Jun.18  initial release
  * 
  */

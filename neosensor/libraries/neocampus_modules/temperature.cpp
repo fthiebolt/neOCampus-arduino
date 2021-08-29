@@ -67,6 +67,7 @@ temperature::~temperature( void ) {
     free( _sensor[i] );
     _sensor[i] = nullptr;
   }
+  _sensors_count = 0;
 }
 
 

@@ -23,6 +23,7 @@
  * - as the number of modules is increasing, implement a list of modules in the setup()
  * 
  * ---
+ * F.Thiebolt   sep.21  added display module support (e.g oled or 7segment displays)
  * F.Thiebolt   aug.21  added digital inputs support (e;g PIR sensor)
  *                      added support for shared JSON document for data exchange 
  *                      between modules
@@ -122,7 +123,11 @@ U8X8_SSD1306_128X64_NONAME_SW_I2C u8x8(/* clock=*/ SCL, /* data=*/ SDA, /* reset
 #include "neocampus_OTA.h"
 //#include "neocampus_comm.h"               // future MQTT(s) comm module: a single MQTTclient shared with multiple subscribers featuring different callbacks
 
-// neOCampus modules
+/* neOCampus modules
+ * !! WARNING !!
+ * Each module makes use of a TCP connection to the neOCampus server (MQTT link)
+ * check that there's enough TCP links available !!
+ */
 #include "device.h"
 #include "temperature.h"
 #include "humidity.h"
@@ -131,6 +136,7 @@ U8X8_SSD1306_128X64_NONAME_SW_I2C u8x8(/* clock=*/ SCL, /* data=*/ SDA, /* reset
 #include "neoclock.h"
 #include "airquality.h"
 #include "digital.h"
+#include "display.h"
 
 // modules management
 #include "modulesMgt.h"

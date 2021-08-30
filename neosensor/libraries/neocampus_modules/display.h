@@ -81,6 +81,9 @@ class display : public base {
     driver_display *_display[_MAX_DISPLAYS];
     uint8_t _displays_count;            // current number of registered displays
 
+    // global shared JSON
+    JsonDocument _globalJSON;
+
     /*
      * private membre functions
      */

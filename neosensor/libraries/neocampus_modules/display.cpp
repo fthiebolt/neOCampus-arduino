@@ -52,6 +52,9 @@ void display::_constructor( void ) {
   // initialize total count of registered displays
   _displays_count = 0;
 
+  // global ref to sharedRoot (JSON)
+  _globalJSON = nullptr;
+
   // load json config file (if any)
   loadConfig( );
 }
@@ -120,9 +123,13 @@ bool display::start( senso *sensocampus, JsonDocument &sharedRoot ) {
   // create module's JSON structure to hold all of our data
   // [aug.21] we create a dictionnary
   variant = sharedRoot.createNestedObject(MQTT_MODULE_NAME);
+
   // all sensors share the same units of values
-  JsonObject _obj = variant.as<JsonObject>();
+  //JsonObject _obj = variant.as<JsonObject>();
   // _obj[F("value_units")] = "°c"; no value_units for displays
+
+  // but keep track of the global shared JSON to enable reading values modules' own sensors
+  *_globalJSON = &sharedRoot;
 
   // initialize module's publish & subscribe topics
   snprintf( pubTopic, sizeof(pubTopic), "%s/%s", sensocampus->getBaseTopic(), MQTT_MODULE_NAME);

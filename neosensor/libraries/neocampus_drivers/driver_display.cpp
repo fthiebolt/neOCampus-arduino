@@ -26,7 +26,18 @@
 /******************************************
  * Default constructor
  */
-driver_display::driver_display() {
+driver_display::driver_display( void ) {
+}
+
+
+/******************************************
+ * Detection
+ */
+boolean driver_display::begin( uint8_t adr ) {
+  return false;
+}
+boolean driver_display::begin( JsonVariant root ) {
+  return false;
 }
 
 
@@ -40,6 +51,13 @@ void driver_display::powerOFF( void ) {
   // switch OFF
 }
 
+
+
+/******************************************
+ * DEPRECATION NOTICE
+ * ALL METHODS BELOW WILL BECOME OBSOLETE
+ * ONCE DISPLAY MODULE WILL BE AVAILABLE
+ ******************************************/
 
 /******************************************
  * Luminosity, contrast etc

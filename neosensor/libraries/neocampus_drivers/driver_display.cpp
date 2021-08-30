@@ -27,6 +27,13 @@
  * Default constructor
  */
 driver_display::driver_display( void ) {
+
+  _trigger        = false;
+
+  _lastMsWrite    = ULONG_MAX/2;
+  _lastMsSent     = ULONG_MAX/2;
+
+  value           = -1.0; // fool guard
 }
 
 
@@ -49,6 +56,78 @@ void driver_display::powerON( void ) {
 }
 void driver_display::powerOFF( void ) {
   // switch OFF
+}
+
+
+/******************************************
+ * Display(s) internal processing
+ * 
+ */
+void driver_display::process( uint16_t coolDown ) {
+  // same time ref for all
+  unsigned long _curTime = millis();
+
+  // check wether it's time to process or not
+  if( _curTime - _lastMsWrite < ((unsigned long)coolDown)*1000 ) return;
+
+#if 0
+TO BE CONTINUED
+
+  // acquire data
+  float val;
+  if( acquire(&val)==false ) return;   // data was not ready
+  _lastMsRead   = _curTime;
+
+  // round acquired value
+  decimals = ( decimals > _MAX_DATA_DECIMALS ? _MAX_DATA_DECIMALS : decimals );
+  if( decimals==0 ) {
+    val = (float)round(val);
+  }
+  else {
+    float _pow = pow(10,decimals);
+    val = (float)round(val*_pow)/_pow;
+  }
+
+  // data has been acquired :)
+  if( _currentCpt==(uint8_t)(-1) or
+      abs(_current - val) > abs((_current*(float)_thresholdPercent)/100.0) ) {
+    // (re)initializing either because it's first time or unstable value
+    _current    = val;
+    _currentCpt = 0;
+    return;
+  }
+
+  // value read from sensor is stable :)
+  if( ++_currentCpt < _thresholdCpt-1 ) return;
+
+  // new stable value :)
+  _currentCpt   = -1;
+  value         = _current;
+  _lastMsWrite  = _curTime;
+
+  /* We need to send the new value either because:
+   * - its own value evolved above threshold
+   * - we reached the _MAX_COOLDOWN_SENSOR delay regarding our last sending
+   */
+  if( abs(value - valueSent) > DATA_SENDING_VARIATION_THRESHOLD ||
+      (_curTime - _lastMsSent >= ((unsigned long)_MAX_COOLDOWN_SENSOR)*1000) ) {
+    _trigger = true;
+    return;
+  }
+
+  // new official value does not differ so much from the previously sent
+  // ... continuing after next cooldown period
+#endif /* 0 */
+}
+
+
+/******************************************
+ * DATA integration related methods
+ */
+void driver_display::setDataSent( void ) {
+  _trigger = false;
+  valueSent = value;
+  _lastMsSent = millis();
 }
 
 

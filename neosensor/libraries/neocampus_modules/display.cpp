@@ -52,9 +52,6 @@ void display::_constructor( void ) {
   // initialize total count of registered displays
   _displays_count = 0;
 
-  // global ref to sharedRoot (JSON)
-  _globalJSON = nullptr;
-
   // load json config file (if any)
   loadConfig( );
 }
@@ -129,7 +126,7 @@ bool display::start( senso *sensocampus, JsonDocument &sharedRoot ) {
   // _obj[F("value_units")] = "°c"; no value_units for displays
 
   // but keep track of the global shared JSON to enable reading values modules' own sensors
-  *_globalJSON = &sharedRoot;
+  _sharedRoot = sharedRoot.to<JsonVariant>();
 
   // initialize module's publish & subscribe topics
   snprintf( pubTopic, sizeof(pubTopic), "%s/%s", sensocampus->getBaseTopic(), MQTT_MODULE_NAME);
@@ -285,7 +282,7 @@ void display::_process_sensors( void ) {
 
     // new data ready to get sent ==> activate module's trigger
     log_debug(F("\n[display][")); log_debug(_display[cur_display]->subID());
-    log_debug(F("] has status/data to send: ")); log_debug(_sensor[cur_sensor]->getValue()); log_flush();
+    log_debug(F("] has status/data to send: ")); log_debug(_display[cur_display]->getValue()); log_flush();
     _trigger = true;  // activate module level trigger
 
     /*
@@ -318,7 +315,7 @@ boolean display::_sendValues( void ) {
     root[F("value")] = serialized(String(value));   // [nov.20] force float encoding
     //root[F("value")] = (float)( value );   // [may.20] force data as float (e.g ArduinoJson converts 20.0 to INT)
                                             // this doesn't work since ArduinoJson converts to STRING withiout decimal!
-    root[F("value_units")] = _display[cur_display]->sensorUnits();
+    //root[F("value_units")] = _display[cur_display]->sensorUnits();
     root[F("subID")] = _display[cur_display]->subID();
 
     /*

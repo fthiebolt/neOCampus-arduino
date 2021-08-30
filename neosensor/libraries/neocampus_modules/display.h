@@ -82,7 +82,7 @@ class display : public base {
     uint8_t _displays_count;            // current number of registered displays
 
     // global shared JSON
-    JsonDocument _globalJSON;
+    JsonVariant _sharedRoot;            // global shared JsonDocument
 
     /*
      * private membre functions

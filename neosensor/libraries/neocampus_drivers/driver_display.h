@@ -69,20 +69,15 @@ class driver_display {
 
     // --- DEPRECATED methods / attributes ---------------------
     // Brightness & others
-[[deprecated("will get obsolted soon by the new display module")]]
-    virtual uint8_t setPercentBrightness( uint8_t );  // 0 -> 100% luminosity
-[[deprecated("will get obsolted soon by the new display module")]]
-    virtual bool setDotsBlinking( bool );             // central dots blinking or not
+    [[deprecated]] virtual uint8_t setPercentBrightness( uint8_t );  // 0 -> 100% luminosity
+    [[deprecated]] virtual bool setDotsBlinking( bool );             // central dots blinking or not
     
     // Display methods to get overridden in child classes
-[[deprecated("will get obsolted soon by the new display module")]]
-    virtual uint8_t dispMsg( const char * );   // display a text message
-[[deprecated("will get obsolted soon by the new display module")]]
-    virtual uint8_t dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds=0 ); // display time
+    [[deprecated]] virtual uint8_t dispMsg( const char * );   // display a text message
+    [[deprecated]] virtual uint8_t dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds=0 ); // display time
 
     // animation
-[[deprecated("will get obsolted soon by the new display module")]]
-    virtual bool animate( bool activate=true, uint8_t mode=1 );
+    [[deprecated]]virtual bool animate( bool activate=true, uint8_t mode=1 );
 
   // --- protected methods / attributes ---------------------
   // --- i.e subclass have direct access to

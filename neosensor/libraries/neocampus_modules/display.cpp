@@ -76,12 +76,12 @@ boolean display::add_display( uint8_t adr ) {
   if( _displays_count>=_MAX_DISPLAYS ) return false;
 
   bool _display_added=false;
-#if 0
+
   // check for OLED 1.3 inch (SH1106)
-  if( oled1.3inches::is_device( adr ) == true ) {
-    oled1.3inches *cur_display = new oled1.3inches();
+  if( oled13inch::is_device( adr ) == true ) {
+    oled13inch *cur_display = new oled13inch();
     if( cur_display->begin( adr ) != true ) {
-      log_debug(F("\n[display] ###ERROR at OLED1.3INCHES startup ... removing instance ..."));log_flush();
+      log_debug(F("\n[display] ###ERROR at OLED13INCH startup ... removing instance ..."));log_flush();
       free(cur_display);
       cur_display = nullptr;
     }
@@ -92,7 +92,7 @@ boolean display::add_display( uint8_t adr ) {
     }
   }
   //else if( SK9822::is_device( adr ) == true ) {
-#endif /* 0 */
+
   // add check for additional device here
 
   // summary
@@ -197,8 +197,8 @@ bool display::process( void ) {
    */
   _ret = base::process();
 
-  /* sensors internal processing */
-  _process_sensors();
+  /* displays internal processing */
+  _process_displays();
 
   // [aug.21] TXtime is not based on timer but upon data ready
   // to get sent !
@@ -267,11 +267,10 @@ boolean display::loadSensoConfig( senso *sp ) {
  */
 
 /*
- * sensors internal processing
- * this function is called every lopp() call and leverages
- * the needs for (e.g) continuous integration.
+ * displays internal processing
+ * this function is called every lopp() call.
  */
-void display::_process_sensors( void ) {
+void display::_process_displays( void ) {
   // process all valid sensors
   for( uint8_t cur_display=0; cur_display<_displays_count; cur_display++ ) {
     if( _display[cur_display]==nullptr ) continue;

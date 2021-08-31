@@ -40,7 +40,7 @@
 #define MQTT_MODULE_NAME        "temperature"  // used to build module's base topic
 #define DATA_JSON_SIZE          (JSON_OBJECT_SIZE(20))
 #define CONFIG_JSON_SIZE        (JSON_OBJECT_SIZE(3))   // config file contains: frequency
-// [nov.20] set FLOAT resolution data to send over MQTT
+// [nov.20] set FLOAT resolution of data to get sent over MQTT
 #define FLOAT_RESOLUTION        3
 
 

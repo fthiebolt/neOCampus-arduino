@@ -29,11 +29,11 @@
  */
 generic_driver::generic_driver( uint16_t read_msinterval,
                                 uint8_t threshold_cpt,
-                                uint8_t threshold_percent ) {
+                                uint8_t threshold_thousandth ) {
 
-  _readMsInterval   = read_msinterval;
-  _thresholdCpt     = threshold_cpt;
-  _thresholdPercent = threshold_percent;
+  _readMsInterval       = read_msinterval;
+  _thresholdCpt         = threshold_cpt;
+  _thresholdThousandth  = threshold_thousandth;
 
   _trigger        = false;
   _currentCpt     = (uint8_t)(-1);
@@ -94,7 +94,7 @@ void generic_driver::process( uint16_t coolDown, uint8_t decimals ) {
 
   // data has been acquired :)
   if( _currentCpt==(uint8_t)(-1) or
-      abs(_current - val) > abs((_current*(float)_thresholdPercent)/100.0) ) {
+      abs(_current - val) > abs((_current*(float)_thresholdThousandth)/1000.0) ) {
     // (re)initializing either because it's first time or unstable value
     _current    = val;
     _currentCpt = 0;
@@ -113,7 +113,7 @@ void generic_driver::process( uint16_t coolDown, uint8_t decimals ) {
    * - its own value evolved above threshold
    * - we reached the _MAX_COOLDOWN_SENSOR delay regarding our last sending
    */
-  if( abs(value - valueSent) > DATA_SENDING_VARIATION_THRESHOLD ||
+  if( abs(value - valueSent) >= DATA_SENDING_VARIATION_THRESHOLD ||
       (_curTime - _lastMsSent >= ((unsigned long)_MAX_COOLDOWN_SENSOR)*1000) ) {
     _trigger = true;
     return;

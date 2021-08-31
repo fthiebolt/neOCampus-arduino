@@ -29,7 +29,7 @@
 
 // chips drivers
 #include "driver_display.h"       // virtual class for all displays drivers
-//#include "oled1.3inches.h"      // 1.3 inches oled display based on SH1106
+#include "oled1.3inch.h"          // 1.3 inch oled display based on SH1106
 //#include "TM1637.h"             // neOClock driver
 //#include "SK9822.h"             // strip leds (APA102 compatible)
 
@@ -90,7 +90,7 @@ class display : public base {
     bool _loadConfig( JsonObject );
     bool _processOrder( const char *, int * );  // an order to process with optional value
     boolean _sendValues( void );                // send all sensors' values
-    void _process_sensors( void );              // sensors internal processing (optional)
+    void _process_displays( void );             // displays internal processing (optional)
     void _constructor( void );                  // low-level constructor
 };
 

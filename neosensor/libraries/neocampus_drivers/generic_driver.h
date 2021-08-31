@@ -39,16 +39,16 @@
  * 
  * A sensor is read every 1s till value is stable over 'thresholdCpt' count,
  *   then it becomes the new official value;
- * If new value read < 2% vs _current ==> increase _currentCpt;
- * If _currentCPT > 5 or 10 ==> it becomes the official value 'value'
- * If abs(new official value - valueSent) > resolution ==> activate _trigger
+ * If abs(new value read - _current) < PERCENT% ==> increase _currentCpt;
+ * If _currentCPT >= 7 ==> it becomes the new official value
+ * If abs(new official value - valueSent) > THRESHOLD ==> activate _trigger
  * _trigger activation will generate a data sending
  */
-#define DEFL_READ_MSINTERVAL    1250  // default ms between two consecutives read of sensor
-#define DEFL_THRESHOLD_CPT      5     // threshold counter to declare current value the new official one
-#define DEFL_THRESHOLD_PERCENT  2     // percent variation threshold to consider stable value
+#define DEFL_READ_MSINTERVAL      1250      // default ms between two consecutives read of sensor
+#define DEFL_THRESHOLD_CPT        7         // threshold counter to declare current value the new official one
+#define DEFL_THRESHOLD_THOUSANDTH 15        // 1.5 percent variation threshold to consider stable value
 
-#define _MAX_DATA_DECIMALS      3     // we won't support more than decimals in data from sensors
+#define _MAX_DATA_DECIMALS      3           // we won't support more than X decimals in data from sensors
 #define DATA_SENDING_VARIATION_THRESHOLD  (float)(0.15) // new official value ought to differ more than this threshold to get sent
 
 
@@ -61,7 +61,7 @@ class generic_driver {
     // constructor
     generic_driver( uint16_t read_msinterval=DEFL_READ_MSINTERVAL,
                     uint8_t threshold_cpt=DEFL_THRESHOLD_CPT,
-                    uint8_t threshold_percent=DEFL_THRESHOLD_PERCENT );
+                    uint8_t threshold_thousandth=DEFL_THRESHOLD_THOUSANDTH );
     
     // Power Modes
     virtual void powerON( void );         // switch ON
@@ -93,7 +93,7 @@ class generic_driver {
   protected:
     uint16_t      _readMsInterval;    // seconds interval between two consective data acquisition
     uint8_t       _thresholdCpt;      // threshold counter for stable data
-    uint8_t       _thresholdPercent;  // max percent data variation to consider as stable
+    uint8_t       _thresholdThousandth;  // max tenth percent (i.e millièmes) data variation to consider as stable
 
     bool          _trigger;       // stable official value ought to get sent according to variation constraints and the coolDown/_lastTX value
 

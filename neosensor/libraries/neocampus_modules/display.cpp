@@ -45,12 +45,19 @@ display::display( void ): base() {
 
 // low-level constructor
 void display::_constructor( void ) {
+
   _freq = DEFL_DISPLAY_COOLDOWN;    // [aug.21] useless since we're now following a cooldown approach for sensors
+
   for( uint8_t i=0; i < _MAX_DISPLAYS; i++ )
     _display[i] = nullptr;
 
   // initialize total count of registered displays
   _displays_count = 0;
+
+  // time management
+  _displayChange = false;
+  _secondsLeft = -1;
+  _initialized = false;
 
   // load json config file (if any)
   loadConfig( );
@@ -70,6 +77,7 @@ display::~display( void ) {
 
 /*
  * add_device method
+ * Note: TM1637 display can't get detected ==> sensOCampus config or WiFiParameters
  */
 boolean display::add_display( uint8_t adr ) {
   // check if it is possible to add a sensor
@@ -103,12 +111,10 @@ boolean display::add_display( uint8_t adr ) {
 }
 
 
-
 // check if at least one sensor exist
 boolean display::is_empty( ) {
   return ( _displays_count==0 ? true : false );
 }
-
 
 
 /*
@@ -128,11 +134,57 @@ bool display::start( senso *sensocampus, JsonDocument &sharedRoot ) {
   // but keep track of the global shared JSON to enable reading values modules' own sensors
   _sharedRoot = sharedRoot.to<JsonVariant>();
 
+  for( uint8_t i=0; i < _displays_count; i++ ) {
+    if( _display[i]==nullptr ) continue;
+
+    // stop animes (if any)
+    _display[i]->animate( false );
+    
+    // switch Power ON full brightness;
+    _display[i]->setDotsBlinking( true );
+    _display[i]->setPercentBrightness( 100 );
+    _display[i]->powerON();
+  }
+
+  // first time
+  _secondsLeft = 0;
+  _initialized = true;
+
+  // start timer with associated 1s interrupt handler 
+  _timer1s.attach( 1, timerHandler, this );
+
   // initialize module's publish & subscribe topics
   snprintf( pubTopic, sizeof(pubTopic), "%s/%s", sensocampus->getBaseTopic(), MQTT_MODULE_NAME);
   snprintf( subTopic, sizeof(subTopic), "%s/%s", pubTopic, "command" );
   return base::start( sensocampus, sharedRoot );
 }
+
+
+/*
+ * Module shutdown (MQTT)
+ */
+bool display::stop( void ) {
+
+  log_info(F("\n[display] module shutdown ..."));
+
+  // detach timer  
+  _timer1s.detach();
+
+  for( uint8_t i=0; i < _displays_count; i++ ) {
+    if( _display[i]==nullptr ) continue;
+
+    // switch Power OFF
+    //_display->setPercentBrightness( 0 );
+    _display[i]->powerOFF();
+  }
+
+  /*
+   * shutdown MQTT subscription and stop client ...
+   */
+  
+  return base::stop( );
+}
+
 
 
 /*
@@ -271,6 +323,27 @@ boolean display::loadSensoConfig( senso *sp ) {
  * this function is called every lopp() call.
  */
 void display::_process_displays( void ) {
+#if 0
+  if( !_initialized ) return false;
+  
+  // do we need to update the HOURS:MINUTES displayed ?
+  if( _displayChange ) {
+
+    // display current time
+    uint8_t bytes = _display->dispTime( _tm_displayedTime.tm_hour, _tm_displayedTime.tm_min );
+
+    if( !bytes ) {
+      log_warning(F("\n[neoclock] no bytes writtent in display ?!?!"));log_flush();
+    }
+    
+    _displayChange = false;
+
+    log_debug(F("\n[neoclock] updated time displayed to "));
+    log_debug(_tm_displayedTime.tm_hour,DEC);log_debug(F(":"));log_debug(_tm_displayedTime.tm_min);
+    log_debug(F(" with tm_sec= ")); log_debug(_tm_displayedTime.tm_sec,DEC);
+    log_flush();
+  }
+#endif /* 0 */
   // process all valid sensors
   for( uint8_t cur_display=0; cur_display<_displays_count; cur_display++ ) {
     if( _display[cur_display]==nullptr ) continue;
@@ -465,3 +538,21 @@ bool display::saveConfig( void ) {
   return base::saveConfig( MODULE_CONFIG_FILE(MQTT_MODULE_NAME), root );
 }
 
+/*
+ * 1s timer handler
+ * Note: interrupt handler, no serial debug messages !
+ */
+void ICACHE_RAM_ATTR display::timerHandler( display *p ) {
+
+  if( p->_secondsLeft-- ) return;
+
+  // timeout reached ...
+  time( &(p->_curDisplayedTime) );
+  localtime_r( &(p->_curDisplayedTime), &(p->_tm_displayedTime) );   // Weird part ... localtime function *corrects* time to match timezone ... :s
+
+  // restart count-down to next minute
+  p->_secondsLeft = 59 - p->_tm_displayedTime.tm_sec;
+
+  // display current time
+  p->_displayChange = true;
+}

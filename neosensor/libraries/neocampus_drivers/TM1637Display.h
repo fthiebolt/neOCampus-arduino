@@ -164,7 +164,7 @@ class TM1637Display : public driver_display {
       
     String subID(void) { return String(""); }             // retrieve identity (no subID available)
 
-    bool animate( bool activate=true, uint8_t mode=1 );   // display some animations :)
+    bool animate( displayAnimate_t mode=displayAnimate_t::demo );   // display some animations :)
 
   protected:
     void bitDelay();
@@ -200,7 +200,7 @@ class TM1637Display : public driver_display {
     bool _enabledDotsBlinking;  // enable / disable flag
     Ticker _blinkTimer;         // timer to manage dots blinking
     bool _dots;                 // dots status (on/off)
-    uint8_t _animMode;
+    displayAnimate_t _animMode;
 
     // currently displayed time
     uint8_t _curHour;

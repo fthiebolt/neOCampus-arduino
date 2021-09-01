@@ -59,7 +59,10 @@ class oled13inch : public driver_display {
     void powerOFF( void );      // switch OFF
 
     String subID( void ) { return String(_i2caddr); };
-    
+
+    // Brightness & others
+    uint8_t setPercentBrightness( uint8_t );
+
     // --- static methods / constants -----------------------
     
     // list of possibles I2C addrs

@@ -95,7 +95,7 @@ TM1637Display::TM1637Display( uint8_t pinClk, uint8_t pinDIO, uint16_t usBitDela
   _enabledDotsBlinking = true;
   
   // disable animations
-  _animMode = DRIVER_DISPLAY_ANIMMODE_DISABLED;
+  _animMode = displayAnimate_t::stop;
   
   // Set the pin direction and default value.
   // Both pins are set as inputs, allowing the pull-up resistors to pull them up
@@ -267,7 +267,7 @@ void TM1637Display::powerON( void ) {
 
   setBrightness( TM1637_MAX_BRIGHTNESS, true );
   
-  if( _enabledDotsBlinking and _animMode==DRIVER_DISPLAY_ANIMMODE_DISABLED ) {
+  if( _enabledDotsBlinking and _animMode==displayAnimate_t::stop ) {
     _dots = false;
     _blinkTimer.detach();   // in case something already active (like an animation)
     _blinkTimer.attach( 0.5, timerHandler, this );
@@ -361,9 +361,9 @@ uint8_t TM1637Display::subID( void ) {
 // display some animations
 // - wifi scanning
 // - demo etc
-bool TM1637Display::animate( bool activate, uint8_t mode ) {
+bool TM1637Display::animate( displayAnimate_t mode ) {
   
-  if( activate and mode!=DRIVER_DISPLAY_ANIMMODE_DISABLED ) {
+  if( mode!=displayAnimate_t::stop ) {
     // start animation mode
     _animMode = mode;
     
@@ -376,7 +376,7 @@ bool TM1637Display::animate( bool activate, uint8_t mode ) {
   else {
     // stop animation mode
     _blinkTimer.detach();
-    _animMode = DRIVER_DISPLAY_ANIMMODE_DISABLED;
+    _animMode = displayAnimate_t::stop;
     
     powerOFF();    
   }
@@ -392,14 +392,14 @@ bool TM1637Display::animate( bool activate, uint8_t mode ) {
 
 /*
  * process current animation
- * [jun.18] only one animation available
+ * [jun.18] only one animation available --> WiFi connect
  */
 uint8_t TM1637Display::_processAnim( void ) {
 
   static bool toggle = false;
   static uint8_t curBrightness = TM1637_MAX_BRIGHTNESS;
   
-  if( _animMode==(uint8_t)1 ) {
+  if( _animMode==displayAnimate_t::network_connect ) {
     
     setBrightness( TM1637_MAX_BRIGHTNESS, true );
     
@@ -412,7 +412,7 @@ uint8_t TM1637Display::_processAnim( void ) {
     toggle = !toggle;
     
   }
-  else if( _animMode==(uint8_t)2 ) {
+  else if( _animMode==displayAnimate_t::network_connect_alt ) {
     
     static bool increaseBrightness = true;
 
@@ -428,7 +428,7 @@ uint8_t TM1637Display::_processAnim( void ) {
     else if( curBrightness==0 ) increaseBrightness=true;
   }
   
-  return _animMode;
+  return true;
 }
 
 
@@ -453,7 +453,7 @@ uint8_t TM1637Display::_computePercentBrightness( uint8_t percent ) {
 void ICACHE_RAM_ATTR TM1637Display::timerHandler( TM1637Display *p ) {
 
   // animation mode is exclusive with normal mode (i.e central leds blinking)
-  if( p->_animMode != DRIVER_DISPLAY_ANIMMODE_DISABLED ) {
+  if( p->_animMode != displayAnimate_t::stop ) {
     p->_processAnim();
     return;
   }

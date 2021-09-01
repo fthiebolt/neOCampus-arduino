@@ -87,6 +87,9 @@ class display : public base {
     // Every second timer call to this method
     static void ICACHE_RAM_ATTR timerHandler( display * );
 
+    // animation
+    bool animate( displayAnimate_t mode=displayAnimate_t::demo );
+
   private:
     // supported devices
     driver_display *_display[_MAX_DISPLAYS];
@@ -103,7 +106,7 @@ class display : public base {
     bool _displayChange;          // bool to trigger a change in the clock displayed values
     
     // The one second timer
-    Ticker _timer1s;            // our 1second timer
+    Ticker _timer1s;              // our 1second timer
 
     /*
      * private membre functions

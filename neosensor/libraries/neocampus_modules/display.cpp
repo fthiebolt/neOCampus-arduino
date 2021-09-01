@@ -134,11 +134,12 @@ bool display::start( senso *sensocampus, JsonDocument &sharedRoot ) {
   // but keep track of the global shared JSON to enable reading values modules' own sensors
   _sharedRoot = sharedRoot.to<JsonVariant>();
 
+  // start ALL displays ...
   for( uint8_t i=0; i < _displays_count; i++ ) {
     if( _display[i]==nullptr ) continue;
 
     // stop animes (if any)
-    _display[i]->animate( false );
+    _display[i]->animate( displayAnimate_t::stop );
     
     // switch Power ON full brightness;
     _display[i]->setDotsBlinking( true );
@@ -181,7 +182,6 @@ bool display::stop( void ) {
   /*
    * shutdown MQTT subscription and stop client ...
    */
-  
   return base::stop( );
 }
 
@@ -323,31 +323,17 @@ boolean display::loadSensoConfig( senso *sp ) {
  * this function is called every lopp() call.
  */
 void display::_process_displays( void ) {
-#if 0
-  if( !_initialized ) return false;
-  
-  // do we need to update the HOURS:MINUTES displayed ?
-  if( _displayChange ) {
 
-    // display current time
-    uint8_t bytes = _display->dispTime( _tm_displayedTime.tm_hour, _tm_displayedTime.tm_min );
-
-    if( !bytes ) {
-      log_warning(F("\n[neoclock] no bytes writtent in display ?!?!"));log_flush();
-    }
-    
-    _displayChange = false;
-
-    log_debug(F("\n[neoclock] updated time displayed to "));
-    log_debug(_tm_displayedTime.tm_hour,DEC);log_debug(F(":"));log_debug(_tm_displayedTime.tm_min);
-    log_debug(F(" with tm_sec= ")); log_debug(_tm_displayedTime.tm_sec,DEC);
-    log_flush();
-  }
-#endif /* 0 */
   // process all valid sensors
   for( uint8_t cur_display=0; cur_display<_displays_count; cur_display++ ) {
     if( _display[cur_display]==nullptr ) continue;
-    // start display processing
+
+    // hours:minutes update
+    if( _initialized & _displayChange ) {
+      _display[cur_display]->dispTime( _tm_displayedTime.tm_hour, _tm_displayedTime.tm_min );
+    }
+
+    // start processing @ each display
     // [aug.21] _freq is our coolDown parameter
     _display[cur_display]->process( _freq );
     if( _display[cur_display]->getTrigger()!=true ) continue;
@@ -362,6 +348,15 @@ void display::_process_displays( void ) {
      */
     JsonObject _obj = variant.as<JsonObject>();
     _obj[_display[cur_display]->subID()] = _display[cur_display]->getValue();
+  }
+
+  // time update done
+  if( _initialized & _displayChange ) {
+    log_debug(F("\n[display] updated time displayed to "));
+    log_debug(_tm_displayedTime.tm_hour,DEC);log_debug(F(":"));log_debug(_tm_displayedTime.tm_min);
+    log_debug(F(" with tm_sec= ")); log_debug(_tm_displayedTime.tm_sec,DEC);
+    log_flush();
+    _displayChange = false;
   }
 }
 
@@ -538,6 +533,7 @@ bool display::saveConfig( void ) {
   return base::saveConfig( MODULE_CONFIG_FILE(MQTT_MODULE_NAME), root );
 }
 
+
 /*
  * 1s timer handler
  * Note: interrupt handler, no serial debug messages !
@@ -555,4 +551,22 @@ void ICACHE_RAM_ATTR display::timerHandler( display *p ) {
 
   // display current time
   p->_displayChange = true;
+}
+
+
+/*
+ * Animation modes (i.e demo & others )
+ */
+bool display::animate( displayAnimate_t mode ) {
+
+  bool _ret = true;
+  // start animation to all displays
+  for( uint8_t cur_display=0; cur_display<_displays_count; cur_display++ ) {
+    if( _display[cur_display]==nullptr ) continue;
+
+    // set animation mode to current display
+    if( ! _display[cur_display]->animate( mode ) ) _ret = false;
+  }
+
+  return _ret;
 }

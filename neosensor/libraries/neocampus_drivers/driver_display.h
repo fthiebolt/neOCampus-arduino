@@ -30,7 +30,14 @@
 /*
  * Definitions
  */
-#define DRIVER_DISPLAY_ANIMMODE_DISABLED    (uint8_t)(-1)
+// animation modes
+enum class displayAnimate_t : uint8_t {
+  demo      = (uint8_t)(-1),  // demo mode
+  stop                  = 0,  // i.e normal mode
+  network_connect,            // connecting to a network
+  network_connect_alt,        // alternative animation version when connecting to a network
+  network_fail,               // quite explicit ...
+};
 
 
 /*
@@ -66,18 +73,16 @@ class driver_display {
     inline float getValue( void ) { return value; };      // get official value that has gone through the whole integration process
     void setDataSent( void );                             // data has been sent, reset the 'new official data' trigger
 
-
-    // --- DEPRECATED methods / attributes ---------------------
     // Brightness & others
-    [[deprecated]] virtual uint8_t setPercentBrightness( uint8_t );  // 0 -> 100% luminosity
+    virtual uint8_t setPercentBrightness( uint8_t );          // 0 -> 100% luminosity
     [[deprecated]] virtual bool setDotsBlinking( bool );             // central dots blinking or not
     
     // Display methods to get overridden in child classes
     [[deprecated]] virtual uint8_t dispMsg( const char * );   // display a text message
-    [[deprecated]] virtual uint8_t dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds=0 ); // display time
+    virtual uint8_t dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds=0 );  // display time
 
-    // animation
-    [[deprecated]]virtual bool animate( bool activate=true, uint8_t mode=1 );
+    // various animation modes
+    virtual bool animate( displayAnimate_t mode=displayAnimate_t::demo );
 
   // --- protected methods / attributes ---------------------
   // --- i.e subclass have direct access to

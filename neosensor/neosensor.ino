@@ -790,7 +790,7 @@ void setup() {
   wifiParameters.loadConfigFile();
   processWIFIparameters( &wifiParameters );
   if( clockModule ) {
-    clockModule->animate();
+    clockModule->animate( displayAnimate_t::network_connect );
   }
   else {
 #ifdef LED
@@ -818,7 +818,7 @@ void setup() {
    * Disable led blinking for WiFI setup mode since we're already connected
    */
   if( clockModule ) {
-    clockModule->animate( false );
+    clockModule->animate( displayAnimate_t::stop );
   }
   else {
 #ifdef LED

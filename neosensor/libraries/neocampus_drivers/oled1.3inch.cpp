@@ -93,6 +93,7 @@ boolean oled13inch::begin( uint8_t addr=INVALID_I2CADDR) {
   // instantiate u8 device
 
   /* set config:
+   * - brightness 100%
    */
 
   // define defaults parameters
@@ -110,6 +111,16 @@ void oled13inch::powerOFF( void ) {
 void oled13inch::powerON( void ) {
 }
 
+
+/*
+ * Brightness control of oled display
+ */
+uint8_t oled13inch::setPercentBrightness( uint8_t val ) {
+
+#warning "Brighness at oled1.3inch NOT YET IMPLEMENTED"
+
+  return (uint8_t)(-1);
+}
 
 
 /* ------------------------------------------------------------------------------

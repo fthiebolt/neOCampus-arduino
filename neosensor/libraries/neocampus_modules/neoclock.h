@@ -75,7 +75,7 @@ class neoclock : public base {
     static void ICACHE_RAM_ATTR timerHandler( neoclock * );
 
     // animation
-    bool animate( bool activate=true, uint8_t mode=1 );
+    bool animate( displayAnimate_t mode=displayAnimate_t::demo );
     
   private:
     // only one display at time supported

@@ -133,12 +133,6 @@ void driver_display::setDataSent( void ) {
 
 
 /******************************************
- * DEPRECATION NOTICE
- * ALL METHODS BELOW WILL BECOME OBSOLETE
- * ONCE DISPLAY MODULE WILL BE AVAILABLE
- ******************************************/
-
-/******************************************
  * Luminosity, contrast etc
  * Methods to get overriden in child classes
  */
@@ -159,16 +153,16 @@ bool driver_display::setDotsBlinking( bool val ) {
  */
 // return number of bytes displayed
 uint8_t driver_display::dispMsg( const char *msg ) {
-  return -1;
+  return (uint8_t)(-1);
 }
 
 // return number of bytes displayed
 uint8_t driver_display::dispTime( uint8_t hour, uint8_t minute, uint8_t seconds ) {
-  return -1;
+  return (uint8_t)(-1);
 }
 
 // animations
 // method to get overriden
-bool driver_display::animate( bool activate, uint8_t mode ) {
+bool driver_display::animate( displayAnimate_t mode ) {
   return false;
 }

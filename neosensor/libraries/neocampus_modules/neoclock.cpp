@@ -86,7 +86,7 @@ bool neoclock::start( senso *sensocampus, JsonDocument &sharedRoot ) {
   */
   
   // stop animes (if any)
-  _display->animate( false );
+  _display->animate( displayAnimate_t::stop );
   
   // switch Power ON full brightness;
   _display->setDotsBlinking( true );
@@ -192,7 +192,7 @@ void ICACHE_RAM_ATTR neoclock::timerHandler( neoclock *p ) {
 /*
  * Animation modes (i.e demo & others )
  */
-bool neoclock::animate( bool activate, uint8_t mode ) {
-  if( _display ) return _display->animate( activate, mode );
+bool neoclock::animate( displayAnimate_t mode ) {
+  if( _display ) return _display->animate( mode );
   return false;
 }

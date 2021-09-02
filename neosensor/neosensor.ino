@@ -733,6 +733,10 @@ void lateSetup( void ) {
   log_info(F("\n# max TCP concurrent sockets = ")); log_info(MAX_TCP_CONNECTIONS, DEC); log_flush();
 #elif defined(ESP32)
   log_info(F("\n# max TCP concurrent sockets = ")); log_info(CONFIG_LWIP_MAX_ACTIVE_TCP, DEC); log_flush();
+  if( CONFIG_LWIP_MAX_ACTIVE_TCP < MAX_TCP_CONNECTIONS ) {
+    log_warning(F("\nNOT ENOUGHT TCP CONNEXIONS ...")); log_flush();
+    delay(1000);
+  }
 #endif /* MAX_TCP_CONNECTIONS */
 
   // display loop() delay

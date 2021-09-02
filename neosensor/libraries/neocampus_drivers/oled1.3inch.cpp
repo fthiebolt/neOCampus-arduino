@@ -97,11 +97,14 @@ boolean oled13inch::begin( uint8_t addr=INVALID_I2CADDR) {
   if( !_check_identity(_i2caddr) ) return false;
 
   // instantiate u8 device
-
+  _u8g2 = new U8G2_SH1106_128X64_NONAME_F_HW_I2C(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
+  if( _u8g2==nullptr ) return false;
 
   /* set config:
    * - brightness 100%
    */
+  setPercentBrightness( 100 );
+  powerON();
 
   // define defaults parameters
 
@@ -112,10 +115,16 @@ boolean oled13inch::begin( uint8_t addr=INVALID_I2CADDR) {
 /*
  * Power modes: ON or powerOFF
  */
-void oled13inch::powerOFF( void ) {
+void oled13inch::powerON( void ) {
+  // init display
+  _u8g2->begin();
 }
 
-void oled13inch::powerON( void ) {
+void oled13inch::powerOFF( void ) {
+  // clear buffer & display
+  _u8g2->clear();
+  // enter power save mode
+  _u8g2->setPowerSave( true );
 }
 
 
@@ -129,6 +138,44 @@ uint8_t oled13inch::setPercentBrightness( uint8_t val ) {
   return (uint8_t)(-1);
 }
 
+
+#if 0
+  u8g2.begin();  
+  
+  u8g2.setFont(u8g2_font_inb30_mr);	// set the target font to calculate the pixel width
+  width = u8g2.getUTF8Width(text);		// calculate the pixel width of the text
+  
+  u8g2.setFontMode(0);		// enable transparent mode, which is faster
+}
+
+
+void loop(void) {
+  u8g2_uint_t x;
+  
+  u8g2.firstPage();
+  do {
+  
+    // draw the scrolling text at current offset
+    x = offset;
+    u8g2.setFont(u8g2_font_inb30_mr);		// set the target font
+    do {								// repeated drawing of the scrolling text...
+      u8g2.drawUTF8(x, 30, text);			// draw the scolling text
+      x += width;						// add the pixel width of the scrolling text
+    } while( x < u8g2.getDisplayWidth() );		// draw again until the complete display is filled
+    
+    u8g2.setFont(u8g2_font_inb16_mr);		// draw the current pixel width
+    u8g2.setCursor(0, 58);
+    u8g2.print(width);					// this value must be lesser than 128 unless U8G2_16BIT is set
+    
+  } while ( u8g2.nextPage() );
+  
+  offset-=1;							// scroll by one pixel
+  if ( (u8g2_uint_t)offset < (u8g2_uint_t)-width )	
+    offset = 0;							// start over again
+    
+  delay(10);							// do some small delay
+}
+#endif /* 0 */
 
 /* ------------------------------------------------------------------------------
  * Private methods 

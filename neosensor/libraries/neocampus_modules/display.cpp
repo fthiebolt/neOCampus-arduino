@@ -182,7 +182,7 @@ bool display::stop( void ) {
   /*
    * shutdown MQTT subscription and stop client ...
    */
-  return base::stop( );
+  return base::stop();
 }
 
 

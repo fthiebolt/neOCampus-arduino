@@ -49,7 +49,7 @@ class driver_display {
     driver_display( void );
     
     // destructor
-    //~driver_display( void );
+    virtual ~driver_display( void ) { return; };
   
     // Power Modes
     virtual void powerON( void );       // switch ON

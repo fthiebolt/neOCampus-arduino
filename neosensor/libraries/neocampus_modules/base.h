@@ -59,7 +59,7 @@ class base {
     base( const char* );    // base definition with unitID 'provided' (e.g mac addr for the device module)
 
     // destructor
-    ~base( void );
+    virtual ~base( void );
 
     // MQTT
     virtual bool start( senso *, JsonDocument& );

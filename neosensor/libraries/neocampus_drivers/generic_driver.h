@@ -63,6 +63,9 @@ class generic_driver {
                     uint8_t threshold_cpt=DEFL_THRESHOLD_CPT,
                     uint8_t threshold_thousandth=DEFL_THRESHOLD_THOUSANDTH );
     
+    // destructor
+    virtual ~generic_driver( void ) { return; };
+
     // Power Modes
     virtual void powerON( void );         // switch ON
     virtual void powerOFF( void );        // switch OFF

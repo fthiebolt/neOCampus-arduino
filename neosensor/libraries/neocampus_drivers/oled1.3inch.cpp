@@ -68,14 +68,20 @@ boolean oled13inch::is_device( uint8_t a ) {
 
 
 
-/**************************************************************************/
-/*! 
-    @brief  Instantiates a new oled13inch class
-*/
-/**************************************************************************/
+// constructor
 oled13inch::oled13inch( void ) : driver_display() {
-  _i2caddr = INVALID_I2CADDR;
+  _i2caddr    = INVALID_I2CADDR;
+  _u8g2       = nullptr;
 }
+
+// destructor
+oled13inch::~oled13inch( void ) {
+  if( _u8g2 != nullptr ) {
+    free( _u8g2 );
+    _u8g2 = nullptr;
+  }
+}
+
 
 /**************************************************************************/
 /*! 
@@ -91,6 +97,7 @@ boolean oled13inch::begin( uint8_t addr=INVALID_I2CADDR) {
   if( !_check_identity(_i2caddr) ) return false;
 
   // instantiate u8 device
+
 
   /* set config:
    * - brightness 100%

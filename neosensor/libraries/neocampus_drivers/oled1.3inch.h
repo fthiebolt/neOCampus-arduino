@@ -27,6 +27,7 @@
  * Includes
  */
 #include <Arduino.h>
+#include <U8g2lib.h>
 
 // generic display driver
 #include "driver_display.h"
@@ -54,6 +55,9 @@ class oled13inch : public driver_display {
     // constructor
     oled13inch( void );
     
+    // destructor
+    ~oled13inch( void );
+    
     boolean begin( uint8_t );   // start with an i2c address
     void powerON( void );       // switch ON
     void powerOFF( void );      // switch OFF
@@ -74,6 +78,8 @@ class oled13inch : public driver_display {
   protected:
     // attributes
     uint8_t _i2caddr;
+
+    U8G2_SH1106_128X64_NONAME_1_HW_I2C *_u8g2;
 
     // methods ...
     static bool _check_identity( uint8_t );   // check device is what we expect!

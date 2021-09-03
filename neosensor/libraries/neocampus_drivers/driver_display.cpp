@@ -18,6 +18,8 @@
 */
 /**************************************************************************/
 
+#include "neocampus.h"
+#include "neocampus_debug.h"
 
 #include "driver_display.h"
 
@@ -54,7 +56,7 @@ boolean driver_display::begin( JsonVariant root ) {
 }
 
 // low-level _begin()
-bool driver_display::begin( void ) {
+bool driver_display::_begin( void ) {
 
   // set FSM initial state
   _FSMstatus = DISPLAY_FSMSTATE_DEFL;
@@ -103,6 +105,7 @@ void driver_display::process( uint16_t coolDown ) {
       if( dispLogo() ) {
         log_debug(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] display LOGO ...")); log_flush();
       }
+      else _FSMtimerDelay = 0;
       //yield();
       //break;
 
@@ -113,12 +116,13 @@ void driver_display::process( uint16_t coolDown ) {
       log_debug(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] logo display is now over (or not available) ...")); log_flush();
 
       // going next step ...
-      _FSMstatus = lccSensorState_t::time;
+      _FSMstatus = displayState_t::time;
       _FSMtimerDelay = DISPLAY_TIME_MS;
       _FSMtimerStart = millis();
-      if( dispTime( _hour, _minute ) ) {
+      if( dispTime( _hours, _minutes ) ) {
         log_debug(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] display TIME ...")); log_flush();
       }
+      else _FSMtimerDelay = 0;
       //yield();
       //break;
 
@@ -128,41 +132,49 @@ void driver_display::process( uint16_t coolDown ) {
       if( dispTimeBusy() ) break;
       log_debug(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] time display is now over (or not availale) ...")); log_flush();
 
-      // ok continue with next step: measure
-      _FSMstatus = lccSensorState_t::measuring;
-      if( measureStart() ) {
-        log_debug(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] start measuring ...")); log_flush();
+      // going next step ...
+      _FSMstatus = displayState_t::message;
+      _FSMtimerDelay = DISPLAY_MSG_MS;
+      _FSMtimerStart = millis();
+      if( dispMsg(nullptr) ) {
+        log_debug(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] display message ...")); log_flush();
       }
+      else _FSMtimerDelay = 0;
       //yield();
       //break;
 
-    // MEASURING
-    case displayState_t::measuring:
-      // still in the measuring process ?
-      if( measureBusy() ) break;
-      log_debug(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] end of measures :)")); log_flush();
+    // MESSAGE
+    case displayState_t::message:
+      // still displaying message ?
+      if( dispMsgBusy() ) break;
+      log_debug(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] message display is now over (or not available) ...")); log_flush();
 
-      // ok continue with next step: wait4read
-      _FSMstatus = lccSensorState_t::wait4read;
-      if( _nb_measures ) {
-        log_debug(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] IDLE --> now waiting for data to get read ...")); log_flush();
+      // going next step ...
+      _FSMstatus = displayState_t::weather;
+      _FSMtimerDelay = DISPLAY_WEATHER_MS;
+      _FSMtimerStart = millis();
+      if( dispWeather(nullptr) ) {
+        log_debug(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] display weather ...")); log_flush();
       }
+      else _FSMtimerDelay = 0;
       //yield();
       //break;
 
-    // WAIT4READ
-    case displayState_t::wait4read:
-      // waiting for data to get read before acquiring new ones
-      if( _nb_measures ) break;
+    // LAST
+    case displayState_t::last:
+      // still displaying weather ?
+      if( dispWeatherBusy() ) break;
+      log_debug(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] weather display is now over (or not available) ...")); log_flush();
 
-      // let's restart on next loop()
-      _FSMstatus = lccSensorState_t::idle;
+      // let's restart to TIME on next loop()
+      _FSMstatus = displayState_t::logo;
+      _FSMtimerDelay = 0;
       break;
 
     // default
     default:
-      log_error(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] unknown FSM state ?!?! ... resetting !")); log_flush();
-      _init();
+      log_error(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] unknown FSM state ?!?! ... resetting !")); log_flush();
+      _begin();
   }
 
 #if 0
@@ -257,17 +269,17 @@ bool driver_display::dispLogo( void ) {
 }
 // return number of bytes displayed
 uint8_t driver_display::dispMsg( const char *msg ) {
-  return (uint8_t)(-1);
+  return 0;
 }
 
 // return number of bytes displayed
 uint8_t driver_display::dispTime( uint8_t hour, uint8_t minute, uint8_t seconds ) {
-  return (uint8_t)(-1);
+  return 0;
 }
 
 // return number of bytes displayed
 uint8_t driver_display::dispWeather( const char *city, float temperature, float hygro, bool sunny, bool rainy, bool windy ) {
-  return (uint8_t)(-1);
+  return 0;
 }
 
 // check FSM LOGO state still budy ?
@@ -288,6 +300,12 @@ bool driver_display::dispTimeBusy( void ) {
 // check FSM WEATHER state still budy ?
 bool driver_display::dispWeatherBusy( void ) {
   return _FSMstateBusy();
+}
+
+// check for matching current FSM status
+bool driver_display::isFSMstatus( displayState_t s ) {
+  if( !_FSMinitialized or s!=_FSMstatus ) return false;
+  return true;
 }
 
 

@@ -96,8 +96,11 @@ boolean oled13inch::begin( uint8_t addr=INVALID_I2CADDR ) {
   // check device identity
   if( !_check_identity(_i2caddr) ) return false;
 
-  // instantiate u8 device
-  _u8g2 = new U8G2_SH1106_128X64_NONAME_F_HW_I2C(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
+  /* instantiate u8 device
+   * _F_ full frame buffer
+   * _1_ or _2_ single or dual frame
+   */
+  _u8g2 = new U8G2_SH1106_128X64_NONAME_1_HW_I2C(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
   if( _u8g2==nullptr ) return false;
 
   /* set config:
@@ -109,7 +112,7 @@ boolean oled13inch::begin( uint8_t addr=INVALID_I2CADDR ) {
   // define defaults parameters
 
   // call parent class:begin()
-  return driver_display:begin();
+  return driver_display::begin( addr );
 }
 
 
@@ -143,8 +146,12 @@ void oled13inch::process( uint16_t coolDown )
    * call process() from prent class */
   driver_display::process( coolDown );
 
-  // add local processing to our current display here
 
+  /*
+   * add local processing to our current display here
+   */
+
+  // e.g central dot blinking or logo animation
 
 }
 
@@ -152,9 +159,11 @@ void oled13inch::process( uint16_t coolDown )
 /*
  * Brightness control of oled display
  */
-uint8_t oled13inch::setPercentBrightness( uint8_t val ) {
+uint8_t oled13inch::setPercentBrightness( uint8_t percent ) {
 
-  return _u8g2->setContrast( val<OLED13INCH_BRIGHTNESS_PERCENT_THRESHOLD ? OLED13INCH_BRIGHTNESS_LOW : OLED13INCH_BRIGHTNESS_HIGH );
+  uint8_t _contrast = ( percent<OLED13INCH_BRIGHTNESS_PERCENT_THRESHOLD ? OLED13INCH_BRIGHTNESS_LOW : OLED13INCH_BRIGHTNESS_HIGH );
+  _u8g2->setContrast( _contrast );
+  return ( _contrast==OLED13INCH_BRIGHTNESS_HIGH ? 100 : (_contrast*100)/OLED13INCH_BRIGHTNESS_HIGH);
 }
 
 
@@ -201,20 +210,29 @@ void loop(void) {
  * Display LOGO
  */
 bool oled13inch::dispLogo( void ) {
-  if( _u8g2==nullptr ) return driver_display:dispLogo();
+  if( _u8g2==nullptr ) return false;
 
-  // ms to display the logo
-  if( _FSMtimerDelay==0 ) _FSMtimerDelay = DISPLAY_LOGO_MS;
+  // FSMstate check
+  if( !isFSMstatus(displayState_t::logo) ) return false;
 
-  // display our logo
+  const char _str[]="neOCampus";
+
+  // compute display offsets
+  _u8g2->setFont(u8g2_font_inb30_mr);	// set the target font to calculate the pixel width
+  uint8_t str_width = _u8g2->getUTF8Width(_str);  // calculate the pixel width of the text
+  uint8_t screen_width = _u8g2->getDisplayWidth();
+  uint8_t x_offset = ( str_width>=screen_width ? 0 : (screen_width-str_width)/2 );
+
+  uint8_t str_height = _u8g2->getMaxCharHeight(); // calculate the max pixel height of the text
+  uint8_t screen_height = _u8g2->getDisplayHeight();
+  uint8_t y_offset = ( str_height>=screen_height ? str_height : (screen_height-str_height)/2 );
+
+  _u8g2->setFontMode(0);		// non transparent mode
+
+  // display logo
   _u8g2->firstPage();
   do {
-
-
-TO BE CONTINUED
-
-
-
+    _u8g2->drawUTF8(x_offset, y_offset, _str);
   } while ( _u8g2->nextPage() );
 
   // finish :)
@@ -226,26 +244,34 @@ TO BE CONTINUED
  * Display TIME
  * Note: Beware that this method may get called at any time ...
  */
-bool oled13inch::dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds=0 ) {
-  if( _u8g2==nullptr ) return driver_display:dispTime();
+uint8_t oled13inch::dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds ) {
+  if( _u8g2==nullptr ) return false;
 
-  _hours = hours;
-  _minutes = minutes;
+  _hours = ( hours!=(uint8_t)(-1) ? hours : _hours );
+  _minutes = ( minutes!=(uint8_t)(-1) ? minutes : _minutes );
 
-  // ms to display the current time
-  if( _FSMtimerDelay==0 ) _FSMtimerDelay = DISPLAY_TIME_MS;
+  // FSMstate check
+  if( !isFSMstatus(displayState_t::time) ) return false;
 
-  // current state
+  char _str[6];
+  snprintf( _str, sizeof(_str), "%2d:%02d", _hours, _minutes );
 
-  // display our logo
+  // compute display offsets
+  _u8g2->setFont(u8g2_font_inb30_mr);	// set the target font to calculate the pixel width
+  uint8_t str_width = _u8g2->getUTF8Width(_str);		// calculate the pixel width of the text
+  uint8_t screen_width = _u8g2->getDisplayWidth();
+  uint8_t x_offset = ( str_width>=screen_width ? 0 : (screen_width-str_width)/2 );
+
+  uint8_t str_height = _u8g2->getMaxCharHeight(); // calculate the max pixel height of the text
+  uint8_t screen_height = _u8g2->getDisplayHeight();
+  uint8_t y_offset = ( str_height>=screen_height ? str_height : (screen_height-str_height)/2 );
+
+  _u8g2->setFontMode(0);		// non transparent mode
+
+  // display logo
   _u8g2->firstPage();
   do {
-
-
-TO BE CONTINUED
-
-
-
+    _u8g2->drawUTF8(x_offset, y_offset, _str);
   } while ( _u8g2->nextPage() );
 
   // finish :)

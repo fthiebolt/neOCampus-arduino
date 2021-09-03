@@ -97,9 +97,9 @@ void driver_display::process( uint16_t coolDown ) {
       log_debug(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] about to start the display ...")); log_flush();
 
       // going next step ...
-      _FSMtimerDelay = 0; // for case when child does not implement it
-      _FSMtimerStart = millis();
       _FSMstatus = displayState_t::logo;
+      _FSMtimerDelay = DISPLAY_LOGO_MS;
+      _FSMtimerStart = millis();
       if( dispLogo() ) {
         log_debug(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] display LOGO ...")); log_flush();
       }
@@ -113,9 +113,9 @@ void driver_display::process( uint16_t coolDown ) {
       log_debug(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] logo display is now over (or not available) ...")); log_flush();
 
       // going next step ...
-      _FSMtimerDelay = 0; // for case when child does not implement it
-      _FSMtimerStart = millis();
       _FSMstatus = lccSensorState_t::time;
+      _FSMtimerDelay = DISPLAY_TIME_MS;
+      _FSMtimerStart = millis();
       if( dispTime( _hour, _minute ) ) {
         log_debug(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] display TIME ...")); log_flush();
       }

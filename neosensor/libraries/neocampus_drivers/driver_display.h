@@ -39,6 +39,26 @@ enum class displayAnimate_t : uint8_t {
   network_fail,               // quite explicit ...
 };
 
+/*
+ * Finite State Machine
+ */
+// Logo delay
+#define DISPLAY_LOGO_MS        5000    // ms LOGO will get displayed (max 65535)
+#define DISPLAY_TIME_MS       10000    // ms TIME will get displayed (max 65535)
+#define DISPLAY_MSG_MS        10000    // ms MSG will get displayed (max 65535)
+#define DISPLAY_WEATHER_MS    10000    // ms WEATHER will get displayed (max 65535)
+
+// Finite state machine
+enum class displayState_t : uint8_t {
+  idle            = 0,
+  logo,                 // display logo
+  time,                 // display time
+  message,              // display current message (e.g sensors values or custom message)
+  weather,              // display weather
+};
+#define DISPLAY_FSMSTATE_DEFL     displayState_t::idle
+
+
 
 /*
  * Class
@@ -60,7 +80,7 @@ class driver_display {
     virtual boolean begin( JsonVariant );   // Json senso config
 
     // Data
-    virtual void process( uint16_t coolDown=0 );    // actuators internal processing
+    virtual void process( uint16_t coolDown=0 );    // display internal processing
 
     //virtual boolean acquire( float* )=0;          // pure virtual, acquire sensor value
     //virtual const char *sensorUnits( void )=0;    // pure virtual, retrieve units of actual sensors (e.g celsius, %r.H, lux ...)
@@ -77,16 +97,26 @@ class driver_display {
     virtual uint8_t setPercentBrightness( uint8_t );          // 0 -> 100% luminosity
     [[deprecated]] virtual bool setDotsBlinking( bool );             // central dots blinking or not
     
-    // Display methods to get overridden in child classes
-    [[deprecated]] virtual uint8_t dispMsg( const char * );   // display a text message
+    /* Display methods to get overridden in child classes
+     * Each display method feature its 'BUSY' companion
+     */
+    virtual bool    dispLogo( void );       // display a logo :D
+    virtual uint8_t dispMsg( const char * );  // display a text message
     virtual uint8_t dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds=0 );  // display time
+    virtual uint8_t dispWeather( const char *city, float temperature, float hygro, bool sunny, bool rainy, bool windy );  // display weather
 
-    // various animation modes
+    virtual bool    dispLogoBusy( void );
+    virtual bool    dispMsgBusy( void );
+    virtual bool    dispMsgTime( void );
+    virtual bool    dispWeatherBusy( void );
+
+    // various animation modes mainly related to device setup & demo modes
     virtual bool animate( displayAnimate_t mode=displayAnimate_t::demo );
 
   // --- protected methods / attributes ---------------------
   // --- i.e subclass have direct access to
   protected:
+    // data sending
     bool            _trigger;       // true means that the corresponding driver needs to send something
 
     float           value;          // official value
@@ -94,6 +124,20 @@ class driver_display {
 
     float           valueSent;      // official value that has been sent
     unsigned long   _lastMsSent;    // (ms) time something has been sent
+
+    // current time
+    uint8_t   _hours,_minutes;      // hours:minutes for child class
+
+    // state machine
+    displayState_t _FSMstatus;    // FSM
+    unsigned long _FSMtimerStart; // ms system time start of current state;
+                                  // Only relevant when timerDelay is not null
+    uint16_t _FSMtimerDelay;      // ms delay to cur state timeout
+    bool _FSMinitialized;
+
+    // private methods
+    bool _begin( void );          // low-level part of begin()
+    bool _FSMstateBusy( void );   // current FSM state still busy ?
 };
 
 #endif /* _DRIVER_DISPLAY_H_ */

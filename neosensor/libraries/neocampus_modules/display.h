@@ -45,7 +45,7 @@
  *  hence, the cooldown value may get interpreted in a slightly different way.
  */
 #define _MAX_DISPLAYS                 4
-#define DISPLAY_MIN_COOLDOWN          15            // interval betwwen two subsequent changes in what is displayes
+#define DISPLAY_MIN_COOLDOWN          15            // interval betwwen two subsequent changes in what it displays
 #define DISPLAY_MAX_COOLDOWN          _MAX_COOLDOWN_ACTUATOR
 #define DEFL_DISPLAY_COOLDOWN         (DISPLAY_MIN_COOLDOWN*2)
 
@@ -103,7 +103,7 @@ class display : public base {
     time_t _curDisplayedTime;     // hour currently displayed on clock, uint32_t format
     struct tm _tm_displayedTime;  // hour currently displayed on clock, struct tm format
     uint8_t _secondsLeft;         // seconds left to next minute change
-    bool _displayChange;          // bool to trigger a change in the clock displayed values
+    bool _timeChange;          // bool to trigger a change in the HOUR:MINUTES displayed
     
     // The one second timer
     Ticker _timer1s;              // our 1second timer

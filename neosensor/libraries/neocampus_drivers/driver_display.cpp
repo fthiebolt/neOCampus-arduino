@@ -28,12 +28,18 @@
  */
 driver_display::driver_display( void ) {
 
+  // data sending related
   _trigger        = false;
-
   _lastMsWrite    = ULONG_MAX/2;
   _lastMsSent     = ULONG_MAX/2;
-
   value           = -1.0; // fool guard
+
+  // current time
+  _hours          = (uint8_t)(-1);
+  _minutes        = (uint8_t)(-1);
+
+  // FSM related
+  _FSMinitialized = false;
 }
 
 
@@ -41,10 +47,21 @@ driver_display::driver_display( void ) {
  * Detection
  */
 boolean driver_display::begin( uint8_t adr ) {
-  return false;
+  return _begin();
 }
 boolean driver_display::begin( JsonVariant root ) {
-  return false;
+  return _begin();
+}
+
+// low-level _begin()
+bool driver_display::begin( void ) {
+
+  // set FSM initial state
+  _FSMstatus = DISPLAY_FSMSTATE_DEFL;
+  _FSMtimerDelay = 0;
+  _FSMinitialized = true;
+
+  return true;
 }
 
 
@@ -67,11 +84,94 @@ void driver_display::process( uint16_t coolDown ) {
   // same time ref for all
   unsigned long _curTime = millis();
 
-  // check wether it's time to process or not
-  if( _curTime - _lastMsWrite < ((unsigned long)coolDown)*1000 ) return;
+  /*
+   * FSM related
+   */
+  if( !_FSMinitialized ) return;
+
+  // process according to our FSM
+  switch( _FSMstatus ) {
+
+    // IDLE
+    case displayState_t::idle:
+      log_debug(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] about to start the display ...")); log_flush();
+
+      // going next step ...
+      _FSMtimerDelay = 0; // for case when child does not implement it
+      _FSMtimerStart = millis();
+      _FSMstatus = displayState_t::logo;
+      if( dispLogo() ) {
+        log_debug(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] display LOGO ...")); log_flush();
+      }
+      //yield();
+      //break;
+
+    // LOGO
+    case displayState_t::logo:
+      // still displaying logo ?
+      if( dispLogoBusy() ) break;
+      log_debug(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] logo display is now over (or not available) ...")); log_flush();
+
+      // going next step ...
+      _FSMtimerDelay = 0; // for case when child does not implement it
+      _FSMtimerStart = millis();
+      _FSMstatus = lccSensorState_t::time;
+      if( dispTime( _hour, _minute ) ) {
+        log_debug(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] display TIME ...")); log_flush();
+      }
+      //yield();
+      //break;
+
+    // TIME
+    case displayState_t::time:
+      // still displaying time ?
+      if( dispTimeBusy() ) break;
+      log_debug(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] time display is now over (or not availale) ...")); log_flush();
+
+      // ok continue with next step: measure
+      _FSMstatus = lccSensorState_t::measuring;
+      if( measureStart() ) {
+        log_debug(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] start measuring ...")); log_flush();
+      }
+      //yield();
+      //break;
+
+    // MEASURING
+    case displayState_t::measuring:
+      // still in the measuring process ?
+      if( measureBusy() ) break;
+      log_debug(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] end of measures :)")); log_flush();
+
+      // ok continue with next step: wait4read
+      _FSMstatus = lccSensorState_t::wait4read;
+      if( _nb_measures ) {
+        log_debug(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] IDLE --> now waiting for data to get read ...")); log_flush();
+      }
+      //yield();
+      //break;
+
+    // WAIT4READ
+    case displayState_t::wait4read:
+      // waiting for data to get read before acquiring new ones
+      if( _nb_measures ) break;
+
+      // let's restart on next loop()
+      _FSMstatus = lccSensorState_t::idle;
+      break;
+
+    // default
+    default:
+      log_error(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] unknown FSM state ?!?! ... resetting !")); log_flush();
+      _init();
+  }
 
 #if 0
-TO BE CONTINUED
+  /*
+   * DATA SENDING related
+   */
+
+  // check wether it's time to process or not
+  if( _curTime - _lastMsWrite < ((unsigned long)coolDown)*1000 ) return;
 
   // acquire data
   float val;
@@ -151,6 +251,10 @@ bool driver_display::setDotsBlinking( bool val ) {
 /******************************************
  * Display things
  */
+// display logo
+bool driver_display::dispLogo( void ) {
+  return false;
+}
 // return number of bytes displayed
 uint8_t driver_display::dispMsg( const char *msg ) {
   return (uint8_t)(-1);
@@ -161,8 +265,57 @@ uint8_t driver_display::dispTime( uint8_t hour, uint8_t minute, uint8_t seconds 
   return (uint8_t)(-1);
 }
 
+// return number of bytes displayed
+uint8_t driver_display::dispWeather( const char *city, float temperature, float hygro, bool sunny, bool rainy, bool windy ) {
+  return (uint8_t)(-1);
+}
+
+// check FSM LOGO state still budy ?
+bool driver_display::dispLogoBusy( void ) {
+  return _FSMstateBusy();
+}
+
+// check FSM MSG state still budy ?
+bool driver_display::dispMsgBusy( void ) {
+  return _FSMstateBusy();
+}
+
+// check FSM TIME state still budy ?
+bool driver_display::dispTimeBusy( void ) {
+  return _FSMstateBusy();
+}
+
+// check FSM WEATHER state still budy ?
+bool driver_display::dispWeatherBusy( void ) {
+  return _FSMstateBusy();
+}
+
+
 // animations
 // method to get overriden
 bool driver_display::animate( displayAnimate_t mode ) {
   return false;
+}
+
+
+/* ------------------------------------------------
+ * PRIVATE methods
+ * ------------------------------------------------ */
+// FSM status to check against busyness
+bool driver_display::_FSMstateBusy( void ) {
+
+  if( _FSMtimerDelay==0 ) return false;
+
+  /* reached the delay ?
+   * look at https://arduino.stackexchange.com/questions/33572/arduino-countdown-without-using-delay/33577#33577
+   * for an explanation about millis() that wrap around!
+   */
+  if( (millis() - _FSMtimerStart) >= (unsigned long)_FSMtimerDelay ) {
+    // end of current FSM state
+    _FSMtimerDelay = 0;
+    return false;
+  }
+
+  // current FSM state still on way
+  return true;
 }

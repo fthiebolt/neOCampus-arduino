@@ -23,9 +23,6 @@
 
 #include <Arduino.h>
 
-#include <U8x8lib.h>
-//U8X8_SSD1306_128X64_NONAME_SW_I2C u8x8(/* clock=*/ SCL, /* data=*/ SDA, /* reset=*/ U8X8_PIN_NONE);   // OLEDs without Reset of the Display
-
 #include "neocampus.h"
 #include "neocampus_debug.h"
 #include "neocampus_i2c.h"
@@ -70,8 +67,11 @@ boolean oled13inch::is_device( uint8_t a ) {
 
 // constructor
 oled13inch::oled13inch( void ) : driver_display() {
-  _i2caddr    = INVALID_I2CADDR;
-  _u8g2       = nullptr;
+  _i2caddr      = INVALID_I2CADDR;
+  _u8g2         = nullptr;
+
+  _curHours     = (uint8_t)(-1);
+  _curMinutes   = (uint8_t)(-1);
 }
 
 // destructor
@@ -88,7 +88,7 @@ oled13inch::~oled13inch( void ) {
     @brief  Setups the HW
 */
 /**************************************************************************/
-boolean oled13inch::begin( uint8_t addr=INVALID_I2CADDR) {
+boolean oled13inch::begin( uint8_t addr=INVALID_I2CADDR ) {
   // get i2caddr
   if( (addr < (uint8_t)(I2C_ADDR_START)) or (addr > (uint8_t)(I2C_ADDR_STOP)) ) return false;
   _i2caddr = addr;
@@ -103,12 +103,13 @@ boolean oled13inch::begin( uint8_t addr=INVALID_I2CADDR) {
   /* set config:
    * - brightness 100%
    */
-  setPercentBrightness( 100 );
   powerON();
+  setPercentBrightness( 100 );
 
   // define defaults parameters
 
-  return true;
+  // call parent class:begin()
+  return driver_display:begin();
 }
 
 
@@ -128,14 +129,32 @@ void oled13inch::powerOFF( void ) {
 }
 
 
+/**************************************************************************/
+/*! 
+    @brief  display internal processing
+*/
+/**************************************************************************/
+void oled13inch::process( uint16_t coolDown )
+{
+  if( _u8g2==nullptr ) return;
+
+  /* 1st call FSM management @ driver_display
+   * It will update the current status of our display
+   * call process() from prent class */
+  driver_display::process( coolDown );
+
+  // add local processing to our current display here
+
+
+}
+
+
 /*
  * Brightness control of oled display
  */
 uint8_t oled13inch::setPercentBrightness( uint8_t val ) {
 
-#warning "Brighness at oled1.3inch NOT YET IMPLEMENTED"
-
-  return (uint8_t)(-1);
+  return _u8g2->setContrast( val<OLED13INCH_BRIGHTNESS_PERCENT_THRESHOLD ? OLED13INCH_BRIGHTNESS_LOW : OLED13INCH_BRIGHTNESS_HIGH );
 }
 
 
@@ -145,7 +164,7 @@ uint8_t oled13inch::setPercentBrightness( uint8_t val ) {
   u8g2.setFont(u8g2_font_inb30_mr);	// set the target font to calculate the pixel width
   width = u8g2.getUTF8Width(text);		// calculate the pixel width of the text
   
-  u8g2.setFontMode(0);		// enable transparent mode, which is faster
+  u8g2.setFontMode(0);		// non transparent mode
 }
 
 
@@ -177,6 +196,63 @@ void loop(void) {
 }
 #endif /* 0 */
 
+
+/*
+ * Display LOGO
+ */
+bool oled13inch::dispLogo( void ) {
+  if( _u8g2==nullptr ) return driver_display:dispLogo();
+
+  // ms to display the logo
+  if( _FSMtimerDelay==0 ) _FSMtimerDelay = DISPLAY_LOGO_MS;
+
+  // display our logo
+  _u8g2->firstPage();
+  do {
+
+
+TO BE CONTINUED
+
+
+
+  } while ( _u8g2->nextPage() );
+
+  // finish :)
+  return true;
+}
+
+
+/*
+ * Display TIME
+ * Note: Beware that this method may get called at any time ...
+ */
+bool oled13inch::dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds=0 ) {
+  if( _u8g2==nullptr ) return driver_display:dispTime();
+
+  _hours = hours;
+  _minutes = minutes;
+
+  // ms to display the current time
+  if( _FSMtimerDelay==0 ) _FSMtimerDelay = DISPLAY_TIME_MS;
+
+  // current state
+
+  // display our logo
+  _u8g2->firstPage();
+  do {
+
+
+TO BE CONTINUED
+
+
+
+  } while ( _u8g2->nextPage() );
+
+  // finish :)
+  return true;
+}
+
+
 /* ------------------------------------------------------------------------------
  * Private methods 
  */
@@ -195,13 +271,13 @@ bool oled13inch::_check_identity( uint8_t a ) {
 
   // Read status register ...
   uint8_t cur_status = read8(a, OLED13INCH_STATUS_REG);
-  log_debug(F("\n[oled13inch] status register value read: 0x")); log_debug(cur_status,HEX); log_flush();
+  //log_debug(F("\n[oled13inch] status register value read: 0x")); log_debug(cur_status,HEX); log_flush();
 
   // change display mode (i.e ON/OFF or OFF/ON)
   write8(a, OLED13INCH_CMD_REG, (cur_status & 0x40 ? OLED13INCH_DISPLAY_ON : OLED13INCH_DISPLAY_OFF) );
   yield();
   uint8_t new_status = read8(a, OLED13INCH_STATUS_REG);
-  log_debug(F("\n[oled13inch] status register value read: 0x")); log_debug(new_status,HEX); log_flush();
+  //log_debug(F("\n[oled13inch] status register value read: 0x")); log_debug(new_status,HEX); log_flush();
   
   if( (cur_status ^ new_status) != 0x40 ) return false;
 

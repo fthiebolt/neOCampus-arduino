@@ -55,7 +55,7 @@ void display::_constructor( void ) {
   _displays_count = 0;
 
   // time management
-  _displayChange = false;
+  _timeChange = false;
   _secondsLeft = -1;
   _initialized = false;
 
@@ -143,8 +143,9 @@ bool display::start( senso *sensocampus, JsonDocument &sharedRoot ) {
     
     // switch Power ON full brightness;
     _display[i]->setDotsBlinking( true );
-    _display[i]->setPercentBrightness( 100 );
+
     _display[i]->powerON();
+    _display[i]->setPercentBrightness( 100 );
   }
 
   // first time
@@ -329,9 +330,14 @@ void display::_process_displays( void ) {
     if( _display[cur_display]==nullptr ) continue;
 
     // hours:minutes update
-    if( _initialized & _displayChange ) {
+    if( _initialized & _timeChange ) {
       _display[cur_display]->dispTime( _tm_displayedTime.tm_hour, _tm_displayedTime.tm_min );
     }
+
+
+    // TODO : manage luminosity
+    // TO BE CONTINUED according to lux sensor or TIME > 18:00
+
 
     // start processing @ each display
     // [aug.21] _freq is our coolDown parameter
@@ -351,12 +357,12 @@ void display::_process_displays( void ) {
   }
 
   // time update done
-  if( _initialized & _displayChange ) {
+  if( _initialized & _timeChange ) {
     log_debug(F("\n[display] updated time displayed to "));
     log_debug(_tm_displayedTime.tm_hour,DEC);log_debug(F(":"));log_debug(_tm_displayedTime.tm_min);
     log_debug(F(" with tm_sec= ")); log_debug(_tm_displayedTime.tm_sec,DEC);
     log_flush();
-    _displayChange = false;
+    _timeChange = false;
   }
 }
 
@@ -550,7 +556,7 @@ void ICACHE_RAM_ATTR display::timerHandler( display *p ) {
   p->_secondsLeft = 59 - p->_tm_displayedTime.tm_sec;
 
   // display current time
-  p->_displayChange = true;
+  p->_timeChange = true;
 }
 
 

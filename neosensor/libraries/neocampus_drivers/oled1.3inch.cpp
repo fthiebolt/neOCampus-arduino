@@ -305,7 +305,7 @@ bool oled13inch::_check_identity( uint8_t a ) {
   uint8_t new_status = read8(a, OLED13INCH_STATUS_REG);
   //log_debug(F("\n[oled13inch] status register value read: 0x")); log_debug(new_status,HEX); log_flush();
   
-  if( (cur_status ^ new_status) != 0x40 ) return false;
+  if( ((cur_status&0x40) ^ (new_status&0x40)) != 0x40 ) return false;
 
   return true;
 }

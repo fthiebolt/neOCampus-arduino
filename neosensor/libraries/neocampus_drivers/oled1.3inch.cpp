@@ -258,7 +258,8 @@ uint8_t oled13inch::dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds ) 
 
   // compute display offsets
   //_u8g2->setFont(u8g2_font_inb30_mr);	// set the target font to calculate the pixel width
-  _u8g2->setFont(u8g2_font_inr16_mr);	// set the target font to calculate the pixel width
+  //_u8g2->setFont(u8g2_font_inr16_mr);	// set the target font to calculate the pixel width
+  _u8g2->setFont(u8g2_font_freedoomr25_tn);	// set the target font to calculate the pixel width
   uint8_t str_width = _u8g2->getUTF8Width(_str);		// calculate the pixel width of the text
   uint8_t screen_width = _u8g2->getDisplayWidth();
   uint8_t x_offset = ( str_width>=screen_width ? 0 : (screen_width-str_width)/2 );

@@ -121,7 +121,7 @@ class driver_display {
 
     /* ---- public attributes -----------------------------------------------*/
     // global shared JSON
-    JsonVariantConst variant;       // pointer to global shared JsonDocument
+    JsonVariant variant;       // pointer to global shared JsonDocument
 
 
   // --- protected methods / attributes ---------------------

@@ -93,7 +93,7 @@ class oled13inch : public driver_display {
     // attributes
     uint8_t _i2caddr;
 
-    U8G2_SH1106_128X64_NONAME_1_HW_I2C *_u8g2;  // full buffer mode (_F_) or single page (_1_)
+    U8G2_SH1106_128X64_NONAME_F_HW_I2C *_u8g2;  // full buffer mode (_F_) or single page (_1_)
 
     // time related
     uint8_t _curHours, _curMinutes;

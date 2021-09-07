@@ -100,7 +100,7 @@ boolean oled13inch::begin( uint8_t addr=INVALID_I2CADDR ) {
    * _F_ full frame buffer
    * _1_ or _2_ single or dual frame
    */
-  _u8g2 = new U8G2_SH1106_128X64_NONAME_1_HW_I2C(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
+  _u8g2 = new U8G2_SH1106_128X64_NONAME_F_HW_I2C(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
   if( _u8g2==nullptr ) return false;
 
   /* set config:
@@ -271,7 +271,8 @@ uint8_t oled13inch::dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds ) 
 
   _u8g2->setFontMode(0);		// non transparent mode
 
-  // display logo
+  // display time
+/*
   _u8g2->firstPage();
   do {
     uint8_t x_offset = screen_width - str_width -1;
@@ -283,6 +284,30 @@ uint8_t oled13inch::dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds ) 
     snprintf( _str, sizeof(_str), "%02d", _minutes );
     _u8g2->drawUTF8(x_offset, screen_height-1, _str);
   } while ( _u8g2->nextPage() );
+*/
+  _u8g2->clearBuffer();
+
+  // hours
+  uint8_t x_offset = screen_width - str_width -1;
+  uint8_t y_offset = str_height+2;
+  snprintf( _str, sizeof(_str), "%02d", _hours );
+  _u8g2->drawUTF8(x_offset, y_offset, _str);
+
+  // minutes
+  y_offset += str_height;
+  snprintf( _str, sizeof(_str), "%02d", _minutes );
+  _u8g2->drawUTF8(x_offset, screen_height-1, _str);
+
+  // sensors
+  log_debug(F("\n[oled13inch] Global sharedJSON:\n")); log_flush();
+  serializeJsonPretty( variant, Serial );
+
+  for (JsonPair kv : variant.as<JsonObject>() ) {
+    log_debug(F("\n[oled13inch] key: ")); log_debug(kv.key().c_str()); log_flush();
+    // TO BE CONTINUED: parse all sensors from all modules
+  }
+
+  _u8g2->sendBuffer();
 
   // finish :)
   return true;

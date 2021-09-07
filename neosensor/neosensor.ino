@@ -347,7 +347,7 @@ inline void blinkSysLed( void ) {
 void endLoop( void ) {
   static unsigned long _lastCheck = 0;    // elapsed ms since last check
 
-//#if 0
+#if 0
   // ONY FOR DEBUGGING
   static unsigned long _lastJSONdisplay = 0;    // elapsed ms since last displying shared JSON
   // 90s second elapsed ?
@@ -356,7 +356,7 @@ void endLoop( void ) {
     log_debug(F("\nGlobal sharedJSON:\n")); log_flush();
     serializeJsonPretty( sharedRoot, Serial );
   }
-//#endif /* 0 */
+#endif /* 0 */
 
   // check if a reboot has been requested ...
   if( _need2reboot ) {

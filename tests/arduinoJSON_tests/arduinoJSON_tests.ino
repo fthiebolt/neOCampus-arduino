@@ -31,7 +31,8 @@ void moduleTemperature( JsonDocument &sharedRoot ) {
 
   // now displaying global shared JSON structure
   log_debug(F("\nGlobal sharedJSON (within module):\n")); log_flush();
-  serializeJsonPretty( sharedRoot, Serial );
+  //serializeJsonPretty( sharedRoot, Serial );
+  serializeJsonPretty( variant, Serial );
 
   delay(1000);
 }

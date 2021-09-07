@@ -135,8 +135,8 @@ bool display::start( senso *sensocampus, JsonDocument &sharedRoot ) {
   for( uint8_t i=0; i < _displays_count; i++ ) {
     if( _display[i]==nullptr ) continue;
 
-    // gives reference to the global shaed rootJSON
-    _display[i]->variant = variant;
+    // gives reference to the global shared root JSON
+    _display[i]->variant = sharedRoot.as<JsonVariant>();
 
     // stop animes (if any)
     _display[i]->animate( displayAnimate_t::stop );

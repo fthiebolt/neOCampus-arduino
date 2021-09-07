@@ -253,7 +253,7 @@ uint8_t oled13inch::dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds ) 
   // FSMstate check
   if( !isFSMstatus(displayState_t::time) ) return false;
 
-  char _str[6] = "00";  // largest num char ---yes ?
+  char _str[16] = "00";   // largest num char ---yes ?
   //snprintf( _str, sizeof(_str), "%2d:%02d", _hours, _minutes );
 
   // compute display offsets

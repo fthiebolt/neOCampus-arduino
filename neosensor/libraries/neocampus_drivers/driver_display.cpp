@@ -103,7 +103,7 @@ void driver_display::process( uint16_t coolDown ) {
       _FSMtimerDelay = DISPLAY_LOGO_MS;
       _FSMtimerStart = millis();
       if( dispLogo() ) {
-        log_debug(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] display LOGO ...")); log_flush();
+        log_info(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] display LOGO ...")); log_flush();
       }
       else _FSMtimerDelay = 0;
       //yield();
@@ -113,14 +113,14 @@ void driver_display::process( uint16_t coolDown ) {
     case displayState_t::logo:
       // still displaying logo ?
       if( dispLogoBusy() ) break;
-      log_debug(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] logo display is now over (or not available) ...")); log_flush();
+      //log_debug(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] logo display is now over (or not available) ...")); log_flush();
 
       // going next step ...
       _FSMstatus = displayState_t::time;
       _FSMtimerDelay = DISPLAY_TIME_MS;
       _FSMtimerStart = millis();
       if( dispTime( _hours, _minutes ) ) {
-        log_debug(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] display TIME ...")); log_flush();
+        log_info(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] display TIME ...")); log_flush();
       }
       else _FSMtimerDelay = 0;
       //yield();
@@ -130,14 +130,14 @@ void driver_display::process( uint16_t coolDown ) {
     case displayState_t::time:
       // still displaying time ?
       if( dispTimeBusy() ) break;
-      log_debug(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] time display is now over (or not availale) ...")); log_flush();
+      //log_debug(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] time display is now over (or not availale) ...")); log_flush();
 
       // going next step ...
       _FSMstatus = displayState_t::message;
       _FSMtimerDelay = DISPLAY_MSG_MS;
       _FSMtimerStart = millis();
       if( dispMsg(nullptr) ) {
-        log_debug(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] display message ...")); log_flush();
+        log_info(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] display message ...")); log_flush();
       }
       else _FSMtimerDelay = 0;
       //yield();
@@ -147,14 +147,14 @@ void driver_display::process( uint16_t coolDown ) {
     case displayState_t::message:
       // still displaying message ?
       if( dispMsgBusy() ) break;
-      log_debug(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] message display is now over (or not available) ...")); log_flush();
+      //log_debug(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] message display is now over (or not available) ...")); log_flush();
 
       // going next step ...
       _FSMstatus = displayState_t::weather;
       _FSMtimerDelay = DISPLAY_WEATHER_MS;
       _FSMtimerStart = millis();
       if( dispWeather(nullptr) ) {
-        log_debug(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] display weather ...")); log_flush();
+        log_info(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] display weather ...")); log_flush();
       }
       else _FSMtimerDelay = 0;
       //yield();
@@ -164,7 +164,7 @@ void driver_display::process( uint16_t coolDown ) {
     case displayState_t::last:
       // still displaying weather ?
       if( dispWeatherBusy() ) break;
-      log_debug(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] weather display is now over (or not available) ...")); log_flush();
+      //log_debug(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] weather display is now over (or not available) ...")); log_flush();
 
       // let's restart to TIME on next loop()
       _FSMstatus = displayState_t::logo;

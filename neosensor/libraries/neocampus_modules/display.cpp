@@ -131,15 +131,12 @@ bool display::start( senso *sensocampus, JsonDocument &sharedRoot ) {
   //JsonObject _obj = variant.as<JsonObject>();
   // _obj[F("value_units")] = "°c"; no value_units for displays
 
-  // but keep track of the global shared JSON to enable reading values modules' own sensors
-  _sharedRoot = sharedRoot.to<JsonVariant>();
-
   // start ALL displays ...
   for( uint8_t i=0; i < _displays_count; i++ ) {
     if( _display[i]==nullptr ) continue;
 
     // gives reference to the global shaed rootJSON
-    _display[i]->sharedRoot = sharedRoot.to<JsonVariant>();
+    _display[i]->variant = variant;
 
     // stop animes (if any)
     _display[i]->animate( displayAnimate_t::stop );

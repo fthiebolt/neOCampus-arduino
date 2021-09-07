@@ -278,8 +278,8 @@ uint8_t driver_display::dispTime( uint8_t hour, uint8_t minute, uint8_t seconds 
 }
 
 // return number of bytes displayed
-uint8_t driver_display::dispWeather( const char *city, float temperature, float hygro, bool sunny, bool rainy, bool windy ) {
-  return 0;
+bool driver_display::dispWeather( const char *city, float temperature, float hygro, bool sunny, bool rainy, bool windy ) {
+  return false;
 }
 
 // check FSM LOGO state still budy ?

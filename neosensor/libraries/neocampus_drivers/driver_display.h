@@ -101,14 +101,16 @@ class driver_display {
     /* Display methods to get overridden in child classes
      * Each display method feature its 'BUSY' companion
      */
-    virtual bool    dispLogo( void );       // display a logo :D
+    virtual bool    dispLogo( void );         // display a logo :D
     virtual uint8_t dispMsg( const char * );  // display a text message
     virtual uint8_t dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds=0 );  // display time
-    virtual uint8_t dispWeather( const char *city, float temperature=0.0, float hygro=0.0, bool sunny=false, bool rainy=false, bool windy=false );  // display weather
+    //virtual bool    dispSensors( JsonVariantConst );  // display sensors from shared JSON structure
+    virtual bool    dispWeather( const char *city, float temperature=0.0, float hygro=0.0, bool sunny=false, bool rainy=false, bool windy=false );  // display weather
 
     virtual bool    dispLogoBusy( void );
     virtual bool    dispMsgBusy( void );
     virtual bool    dispTimeBusy( void );
+    //virtual bool    dispSensorsBusy( void );
     virtual bool    dispWeatherBusy( void );
 
     // FSM related
@@ -116,6 +118,11 @@ class driver_display {
 
     // various animation modes mainly related to device setup & demo modes
     virtual bool animate( displayAnimate_t mode=displayAnimate_t::demo );
+
+    /* ---- public attributes -----------------------------------------------*/
+    // global shared JSON
+    JsonVariantConst sharedRoot;    // global shared JsonDocument
+
 
   // --- protected methods / attributes ---------------------
   // --- i.e subclass have direct access to
@@ -139,7 +146,7 @@ class driver_display {
     uint16_t _FSMtimerDelay;      // ms delay to cur state timeout
     bool _FSMinitialized;
 
-    // private methods
+    /* ---- private methods -------------------------------------------------*/
     bool _begin( void );          // low-level part of begin()
     bool _FSMstateBusy( void );   // current FSM state still busy ?
 };

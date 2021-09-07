@@ -253,27 +253,35 @@ uint8_t oled13inch::dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds ) 
   // FSMstate check
   if( !isFSMstatus(displayState_t::time) ) return false;
 
-  char _str[6];
-  snprintf( _str, sizeof(_str), "%2d:%02d", _hours, _minutes );
+  char _str[6] = "00";  // largest num char ---yes ?
+  //snprintf( _str, sizeof(_str), "%2d:%02d", _hours, _minutes );
 
   // compute display offsets
   //_u8g2->setFont(u8g2_font_inb30_mr);	// set the target font to calculate the pixel width
   //_u8g2->setFont(u8g2_font_inr16_mr);	// set the target font to calculate the pixel width
   _u8g2->setFont(u8g2_font_freedoomr25_tn);	// set the target font to calculate the pixel width
+  //_u8g2->setFont(u8g2_font_7Segments_26x42_mn);	// set the target font to calculate the pixel width ---[sep.21] ways too large !
   uint8_t str_width = _u8g2->getUTF8Width(_str);		// calculate the pixel width of the text
   uint8_t screen_width = _u8g2->getDisplayWidth();
-  uint8_t x_offset = ( str_width>=screen_width ? 0 : (screen_width-str_width)/2 );
+  //uint8_t x_offset = ( str_width>=screen_width ? 0 : (screen_width-str_width)/2 );
 
   uint8_t str_height = _u8g2->getMaxCharHeight(); // calculate the max pixel height of the text
   uint8_t screen_height = _u8g2->getDisplayHeight();
-  uint8_t y_offset = ( str_height>=screen_height ? screen_height-1 : (screen_height-str_height)/2+str_height );
+  //uint8_t y_offset = ( str_height>=screen_height ? screen_height-1 : (screen_height-str_height)/2+str_height );
 
   _u8g2->setFontMode(0);		// non transparent mode
 
   // display logo
   _u8g2->firstPage();
   do {
+    uint8_t x_offset = screen_width - str_width -1;
+    uint8_t y_offset = str_height+2;
+    snprintf( _str, sizeof(_str), "%02d", _hours );
     _u8g2->drawUTF8(x_offset, y_offset, _str);
+
+    y_offset += str_height;
+    snprintf( _str, sizeof(_str), "%02d", _minutes );
+    _u8g2->drawUTF8(x_offset, screen_height-1, _str);
   } while ( _u8g2->nextPage() );
 
   // finish :)

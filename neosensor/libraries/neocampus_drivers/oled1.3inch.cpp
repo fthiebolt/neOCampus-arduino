@@ -230,10 +230,11 @@ bool oled13inch::dispLogo( void ) {
   _u8g2->setFontMode(0);		// non transparent mode
 
   // display logo
-  _u8g2->firstPage();
-  do {
-    _u8g2->drawUTF8(x_offset, y_offset, _str);
-  } while ( _u8g2->nextPage() );
+  _u8g2->clearBuffer();
+
+  _u8g2->drawUTF8(x_offset, y_offset, _str);
+
+  _u8g2->sendBuffer();
 
   // finish :)
   return true;
@@ -241,7 +242,7 @@ bool oled13inch::dispLogo( void ) {
 
 
 /*
- * Display TIME
+ * Display TIME + temp/hygro/lux if available
  * Note: Beware that this method may get called at any time ...
  */
 uint8_t oled13inch::dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds ) {
@@ -272,19 +273,6 @@ uint8_t oled13inch::dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds ) 
   _u8g2->setFontMode(0);		// non transparent mode
 
   // display time
-/*
-  _u8g2->firstPage();
-  do {
-    uint8_t x_offset = screen_width - str_width -1;
-    uint8_t y_offset = str_height+2;
-    snprintf( _str, sizeof(_str), "%02d", _hours );
-    _u8g2->drawUTF8(x_offset, y_offset, _str);
-
-    y_offset += str_height;
-    snprintf( _str, sizeof(_str), "%02d", _minutes );
-    _u8g2->drawUTF8(x_offset, screen_height-1, _str);
-  } while ( _u8g2->nextPage() );
-*/
   _u8g2->clearBuffer();
 
   // hours
@@ -299,12 +287,37 @@ uint8_t oled13inch::dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds ) 
   _u8g2->drawUTF8(x_offset, screen_height-1, _str);
 
   // sensors
-  log_debug(F("\n[oled13inch] Global sharedJSON:\n")); log_flush();
-  serializeJsonPretty( variant, Serial );
+  _u8g2->drawRFrame(0,0, x_offset-1, screen_height, 4);
 
-  for (JsonPair kv : variant.as<JsonObject>() ) {
+  _u8g2->setFont(u8g2_font_inr16_mr); // sensors font
+  str_height = _u8g2->getMaxCharHeight();
+  x_offset = 1;
+  y_offset = str_height + 2;
+
+  //log_debug(F("\n[oled13inch] Global sharedJSON:\n")); log_flush();
+  //serializeJsonPretty( variant, Serial );
+
+  for( JsonPair kv : variant.as<JsonObject>() ) {
     log_debug(F("\n[oled13inch] key: ")); log_debug(kv.key().c_str()); log_flush();
-    // TO BE CONTINUED: parse all sensors from all modules
+    _str[0]='\0';
+    {
+      const char *_key = PSTR("temperature");
+      if( strncmp_P(kv.key().c_str(), _key, strlen_P(_key))==0 ) {
+        // temperature
+        //serializeJsonPretty( kv.value(), Serial );
+        for( JsonPair _kv : (kv.value()).as<JsonObject>() ) {
+          log_debug(F("\n[oled13inch][temperature] key: ")); log_debug(_kv.key().c_str()); log_flush();
+          const char *_key2avoid = PSTR("value_units");
+          if( strncmp_P(_kv.key().c_str(), _key2avoid, strlen_P(_key2avoid))!=0 ) {
+            snprintf( _str, sizeof(_str), "%.1f°", (float)(_kv.value().as<float>()));
+            _u8g2->drawUTF8(x_offset, y_offset, _str);
+            break;  // exit inner loop
+          }
+        }
+        continue; // iterate over next kind of sensor
+      }
+    }
+
   }
 
   _u8g2->sendBuffer();

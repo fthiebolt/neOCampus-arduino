@@ -44,7 +44,8 @@ enum class displayAnimate_t : uint8_t {
  */
 // Logo delay
 #define DISPLAY_LOGO_MS        5000    // ms LOGO will get displayed (max 65535)
-#define DISPLAY_TIME_MS       10000    // ms TIME will get displayed (max 65535)
+#define DISPLAY_TIME_MS       15000    // ms TIME will get displayed (max 65535)
+#define DISPLAY_SENSORS_MS    15000    // ms TIME will get displayed (max 65535)
 #define DISPLAY_MSG_MS        10000    // ms MSG will get displayed (max 65535)
 #define DISPLAY_WEATHER_MS    10000    // ms WEATHER will get displayed (max 65535)
 
@@ -52,7 +53,8 @@ enum class displayAnimate_t : uint8_t {
 enum class displayState_t : uint8_t {
   idle            = 0,
   logo,                 // display logo
-  time,                 // display time
+  time,                 // display time (+ some common sensors like temp & hygro)
+  sensors,              // display all (local) sensors values
   message,              // display message (e.g sensors values or custom message)
   weather,              // display weather
   last
@@ -104,13 +106,13 @@ class driver_display {
     virtual bool    dispLogo( void );         // display a logo :D
     virtual uint8_t dispMsg( const char * );  // display a text message
     virtual uint8_t dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds=0 );  // display time
-    //virtual bool    dispSensors( JsonVariantConst );  // display sensors from shared JSON structure
+    virtual bool    dispSensors( void );  // display sensors from shared JSON structure (whose ref has been set earlier)
     virtual bool    dispWeather( const char *city, float temperature=0.0, float hygro=0.0, bool sunny=false, bool rainy=false, bool windy=false );  // display weather
 
     virtual bool    dispLogoBusy( void );
     virtual bool    dispMsgBusy( void );
     virtual bool    dispTimeBusy( void );
-    //virtual bool    dispSensorsBusy( void );
+    virtual bool    dispSensorsBusy( void );
     virtual bool    dispWeatherBusy( void );
 
     // FSM related

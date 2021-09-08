@@ -133,6 +133,23 @@ void driver_display::process( uint16_t coolDown ) {
       //log_debug(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] time display is now over (or not availale) ...")); log_flush();
 
       // going next step ...
+      _FSMstatus = displayState_t::sensors;
+      _FSMtimerDelay = DISPLAY_SENSORS_MS;
+      _FSMtimerStart = millis();
+      if( dispSensors() ) {
+        log_info(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] display sensors ...")); log_flush();
+      }
+      else _FSMtimerDelay = 0;
+      //yield();
+      //break;
+
+    // SENSORS
+    case displayState_t::sensors:
+      // still displaying sensors ?
+      if( dispSensorsBusy() ) break;
+      //log_debug(F("\n\t[driverDisplay]["));log_debug(subID());log_debug(F("] sensors display is now over (or not availale) ...")); log_flush();
+
+      // going next step ...
       _FSMstatus = displayState_t::message;
       _FSMtimerDelay = DISPLAY_MSG_MS;
       _FSMtimerStart = millis();
@@ -267,33 +284,46 @@ bool driver_display::setDotsBlinking( bool val ) {
 bool driver_display::dispLogo( void ) {
   return false;
 }
-// return number of bytes displayed
-uint8_t driver_display::dispMsg( const char *msg ) {
-  return 0;
-}
 
+// display time
 // return number of bytes displayed
 uint8_t driver_display::dispTime( uint8_t hour, uint8_t minute, uint8_t seconds ) {
   return 0;
 }
 
+// display sensors
+bool driver_display::dispSensors( void ) {
+  return false;
+}
+
+// display message
 // return number of bytes displayed
+uint8_t driver_display::dispMsg( const char *msg ) {
+  return 0;
+}
+
+// display weather
 bool driver_display::dispWeather( const char *city, float temperature, float hygro, bool sunny, bool rainy, bool windy ) {
   return false;
 }
 
-// check FSM LOGO state still budy ?
+// check FSM LOGO state still busy ?
 bool driver_display::dispLogoBusy( void ) {
   return _FSMstateBusy();
 }
 
-// check FSM MSG state still budy ?
-bool driver_display::dispMsgBusy( void ) {
+// check FSM TIME state still busy ?
+bool driver_display::dispTimeBusy( void ) {
   return _FSMstateBusy();
 }
 
-// check FSM TIME state still budy ?
-bool driver_display::dispTimeBusy( void ) {
+// check FSM SENSORS state still busy ?
+bool driver_display::dispSensorsBusy( void ) {
+  return _FSMstateBusy();
+}
+
+// check FSM MSG state still busy ?
+bool driver_display::dispMsgBusy( void ) {
   return _FSMstateBusy();
 }
 

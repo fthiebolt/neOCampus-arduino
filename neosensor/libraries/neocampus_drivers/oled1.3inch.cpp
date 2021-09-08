@@ -276,7 +276,7 @@ uint8_t oled13inch::dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds ) 
   _u8g2->clearBuffer();
 
   // hours
-  uint8_t x_offset = screen_width - str_width -1;
+  uint8_t x_offset = screen_width - str_width;
   uint8_t y_offset = str_height+2;
   snprintf( _str, sizeof(_str), "%02d", _hours );
   _u8g2->drawUTF8(x_offset, y_offset, _str);
@@ -289,16 +289,21 @@ uint8_t oled13inch::dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds ) 
   // sensors
   _u8g2->drawRFrame(0,0, x_offset-1, screen_height, 4);
 
-  _u8g2->setFont(u8g2_font_inr16_mr); // sensors font
+  _u8g2->setFont(u8g2_font_helvR12_tf); // sensors font
   str_height = _u8g2->getMaxCharHeight();
-  x_offset = 2;
-  y_offset = str_height + 2;
+  x_offset = 3;
+  y_offset = str_height + 0;
 
   //log_debug(F("\n[oled13inch] Global sharedJSON:\n")); log_flush();
   //serializeJsonPretty( variant, Serial );
 
+  bool sensor2display = false;
+
   for( JsonPair kv : variant.as<JsonObject>() ) {
-    log_debug(F("\n[oled13inch] key: ")); log_debug(kv.key().c_str()); log_flush();
+    //log_debug(F("\n[oled13inch] key: ")); log_debug(kv.key().c_str()); log_flush();
+    // TODO: check kv.value is JsonObject
+
+    if( y_offset >= screen_height-1 ) break;  // out-of screen y_offset ==> stop displaying sensors
 
     {
       const char *_key = PSTR("temperature");
@@ -306,12 +311,13 @@ uint8_t oled13inch::dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds ) 
         // temperature
         //serializeJsonPretty( kv.value(), Serial );
         for( JsonPair _kv : (kv.value()).as<JsonObject>() ) {
-          log_debug(F("\n[oled13inch][temperature] key: ")); log_debug(_kv.key().c_str()); log_flush();
+          //log_debug(F("\n[oled13inch][temperature] key: ")); log_debug(_kv.key().c_str()); log_flush();
           const char *_key2avoid = PSTR("value_units");
           if( strncmp_P(_kv.key().c_str(), _key2avoid, strlen_P(_key2avoid))!=0 ) {
             snprintf( _str, sizeof(_str), "%.1f°", (float)(_kv.value().as<float>()));
             _u8g2->drawUTF8(x_offset, y_offset, _str);
-            y_offset += (str_height + 2);
+            y_offset += (str_height + 0);
+            sensor2display = true;
             break;  // exit inner loop
           }
         }
@@ -325,12 +331,13 @@ uint8_t oled13inch::dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds ) 
         // humidity
         //serializeJsonPretty( kv.value(), Serial );
         for( JsonPair _kv : (kv.value()).as<JsonObject>() ) {
-          log_debug(F("\n[oled13inch][humidity] key: ")); log_debug(_kv.key().c_str()); log_flush();
+          //log_debug(F("\n[oled13inch][humidity] key: ")); log_debug(_kv.key().c_str()); log_flush();
           const char *_key2avoid = PSTR("value_units");
           if( strncmp_P(_kv.key().c_str(), _key2avoid, strlen_P(_key2avoid))!=0 ) {
-            snprintf( _str, sizeof(_str), "%.1f°", (float)(_kv.value().as<float>()));
+            snprintf( _str, sizeof(_str), "%d%%", _kv.value().as<int>());
             _u8g2->drawUTF8(x_offset, y_offset, _str);
-            y_offset += (str_height + 2);
+            y_offset += (str_height + 0);
+            sensor2display = true;
             break;  // exit inner loop
           }
         }
@@ -338,6 +345,38 @@ uint8_t oled13inch::dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds ) 
       }
     }
 
+    {
+      const char *_key = PSTR("luminosity");
+      if( strncmp_P(kv.key().c_str(), _key, strlen_P(_key))==0 ) {
+        // luminosity
+        //serializeJsonPretty( kv.value(), Serial );
+        for( JsonPair _kv : (kv.value()).as<JsonObject>() ) {
+          //log_debug(F("\n[oled13inch][humidity] key: ")); log_debug(_kv.key().c_str()); log_flush();
+          const char *_key2avoid = PSTR("value_units");
+          if( strncmp_P(_kv.key().c_str(), _key2avoid, strlen_P(_key2avoid))!=0 ) {
+            snprintf( _str, sizeof(_str), "%dlux", _kv.value().as<int>());
+            _u8g2->drawUTF8(x_offset, y_offset, _str);
+            y_offset += (str_height + 0);
+            sensor2display = true;
+            break;  // exit inner loop
+          }
+        }
+        continue; // iterate over next kind of sensor
+      }
+    }
+
+  }
+
+  // if no sensor displayed ==> switch to HOURS:MINUTES
+  if( !sensor2display ) {
+    _u8g2->clearBuffer();
+    _u8g2->setFont(u8g2_font_freedoomr25_tn);
+    snprintf(_str, sizeof(_str), "%02d:%02d", _hours, _minutes);
+    str_width = _u8g2->getUTF8Width(_str);
+    str_height = _u8g2->getMaxCharHeight();
+    x_offset = ( str_width>=screen_width ? 0 : (screen_width-str_width)/2 );
+    y_offset = ( str_height>=screen_height ? screen_height-1 : (screen_height-str_height)/2+str_height );
+    _u8g2->drawUTF8(x_offset, y_offset, _str);
   }
 
   _u8g2->sendBuffer();

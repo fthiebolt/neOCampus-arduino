@@ -291,7 +291,7 @@ uint8_t oled13inch::dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds ) 
 
   _u8g2->setFont(u8g2_font_inr16_mr); // sensors font
   str_height = _u8g2->getMaxCharHeight();
-  x_offset = 1;
+  x_offset = 2;
   y_offset = str_height + 2;
 
   //log_debug(F("\n[oled13inch] Global sharedJSON:\n")); log_flush();
@@ -299,7 +299,7 @@ uint8_t oled13inch::dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds ) 
 
   for( JsonPair kv : variant.as<JsonObject>() ) {
     log_debug(F("\n[oled13inch] key: ")); log_debug(kv.key().c_str()); log_flush();
-    _str[0]='\0';
+
     {
       const char *_key = PSTR("temperature");
       if( strncmp_P(kv.key().c_str(), _key, strlen_P(_key))==0 ) {
@@ -311,6 +311,26 @@ uint8_t oled13inch::dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds ) 
           if( strncmp_P(_kv.key().c_str(), _key2avoid, strlen_P(_key2avoid))!=0 ) {
             snprintf( _str, sizeof(_str), "%.1f°", (float)(_kv.value().as<float>()));
             _u8g2->drawUTF8(x_offset, y_offset, _str);
+            y_offset += (str_height + 2);
+            break;  // exit inner loop
+          }
+        }
+        continue; // iterate over next kind of sensor
+      }
+    }
+
+    {
+      const char *_key = PSTR("humidity");
+      if( strncmp_P(kv.key().c_str(), _key, strlen_P(_key))==0 ) {
+        // humidity
+        //serializeJsonPretty( kv.value(), Serial );
+        for( JsonPair _kv : (kv.value()).as<JsonObject>() ) {
+          log_debug(F("\n[oled13inch][humidity] key: ")); log_debug(_kv.key().c_str()); log_flush();
+          const char *_key2avoid = PSTR("value_units");
+          if( strncmp_P(_kv.key().c_str(), _key2avoid, strlen_P(_key2avoid))!=0 ) {
+            snprintf( _str, sizeof(_str), "%.1f°", (float)(_kv.value().as<float>()));
+            _u8g2->drawUTF8(x_offset, y_offset, _str);
+            y_offset += (str_height + 2);
             break;  // exit inner loop
           }
         }

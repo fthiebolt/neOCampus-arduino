@@ -355,14 +355,19 @@ bool setupWiFi( wifiParametersMgt *wp ) {
  * setup SPIFFS
  */
 bool setupSPIFFS( void ) {
+  uint8_t _iter=2;
   log_info(F("\n[SPIFFS] start ... "));
-  if( !SPIFFS.begin() ) {
-    log_info(F("\n[SPIFFS] uninitialized file system ... format :|"));
-    delay(1000);
-    return formatSPIFFS();
-  }
-  else {
-    log_info(F("\n[SPIFFS] mounted file system :)"));
+  while( _iter-- ) {
+    if( !SPIFFS.begin() ) {
+      log_info(F("\n[SPIFFS] uninitialized file system ... format :|"));
+      delay(1000);
+      if( !formatSPIFFS() ) return false;
+      continue;
+    }
+    else {
+      log_info(F("\n[SPIFFS] mounted file system :)"));
+      break;
+    }
   }
   return true;
 }

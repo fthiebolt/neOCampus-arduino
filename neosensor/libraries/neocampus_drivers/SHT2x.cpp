@@ -546,11 +546,14 @@ uint64_t SHT2x::getSerialNumber( uint8_t adr ) {
       return sn;
     }
 
-    sn = (uint64_t)0;
+    sn = (uint64_t)0LL;
     for( uint8_t i=0; i < sizeof(serialNumber); i++ ) {
-      sn |= (serialNumber[i] << i*8);
+      uint64_t _serial = ((uint64_t)(serialNumber[i]) << i*8);
+      sn |= _serial;
+      log_debug(F("\n[SHT2x] _serial=0x"));log_debug(_serial,HEX);
+      log_debug(F("  while sn=0x"));log_debug(sn,HEX);log_flush();
     }
-
+    log_debug(F("\n[SHT2x] sn=0x"));log_debug(sn,HEX);log_flush();
     {
       char _msg[255];
       snprintf(_msg, sizeof(_msg), "\n[SHT2x] adr=0x%02x SerialNumber=0x%02x%02x %02x%02x %02x%02x %02x%02x",
@@ -572,8 +575,10 @@ bool SHT2x::_check_identity( uint8_t a ) {
   // retrieve serial number
   if( getSerialNumber( a ) == (uint64_t)(-1) ) {
     // we've not been able to read the serial number ... maybe not the device we're expecting
+    log_debug(F("\n\t[DEBUG SHT2x] not an SHT2x !"));log_flush();
     return false;
   }
 
+  log_debug(F("\n\t[DEBUG SHT2x] SHT2x identified!"));log_flush();
   return true;
 }

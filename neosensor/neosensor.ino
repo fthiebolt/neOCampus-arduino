@@ -950,6 +950,17 @@ void setup() {
     if( res==uint8_t(-1) ) break;
     log_debug(F("\n\t... detected device at i2c_addr=0x"));log_debug(res,HEX);log_flush();
 
+
+
+// [oct.21] DEBUG SHT2x ...
+if( res!=uint8_t(0x40) ) {
+  log_debug(F("\n\t[DEBUG SHT2x] discarding device at i2c_addr=0x"));log_debug(res,HEX);log_flush();
+  i2c_addr=res+1;
+  continue;
+}
+
+
+
     bool _known = false;
 
     // is chip a temperature sensor ?

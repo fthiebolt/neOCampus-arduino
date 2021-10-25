@@ -217,6 +217,7 @@ uint8_t readList( uint8_t adr, uint8_t reg, uint8_t tab[], uint8_t tabsize, uint
   Wire.endTransmission( false );  // enables the 'repeated start bit'
 
   if( pauseMs ) delay( pauseMs );
+  else yield();
 
   Wire.requestFrom(adr, tabsize);
   uint8_t i=0;

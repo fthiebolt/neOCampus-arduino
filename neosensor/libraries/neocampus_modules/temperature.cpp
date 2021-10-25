@@ -100,7 +100,7 @@ boolean temperature::add_sensor( uint8_t adr ) {
   else if( SHT2x::is_device( adr ) == true ) {
     SHT2x *cur_sensor = new SHT2x( sht2xMeasureType_t::temperature );   // because it features two sensors
     if( cur_sensor->begin( adr ) != true ) {
-      log_debug(F("\n[humidity] ###ERROR at SHT2x startup ... removing instance ..."));log_flush();
+      log_debug(F("\n[temperature] ###ERROR at SHT2x startup ... removing instance ..."));log_flush();
       free(cur_sensor);
       cur_sensor = NULL;
     }
@@ -116,7 +116,7 @@ boolean temperature::add_sensor( uint8_t adr ) {
   else if( SHT3x::is_device( adr ) == true ) {
     SHT3x *cur_sensor = new SHT3x( sht3xMeasureType_t::temperature );
     if( cur_sensor->begin( adr ) != true ) {
-      log_debug(F("\n[humidity] ###ERROR at SHT3x startup ... removing instance ..."));log_flush();
+      log_debug(F("\n[temperature] ###ERROR at SHT3x startup ... removing instance ..."));log_flush();
       free(cur_sensor);
       cur_sensor = NULL;
     }

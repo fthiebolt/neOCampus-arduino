@@ -114,7 +114,7 @@ boolean temperature::add_sensor( uint8_t adr ) {
   }
   // check for SHT3x
   else if( SHT3x::is_device( adr ) == true ) {
-    SHT3x *cur_sensor = new SHT3x( sht3xMeasureType_t::temperature );
+    SHT3x *cur_sensor = new SHT3x( sht3xMeasureType_t::temperature );    // because it features two sensors
     if( cur_sensor->begin( adr ) != true ) {
       log_debug(F("\n[temperature] ###ERROR at SHT3x startup ... removing instance ..."));log_flush();
       free(cur_sensor);

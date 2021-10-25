@@ -88,6 +88,13 @@ enum class sht2xIntegrationT_t : uint8_t {
 
 #define SHT2X_INTEGRATION_TIME_CTE    5 // additionnal ms delay to all timings (total <= 255 ---uint8_t)
 
+// response time (i.e delay between two consecutives reading)
+// max 65s (uint16_t ==> 65536ms max)
+enum class sht2xResponseTime_t : uint8_t {
+  s_humidity_respT      = 8,  // 8s for humidity
+  s_temperature_respT   = 20  // 5 to 30s for temperature
+};
+
 
 
 /*

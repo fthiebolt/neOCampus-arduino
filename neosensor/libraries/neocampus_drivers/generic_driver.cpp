@@ -32,6 +32,7 @@ generic_driver::generic_driver( uint16_t read_msinterval,
                                 uint8_t threshold_thousandth ) {
 
   _readMsInterval       = read_msinterval;
+  //Serial.print(F("\n[generic] read_msinterval="));Serial.print(read_msinterval);Serial.flush();
   _thresholdCpt         = threshold_cpt;
   _thresholdThousandth  = threshold_thousandth;
 

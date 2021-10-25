@@ -74,7 +74,7 @@ boolean SHT2x::is_device( uint8_t a ) {
     @brief  Instantiates a new class
 */
 /**************************************************************************/
-SHT2x::SHT2x( sht2xMeasureType_t kindness ) : generic_driver() {
+SHT2x::SHT2x( sht2xMeasureType_t kindness ) : generic_driver( (kindness==sht2xMeasureType_t::humidity ? (uint16_t)sht2xResponseTime_t::s_humidity_respT*1000 : (uint16_t)sht2xResponseTime_t::s_temperature_respT*1000) ) {
   _i2caddr = -1;
   _measureType = kindness;
   _resolution = SHT2X_DEFL_RESOLUTION;
@@ -221,6 +221,7 @@ boolean SHT2x::acquire( float *pval )
 
   // HUMIDITY
   if( _measureType == sht2xMeasureType_t::humidity ) {
+    //log_debug(F("\n[SHT2x] humidity measurement ..."));log_flush();
     return getRH( pval );
   }
 
@@ -548,12 +549,9 @@ uint64_t SHT2x::getSerialNumber( uint8_t adr ) {
 
     sn = (uint64_t)0LL;
     for( uint8_t i=0; i < sizeof(serialNumber); i++ ) {
-      uint64_t _serial = ((uint64_t)(serialNumber[i]) << i*8);
-      sn |= _serial;
-      log_debug(F("\n[SHT2x] _serial=0x"));log_debug(_serial,HEX);
-      log_debug(F("  while sn=0x"));log_debug(sn,HEX);log_flush();
+      sn |= ((uint64_t)(serialNumber[i]) << i*8);
     }
-    log_debug(F("\n[SHT2x] sn=0x"));log_debug(sn,HEX);log_flush();
+    //log_debug(F("\n[SHT2x] sn=0x"));log_debug(sn,HEX);log_flush();
     {
       char _msg[255];
       snprintf(_msg, sizeof(_msg), "\n[SHT2x] adr=0x%02x SerialNumber=0x%02x%02x %02x%02x %02x%02x %02x%02x",

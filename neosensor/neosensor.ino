@@ -964,6 +964,7 @@ if( res!=uint8_t(0x40) ) {
     bool _known = false;
 
     // is chip a temperature sensor ?
+
     if( temperatureModule and temperatureModule->add_sensor(res) == true ) {
       log_debug(F("\n\t\tadded temperature sensor at i2c addr = 0x"));log_debug(res,HEX); log_flush();
       _known = true;
@@ -979,7 +980,8 @@ if( res!=uint8_t(0x40) ) {
       _known = true;
     }
     // is chip a humidity sensor ?
-    if( humidityModule and humidityModule->add_sensor(res) == true ) {
+// DEBUG: REMOVE 'false'
+    if( false and humidityModule and humidityModule->add_sensor(res) == true ) {
       log_debug(F("\n\t\tadded humidity sensor at i2c addr = 0x"));log_debug(res,HEX); log_flush();
       _known = true;
     }

@@ -221,9 +221,11 @@ boolean SHT2x::acquire( float *pval )
 
   // HUMIDITY
   if( _measureType == sht2xMeasureType_t::humidity ) {
-    //log_debug(F("\n[SHT2x] humidity measurement ..."));log_flush();
+    log_debug(F("\n[SHT2x] humidity measurement ..."));log_flush();
     return getRH( pval );
   }
+
+  log_debug(F("\n[SHT2x] temperature measurement ..."));log_flush();
 
   // TEMPERATURE
   if( !getTemp(pval) ) {

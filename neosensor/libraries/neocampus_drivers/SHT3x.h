@@ -63,9 +63,9 @@ enum class sht3xCmd_t : uint16_t {
   meas_highRes_stretch      = 0x2C06,   // Measurement High Repeatability (resolution) with Clock Stretch Enabled
   meas_medRes_stretch       = 0x2C0D,   // Measurement Medium Repeatability (resolution) with Clock Stretch Enabled
   meas_lowRes_stretch       = 0x2C10,   // Measurement Low Repeatability (resolution) with Clock Stretch Enabled
-  meas_highRes              = 0x2400,   // Measurement High Repeatability (resolution) with Clock Stretch Enabled
-  meas_medRes               = 0x240B,   // Measurement Medium Repeatability (resolution) with Clock Stretch Enabled
-  meas_lowRes               = 0x2416,   // Measurement Low Repeatability (resolution) with Clock Stretch Enabled
+  meas_highRes              = 0x2400,   // Measurement High Repeatability (resolution) WITHOUT clock stretching
+  meas_medRes               = 0x240B,   // Measurement Medium Repeatability (resolution) WITHOUT clock stretching
+  meas_lowRes               = 0x2416,   // Measurement Low Repeatability (resolution) WITHOUT clock stretching
 };
 
 // status

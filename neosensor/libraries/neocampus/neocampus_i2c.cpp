@@ -212,9 +212,14 @@ uint16_t read16le(uint8_t adr, uint8_t reg) {
  */
 uint8_t readList( uint8_t adr, uint8_t reg, uint8_t tab[], uint8_t tabsize, uint8_t pauseMs ) {
   
+  uint8_t _res;
   Wire.beginTransmission(adr);
   Wire.write((uint8_t)reg);
-  Wire.endTransmission( false );  // enables the 'repeated start bit'
+  _res = Wire.endTransmission( false );  // enables the 'repeated start bit'
+  if( _res ) {
+    log_debug(F("\n[I2C-readList] endTransmission non-zero ret code!"));log_flush();
+    return 0;
+  }
 
   if( pauseMs ) delay( pauseMs );
   else yield();
@@ -228,7 +233,7 @@ uint8_t readList( uint8_t adr, uint8_t reg, uint8_t tab[], uint8_t tabsize, uint
 
 #ifdef DEBUG_I2C
   char _msg[255];
-  snprintf(_msg, sizeof(_msg), "\n[I2C-readList] adr=0x%02x reg=%d val=[0x%02x 0x%02x 0x%02x 0x%02x ... ]", adr, reg, tab[0], tab[1], tab[2], tab[3]);
+  snprintf(_msg, sizeof(_msg), "\n[I2C-readList] adr=0x%02x reg=0x%02x i=%d val=[0x%02x 0x%02x 0x%02x 0x%02x ... ]", adr, reg, i, tab[0], tab[1], tab[2], tab[3]);
   log_debug(_msg);log_flush();
 #endif
   

@@ -24,17 +24,22 @@
 // chips drivers
 #include "generic_driver.h"
 #include "lcc_sensor.h"
-
+#include "pmsX.h"
+//#include "sdsX.h"
 
 
 
 /*
  * Definitions
  */
-#define _MAX_SENSORS                  4
-#define AIRQUALITY_MIN_FREQUENCY     30      // may go up to every 30 seconds ...
-#define AIRQUALITY_MAX_FREQUENCY     1800    // or cool down to every every 30mn
-#define DEFL_AIRQUALITY_FREQUENCY    (AIRQUALITY_MIN_FREQUENCY*2)     // air-quality message every 30 seconds by default ...
+#define _MAX_SENSORS                 4
+#define AIRQUALITY_MIN_FREQUENCY    30      // may go up to every 30 seconds ...
+#define AIRQUALITY_MAX_FREQUENCY    _MAX_COOLDOWN_SENSOR
+#define DEFL_AIRQUALITY_FREQUENCY   (AIRQUALITY_MIN_FREQUENCY*2)
+/* [aug.21] now considering COOLDOWN parameters */
+#define AIRQUALITY_MIN_COOLDOWN     AIRQUALITY_MIN_FREQUENCY        // min delay between two consecutives sending
+#define AIRQUALITY_MAX_COOLDOWN     AIRQUALITY_MAX_FREQUENCY        // max delay between two consecutives sending
+#define DEFL_AIRQUALITY_COOLDOWN    (AIRQUALITY_MIN_COOLDOWN*2)     // default cooldown
 
 
 
@@ -49,7 +54,6 @@ class airquality : public base {
 
     // destructor
     ~airquality( void );
-
 
     // add a sensor whose i2c adress is the parameter
     boolean add_sensor( uint8_t adr );

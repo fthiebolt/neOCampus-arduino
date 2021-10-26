@@ -208,8 +208,14 @@ bool airquality::process( void ) {
   /* sensors internal processing */
   _process_sensors();
 
+  // [aug.21] TXtime is not based on timer but upon data ready
+  // to get sent !
   // reached time to transmit ?
-  if( !isTXtime() ) return _ret;
+  //if( !isTXtime() ) return _ret;
+
+  // [aug.21] if global trigger has been activated, we'll parse all inputs
+  // to check for individual triggers
+  if( !_trigger ) return _ret;
 
   /*
    * Time to send a new message
@@ -352,6 +358,27 @@ boolean airquality::loadSensoConfig( senso *sp ) {
       }
     }
 
+    // PMS5003
+    {
+      const char *_unit = PSTR("pms");
+      if( (item[F("driver")] and strncmp_P(item[F("driver")], _unit, strlen_P(_unit))==0) or
+           strncmp_P(item[F("unit")], _unit, strlen_P(_unit))==0 ) {
+        // instantiate sensor
+to be continued
+        lcc_sensor *cur_sensor = new lcc_sensor();
+        if( cur_sensor->begin( item[F("params")] ) != true ) {
+          log_debug(F("\n[airquality] ###ERROR at lcc_sensor startup ... removing instance ..."));log_flush();
+          free(cur_sensor);
+          cur_sensor = NULL;
+        }
+        else {
+          // TODO: set auto_gain ?
+          cur_sensor->powerOFF();
+          _sensor[_sensors_count++] = cur_sensor;
+          _sensor_added = true;
+        }
+      }
+    }
 
     // add additional sensors here
 

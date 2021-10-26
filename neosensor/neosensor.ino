@@ -952,19 +952,17 @@ void setup() {
 
 
 
-// [oct.21] DEBUG SHT2x ...
-if( res!=uint8_t(0x40) ) {
-  log_debug(F("\n\t[DEBUG SHT2x] discarding device at i2c_addr=0x"));log_debug(res,HEX);log_flush();
+// [oct.21] DEBUG single sensor ...
+if( res!=uint8_t(0x44) ) {
+  log_debug(F("\n\t[DEBUG] discarding device at i2c_addr=0x"));log_debug(res,HEX);log_flush();
   i2c_addr=res+1;
   continue;
 }
 
 
-
     bool _known = false;
 
     // is chip a temperature sensor ?
-
     if( temperatureModule and temperatureModule->add_sensor(res) == true ) {
       log_debug(F("\n\t\tadded temperature sensor at i2c addr = 0x"));log_debug(res,HEX); log_flush();
       _known = true;
@@ -980,8 +978,7 @@ if( res!=uint8_t(0x40) ) {
       _known = true;
     }
     // is chip a humidity sensor ?
-// DEBUG: REMOVE 'false'
-    if( false and humidityModule and humidityModule->add_sensor(res) == true ) {
+    if( humidityModule and humidityModule->add_sensor(res) == true ) {
       log_debug(F("\n\t\tadded humidity sensor at i2c addr = 0x"));log_debug(res,HEX); log_flush();
       _known = true;
     }

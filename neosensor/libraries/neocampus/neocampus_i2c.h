@@ -48,7 +48,7 @@ void write16(uint8_t adr, uint8_t reg, uint16_t val);   // big endian (default)
 uint16_t read16le(uint8_t adr, uint8_t reg);            // little-endian
 void write16le(uint8_t adr, uint8_t reg, uint16_t val); // little-endian
 
-uint8_t readList( uint8_t adr, uint8_t reg, uint8_t *tab, uint8_t tabsize, uint8_t pauseMs=0 );
+uint8_t readList( uint8_t adr, uint8_t reg, uint8_t *tab, uint8_t tabsize, uint8_t pauseMs=0, bool repeatStart=false );
 uint8_t writeList( uint8_t adr, uint8_t reg, uint8_t *tab, uint8_t tabsize );
 
 // I2C synchronous LL functions

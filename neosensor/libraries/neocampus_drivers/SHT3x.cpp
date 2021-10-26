@@ -74,7 +74,7 @@ boolean SHT3x::is_device( uint8_t a ) {
     @brief  Instantiates a new class
 */
 /**************************************************************************/
-SHT3x::SHT3x( sht3xMeasureType_t kindness  ) : generic_driver( (kindness==sht3xMeasureType_t::humidity ? (uint16_t)sht3xResponseTime_t::s_humidity_respT*1000 : (uint16_t)sht3xResponseTime_t::s_temperature_respT*1000) ) {
+SHT3x::SHT3x( sht3xMeasureType_t kindness  ) : generic_driver() {
   _i2caddr = -1;
   _measureType = kindness;
   _resolution = SHT3X_DEFL_RESOLUTION;

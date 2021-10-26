@@ -74,7 +74,7 @@ boolean SHT2x::is_device( uint8_t a ) {
     @brief  Instantiates a new class
 */
 /**************************************************************************/
-SHT2x::SHT2x( sht2xMeasureType_t kindness ) : generic_driver( (kindness==sht2xMeasureType_t::humidity ? (uint16_t)sht2xResponseTime_t::s_humidity_respT*1000 : (uint16_t)sht2xResponseTime_t::s_temperature_respT*1000) ) {
+SHT2x::SHT2x( sht2xMeasureType_t kindness ) : generic_driver() {
   _i2caddr = -1;
   _measureType = kindness;
   _resolution = SHT2X_DEFL_RESOLUTION;
@@ -221,11 +221,11 @@ boolean SHT2x::acquire( float *pval )
 
   // HUMIDITY
   if( _measureType == sht2xMeasureType_t::humidity ) {
-    log_debug(F("\n[SHT2x] humidity measurement ..."));log_flush();
+    //log_debug(F("\n[SHT2x] humidity measurement ..."));log_flush();
     return getRH( pval );
   }
 
-  log_debug(F("\n[SHT2x] temperature measurement ..."));log_flush();
+  //log_debug(F("\n[SHT2x] temperature measurement ..."));log_flush();
 
   // TEMPERATURE
   if( !getTemp(pval) ) {
@@ -257,7 +257,7 @@ boolean SHT2x::getRH( float *pval ) {
   uint8_t retry = 3;
   
   while( res==false and retry-- ) {
-    res = _readSensor_hm( sht2xCmd_t::get_rh_hm, &val );
+    res = _readSensor( sht2xCmd_t::get_rh, &val );
     if( res == true ) break;
     yield();  // some intrinsic delay before restarting
   }
@@ -294,7 +294,7 @@ boolean SHT2x::getTemp( float *pval )
   uint8_t retry = 3;
   
   while( res==false and retry-- ) {
-    res = _readSensor_hm( sht2xCmd_t::get_temp_hm, &val );
+    res = _readSensor( sht2xCmd_t::get_temp, &val );
     if( res == true ) break;
     yield();  // some intrinsic delay before restarting
   }
@@ -334,13 +334,22 @@ void SHT2x::sw_reset( uint8_t adr ) {
 
 /*
  * Read 16bits sensor values registers and check CRC
- * Note: Hold Mode means that we won't give back i2c access
- *  prior to fully completed access
  */
-bool SHT2x::_readSensor_hm( sht2xCmd_t cmd, uint16_t *pval ) {
+bool SHT2x::_readSensor( sht2xCmd_t cmd, uint16_t *pval ) {
+
+  bool _repeatStart = false;
+  bool _validCmd = false;
+  // check command
+  if( cmd == sht2xCmd_t::get_temp_hm or cmd == sht2xCmd_t::get_rh_hm ) {
+    _repeatStart = true;
+    _validCmd = true;
+  }
+  else if( cmd == sht2xCmd_t::get_temp or cmd == sht2xCmd_t::get_rh ) {
+    _validCmd = true;
+  }
 
   // check command
-  if( cmd != sht2xCmd_t::get_temp_hm and cmd != sht2xCmd_t::get_rh_hm ) {
+  if( ! _validCmd ) {
     log_error(F("\n[SHT2x] unsupported command: ")); log_error(static_cast<uint8_t>(cmd),HEX); log_flush();
     return false;
   }
@@ -348,7 +357,7 @@ bool SHT2x::_readSensor_hm( sht2xCmd_t cmd, uint16_t *pval ) {
   uint8_t buf[3]; // 16bits data + 8bits CRC
 
   // read sensor's values register
-  if( readList( _i2caddr, static_cast<uint8_t>(cmd), buf, sizeof(buf), _integrationTime ) != sizeof(buf) ) {
+  if( readList( _i2caddr, static_cast<uint8_t>(cmd), buf, sizeof(buf), _integrationTime, _repeatStart ) != sizeof(buf) ) {
     log_error(F("\n[SHT2x] insufficient bytes answered"));log_flush();
     return false;
   }

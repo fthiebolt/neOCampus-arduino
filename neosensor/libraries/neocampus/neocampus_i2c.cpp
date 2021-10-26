@@ -210,12 +210,12 @@ uint16_t read16le(uint8_t adr, uint8_t reg) {
  * [option] delay between writing command and reading result
  * return number of bytes read
  */
-uint8_t readList( uint8_t adr, uint8_t reg, uint8_t tab[], uint8_t tabsize, uint8_t pauseMs ) {
+uint8_t readList( uint8_t adr, uint8_t reg, uint8_t tab[], uint8_t tabsize, uint8_t pauseMs, bool repeatStart ) {
   
   uint8_t _res;
   Wire.beginTransmission(adr);
   Wire.write((uint8_t)reg);
-  _res = Wire.endTransmission( false );  // enables the 'repeated start bit'
+  _res = Wire.endTransmission( !repeatStart );  // 'false' enables the 'repeated start bit'
   if( _res ) {
     log_debug(F("\n[I2C-readList] endTransmission non-zero ret code!"));log_flush();
     return 0;

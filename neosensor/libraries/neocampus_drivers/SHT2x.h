@@ -88,13 +88,6 @@ enum class sht2xIntegrationT_t : uint8_t {
 
 #define SHT2X_INTEGRATION_TIME_CTE    5 // additionnal ms delay to all timings (total <= 255 ---uint8_t)
 
-// response time (i.e delay between two consecutives reading)
-// max 65s (uint16_t ==> 65536ms max)
-enum class sht2xResponseTime_t : uint8_t {
-  s_humidity_respT      = 8,  // 8s for humidity
-  s_temperature_respT   = 20  // 5 to 30s for temperature
-};
-
 
 
 /*
@@ -128,7 +121,7 @@ class SHT2x : public generic_driver {
     
   private:
     // -- private methods
-    bool _readSensor_hm( sht2xCmd_t, uint16_t* ); // low-level function to read value registers (Hold Master mode)
+    bool _readSensor( sht2xCmd_t, uint16_t* );    // low-level function to read value registers
     static void sw_reset( uint8_t );                       // reset sensor via software reset procedure
     static bool crc_check( uint8_t[], uint8_t, uint8_t );  // data array, nb_bytes, checksum
     static uint64_t getSerialNumber( uint8_t );   // retrieve sensor's UUID

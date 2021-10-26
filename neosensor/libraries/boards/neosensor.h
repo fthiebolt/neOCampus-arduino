@@ -48,13 +48,15 @@
  * ###                                                                       ###
  * ###             On-board PCB temperature compensation                     ###
  * ###                                                                       ###
- * 
+ *      [Oct.21] REMOVING TEMPERATURE CORRECTION FOR LATEST I2C temp. sensor
  *      [Mar.18] to enable temperature correction on i2c temperature device
  *      whose i2c addr is the last one, please activate following define.
  * 
- * ############################################################################# */
+ * #############################################################################
+#ifndef TEMPERATURE_CORRECTION_LASTI2C
 #define TEMPERATURE_CORRECTION_LASTI2C  (float)(-0.875)
-
+#endif // TEMPERATURE_CORRECTION_LASTI2C
+ */
 
 // define what is an invalid gpio
 #define INVALID_GPIO        (uint8_t)(-1)

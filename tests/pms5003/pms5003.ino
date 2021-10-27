@@ -211,6 +211,7 @@ void PMS::loop()
       break;
     }
 
+    //Serial.print("+");
     _index++;
   }
 }
@@ -221,7 +222,7 @@ void PMS::loop()
 /* Global variables */
 PMS pms(Serial2);
 PMS::DATA data;
-
+const char _pattern[] = { 0x42, 0x4d, '\0' };
 
 /*
  * SETUP
@@ -234,14 +235,20 @@ void setup() {
   
   Serial.println(F("\n[PMS5003] setup Serial2"));Serial.flush();
   Serial2.begin(9600);    // PMS link
-
+/*
   while( true ) {
     while( Serial2.available() ) {
-      Serial.print(char(Serial2.read()));
+      char msg[16];
+      char _cur = Serial2.read();
+      if( _cur==0x42 ) {
+        Serial.print(F("\n[new frame] = "));
+      }
+      snprintf(msg,sizeof(msg)," 0x%02x", _cur);
+      Serial.print(msg);
     }
-    Serial.print(".");
-    delay(1000);
+    delay(250);
   }
+*/
 }
 
 /*
@@ -262,10 +269,7 @@ void loop()
 
     Serial.println();
   }
-  else {
-    Serial.println(F("\nno data to display ?!?!"));Serial.flush();
-  }
 
   // Do other stuff...
-  delay(1000);
+  //delay(250);
 }

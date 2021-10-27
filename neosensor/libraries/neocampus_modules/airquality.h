@@ -24,8 +24,8 @@
 // chips drivers
 #include "generic_driver.h"
 #include "lcc_sensor.h"
-#include "pmsX.h"
-//#include "sdsX.h"
+#include "pmsSerial.h"
+//#include "sds0x.h"
 
 
 

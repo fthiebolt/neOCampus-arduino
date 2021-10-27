@@ -36,8 +36,9 @@
 #define CONFIG_JSON_SIZE        (JSON_OBJECT_SIZE(3))   // for config FILE that contains: frequency
                                                         // note: others parameters are sent from sensOCampus
                                                         // hence not saved ;)
-// [nov.20] set FLOAT resolution data to send over MQTT
-#define FLOAT_RESOLUTION        3
+// [oct.21] set FLOAT resolution data to send over MQTT
+// We'll consider ppm as integer (i.e not float)
+#define FLOAT_RESOLUTION        0
 
 
 
@@ -358,16 +359,15 @@ boolean airquality::loadSensoConfig( senso *sp ) {
       }
     }
 
-    // PMS5003
+    // PMSSERIAL: PMS5003, PMS7003, PMS1003
     {
-      const char *_unit = PSTR("pms");
+      const char *_unit = PSTR("pmsSerial");
       if( (item[F("driver")] and strncmp_P(item[F("driver")], _unit, strlen_P(_unit))==0) or
            strncmp_P(item[F("unit")], _unit, strlen_P(_unit))==0 ) {
         // instantiate sensor
-to be continued
-        lcc_sensor *cur_sensor = new lcc_sensor();
+        pmsSerial *cur_sensor = new pmsSerial();
         if( cur_sensor->begin( item[F("params")] ) != true ) {
-          log_debug(F("\n[airquality] ###ERROR at lcc_sensor startup ... removing instance ..."));log_flush();
+          log_debug(F("\n[airquality] ###ERROR at pmsSerial startup ... removing instance ..."));log_flush();
           free(cur_sensor);
           cur_sensor = NULL;
         }
@@ -421,35 +421,57 @@ to be continued
 void airquality::_process_sensors( void ) {
   // process all valid sensors
   for( uint8_t cur_sensor=0; cur_sensor<_sensors_count; cur_sensor++ ) {
-    _sensor[cur_sensor]->process();
+    if( _sensor[cur_sensor]==nullptr ) continue;
+    // start sensor processing according to our coolDown parameter
+    // [aug.21] _freq is our coolDown parameter
+    _sensor[cur_sensor]->process( _freq, FLOAT_RESOLUTION );
+    if( _sensor[cur_sensor]->getTrigger()!=true ) continue;
+
+    // new data ready to get sent ==> activate module's trigger
+    log_debug(F("\n[airquality][")); log_debug(_sensor[cur_sensor]->subID());
+    log_debug(F("] new official value = "));log_debug(_sensor[cur_sensor]->getValue(),FLOAT_RESOLUTION); log_flush();
+    _trigger = true;  // activate module level trigger
+
+    /*
+     * update shared JSON
+     */
+    JsonObject _obj = variant.as<JsonObject>();
+    _obj[_sensor[cur_sensor]->subID()] = _sensor[cur_sensor]->getValue();
   }
 }
 
 
 /*
  * send all sensors' values
+ * [aug.21] this function gets called every XXX_FREQ seconds but according
+ *  to sensors integration, a value may not be available (e.g it does not 
+ *  changed for a long time).
+ * However, there's some point over a period of time a data will get sent
+ *  even if if didn't change.
  */
 boolean airquality::_sendValues( void ) {
   /* grab and send values from all sensors
    * each sensor will result in a MQTT message
    */
-  boolean _TXoccured = false;
+  // boolean _TXoccured = false;
 
   for( uint8_t cur_sensor=0; cur_sensor<_sensors_count; cur_sensor++ ) {
 
+    if( _sensor[cur_sensor]==nullptr || _sensor[cur_sensor]->getTrigger()!=true ) continue;
+    
     StaticJsonDocument<DATA_JSON_SIZE> _doc;
     JsonObject root = _doc.to<JsonObject>();
 
     // retrieve data from current sensor
-    float value;
-    if( !_sensor[cur_sensor]->acquire(&value) ) {
-      log_warning(F("\n[airquality] unable to retrieve data from sensor: "));
-      log_warning(_sensor[cur_sensor]->subID()); log_flush();
-      continue;
-    }
-    root[F("value")] = serialized(String(value,FLOAT_RESOLUTION));   // [nov.20] force float encoding
-    //root[F("value")] = (float)( value );   // [may.20] force data as float (e.g ArduinoJson converts 20.0 to INT)
+    float value = _sensor[cur_sensor]->getValue();
+    if( FLOAT_RESOLUTION ) {
+      root[F("value")] = serialized(String(value,FLOAT_RESOLUTION));   // [nov.20] force float encoding
+      //root[F("value")] = (float)( value );   // [may.20] force data as float (e.g ArduinoJson converts 20.0 to INT)
                                                 // this doesn't work since ArduinoJson converts to STRING withiout decimal!
+    }
+    else {
+      root[F("value")] = (int)( value );      // [may.20] force humidity as INT
+    }
     root[F("value_units")] = _sensor[cur_sensor]->sensorUnits();
     root[F("subID")] = _sensor[cur_sensor]->subID();
 
@@ -458,7 +480,7 @@ boolean airquality::_sendValues( void ) {
     */
     if( sendmsg(root) ) {
       log_info(F("\n[airquality] successfully published msg :)")); log_flush();
-      _TXoccured = true;
+      // _TXoccured = true;
     }
     else {
       // we stop as soon as we've not been able to successfully send one message
@@ -466,21 +488,19 @@ boolean airquality::_sendValues( void ) {
       return false;
     }
     
+    // mark data as sent
+    _sensor[cur_sensor]->setDataSent();
+
     // delay between two successives values to send
     delay(20); 
   }
 
   /* do we need to postpone to next TX slot:
    * required when no data at all have been published
+   * [aug.21] useless since we don not rely anymore on periodic sending !
+   *
+  if( !_TXoccured ) cancelTXslot();
    */
-  if( !_TXoccured ) {
-    /* DEBUG DEBUG DEBUG
-    log_debug(F("\n[airquality] postponed to next TX slot ...")); log_flush();
-    delay(100);
-    #warning "remove me !!!"
-    */
-    cancelTXslot();
-  }
 
   return true;
 }

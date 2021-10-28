@@ -218,10 +218,15 @@ void PMS::loop()
 
 
 /* Declarations */
+#define PM_COOLDOWN   30  // seconds inactive betwwen two measures
+#define PM_ENABLE     5   // PMS5003 has an Enable pin featuring a pullup resistor:
+                          // input or output high ==> normal ops
+                          // low ==> disable
 
 /* Global variables */
 PMS pms(Serial2);
 PMS::DATA data;
+unsigned long _lastActive;
 const char _pattern[] = { 0x42, 0x4d, '\0' };
 
 /*
@@ -230,11 +235,18 @@ const char _pattern[] = { 0x42, 0x4d, '\0' };
 void setup() {
   delay(5000);
   Serial.begin(115200);   // debug link
-  Serial.println(F("\n[PMS5003] demo ..."));Serial.flush();
+  Serial.println(F("\n\n\n[PMS5003] demo ..."));Serial.flush();
   delay(1000);
   
   Serial.println(F("\n[PMS5003] setup Serial2"));Serial.flush();
   Serial2.begin(9600);    // PMS link
+
+  // enable pin is input as default
+  pinMode( PM_ENABLE, INPUT );
+  digitalWrite( PM_ENABLE, LOW ); // useless ... till we set it as an ouput
+  Serial.println(F("\n[PMS5003] activate PMS ..."));Serial.flush();
+  _lastActive = millis();
+  delay(500);
 /*
   while( true ) {
     while( Serial2.available() ) {
@@ -254,22 +266,32 @@ void setup() {
 /*
  * LOOP
  */
-void loop()
-{
-  if (pms.read(data))
-  {
+void loop() {
+
+  // activation ?
+  if( digitalRead(PM_ENABLE)==LOW and (millis() - _lastActive) >= PM_COOLDOWN*1000 ) {
+    Serial.println(F("\n[PMS5003] activation ..."));Serial.flush();
+    pinMode( PM_ENABLE, INPUT );
+  }
+  
+  // may we read ?
+  bool _res = (digitalRead(PM_ENABLE)==HIGH) && pms.read(data);
+
+  if( _res ) {
     Serial.print("PM 1.0 (ug/m3): ");
     Serial.println(data.PM_AE_UG_1_0);
-
+  
     Serial.print("PM 2.5 (ug/m3): ");
     Serial.println(data.PM_AE_UG_2_5);
-
+  
     Serial.print("PM 10.0 (ug/m3): ");
     Serial.println(data.PM_AE_UG_10_0);
-
-    Serial.println();
+  
+    Serial.println(F("\n[PMS5003] disabling ..."));Serial.flush();
+    pinMode( PM_ENABLE, OUTPUT );
+    _lastActive = millis();
   }
-
+  
   // Do other stuff...
-  //delay(250);
+  delay(250);
 }

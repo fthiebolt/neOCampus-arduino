@@ -244,7 +244,15 @@ void setup() {
   // enable pin is input as default
   pinMode( PM_ENABLE, INPUT );
   digitalWrite( PM_ENABLE, LOW ); // useless ... till we set it as an ouput
-  Serial.println(F("\n[PMS5003] activate PMS ..."));Serial.flush();
+/*
+  Serial.println(F("\n[PMS5003] disabling "));Serial.flush();
+  pinMode( PM_ENABLE, OUTPUT );
+  while( true ) {
+    Serial.print(F("."));Serial.flush();
+    delay(1000);
+  }
+*/
+  Serial.println(F("\n[PMS5003] PMS is active ..."));Serial.flush();
   _lastActive = millis();
   delay(500);
 /*
@@ -275,10 +283,13 @@ void loop() {
   }
   
   // may we read ?
+  if( digitalRead(PM_ENABLE)==HIGH ) {
+    Serial.print(F("."));Serial.flush();
+  }
   bool _res = (digitalRead(PM_ENABLE)==HIGH) && pms.read(data);
-
+  
   if( _res ) {
-    Serial.print("PM 1.0 (ug/m3): ");
+    Serial.print("\nPM 1.0 (ug/m3): ");
     Serial.println(data.PM_AE_UG_1_0);
   
     Serial.print("PM 2.5 (ug/m3): ");

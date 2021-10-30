@@ -226,6 +226,12 @@ void PMS::loop()
 /* Global variables */
 PMS pms(Serial2);
 PMS::DATA data;
+enum class pmSensorState_t : uint8_t {
+  idle    = 0,
+  requestData,    // (passive mode) ask for data
+  readData        // read data
+};
+pmSensorState_t cur_status = pmSensorState_t::idle;
 unsigned long _lastActive;
 const char _pattern[] = { 0x42, 0x4d, '\0' };
 
@@ -240,10 +246,14 @@ void setup() {
   
   Serial.println(F("\n[PMS5003] setup Serial2"));Serial.flush();
   Serial2.begin(9600);    // PMS link
-
+/*
   Serial.println(F("\n[PMS5003] switch to passive mode & empty receuve buffer"));Serial.flush();
   pms.passiveMode();delay(10);
   while (Serial2.available()) Serial2.read();
+*/
+
+  Serial.println(F("\n[PMS5003] switch to active mode"));Serial.flush();
+  pms.activeMode();
 
   // enable pin is input as default
   pinMode( PM_ENABLE, INPUT );
@@ -255,11 +265,11 @@ void setup() {
     Serial.print(F("."));Serial.flush();
     delay(1000);
   }
-*/
+  
   Serial.println(F("\n[PMS5003] PMS is active ..."));Serial.flush();
   _lastActive = millis();
   delay(500);
-/*
+
   while( true ) {
     while( Serial2.available() ) {
       char msg[16];
@@ -280,6 +290,31 @@ void setup() {
  */
 void loop() {
 
+  delay(250);
+  
+  Serial.println(F("\n[PMS5003] start to read data"));Serial.flush();
+  // 32 bytes @ 8N1 @ 9600bauds = 33.3ms
+  _lastActive = millis();
+  while( ! pms.readUntil(data,200) ) {
+    Serial.print(F("*"));Serial.flush();
+  }
+  unsigned long _cur = millis();
+  Serial.print(F("\n[PMS5003] successfull read in "));Serial.print(_cur-_lastActive);Serial.println(F(" ms"));Serial.flush();
+
+  Serial.print("\nPM 1.0 (ug/m3): ");
+  Serial.println(data.PM_AE_UG_1_0);
+  
+  Serial.print("PM 2.5 (ug/m3): ");
+  Serial.println(data.PM_AE_UG_2_5);
+  
+  Serial.print("PM 10.0 (ug/m3): ");
+  Serial.println(data.PM_AE_UG_10_0);
+  
+  Serial.println(F("\n[PMS5003] sleeping for 15s ..."));Serial.flush();
+
+  delay(15*1000);
+
+/*
   // activation ?
   if( digitalRead(PM_ENABLE)==LOW and (millis() - _lastActive) >= PM_COOLDOWN*1000 ) {
     Serial.println(F("\n[PMS5003] activation ..."));Serial.flush();
@@ -309,4 +344,5 @@ void loop() {
   
   // Do other stuff...
   delay(250);
+*/
 }

@@ -241,6 +241,10 @@ void setup() {
   Serial.println(F("\n[PMS5003] setup Serial2"));Serial.flush();
   Serial2.begin(9600);    // PMS link
 
+  Serial.println(F("\n[PMS5003] switch to passive mode & empty receuve buffer"));Serial.flush();
+  pms.passiveMode();delay(10);
+  while (Serial2.available()) Serial2.read();
+
   // enable pin is input as default
   pinMode( PM_ENABLE, INPUT );
   digitalWrite( PM_ENABLE, LOW ); // useless ... till we set it as an ouput

@@ -94,6 +94,8 @@ class base {
     char pubTopic[MQTT_BASE_TOPIC_LENGTH];  // topic to publish to
     char subTopic[MQTT_BASE_TOPIC_LENGTH];  // topic to subscribe to
     JsonVariant variant;            // JSON structure (pointer to) part of the global shared JSON structure
+                                    // used to share sensors values across modules
+                                    // (e.g enabling display to show sensors values)
     // module level flag to specifiy that at least one digital input trigger has been activated ot that one
     // analog value need to get sent
     boolean _trigger;

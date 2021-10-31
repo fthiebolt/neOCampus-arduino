@@ -60,6 +60,8 @@
 
 // define what is an invalid gpio
 #define INVALID_GPIO        (uint8_t)(-1)
+// define what is an invalid serial link
+#define INVALID_SERIAL_LINK (uint8_t)(-1)
 
 
 /* system led (on ESP8266 module)
@@ -143,6 +145,28 @@
     #define PIR_SENSOR      4       // infrared detector
   #elif defined(ESP32)
     #define PIR_SENSOR      4       // [jul.21] neOSensor V5 added PIR
+  #endif
+#endif
+
+/* Sensors/Actuators serial link
+ * Note: added neOSensors V5, esp8266 not available
+ */
+#ifndef SENSORS_SERIAL_LINK
+  #ifdef ESP32
+    #define SENSORS_SERIAL_LINK     2   // [jul.21] neOSensor V5 added (i.e Serial2)
+  #else
+    #define SENSORS_SERIAL_LINK     INVALID_SERIAL_LINK
+  #endif
+#endif
+
+/* PM_ENABLE
+ * this gpio may give additional control over serially connected sensors
+ */
+#ifndef PM_ENABLE
+  #ifdef ESP8266
+    #define PM_ENABLE       INVALID_GPIO
+  #elif defined(ESP32)
+    #define PM_ENABLE       5       // [jul.21] neOSensor V5 added
   #endif
 #endif
 

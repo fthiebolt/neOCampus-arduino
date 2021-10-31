@@ -21,11 +21,11 @@
 // include base for all modules
 #include "base.h"
 
-// chips drivers
+// chips & devices drivers
 #include "generic_driver.h"
-#include "lcc_sensor.h"
-#include "pmsSerial.h"
-//#include "sds0x.h"
+#include "lcc_sensor.h"   // LCC's air quality sensors
+#include "pms_serial.h"   // PMS5003 & derivatives serial sensors
+//#include "sds0x.h"      // SDS011 & derivatives serial sensors
 
 
 

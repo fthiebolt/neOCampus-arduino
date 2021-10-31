@@ -3,11 +3,13 @@
  * 
  * AirQuality module to manage all kind of air quality sensors that does not
  * fit within the existing sensOCampus classes.
- * 
- * F.Thiebolt aug.21  in loadSensoConfig, replaced StaticJsonDocument (stack)
- *                    whith DynamicJsonDocument because it crashes on ESP8266
- * Thiebolt.F nov.20  previous 'force data as float' didn't work! we need to
- *                    use serialized(String(1.0,6)); // 1.000000
+ *
+ * F.Thiebolt   oct.21  added support for particle meters (e.g PMS5003)
+ *                      switched to data available delivery (instead of timer based)
+ * F.Thiebolt   aug.21  in loadSensoConfig, replaced StaticJsonDocument (stack)
+ *                      whith DynamicJsonDocument because it crashes on ESP8266
+ * Thiebolt.F   nov.20  previous 'force data as float' didn't work! we need to
+ *                      use serialized(String(1.0,6)); // 1.000000
  * https://arduinojson.org/v6/how-to/configure-the-serialization-of-floats/
  * F.Thiebolt   Aug.20  initial release
  * 
@@ -38,6 +40,7 @@
                                                         // hence not saved ;)
 // [oct.21] set FLOAT resolution data to send over MQTT
 // We'll consider ppm as integer (i.e not float)
+// We'll consider µg/m3 as integer (i.e not float)
 #define FLOAT_RESOLUTION        0
 
 
@@ -132,10 +135,19 @@ bool airquality::start( senso *sensocampus,  JsonDocument &sharedRoot ) {
   variant = sharedRoot.createNestedObject(MQTT_MODULE_NAME);
   // all sensors share the same units of values
   JsonObject _obj = variant.as<JsonObject>();
-  _obj[F("value_units")] = "ppm"; // as of aug.21, lcc_sensor send back ohm values ...
-                                  // The shared Json may specify a specific per sensor 'value_units'
-                                  // e.g CP1="10042" CP1_value_units="ohm"
-
+  // we consider each module (e.g airquality) having each drivers producing the same king of value_units
+  // hence we'll select value_units from first sensor of our sensors' list
+  if( _sensor[0] != nullptr ) {
+    _obj[F("value_units")] = _sensor[0]->sensorUnits();
+  }
+  else {
+    // default value_units for this module shared JSON
+    _obj[F("value_units")] = "ppm";
+    // [aug.21] lcc_sensor send back ohm values ...
+    // The shared Json may specify a specific per sensor 'value_units'
+    // e.g CP1="10042" CP1_value_units="ohm"
+    // [oct.21] particle meters send back µg/m3 !
+  }
   // initialize module's publish and subscribe topics
   snprintf( pubTopic, sizeof(pubTopic), "%s/%s", sensocampus->getBaseTopic(), MQTT_MODULE_NAME);
   snprintf( subTopic, sizeof(subTopic), "%s/%s", pubTopic, "command" );
@@ -209,12 +221,12 @@ bool airquality::process( void ) {
   /* sensors internal processing */
   _process_sensors();
 
-  // [aug.21] TXtime is not based on timer but upon data ready
+  // [oct.21] TXtime is not based on timer but upon data ready
   // to get sent !
   // reached time to transmit ?
   //if( !isTXtime() ) return _ret;
 
-  // [aug.21] if global trigger has been activated, we'll parse all inputs
+  // [oct.21] if global trigger has been activated, we'll parse all inputs
   // to check for individual triggers
   if( !_trigger ) return _ret;
 
@@ -359,15 +371,15 @@ boolean airquality::loadSensoConfig( senso *sp ) {
       }
     }
 
-    // PMSSERIAL: PMS5003, PMS7003, PMS1003
+    // PMS_SERIAL: PMS5003 & derivatives
     {
-      const char *_unit = PSTR("pmsSerial");
+      const char *_unit = PSTR("pms_serial");
       if( (item[F("driver")] and strncmp_P(item[F("driver")], _unit, strlen_P(_unit))==0) or
            strncmp_P(item[F("unit")], _unit, strlen_P(_unit))==0 ) {
         // instantiate sensor
-        pmsSerial *cur_sensor = new pmsSerial();
+        pms_serial *cur_sensor = new pms_serial();
         if( cur_sensor->begin( item[F("params")] ) != true ) {
-          log_debug(F("\n[airquality] ###ERROR at pmsSerial startup ... removing instance ..."));log_flush();
+          log_debug(F("\n[airquality] ###ERROR at pms_serial startup ... removing instance ..."));log_flush();
           free(cur_sensor);
           cur_sensor = NULL;
         }
@@ -572,7 +584,22 @@ boolean airquality::_loadConfig( JsonObject root ) {
 /*
  * sensOCampus sample module config (see end of file sensocampus.cpp for full config)
  *
-
+{
+  "module": "airquality",
+  "unit": "pms_serial",
+  "driver": "pms_serial",
+  "params":
+  [
+    {
+      "param": "link",  // optional since serial2 is the only one available serial link for sensors
+      "value": 2
+    },
+    {
+      "param": "link_speed",
+      "value": 9600
+    }
+  ]
+},
 {
   "module": "airquality",
   "unit": "lcc_sensor",

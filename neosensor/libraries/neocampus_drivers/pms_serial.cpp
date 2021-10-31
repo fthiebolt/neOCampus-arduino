@@ -124,7 +124,7 @@ boolean pms_serial::begin( JsonVariant root ) {
   /*
    * sensor HW initialisation
    */
-  return _init();
+  return _init( _link, _link_speed );
 }
 
 

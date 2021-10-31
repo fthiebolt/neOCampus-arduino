@@ -100,7 +100,11 @@ class pms_serial : public generic_driver {
     PMS *_psensor;                // [ll] pointer to low-level PMS serial sensor
     PMS::DATA _sensor_data;       // [ll] low-level PMS sensor deserialized data
 
-    bool _activeMode;             // active or passive mode selected
+    uint8_t _link;                // serial link number (e.g 2 --> Serial2)
+    unsigned int _link_speed;     // 9600 to 115200 bauds
+    uint8_t _enable_gpio;         // PM_ENABLE gpio
+
+    bool _activeMode;             // PMS active or passive mode selected
 
     pmsSensorState_t _FSMstatus;  // FSM
     unsigned long _FSMtimerStart; // ms system time start of current state;

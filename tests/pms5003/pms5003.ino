@@ -218,10 +218,13 @@ void PMS::loop()
 
 
 /* Declarations */
-#define PM_COOLDOWN   30  // seconds inactive betwwen two measures
-#define PM_ENABLE     5   // PMS5003 has an Enable pin featuring a pullup resistor:
-                          // input or output high ==> normal ops
-                          // low ==> disable
+#define PM_PASSIVE_MODE   1   // PASSIVE vs ACTIVE modes
+//#define PM_POWER_SAVING   1   // enable sleep() wakeUp() cycles to save power
+
+#define PM_COOLDOWN       30  // seconds inactive betwwen two measures
+#define PM_ENABLE         5   // PMS5003 has an Enable pin featuring a pullup resistor:
+                              // input or output high ==> normal ops
+                              // low ==> disable
 
 /* Global variables */
 PMS pms(Serial2);
@@ -244,17 +247,22 @@ void setup() {
   Serial.println(F("\n\n\n[PMS5003] demo ..."));Serial.flush();
   delay(1000);
   
-  Serial.println(F("\n[PMS5003] setup Serial2"));Serial.flush();
+  Serial.print(F("\n[PMS5003] setup Serial2"));Serial.flush();
   Serial2.begin(9600);    // PMS link
-/*
-  Serial.println(F("\n[PMS5003] switch to passive mode & empty receuve buffer"));Serial.flush();
+  
+#ifdef PM_PASSIVE_MODE
+  Serial.print(F("\n[PMS5003] switch to passive mode & empty receive buffer"));Serial.flush();
   pms.passiveMode();delay(10);
-  while (Serial2.available()) Serial2.read();
-*/
-
-  Serial.println(F("\n[PMS5003] switch to active mode"));Serial.flush();
+  while( Serial2.available() ) Serial2.read();  // flush input buffer
+#else
+  Serial.print(F("\n[PMS5003] switch to active mode"));Serial.flush();
   pms.activeMode();
-
+#endif /* PM_PASSIVE_MODE */
+  
+#ifndef PM_POWER_SAVING
+  Serial.print(F("\n[PMS5003] power saving mode disabled !! ... 30s warmup procedure ..."));Serial.flush();
+  pms.wakeUp(); delay(30*1000);
+#endif /* PM_POWER_SAVING */
   // enable pin is input as default
   pinMode( PM_ENABLE, INPUT );
   digitalWrite( PM_ENABLE, LOW ); // useless ... till we set it as an ouput
@@ -290,30 +298,50 @@ void setup() {
  */
 void loop() {
 
-  delay(250);
-  
+#ifdef PM_POWER_SAVING
+  Serial.print(F("\n[PMS5003] wakeup ... now waiting 30s for stable values..."));Serial.flush();
+  pms.wakeUp();delay(30*1000);
+#endif /* PM_POWER_SAVING */
+
   Serial.println(F("\n[PMS5003] start to read data"));Serial.flush();
   // 32 bytes @ 8N1 @ 9600bauds = 33.3ms
-  _lastActive = millis();
-  while( ! pms.readUntil(data,200) ) {
-    Serial.print(F("*"));Serial.flush();
+
+  // undertaking 5 measures with 1250ms interleave
+  uint8_t _mescount=0;
+  while( _mescount < 5 ) {
+#ifdef PM_PASSIVE_MODE
+    pms.requestRead();
+#endif /* PM_PASSIVE_MODE */
+    _lastActive = millis();
+    while( ! pms.readUntil(data,200) ) {
+      Serial.print(F("*"));Serial.flush();
+    }
+    unsigned long _cur = millis();
+    char msg[64];
+    snprintf(msg,sizeof(msg),"[PMS5003] %lums read [PM1|PM2.5|PM10](µg/m3) %d %d %d", (_cur-_lastActive), data.PM_AE_UG_1_0, data.PM_AE_UG_2_5, data.PM_AE_UG_10_0 );
+    Serial.println(msg);Serial.flush();
+/*
+    Serial.print("\nPM 1.0 (ug/m3): ");
+    Serial.println(data.PM_AE_UG_1_0);
+
+    Serial.print("PM 2.5 (ug/m3): ");
+    Serial.println(data.PM_AE_UG_2_5);
+
+    Serial.print("PM 10.0 (ug/m3): ");
+    Serial.println(data.PM_AE_UG_10_0);
+*/
+    delay(1250);
+    _mescount++;
   }
-  unsigned long _cur = millis();
-  Serial.print(F("\n[PMS5003] successfull read in "));Serial.print(_cur-_lastActive);Serial.println(F(" ms"));Serial.flush();
 
-  Serial.print("\nPM 1.0 (ug/m3): ");
-  Serial.println(data.PM_AE_UG_1_0);
-  
-  Serial.print("PM 2.5 (ug/m3): ");
-  Serial.println(data.PM_AE_UG_2_5);
-  
-  Serial.print("PM 10.0 (ug/m3): ");
-  Serial.println(data.PM_AE_UG_10_0);
-  
-  Serial.println(F("\n[PMS5003] sleeping for 15s ..."));Serial.flush();
-
-  delay(15*1000);
-
+#ifdef PM_POWER_SAVING
+  // end of measurement campaign
+  Serial.print(F("\n[PMS5003] going down for 10s..."));Serial.flush();
+  pms.sleep();delay(10*1000);
+#else
+  Serial.print(F("\n[PMS5003] waiting for 40s ..."));Serial.flush();
+  delay(40*1000);
+#endif /* PM_POWER_SAVING */
 /*
   // activation ?
   if( digitalRead(PM_ENABLE)==LOW and (millis() - _lastActive) >= PM_COOLDOWN*1000 ) {

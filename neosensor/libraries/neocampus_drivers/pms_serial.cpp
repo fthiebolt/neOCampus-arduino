@@ -21,7 +21,7 @@
 #include "neocampus.h"
 #include "neocampus_debug.h"
 
-#include "pms_serial.h"
+#include "pms_serial.h"   // neOCampus driver
 
 
 /* 
@@ -40,27 +40,50 @@ const char *pms_serial::units = "µg/m3";
 /**************************************************************************/
 pms_serial::pms_serial( void ) : generic_driver() {
   _initialized = false;
+
   _psensor = nullptr;
+  _link = SENSORS_SERIAL_LINK;        // serial link number (e.g 2 --> Serial2)
+  _link_speed = PMS_DEFL_LINK_SPEED;  // serial link bauds rate
+
+  /* [nov.21] we choose to disable PM%_ENABLE gpio because PMS sensors
+   * already features both sleep() and wakeUp() commands
+  _enable_gpio = PM_ENABLE;           // PM_ENABLE gpio
+  */
+  _enable_gpio = INVALID_GPIO
 }
 
 
 /*
- * Power modes: ON or powerOFF
+ * Power modes: ON / OFF
  */
 void pms_serial::powerOFF( void )
 {
   if( !_initialized ) return;
   if( ! _psensor) return;
-  log_debug(F("\n[pms_serial] set PMS in sleep state"));log_flush();
-  _psensor->sleep();
+
+  if( _enable_GPIO != INVALID_GPIO ) {
+    log_debug(F("\n[pms_serial] set PMS in sleep state through GPIO "));log_debug(_enable_gpio);log_flush();
+    pinMode( _enable_gpio, OUTPUT );    // output value has already been set to LOW
+  }
+  else {
+    log_debug(F("\n[pms_serial] set PMS in sleep state through sleep() command"));log_flush();
+    _psensor->sleep();
+  }
 }
 
 void pms_serial::powerON( void )
 {
   if( !_initialized ) return;
   if( ! _psensor) return;
-  log_debug(F("\n[pms_serial] set PMS in sleep state"));log_flush();
-  _psensor->wakeUp();
+
+  if( _enable_GPIO != INVALID_GPIO ) {
+    log_debug(F("\n[pms_serial] wakeup PMS through GPIO "));log_debug(_enable_gpio);log_flush();
+    pinMode( _enable_gpio, INPUT );    // output value has already been set to LOW
+  }
+  else {
+    log_debug(F("\n[pms_serial] wakeup PMS through wakeUp() command"));log_flush();
+    _psensor->wakeUp();
+  }
 }
 
 
@@ -89,12 +112,13 @@ boolean pms_serial::begin( JsonVariant root ) {
     {
       "param": "link_speed",
       "value": 9600
+    },
+    {
+      "param": "enable_gpio", // hardware enable gpio pin
+      "value": 5
     }
   ]
   */
-  uint8_t _link = SENSORS_SERIAL_LINK;
-  unsigned int _link_speed = PMS_DEFL_LINK_SPEED;
-
   for( JsonVariant item : root.as<JsonArray>() ) {
 
     if( item.isNull() or not item.is<JsonObject>() ) {
@@ -118,13 +142,21 @@ boolean pms_serial::begin( JsonVariant root ) {
       }
     }
 
+    // ENABLE_GPIO
+    {
+      const char *_param = PSTR("enable_gpio");
+      if( strncmp_P(item[F("param")], _param, strlen_P(_param))==0 ) {
+        _enable_gpio = (uint8_t)item[F("value")].as<int>();    // to force -1 to get converted to (uint8_t)255
+      }
+    }
+
   }
 
 
   /*
    * sensor HW initialisation
    */
-  return _init( _link, _link_speed );
+  return _init();
 }
 
 
@@ -136,7 +168,7 @@ TO BE CONTINUED
     @brief  sensor internal processing
 */
 /**************************************************************************/
-void lcc_sensor::process( void )
+void pms_serial::process( void )
 {
   if( !_initialized ) return;
 
@@ -519,7 +551,7 @@ boolean lcc_sensor::measureBusy( void ) {
     if( _MEASURES_INTERLEAVE_MS < MAIN_LOOP_DELAY ) {
       delay( _MEASURES_INTERLEAVE_MS );
       _FSMtimerDelay = 0;
-      continue;
+      continue;z
     }
 
     // long delay between measures
@@ -540,160 +572,56 @@ boolean lcc_sensor::measureBusy( void ) {
 
 /**************************************************************************/
 /*! 
-    @brief  convert mv voltage to PPM concentration
-*/
-/**************************************************************************/
-float lcc_sensor::calculatePPM( uint32_t mv ) {
-
-  /* sep.20: this computation is based on Aymen algorithm.
-   * It does not produce a 'ppm' value but instead it 
-   * provides a R-ohm of the sensor itself.
-   */
-
-  log_debug(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("][calculatePPM] avg adc input(mv): ")); log_debug(mv); log_flush();
-
-  // Gain resistor
-  uint32_t Rgain = 0;
-  switch(_cur_gain) {
-    case LCC_SENSOR_10K:
-      Rgain = 10000; break;
-    case LCC_SENSOR_100K:
-      Rgain = 100000; break;
-    case LCC_SENSOR_1M:
-      Rgain = 1000000; break;
-    case LCC_SENSOR_10M:
-      Rgain = 10000000; break;
-    default:
-      Rgain = 0;
-  }
-
-  // Original Rsensor computation (Aymen)
-  //return (float)Rgain*3300/mv-Rgain;
-
-  // [aug.20] Francois Rsensor computation proposal,
-  // ... best will be to evalute a PPM concentration ;)
-  return (float)Rgain*(5000-mv)/mv;
-}
-
-
-/**************************************************************************/
-/*! 
     @brief  Low-level HW initialization
 */
 /**************************************************************************/
-boolean lcc_sensor::_init( void ) {
+boolean pms_sensor::_init( void ) {
 
-  _initialized = true;  // will turn to false if any of the methods fail
+  _initialized = false;
 
-  // configure gpio
-  _reset_gpio();
+  /* PMS instantiation with selected serial link.
+   * Note: link number is the serialX stream object
+   */
+  if( _link != SENSORS_SERIAL_LINK ) {
+    log_error(F("\n[pms_serial] inappropriate serial link number "));log_error(_link);log_flush();
+    return _initialized;
+  }
 
-  // powerON module
-  powerON();  // as of [aug.20] there's no power settings
+  // configure serial link and instantiate PMS low-level driver
+  Serial2.begin( _link_speed );
+  if( !_psensor ) {
+    _psensor = new PMS(Serial2);
+    if( _psensor == nullptr ) {
+      log_error(F("\n[pms_serial] failed to instantiate PMS(serial_link) ?!?!"));log_flush();
+      return _initialized;
+    }
 
-  // reset measures
-  _nb_measures = 0;
+$    log_debug(F("\n[pms_serial] successfully instantiated PMS(serial_link) sensor :)"));log_flush();
+  }
+  else {
+    log_debug(F("`\n[pms_serial} PMS already instantiated ?! ... continuing"));log_flush();
+  }
 
-  // set FSM initial state
-  _FSMstatus = LCC_SENSOR_STATE_DEFL;
-  _FSMtimerDelay = 0;
+  // switch to passive mode
+  log_debug(F("\n[pms_serial] switch to passive mode"));log_flush();
+  _psensor->passiveMode();delay(5);
 
   // powerOFF module
-  powerOFF();  // as of [aug.20] there's no power settings
+  powerOFF();
 
-  return _initialized;
-}
+  // flush serial buffer
+  while( Serial2.available() ) Serial2.read();
 
-
-/**************************************************************************/
-/*! 
-    @brief  Reset GPIO to their initial state
-*/
-/**************************************************************************/
-void lcc_sensor::_reset_gpio( void ) {
-
-  // configure gpio inputs
-  for( uint8_t pin : _inputs ) {
-    if( pin==INVALID_GPIO ) continue;
-    pinMode( pin, INPUT );
-  }
-  _cur_gain = LCC_SENSOR_GAIN_NONE;
-
-  // configure analog_input
-#if defined(ESP32)
-  #if !defined(DISABLE_ADC_CAL)
-  if( _inputs[LCC_SENSOR_ANALOG]!=INVALID_GPIO ) {
-    /* the default 11db attenuation enables analog input full range
-     * Note: unsure if it's not already done somewhere ...
-     */
-    adc1_config_channel_atten( (adc1_channel_t)digitalPinToAnalogChannel(_inputs[LCC_SENSOR_ANALOG]), ADC_ATTEN_DB_11 );
-  }
-  #else /* ADC_CAL is disabled */
-  /*
-   * regular ADC configuration, DEFAULTS are:
-   * - 8 times sampling
-   * - 11dB attenuation ==> voltage ref is 3300mv
-   * - 12 bits resolution
-   */
-  /* adc voltage ref
-   * TODO: CHANGE ME if default attenuation is not 11dB
-   */
-  _adc_voltageRef  = 3300;    // full range ADC resolution reach this voltage for a DEFAULT 11db attenuation
-
-  // adc resolution
-  _adc_resolution = ADC_RESOLUTION;
-  analogSetWidth( _adc_resolution );
-
-  #endif /* DISABLE_ADC_CAL */
-#elif defined(ESP8266)
-  /* ESP8266 defaults:
-   * - 10 bits resolution
-   * - 1100mv voltage ref
-   */
-  _adc_resolution = ADC_RESOLUTION;
-  _adc_voltageRef = 1100;
-#endif
-
-  // configure gpio output
-  if( _heater_gpio != INVALID_GPIO ) {
-    pinMode( _heater_gpio, OUTPUT );
-    pinMode( _heater_gpio, LOW );
-  }
-}
-
-
-/**************************************************************************/
-/*! 
-    @brief  Decrease current gain (if possible)
-*/
-/**************************************************************************/
-boolean lcc_sensor::_decreaseGain( void ) {
-
-  if( _cur_gain == LCC_SENSOR_GAIN_MIN ) return false;
-
-  // we need to find if there exists a gpio for a lower gain
-  boolean _found = false;
-  uint8_t g = LCC_SENSOR_GAIN_NONE;
-  for( g=_cur_gain-1; g>=LCC_SENSOR_GAIN_MIN; g-- ) {
-    if( _inputs[g]==INVALID_GPIO ) continue;
-    _found = true;
-    break;
+  // configure enable_gpio if any
+  if( _enable_gpio != INVALID_GPIO ) {
+    pinMode( _enable_gpio, INPUT );
+    digitalWrite( _enable_gpio, LOW );  // this way, INPUT ==> normal ops, OUTPUT ==> sensor disabled
   }
 
-  if( !_found or g==LCC_SENSOR_GAIN_NONE ) return false;
+  // set FSM initial state
+  _FSMstatus = PMS_FSMSTATE_DEFL;
+  _FSMtimerDelay = 0;
 
-  /* we found a lower gain ==>
-   * - disable _cur_gain gpio
-   * - enable lower gain gpio and update _cur_gaine
-   */
-  pinMode( _inputs[_cur_gain], INPUT );
-
-  pinMode( _inputs[g], OUTPUT );
-  digitalWrite( _inputs[g], LOW );
-  _cur_gain = g;
-
-  log_debug(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] _cur_gain = ")); log_debug(_cur_gain); log_flush();
-
-  return true;
+  return _initialized=true;
 }
 

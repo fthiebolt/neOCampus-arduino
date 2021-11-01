@@ -597,6 +597,10 @@ boolean airquality::_loadConfig( JsonObject root ) {
     {
       "param": "link_speed",
       "value": 9600
+    },
+    {
+      "param": "enable_gpio", // optional hardware enable gpio pin
+      "value": 5
     }
   ]
 },

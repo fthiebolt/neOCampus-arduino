@@ -27,8 +27,7 @@
 
 // generic sensor driver
 #include "generic_driver.h"
-// low-level driver from Arduino's libraries
-#include "PMS.h"
+#include "PMS.h"              // low-level driver from Arduino's libraries
 
 
 /*
@@ -88,7 +87,6 @@ class pms_serial : public generic_driver {
   protected:
     // -- private/protected methods
     boolean _init( void );          // low-level init
-    void _reset_gpio( void );       // set GPIOs at initial state
 
     boolean wakeUpStart( uint16_t=PMS_WAKEUP_DELAY );
     boolean wakeUpBusy( void );
@@ -103,8 +101,6 @@ class pms_serial : public generic_driver {
     uint8_t _link;                // serial link number (e.g 2 --> Serial2)
     unsigned int _link_speed;     // 9600 to 115200 bauds
     uint8_t _enable_gpio;         // PM_ENABLE gpio
-
-    bool _activeMode;             // PMS active or passive mode selected
 
     pmsSensorState_t _FSMstatus;  // FSM
     unsigned long _FSMtimerStart; // ms system time start of current state;

@@ -11,6 +11,7 @@
 
 	@section  HISTORY
 
+    F.Thiebolt  nov.21  added support for single data threshold_cpt
     F.Thiebolt  aug.21  added support for analog data integration
     2020-May    - First release, F. Thiebolt
     
@@ -26,6 +27,7 @@
 
 /******************************************
  * Default constructor
+ * threshold_cpt min. = 1
  */
 generic_driver::generic_driver( uint16_t read_msinterval,
                                 uint8_t threshold_cpt,
@@ -33,7 +35,7 @@ generic_driver::generic_driver( uint16_t read_msinterval,
 
   _readMsInterval       = read_msinterval;
   //Serial.print(F("\n[generic] read_msinterval="));Serial.print(read_msinterval);Serial.flush();
-  _thresholdCpt         = threshold_cpt;
+  _thresholdCpt         = ( threshold_cpt<=1 ? 1 : threshold_cpt ); // minimum is 1 measure
   _thresholdThousandth  = threshold_thousandth;
 
   _trigger        = false;
@@ -99,10 +101,11 @@ void generic_driver::process( uint16_t coolDown, uint8_t decimals ) {
     // (re)initializing either because it's first time or unstable value
     _current    = val;
     _currentCpt = 0;
-    return;
+    if( _thresholdCpt > 1 ) return;   // allowing others measures
   }
 
   // value read from sensor is stable :)
+  // or we're facing the thresholdCpt == 1 case
   if( ++_currentCpt < _thresholdCpt-1 ) return;
 
   // new stable value :)
@@ -113,6 +116,8 @@ void generic_driver::process( uint16_t coolDown, uint8_t decimals ) {
   /* We need to send the new value either because:
    * - its own value evolved above threshold
    * - we reached the _MAX_COOLDOWN_SENSOR delay regarding our last sending
+   * Note: on first time we reach thie portion of code, valueSent is garbled data
+   * but _lastMsSent is ULONG_MAX/2 means that data will get sent ;)
    */
   if( abs(value - valueSent) >= DATA_SENDING_VARIATION_THRESHOLD ||
       (_curTime - _lastMsSent >= ((unsigned long)_MAX_COOLDOWN_SENSOR)*1000) ) {

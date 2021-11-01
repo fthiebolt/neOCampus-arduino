@@ -48,7 +48,7 @@
 #define DEFL_THRESHOLD_CPT        7         // threshold counter to declare current value the new official one
 #define DEFL_THRESHOLD_THOUSANDTH 15        // 1.5 percent variation threshold to consider stable value
 
-#define _MAX_DATA_DECIMALS      3           // we won't support more than X decimals in data from sensors
+#define _MAX_DATA_DECIMALS      3           // we won't support more than X decimals for sensors' data
 #define DATA_SENDING_VARIATION_THRESHOLD  (float)(0.15) // new official value ought to differ more than this threshold to get sent
 
 

@@ -36,9 +36,12 @@ const char *pms_serial::units = "µg/m3";
 /**************************************************************************/
 /*! 
     @brief  Instantiates a new pms_serial class
+    Note: we're setting generic_driver to send data every time a new one is
+    produced 'threshold_cpt'=1 ... hence no need for 'threshold_thousandth'
+    since each data will get sent as is.
 */
 /**************************************************************************/
-pms_serial::pms_serial( void ) : generic_driver() {
+pms_serial::pms_serial( void ) : generic_driver( DEFL_READ_MSINTERVAL, 1 ) {
   _initialized = false;
 
   _psensor = nullptr;
@@ -166,17 +169,18 @@ TO BE CONTINUED
 /**************************************************************************/
 /*! 
     @brief  sensor internal processing
+    [nov.21] overriding generic_sensor::process()
 */
 /**************************************************************************/
-void pms_serial::process( void )
-{
+void pms_serial::process( uint16_t coolDown, uint8_t decimals ) {
+
   if( !_initialized ) return;
 
   // process according to our FSM
   switch( _FSMstatus ) {
 
     // IDLE
-    case lccSensorState_t::idle:
+    case pmsSensorState_t::idle:
       log_debug(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] about to start a new acquisition cycle ...")); log_flush();
       _FSMtimerDelay = 0;
 
@@ -246,6 +250,9 @@ void pms_serial::process( void )
       _init();
   }
 }
+
+
+TO BE CONTINUED
 
 
 /**************************************************************************/

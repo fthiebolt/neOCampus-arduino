@@ -61,8 +61,8 @@
 /* define maximum number of measures
  * over a single campaign.
  */
-#define _MAX_MEASURES               (uint8_t)7            // max. is 255
 #define _MEASURES_INTERLEAVE_MS     DEFL_READ_MSINTERVAL  // delay between two measures in the 'measuring' state
+#define _MAX_MEASURES               (uint8_t)5            // max. is 255
 
 // Finite state machine
 enum class pmsSensorState_t : uint8_t {
@@ -109,17 +109,20 @@ class pms_serial : public generic_driver {
     boolean measureBusy( void );
   
     // --- private/protected attributes
-    PMS *_psensor;                // [ll] pointer to low-level PMS serial sensor
-    PMS::DATA _sensor_data[];       // [ll] low-level PMS sensor deserialized data
+    PMS *_psensor;                      // [ll] pointer to low-level PMS serial sensor
 
-    uint8_t _link;                // serial link number (e.g 2 --> Serial2)
-    unsigned int _link_speed;     // 9600 to 115200 bauds
-    uint8_t _enable_gpio;         // PM_ENABLE gpio
+    uint8_t _nb_measures;               // current number of measures
+    non, structure complexe nécéssaires
+    float _measures[_MAX_MEASURES];  // currently measured mv
 
-    pmsSensorState_t _FSMstatus;  // FSM
-    unsigned long _FSMtimerStart; // ms system time start of current state;
-                                  // Only relevant when timerDelay is not null
-    uint16_t _FSMtimerDelay;      // ms delay to cur state timeout
+    uint8_t _link;                      // serial link number (e.g 2 --> Serial2)
+    unsigned int _link_speed;           // 9600 to 115200 bauds
+    uint8_t _enable_gpio;               // PM_ENABLE gpio
+
+    pmsSensorState_t _FSMstatus;        // FSM
+    unsigned long _FSMtimerStart;       // ms system time start of current state;
+                                        // Only relevant when timerDelay is not null
+    uint16_t _FSMtimerDelay;            // ms delay to cur state timeout
     
     boolean _initialized;
     static const char *units;

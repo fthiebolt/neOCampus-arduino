@@ -44,16 +44,7 @@
  * SERIAL SENSOR overall data processing:
  *
  * PMS5003 sends back 3 different values --> PM1.0, PM2.5 and PM10
- * 
- * generic_driver::process() is not overriden --> it will call pms_serial::acquire()
- * pms_serial::acquire() implements the FSM procedure
- * @pms_serial, we'll keep track of our various data acquisition
- * once all DATA have been collected, acquire() will send back a (virtual) value
- * (e.g max variation of each PM values),
- * then generic_driver::process() will decide if it needs to send back something.
- * 
- * TO BE CONTINUED
- * 
+ * generic_driver::process() is overriden and will implement the Finite State Machine (FSM)
  */
 
 /*
@@ -69,18 +60,15 @@
 
 /* define maximum number of measures
  * over a single campaign.
- * Interleave mesurementwill be 
  */
-
-TO BE CONTINUED
-
-#define _MAX_MEASURES               (uint8_t)7    // max. is 255
+#define _MAX_MEASURES               (uint8_t)7            // max. is 255
+#define _MEASURES_INTERLEAVE_MS     DEFL_READ_MSINTERVAL  // delay between two measures in the 'measuring' state
 
 // Finite state machine
 enum class pmsSensorState_t : uint8_t {
   idle            = 0,
   wakeup,               // only when sensor is sleeping
-  reading               // reading PM values from serial link
+  measures              // reading PM values from serial link
 };
 #define PMS_FSMSTATE_DEFL     pmsSensorState_t::idle
 
@@ -99,10 +87,10 @@ class pms_serial : public generic_driver {
     boolean begin( JsonVariant );
     void powerON( void );
     void powerOFF( void );
-/*
+
     void process( uint16_t coolDown=0,
                   uint8_t decimals=0 );  // override generic:process for our sensor internal processing
-*/
+
     // send back sensor's value, units and subID
     boolean acquire( float* );
     const char *sensorUnits( void ) { return units; };

@@ -46,7 +46,7 @@ class driver_dac {
     virtual uint8_t setPercentOutput( uint8_t )=0;    // pure virtual, DAC output between 0 and 100%   
     
     // MQTT retrieve subID (i.e i2c addr)
-    virtual String subID( void )=0;                   // pure virtual
+    virtual String subID( uint8_t *idx=nullptr )=0;   // pure virtual
 
   // --- protected methods / attributes ---------------------
   // --- i.e subclass have direct access to

@@ -102,8 +102,8 @@ class MAX44009 : public generic_driver {
 
     // send back sensor's value and units (e.g "32,5" "°C", <i2c_addr> )
     boolean acquire( float* );
-    const char *sensorUnits( void ) { return units; };
-    String subID( void ) { return String(_i2caddr); };
+    const char *sensorUnits( uint8_t *idx=nullptr ) { return units; };
+    String subID( uint8_t *idx=nullptr ) { return String(_i2caddr); };
 
     // MAX44009 specific methods
     boolean setIntegration( max44009IntegrationT_t );

@@ -109,14 +109,14 @@ class pm_serial : public generic_driver {
     boolean begin( JsonVariant );
     void powerON( void );
     void powerOFF( void );
-/*
+
     void process( uint16_t coolDown=0,
                   uint8_t decimals=0 );  // override generic:process for our sensor internal processing
-*/
+
     // send back sensor's value, units and subID
     boolean acquire( float* );
-    const char *sensorUnits( void ) { return units; };
-    String subID( void ) { return String("PM2.5"); };
+    const char *sensorUnits( uint8_t *idx=nullptr ) { return units; };
+    String subID( uint8_t *idx=nullptr ) { return String("PM2.5"); };
 
   // --- protected methods / attributes ---------------------
   // --- i.e subclass have direct access to

@@ -482,7 +482,7 @@ boolean airquality::_sendValues( void ) {
                                                 // this doesn't work since ArduinoJson converts to STRING withiout decimal!
     }
     else {
-      root[F("value")] = (int)( value );      // [may.20] force humidity as INT
+      root[F("value")] = (int)( value );      // [may.20] force as INT
     }
     root[F("value_units")] = _sensor[cur_sensor]->sensorUnits();
     root[F("subID")] = _sensor[cur_sensor]->subID();

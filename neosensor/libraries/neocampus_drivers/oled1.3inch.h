@@ -72,7 +72,7 @@ class oled13inch : public driver_display {
     void powerOFF( void );                // switch OFF
     void process( uint16_t coolDown=0 );  // internal processing
 
-    String subID( void ) { return String(_i2caddr); };
+    String subID( uint8_t *idx=nullptr ) { return String(_i2caddr); };
 
     // Brightness & others
     uint8_t setPercentBrightness( uint8_t );

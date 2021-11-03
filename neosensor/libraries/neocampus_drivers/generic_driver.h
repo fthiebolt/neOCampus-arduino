@@ -11,6 +11,8 @@
 
 	@section  HISTORY
 
+    nov.21  F.Thiebolt  started to add support for multiple values/subIDs/value_units
+                        from a single sensor.
     aug.21  F.Thiebolt  added support for data integration
     aug.20  F.Thiebolt  added support for sensors' internal processing
                         used in continuous integration for example.
@@ -79,14 +81,14 @@ class generic_driver {
                           uint8_t decimals=0 );   // sensors internal processing with coolDown parameter (e.g for continuous integration)
                                                   // The 'decimals' parameter is the number of digits after comma ==> 0 means integer !
     virtual boolean acquire( float* )=0;          // pure virtual, acquire sensor value
-    virtual const char *sensorUnits( void )=0;    // pure virtual, retrieve units of actual sensors (e.g celsius, %r.H, lux ...)
-
+    virtual const char *sensorUnits( uint8_t *idx=nullptr )=0;  // pure virtual, retrieve units of actual sensors (e.g celsius, %r.H, lux ...)
+                                                                // [nov.21] idx pointer enable multiples values to get returned
     // Identity (i.e i2c addr)
-    virtual String subID( void )=0;    // pure virtual, retrieve subID (i.e i2c addr)
-
+    virtual String subID( uint8_t *idx=nullptr )=0; // pure virtual, retrieve subID(s) (i.e i2c addr)
+                                                    // [nov.21] idx pointer enable multiples values to get returned
     // data integration
     inline bool getTrigger( void ) { return _trigger; };  // local driver trigger that indicates a new official value needs to get sent
-    inline float getValue( void ) { return value; };      // get official value that has gone through the whole integration process
+    inline float getValue( uint8_t *idx=nullptr ) { return value; };  // get official value that has gone through the whole integration process
     void setDataSent( void );                             // data has been sent, reset the 'new official data' trigger
 
     // public attributes

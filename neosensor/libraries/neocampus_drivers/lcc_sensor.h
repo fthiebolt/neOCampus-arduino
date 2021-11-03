@@ -127,8 +127,8 @@ class lcc_sensor : public generic_driver {
 
     // send back sensor's value, units and subID
     boolean acquire( float* );
-    const char *sensorUnits( void ) { return units; };
-    String subID( void ) { return _subID; };
+    const char *sensorUnits( uint8_t *idx=nullptr ) { return units; };
+    String subID( uint8_t *idx=nullptr ) { return _subID; };
 
   // --- protected methods / attributes ---------------------
   // --- i.e subclass have direct access to

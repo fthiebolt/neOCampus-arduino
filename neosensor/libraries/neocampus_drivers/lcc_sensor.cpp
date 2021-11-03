@@ -283,7 +283,7 @@ boolean lcc_sensor::acquire( float *pval )
    */
 
   // data available ?
-  if( _nb_measures < _MAX_MEASURES ) return false;
+  if( _nb_measures < LCC_MAX_MEASURES ) return false;
   if( _cur_gain == LCC_SENSOR_GAIN_NONE ) return false; // because it is needed to compute Rgain
 
   // we'll now parse our raw measures array to produce an average
@@ -549,7 +549,7 @@ boolean lcc_sensor::measureStart( void ) {
 boolean lcc_sensor::measureBusy( void ) {
 
   boolean res;
-  while( _nb_measures < _MAX_MEASURES ) {
+  while( _nb_measures < LCC_MAX_MEASURES ) {
     
     // do we need to wait (i.e are we busy) ?
     if( _FSMtimerDelay!=0 and 
@@ -564,18 +564,18 @@ boolean lcc_sensor::measureBusy( void ) {
     _nb_measures++;
 
     // last data written ?
-    if( _nb_measures == _MAX_MEASURES ) break; // not busy anymore
+    if( _nb_measures == LCC_MAX_MEASURES ) break; // not busy anymore
 
     // delay between two measures
-    if( _MEASURES_INTERLEAVE_MS < MAIN_LOOP_DELAY ) {
-      delay( _MEASURES_INTERLEAVE_MS );
+    if( LCC_MEASURES_INTERLEAVE_MS < MAIN_LOOP_DELAY ) {
+      delay( LCC_MEASURES_INTERLEAVE_MS );
       _FSMtimerDelay = 0;
       continue;
     }
 
     // long delay between measures
     _FSMtimerStart = millis();
-    _FSMtimerDelay = _MEASURES_INTERLEAVE_MS;
+    _FSMtimerDelay = LCC_MEASURES_INTERLEAVE_MS;
     return true; // we're busy so check on next loop() iteration
   }
 

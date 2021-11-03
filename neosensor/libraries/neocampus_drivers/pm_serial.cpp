@@ -21,12 +21,14 @@
 #include "neocampus.h"
 #include "neocampus_debug.h"
 
-#include "pms_serial.h"   // neOCampus driver
+#include "pm_serial.h"   // neOCampus driver
 
 
 /* 
  * Definitions
  */
+#define _MEASURES_INTERLEAVE_MS     DEFL_READ_MSINTERVAL  // delay between two measures in the 'measuring' state
+#define _MAX_MEASURES               (uint8_t)5            // max. number of measures during a single campaign
 
 
 /* declare kind of units (value_units) */
@@ -40,18 +42,20 @@ const char *pm_serial::units = "µg/m3";
 */
 /**************************************************************************/
 pm_serial::pm_serial( void ) : generic_driver( _MEASURES_INTERLEAVE_MS,
-                                                 _MAX_MEASURES ) {
+                                               _MAX_MEASURES ) {
   _initialized = false;
 
-  _psensor = nullptr;
+  _stream = nullptr;
   _link = SENSORS_SERIAL_LINK;        // serial link number (e.g 2 --> Serial2)
-  _link_speed = PMS_DEFL_LINK_SPEED;  // serial link bauds rate
+  _link_speed = PM_DEFL_LINK_SPEED;   // serial link bauds rate
+
+  _sensor_type = pmSensorType_t::undefined;
 
   /* [nov.21] we choose to disable PM%_ENABLE gpio because PMS sensors
    * already features both sleep() and wakeUp() commands
   _enable_gpio = PM_ENABLE;           // PM_ENABLE gpio
   */
-  _enable_gpio = INVALID_GPIO
+  _enable_gpio = INVALID_GPIO;
 }
 
 
@@ -60,31 +64,27 @@ pm_serial::pm_serial( void ) : generic_driver( _MEASURES_INTERLEAVE_MS,
  */
 void pm_serial::powerOFF( void )
 {
-  if( !_initialized ) return;
-  if( ! _psensor) return;
+  if( !_initialized or !_stream ) return;
 
-  if( _enable_GPIO != INVALID_GPIO ) {
-    log_debug(F("\n[pms_serial] set PMS in sleep state through GPIO "));log_debug(_enable_gpio);log_flush();
+  if( _enable_gpio != INVALID_GPIO ) {
+    log_debug(F("\n[pm_serial] going to sleep through GPIO "));log_debug(_enable_gpio);log_flush();
     pinMode( _enable_gpio, OUTPUT );    // output value has already been set to LOW
   }
-  else {
-    log_debug(F("\n[pms_serial] set PMS in sleep state through sleep() command"));log_flush();
-    _psensor->sleep();
+  else if( _ll_sleep() ) {
+    log_debug(F("\n[pm_serial] going to sleep through sleep() command"));log_flush();
   }
 }
 
 void pm_serial::powerON( void )
 {
-  if( !_initialized ) return;
-  if( ! _psensor) return;
+  if( !_initialized or !_stream ) return;
 
-  if( _enable_GPIO != INVALID_GPIO ) {
-    log_debug(F("\n[pms_serial] wakeup PMS through GPIO "));log_debug(_enable_gpio);log_flush();
+  if( _enable_gpio != INVALID_GPIO ) {
+    log_debug(F("\n[pm_serial] wakeup through GPIO "));log_debug(_enable_gpio);log_flush();
     pinMode( _enable_gpio, INPUT );    // output value has already been set to LOW
   }
-  else {
-    log_debug(F("\n[pms_serial] wakeup PMS through wakeUp() command"));log_flush();
-    _psensor->wakeUp();
+  else if( _ll_wakeUp() ) {
+    log_debug(F("\n[pm_serial] wakeup through wakeUp() command"));log_flush();
   }
 }
 
@@ -94,7 +94,7 @@ void pm_serial::powerON( void )
     @brief  Extract JSON config parameters to initialize the HW
 */
 /**************************************************************************/
-boolean pms_serial::begin( JsonVariant root ) {
+boolean pm_serial::begin( JsonVariant root ) {
 
   // check input(s)
   if( root.isNull() or not root.is<JsonArray>() ) {
@@ -114,6 +114,10 @@ boolean pms_serial::begin( JsonVariant root ) {
     {
       "param": "link_speed",
       "value": 9600
+    },
+    {
+      "param": "type",
+      "value": 16
     },
     {
       "param": "enable_gpio", // hardware enable gpio pin
@@ -148,7 +152,7 @@ boolean pms_serial::begin( JsonVariant root ) {
     {
       const char *_param = PSTR("type");
       if( strncmp_P(item[F("param")], _param, strlen_P(_param))==0 ) {
-        _sensor_type = (uint8_t)item[F("value")].as<int>();    // to force -1 to get converted to (uint8_t)255
+        _sensor_type = (pmSensorType_t)item[F("value")].as<int>();    // to force -1 to get converted to (uint8_t)255
       }
     }
 
@@ -170,6 +174,7 @@ boolean pms_serial::begin( JsonVariant root ) {
 }
 
 
+#if 0
 TO BE CONTINUED
 subID ??
 
@@ -261,21 +266,19 @@ void pms_serial::process( uint16_t coolDown, uint8_t decimals ) {
 
 TO BE CONTINUED
 note: wakeup state --> nb_measures to 0
+#endif /* 0 */
 
 /**************************************************************************/
 /*! 
-    @brief  return sensor value.
-            Note that we send back values collected during the internal
-            sensor processing.
+    @brief  return sensor value read from serial link
 */
 /**************************************************************************/
-boolean lcc_sensor::acquire( float *pval )
+boolean pm_serial::acquire( float *pval )
 {
-  /* it's not possible to generate the data on the fly because there are
-   * some huge delays (especially with pulse mode) before reading a data.
-   * Hence, average data collected during the sensor internal processing
-   * (i.e process()) we'll be sent back now.
-   */
+#if 0
+
+WARNING: il older airquality module, acquire was intended to retrieve data
+for sending over MQTT --> now replaced with getValue method
 
   // data available ?
   if( _nb_measures < _MAX_MEASURES ) return false;
@@ -292,6 +295,9 @@ boolean lcc_sensor::acquire( float *pval )
 
   // reset measures counter (to avoid sending the same values)
   _nb_measures = 0;
+#endif /* 0 */
+
+  *pval = 42.0;
 
   return true;
 }
@@ -301,7 +307,7 @@ boolean lcc_sensor::acquire( float *pval )
  * Private'n Protected methods 
  */
 
-
+#if 0
 /**************************************************************************/
 /*! 
     @brief  start heater for a specified duration up to 65535ms
@@ -582,6 +588,7 @@ boolean lcc_sensor::measureBusy( void ) {
 
   return false; // not busy anymore
 }
+#endif /* 0 */
 
 
 /**************************************************************************/
@@ -589,42 +596,44 @@ boolean lcc_sensor::measureBusy( void ) {
     @brief  Low-level HW initialization
 */
 /**************************************************************************/
-boolean pms_sensor::_init( void ) {
+boolean pm_serial::_init( void ) {
 
-  _initialized = false;
+  // check sensor type
+  switch( _sensor_type ) {
+    case pmSensorType_t::PMSx003 :
+      log_debug(F("\n[pm_serial] start PMSx003 PM sensor setup ..."));log_flush();
+      break;
 
-  /* PMS instantiation with selected serial link.
+    // add additional kind of sensor here
+
+    default:
+      log_error(F("\n[pm_serial] unknown PM sensor type "));log_error((uint8_t)_sensor_type);log_flush();
+      return false;
+  }
+
+  /* Initialize serial link.
    * Note: link number is the serialX stream object
    */
   if( _link != SENSORS_SERIAL_LINK ) {
-    log_error(F("\n[pms_serial] inappropriate serial link number "));log_error(_link);log_flush();
-    return _initialized;
+    log_error(F("\n[pm_serial] inappropriate serial link number "));log_error(_link);log_flush();
+    return false;
   }
-
-  // configure serial link and instantiate PMS low-level driver
   Serial2.begin( _link_speed );
-  if( !_psensor ) {
-    _psensor = new PMS(Serial2);
-    if( _psensor == nullptr ) {
-      log_error(F("\n[pms_serial] failed to instantiate PMS(serial_link) ?!?!"));log_flush();
-      return _initialized;
-    }
-
-$    log_debug(F("\n[pms_serial] successfully instantiated PMS(serial_link) sensor :)"));log_flush();
+  _stream = &Serial2;  // TODO pointer to stream according to link number specified ... maybe later ;)
+  if( !_stream ) return false;
+  
+  // switch to passive mode (if any)
+  _activeMode = true;
+  if( _ll_passiveMode() ) {
+    log_debug(F("\n[pm_serial] switch to passive mode"));log_flush();
+    _activeMode = false;
   }
-  else {
-    log_debug(F("`\n[pms_serial} PMS already instantiated ?! ... continuing"));log_flush();
-  }
-
-  // switch to passive mode
-  log_debug(F("\n[pms_serial] switch to passive mode"));log_flush();
-  _psensor->passiveMode();delay(5);
 
   // powerOFF module
   powerOFF();
 
   // flush serial buffer
-  while( Serial2.available() ) Serial2.read();
+  while( _stream->available() ) _stream->read();
 
   // configure enable_gpio if any
   if( _enable_gpio != INVALID_GPIO ) {
@@ -633,9 +642,97 @@ $    log_debug(F("\n[pms_serial] successfully instantiated PMS(serial_link) sens
   }
 
   // set FSM initial state
-  _FSMstatus = PMS_FSMSTATE_DEFL;
+  _FSMstatus = PM_FSMSTATE_DEFL;
   _FSMtimerDelay = 0;
 
-  return _initialized=true;
+  // the end ...
+  _initialized = true;
+  log_debug(F("\n[pm_serial] successfully initialized PM sensor"));log_flush();
+
+  return _initialized;
 }
 
+
+
+// ============================================================================
+// === LOW-LEVEL serial methods ===============================================
+
+/**************************************************************************/
+/*! 
+    @brief  Low-level sleep PM sensor
+    @note   only relevant if PM sensor has support for such feature
+*/
+/**************************************************************************/
+boolean pm_serial::_ll_sleep( void ) {
+
+  if( ! _stream ) return false;
+
+  boolean res = false;
+
+  if( _sensor_type ==  pmSensorType_t::PMSx003 ) {
+    uint8_t command[] = { 0x42, 0x4D, 0xE4, 0x00, 0x00, 0x01, 0x73 };
+    _stream->write(command, sizeof(command)); delay(50);
+    res = true;
+  }
+  return res;
+}
+
+/**************************************************************************/
+/*! 
+    @brief  Low-level wakeUP PM sensor
+    @note   only relevant if PM sensor has support for such feature
+*/
+/**************************************************************************/
+boolean pm_serial::_ll_wakeUp( void ) {
+
+  if( ! _stream ) return false;
+
+  boolean res = false;
+
+  if( _sensor_type ==  pmSensorType_t::PMSx003 ) {
+      uint8_t command[] = { 0x42, 0x4D, 0xE4, 0x00, 0x01, 0x01, 0x74 };
+      _stream->write(command, sizeof(command)); delay(50);
+      res = true;
+  }
+  return res;
+}
+
+/**************************************************************************/
+/*! 
+    @brief  Low-level passive mode PM sensor
+    @note   only relevant if PM sensor has support for such feature
+*/
+/**************************************************************************/
+boolean pm_serial::_ll_passiveMode( void ) {
+
+  if( ! _stream ) return false;
+
+  boolean res = false;
+
+  if( _sensor_type ==  pmSensorType_t::PMSx003 ) {
+      uint8_t command[] = { 0x42, 0x4D, 0xE1, 0x00, 0x00, 0x01, 0x70 };
+      _stream->write(command, sizeof(command)); delay(50);
+      res = true;
+  }
+  return res;
+}
+
+/**************************************************************************/
+/*! 
+    @brief  Low-level active mode PM sensor
+    @note   only relevant if PM sensor has support for such feature
+*/
+/**************************************************************************/
+boolean pm_serial::_ll_activeMode( void ) {
+
+  if( ! _stream ) return false;
+
+  boolean res = false;
+
+  if( _sensor_type ==  pmSensorType_t::PMSx003 ) {
+      uint8_t command[] = { 0x42, 0x4D, 0xE1, 0x00, 0x01, 0x01, 0x71 };
+      _stream->write(command, sizeof(command)); delay(50);
+      res = true;
+  }
+  return res;
+}

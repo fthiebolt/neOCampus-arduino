@@ -247,7 +247,11 @@ void setup() {
   Serial.begin(115200);   // debug link
   Serial.println(F("\n\n\n[PMS5003] demo ..."));Serial.flush();
   delay(1000);
-  
+/*
+  Stream* _pstream;
+  _pstream = &Serial2;
+  _pstream->begin( 9600 );
+*/
   Serial.print(F("\n[PMS5003] setup Serial2"));Serial.flush();
   Serial2.begin(9600);    // PMS link
   delay(50);

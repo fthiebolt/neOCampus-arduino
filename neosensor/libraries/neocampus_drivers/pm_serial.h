@@ -5,8 +5,7 @@
 	  @license
 	
     This is part of a the neOCampus drivers library.
-    This driver is intended various particules meters
-    featuring a serial link:
+    This driver is intended various particules meters featuring a serial link:
     - PMSx003
     - [later] SDS011
     - [later] Sensirion SCP30
@@ -17,6 +16,7 @@
 
 	@section  HISTORY
 
+    nov.21  F.Thiebolt  integration of functionalities from PMS_library sensor
     oct.21  F.Thiebolt  initial release
     
 */
@@ -33,7 +33,7 @@
 
 // generic sensor driver
 #include "generic_driver.h"
-#include "PMS.h"              // PMSx003 low-level driver from Arduino's libraries
+
 
 
 /*
@@ -70,12 +70,6 @@
  */
 #define PM_READ_MSTIMEOUT     100   // ms timeout delay for reading data from serial link (use to be < 40ms)
 
-/* define maximum number of measures
- * over a single campaign.
- */
-#define _MEASURES_INTERLEAVE_MS     DEFL_READ_MSINTERVAL  // delay between two measures in the 'measuring' state
-#define _MAX_MEASURES               (uint8_t)5            // max. is 255
-
 // Finite state machine
 enum class pmSensorState_t : uint8_t {
   idle            = 0,
@@ -91,10 +85,13 @@ enum class pmSensorState_t : uint8_t {
 #define PM_DEFL_LINK_SPEED    9600  // serial link default speed
 
 // type of PM sensor
-enum class pmSensorType_t : uint8_t {
+enum class pmSensorType_t : uint8_t { 
   PMSx003       = 0x10,
   SDS011        = 0x20,
-  SCP30         = 0x30
+  SCP30         = 0x30,
+  // add additional kind of PM sensors here
+
+  undefined     = (uint8_t)(-1)
 };
 
 
@@ -119,34 +116,42 @@ class pm_serial : public generic_driver {
     // send back sensor's value, units and subID
     boolean acquire( float* );
     const char *sensorUnits( void ) { return units; };
-    String subID( void ) { return _subID; };
+    String subID( void ) { return String("PM2.5"); };
 
   // --- protected methods / attributes ---------------------
   // --- i.e subclass have direct access to
   protected:
-    // -- private/protected methods
-    boolean _init( void );          // low-level init
-
-    boolean wakeUpStart( uint16_t=PMS_WAKEUP_DELAY );
-    boolean wakeUpBusy( void );
-
-    boolean measureStart( void );
-    boolean measureBusy( void );
-
     // --- private/protected attributes
-    PMS *_psensor;                      // [ll] pointer to low-level PMS serial sensor
-
     uint8_t _link;                      // serial link number (e.g 2 --> Serial2)
+    Stream* _stream;                    // serial link stream (pointer)
     unsigned int _link_speed;           // 9600 to 115200 bauds
     uint8_t _enable_gpio;               // PM_ENABLE gpio
 
-    pmsSensorState_t _FSMstatus;        // FSM
+    pmSensorType_t _sensor_type;        // kind of PM sensor (e.g PMSx003, SDS011, SCP30 ...)
+    boolean _activeMode;                // only relevant to PM sensors having support for active/passive modes
+
+    pmSensorState_t _FSMstatus;         // FSM
     unsigned long _FSMtimerStart;       // ms system time start of current state;
                                         // Only relevant when timerDelay is not null
     uint16_t _FSMtimerDelay;            // ms delay to cur state timeout
     
     boolean _initialized;
     static const char *units;
+
+    // -- private/protected methods
+    boolean _init( void );          // low-level init
+#if 0
+    boolean wakeUpStart( uint16_t=PM_WAKEUP_DELAY );
+    boolean wakeUpBusy( void );
+
+    boolean measureStart( void );
+    boolean measureBusy( void );
+#endif /* 0 */
+    // -- [ll] serial link private/protected methods
+    boolean _ll_sleep( void );
+    boolean _ll_wakeUp( void );
+    boolean _ll_passiveMode( void );
+    boolean _ll_activeMode( void );
 };
 
 #endif /* _PM_SERIAL_H_ */

@@ -60,9 +60,14 @@ const char *lcc_sensor::units = "ohm";  // better to avoid this, we really need 
 /**************************************************************************/
 /*! 
     @brief  Instantiates a new lcc_sensor class
+    @note   generic_driver parameters are a bit useless because of our
+            own process()
+    @todo   see @note
 */
 /**************************************************************************/
-lcc_sensor::lcc_sensor( void ) : generic_driver() {
+lcc_sensor::lcc_sensor( void ) : generic_driver( LCC_MEASURES_INTERLEAVE_MS,
+                                                 LCC_MAX_MEASURES ) {
+
   _initialized = false;
   _subID[0] = '\0';
   _heater_gpio = INVALID_GPIO;
@@ -185,10 +190,11 @@ boolean lcc_sensor::begin( JsonVariant root ) {
 /**************************************************************************/
 /*! 
     @brief  sensor internal processing
+    @todo   makes use of cooldown parameter
 */
 /**************************************************************************/
-void lcc_sensor::process( void )
-{
+void lcc_sensor::process( uint16_t coolDown,
+                          uint8_t decimals ) {
   if( !_initialized ) return;
 
   // process according to our FSM
@@ -240,7 +246,8 @@ void lcc_sensor::process( void )
     case lccSensorState_t::measuring:
       // still in the measuring process ?
       if( measureBusy() ) break;
-      log_debug(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] end of measures :)")); log_flush();
+      log_debug(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] end of measures :) ... activate trigger")); log_flush();
+      _trigger = true;
 
       // ok continue with next step: wait4read
       _FSMstatus = lccSensorState_t::wait4read;
@@ -267,6 +274,8 @@ void lcc_sensor::process( void )
 }
 
 
+#if 0
+// [nov.21] deprecated and replaced with getValue()
 /**************************************************************************/
 /*! 
     @brief  return sensor value.
@@ -300,6 +309,7 @@ boolean lcc_sensor::acquire( float *pval )
 
   return true;
 }
+#endif /* 0 */
 
 
 /* ------------------------------------------------------------------------------
@@ -627,6 +637,42 @@ float lcc_sensor::calculatePPM( uint32_t mv ) {
 }
 
 
+/******************************************
+ * DATA integration related methods:
+ *  get official value that has gone through the whole integration process
+ */
+float lcc_sensor::getValue( uint8_t *idx ) {
+
+  // we hope that data is available ... anyway let's check !
+  if( _nb_measures < LCC_MAX_MEASURES ) return -1.0;
+  if( _cur_gain == LCC_SENSOR_GAIN_NONE ) return -1.0; // because it is needed to compute Rgain
+
+  // we'll now parse our raw measures array to produce an average
+  uint32_t mv_sum = 0;
+  for( uint8_t i=0; i<_nb_measures; i++ ) {
+    mv_sum += _measures[i];
+  }
+
+  // we then convert the mv average value to a ppm one
+  return calculatePPM( (float)mv_sum / (float)_nb_measures );
+}
+
+
+/******************************************
+ * DATA integration related methods
+ */
+void lcc_sensor::setDataSent( void ) {
+
+  _trigger = false;
+
+  // reset measures counter (to avoid sending the same values)
+  _nb_measures = 0;
+
+//  valueSent = value;
+//  _lastMsSent = millis();
+}
+
+
 /**************************************************************************/
 /*! 
     @brief  Low-level HW initialization
@@ -644,6 +690,7 @@ boolean lcc_sensor::_init( void ) {
 
   // reset measures
   _nb_measures = 0;
+  _trigger = false;
 
   // set FSM initial state
   _FSMstatus = LCC_SENSOR_STATE_DEFL;

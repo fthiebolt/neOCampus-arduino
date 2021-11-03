@@ -174,20 +174,16 @@ boolean pm_serial::begin( JsonVariant root ) {
 }
 
 
-#if 0
-TO BE CONTINUED
-subID ??
-
 /**************************************************************************/
 /*! 
     @brief  sensor internal processing
     [nov.21] overriding generic_sensor::process()
 */
 /**************************************************************************/
-void pms_serial::process( uint16_t coolDown, uint8_t decimals ) {
+void pm_serial::process( uint16_t coolDown, uint8_t decimals ) {
 
   if( !_initialized ) return;
-
+#if 0
   // process according to our FSM
   switch( _FSMstatus ) {
 
@@ -261,12 +257,11 @@ void pms_serial::process( uint16_t coolDown, uint8_t decimals ) {
       log_error(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] unknown FSM state ?!?! ... resetting !")); log_flush();
       _init();
   }
-}
-
-
 TO BE CONTINUED
 note: wakeup state --> nb_measures to 0
 #endif /* 0 */
+}
+
 
 /**************************************************************************/
 /*! 
@@ -610,6 +605,8 @@ boolean pm_serial::_init( void ) {
       log_error(F("\n[pm_serial] unknown PM sensor type "));log_error((uint8_t)_sensor_type);log_flush();
       return false;
   }
+
+  _trigger = false;
 
   /* Initialize serial link.
    * Note: link number is the serialX stream object

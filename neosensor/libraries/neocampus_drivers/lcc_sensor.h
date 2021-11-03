@@ -123,12 +123,20 @@ class lcc_sensor : public generic_driver {
     boolean begin( JsonVariant );
     //void powerON( void );       // [aug.20] the board does feature any way to switch power
     //void powerOFF( void );      // [aug.20] the board does feature any way to switch power
-    void process( void );         // sensor internal processing
+
+    void process( uint16_t coolDown=0,
+                  uint8_t decimals=0 );  // override generic:process for our sensor internal processing
 
     // send back sensor's value, units and subID
-    boolean acquire( float* );
+    boolean acquire( float* ) { return false; }   // [nov.21] unused because this sensor features its own process()
+                                                  // data driven sending means that data won't get asked before we tell it's ready
     const char *sensorUnits( uint8_t *idx=nullptr ) { return units; };
     String subID( uint8_t *idx=nullptr ) { return _subID; };
+
+    // data integration, override generic_driver
+    inline bool getTrigger( void ) { return _trigger; };  // local driver trigger that indicates a new official value needs to get sent
+    float getValue( uint8_t *idx=nullptr );               // get official value that has gone through the whole integration process
+    void setDataSent( void );                             // data has been sent, reset the 'new official data' trigger
 
   // --- protected methods / attributes ---------------------
   // --- i.e subclass have direct access to
@@ -149,6 +157,9 @@ class lcc_sensor : public generic_driver {
     boolean _init( void );          // low-level init
     void _reset_gpio( void );       // set GPIOs at initial state
     boolean _decreaseGain( void );  // decrease current gain
+
+    // data integration
+    boolean _trigger;             // when triggered, module will call getValue to send back value to our infrastructure
 
     // --- private/protected attributes
     char _subID[SENSO_SUBID_MAXSIZE];

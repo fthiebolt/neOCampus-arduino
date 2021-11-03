@@ -660,6 +660,7 @@ float lcc_sensor::getValue( uint8_t *idx ) {
 
 /******************************************
  * DATA integration related methods
+ *  cancel trigger that indicates that data are ready to get sent
  */
 void lcc_sensor::setDataSent( void ) {
 

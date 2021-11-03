@@ -109,7 +109,7 @@ class pm_serial : public generic_driver {
     boolean begin( JsonVariant );
     void powerON( void );
     void powerOFF( void );
-    
+
     void process( uint16_t coolDown=0,
                   uint8_t decimals=0 );  // override generic:process for our sensor internal processing
 
@@ -120,7 +120,7 @@ class pm_serial : public generic_driver {
 
     // data integration, override generic_driver
     inline bool getTrigger( void ) { return _trigger; };  // local driver trigger that indicates a new official value needs to get sent
-    inline float getValue( uint8_t *idx=nullptr ) { return value; };  // get official value that has gone through the whole integration process
+    inline float getValue( uint8_t *idx=nullptr );        // get official value that has gone through the whole integration process
     void setDataSent( void );                             // data has been sent, reset the 'new official data' trigger
 
   // --- protected methods / attributes ---------------------

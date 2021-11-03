@@ -586,6 +586,31 @@ boolean lcc_sensor::measureBusy( void ) {
 #endif /* 0 */
 
 
+
+/******************************************
+ * DATA integration related methods:
+ *  get official value that has gone through the whole integration process
+ */
+float pm_serial::getValue( uint8_t *idx ) {
+
+  // TODO !!
+  return -1.0;
+}
+
+
+/******************************************
+ * DATA integration related methods
+ *  cancel trigger that indicates that data are ready to get sent
+ */
+void pm_serial::setDataSent( void ) {
+
+  _trigger = false;
+
+//  valueSent = value;
+//  _lastMsSent = millis();
+}
+
+
 /**************************************************************************/
 /*! 
     @brief  Low-level HW initialization

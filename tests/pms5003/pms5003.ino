@@ -283,8 +283,8 @@ void setup() {
  */
 #ifdef DEBUG_SERIAL
   delay(50);
-  pms.passiveMode();delay(50);
-  pms.wakeUp();delay(50);
+//pms.passiveMode();delay(50);
+//pms.wakeUp();delay(50);
   pms.activeMode();delay(50);
   Serial.println(F("\n[PMS5003] PMS is active ..."));Serial.flush();
   delay(5000);

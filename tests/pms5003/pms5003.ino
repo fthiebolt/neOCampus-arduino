@@ -218,8 +218,9 @@ void PMS::loop()
 
 
 /* Declarations */
+//#define DEBUG_SERIAL
 #define PM_PASSIVE_MODE   1   // PASSIVE vs ACTIVE modes
-//#define PM_POWER_SAVING   1   // enable sleep() wakeUp() cycles to save power
+#define PM_POWER_SAVING   1   // enable sleep() wakeUp() cycles to save power
 
 #define PM_COOLDOWN       30  // seconds inactive betwwen two measures
 #define PM_ENABLE         5   // PMS5003 has an Enable pin featuring a pullup resistor:
@@ -249,38 +250,48 @@ void setup() {
   
   Serial.print(F("\n[PMS5003] setup Serial2"));Serial.flush();
   Serial2.begin(9600);    // PMS link
+  delay(50);
   
-#ifdef PM_PASSIVE_MODE
+#if defined(PM_PASSIVE_MODE)
   Serial.print(F("\n[PMS5003] switch to passive mode & empty receive buffer"));Serial.flush();
-  pms.passiveMode();delay(10);
+  pms.passiveMode();delay(50);
   while( Serial2.available() ) Serial2.read();  // flush input buffer
 #else
   Serial.print(F("\n[PMS5003] switch to active mode"));Serial.flush();
   pms.activeMode();
 #endif /* PM_PASSIVE_MODE */
   
-#ifndef PM_POWER_SAVING
+#if not defined(PM_POWER_SAVING)
   Serial.print(F("\n[PMS5003] power saving mode disabled !! ... 30s warmup procedure ..."));Serial.flush();
   pms.wakeUp(); delay(30*1000);
 #endif /* PM_POWER_SAVING */
   // enable pin is input as default
   pinMode( PM_ENABLE, INPUT );
   digitalWrite( PM_ENABLE, LOW ); // useless ... till we set it as an ouput
-/*
+
+/* PM_ENABLE gpio
   Serial.println(F("\n[PMS5003] disabling "));Serial.flush();
   pinMode( PM_ENABLE, OUTPUT );
   while( true ) {
     Serial.print(F("."));Serial.flush();
     delay(1000);
   }
-  
+*/
+
+/* DEBUG
+ * raw print of serial messages
+ */
+#ifdef DEBUG_SERIAL
+  delay(50);
+  pms.passiveMode();delay(50);
+  pms.wakeUp();delay(50);
+  pms.activeMode();delay(50);
   Serial.println(F("\n[PMS5003] PMS is active ..."));Serial.flush();
-  _lastActive = millis();
-  delay(500);
+  delay(5000);
 
   while( true ) {
     while( Serial2.available() ) {
-      char msg[16];
+      char msg[64];
       char _cur = Serial2.read();
       if( _cur==0x42 ) {
         Serial.print(F("\n[new frame] = "));
@@ -290,7 +301,7 @@ void setup() {
     }
     delay(250);
   }
-*/
+#endif /* DEBUG_SERIAL */
 }
 
 /*

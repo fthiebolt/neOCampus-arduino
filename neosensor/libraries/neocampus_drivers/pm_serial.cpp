@@ -30,7 +30,7 @@
 
 
 /* declare kind of units (value_units) */
-const char *pms_serial::units = "µg/m3";
+const char *pm_serial::units = "µg/m3";
 
 
 /**************************************************************************/
@@ -39,7 +39,7 @@ const char *pms_serial::units = "µg/m3";
     Note: we're setting generic_driver specific parameters
 */
 /**************************************************************************/
-pms_serial::pms_serial( void ) : generic_driver( _MEASURES_INTERLEAVE_MS,
+pm_serial::pm_serial( void ) : generic_driver( _MEASURES_INTERLEAVE_MS,
                                                  _MAX_MEASURES ) {
   _initialized = false;
 
@@ -52,15 +52,13 @@ pms_serial::pms_serial( void ) : generic_driver( _MEASURES_INTERLEAVE_MS,
   _enable_gpio = PM_ENABLE;           // PM_ENABLE gpio
   */
   _enable_gpio = INVALID_GPIO
-
-  _nb_measures = 0;
 }
 
 
 /*
  * Power modes: ON / OFF
  */
-void pms_serial::powerOFF( void )
+void pm_serial::powerOFF( void )
 {
   if( !_initialized ) return;
   if( ! _psensor) return;
@@ -75,7 +73,7 @@ void pms_serial::powerOFF( void )
   }
 }
 
-void pms_serial::powerON( void )
+void pm_serial::powerON( void )
 {
   if( !_initialized ) return;
   if( ! _psensor) return;
@@ -146,6 +144,14 @@ boolean pms_serial::begin( JsonVariant root ) {
       }
     }
 
+    // TYPE
+    {
+      const char *_param = PSTR("type");
+      if( strncmp_P(item[F("param")], _param, strlen_P(_param))==0 ) {
+        _sensor_type = (uint8_t)item[F("value")].as<int>();    // to force -1 to get converted to (uint8_t)255
+      }
+    }
+
     // ENABLE_GPIO
     {
       const char *_param = PSTR("enable_gpio");
@@ -165,7 +171,7 @@ boolean pms_serial::begin( JsonVariant root ) {
 
 
 TO BE CONTINUED
-
+subID ??
 
 /**************************************************************************/
 /*! 

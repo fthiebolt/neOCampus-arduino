@@ -373,11 +373,11 @@ boolean airquality::loadSensoConfig( senso *sp ) {
 
     // PMS_SERIAL: PMS5003 & derivatives
     {
-      const char *_unit = PSTR("pms_serial");
+      const char *_unit = PSTR("pm_serial");
       if( (item[F("driver")] and strncmp_P(item[F("driver")], _unit, strlen_P(_unit))==0) or
            strncmp_P(item[F("unit")], _unit, strlen_P(_unit))==0 ) {
         // instantiate sensor
-        pms_serial *cur_sensor = new pms_serial();
+        pm_serial *cur_sensor = new pm_serial();
         if( cur_sensor->begin( item[F("params")] ) != true ) {
           log_debug(F("\n[airquality] ###ERROR at pms_serial startup ... removing instance ..."));log_flush();
           free(cur_sensor);
@@ -586,8 +586,8 @@ boolean airquality::_loadConfig( JsonObject root ) {
  *
 {
   "module": "airquality",
-  "unit": "pms_serial",
-  "driver": "pms_serial",
+  "unit": "pm_serial",
+  "driver": "pm_serial",
   "params":
   [
     {
@@ -597,6 +597,10 @@ boolean airquality::_loadConfig( JsonObject root ) {
     {
       "param": "link_speed",
       "value": 9600
+    },
+    {
+      "param": "type",  // type of PM sensor (see pm_serial.h)
+      "value": 16
     },
     {
       "param": "enable_gpio", // optional hardware enable gpio pin

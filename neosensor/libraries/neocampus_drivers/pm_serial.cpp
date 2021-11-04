@@ -593,7 +593,14 @@ boolean lcc_sensor::measureBusy( void ) {
  */
 float pm_serial::getValue( uint8_t *idx ) {
 
+  if( _idx ) {
+    return -1.0;
+  }
+
+TO BE CONTINUED
+
   // TODO !!
+  log_error(F("\n[pm_serial] NOT YET IMPLEMENTED"));log_flush();
   return -1.0;
 }
 

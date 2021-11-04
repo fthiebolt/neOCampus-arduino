@@ -17,12 +17,14 @@
  * 
  * ---
  * TODO:
+ * - esp8266 now features a configTzTime() in newer API
  * - loadSensoConfig --> avoid data duplication, implement an iterator
- * - check sntp!=IPADDR_ANY works with ESP8266 (line 342)
+ * - check sntp!=IPADDR_ANY works with ESP8266 (line 400)
  * - remove DISABLE_SSL compilation flag
  * - as the number of modules is increasing, implement a list of modules in the setup()
  * 
  * ---
+ * F.Thiebolt   nov.21  corrected timezone definition for esp32
  * F.Thiebolt   sep.21  added display module support (e.g oled or 7segment displays)
  * F.Thiebolt   aug.21  added digital inputs support (e;g PIR sensor)
  *                      added support for shared JSON document for data exchange 
@@ -150,10 +152,13 @@
 #define SENSO_MAX_RETRIES         5   // maximum number of sensOCampus configuration retrieval retries
 
 // Time related definitions
-#define MYTZ                      TZ_Europe_Paris
-#ifdef ESP32
-  const long  gmtOffset_sec = 3600;
-  const int   daylightOffset_sec = 3600;
+#ifdef ESP8266
+  #define MYTZ                    TZ_Europe_Paris
+#elif defined(ESP32)
+  //#define MYTZ                    "Europe/Paris" [nov.21] why is it not working ?!?!
+  #define MYTZ                    "CET-1CEST,M3.5.0/2,M10.5.0/3"
+  //const long  gmtOffset_sec = 3600; [nov.21] daylight changing does not work
+  //const int   daylightOffset_sec = 3600;
 #endif
 #define NTP_DEFAULT_SERVER1       "pool.ntp.org"      // DNS location aware
 //#define NTP_DEFAULT_SERVER1       "time.nist.gov"     // DNS location aware
@@ -563,8 +568,10 @@ bool setupNTP( void ) {
 #elif ESP32
   // register ntp sync callback
   sntp_set_time_sync_notification_cb( _syncNTP_cb );
+  // [nov.21] now using timezone definition :)
+  configTzTime( MYTZ, NTP_DEFAULT_SERVER1, NTP_DEFAULT_SERVER2, NTP_DEFAULT_SERVER3 );
   // [may.20] as default, NTP server is provided by the DHCP server
-  configTime(gmtOffset_sec, daylightOffset_sec, NTP_DEFAULT_SERVER1, NTP_DEFAULT_SERVER2, NTP_DEFAULT_SERVER3 );
+  // configTime(gmtOffset_sec, daylightOffset_sec, NTP_DEFAULT_SERVER1, NTP_DEFAULT_SERVER2, NTP_DEFAULT_SERVER3 );
 #endif    
 
   log_flush();

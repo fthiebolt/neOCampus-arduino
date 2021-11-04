@@ -951,14 +951,13 @@ void setup() {
     log_debug(F("\n\t... detected device at i2c_addr=0x"));log_debug(res,HEX);log_flush();
 
 
-
-/* DEBUG single sensor ... */
+/* DEBUG single sensor ... 
 if( res!=uint8_t(0x44) ) {
   log_debug(F("\n\t[DEBUG] discarding device at i2c_addr=0x"));log_debug(res,HEX);log_flush();
   i2c_addr=res+1;
   continue;
 }
-
+*/
 
     bool _known = false;
 

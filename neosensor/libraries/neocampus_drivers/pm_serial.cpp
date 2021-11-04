@@ -592,12 +592,14 @@ boolean lcc_sensor::measureBusy( void ) {
  *  get official value that has gone through the whole integration process
  */
 float pm_serial::getValue( uint8_t *idx ) {
-
+#if 0
   if( _idx ) {
-    return -1.0;
+    if( *_idx==(uint8_t)(-1) ) {
+      return nb_vars2retrieve
+    }
   }
-
-TO BE CONTINUED
+#endif /* 0 */
+//TO BE CONTINUED
 
   // TODO !!
   log_error(F("\n[pm_serial] NOT YET IMPLEMENTED"));log_flush();

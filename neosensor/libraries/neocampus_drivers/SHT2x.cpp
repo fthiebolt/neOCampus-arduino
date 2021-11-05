@@ -91,7 +91,8 @@ const char *SHT2x::_rh_units = "%r.H.";
     @brief  send back units
 */
 /**************************************************************************/
-const char * SHT2x::sensorUnits( uint8_t *idx ) {
+const char * SHT2x::sensorUnits( uint8_t idx ) {
+  
   switch( _measureType ) {
     case sht2xMeasureType_t::temperature:
       return _t_units;

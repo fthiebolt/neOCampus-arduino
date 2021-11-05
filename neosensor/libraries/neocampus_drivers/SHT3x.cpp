@@ -96,7 +96,8 @@ uint16_t SHT3x::_rh_sensor  = (uint16_t)(-1);
     @brief  send back units
 */
 /**************************************************************************/
-const char * SHT3x::sensorUnits( uint8_t *idx ) {
+const char * SHT3x::sensorUnits( uint8_t idx ) {
+  
   switch( _measureType ) {
     case sht3xMeasureType_t::temperature:
       return _t_units;

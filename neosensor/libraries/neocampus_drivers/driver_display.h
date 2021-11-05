@@ -89,11 +89,11 @@ class driver_display {
     //virtual const char *sensorUnits( void )=0;    // pure virtual, retrieve units of actual sensors (e.g celsius, %r.H, lux ...)
   
     // Identity (e.g i2c addr)
-    virtual String subID( uint8_t *idx=nullptr )=0;    // pure virtual, retrieve subID (e.g i2c addr)
+    virtual String subID( uint8_t=0 )=0;    // pure virtual, retrieve subID (e.g i2c addr)
 
     // data integration
     inline bool getTrigger( void ) { return _trigger; };  // local driver trigger that indicates a new official value needs to get sent
-    inline float getValue( void ) { return value; };      // get official value that has gone through the whole integration process
+    inline float getValue( uint8_t *idx=nullptr ) { return value; };  // get official value that has gone through the whole integration process
     void setDataSent( void );                             // data has been sent, reset the 'new official data' trigger
 
     // Brightness & others

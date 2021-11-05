@@ -266,7 +266,7 @@ note: wakeup state --> nb_measures to 0
 
 /**************************************************************************/
 /*! 
-    @brief  return sensor value read from serial link
+    @brief  return sensor value(s) read from serial link
 */
 /**************************************************************************/
 boolean pm_serial::acquire( float *pval )
@@ -296,6 +296,18 @@ for sending over MQTT --> now replaced with getValue method
   *pval = 42.0;
 
   return true;
+}
+
+
+/**************************************************************************/
+/*! 
+    @brief  return current measure subID
+*/
+/**************************************************************************/
+String pm_serial::subID( uint8_t idx ) {
+
+  log_warning(F("\n[pm_serial] subID with index NOT YET IMPLEMENTED"));log_flush();
+  return String("PM2.5");
 }
 
 

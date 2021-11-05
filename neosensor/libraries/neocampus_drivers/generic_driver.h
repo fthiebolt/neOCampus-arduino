@@ -81,14 +81,15 @@ class generic_driver {
                           uint8_t decimals=0 );   // sensors internal processing with coolDown parameter (e.g for continuous integration)
                                                   // The 'decimals' parameter is the number of digits after comma ==> 0 means integer !
     virtual boolean acquire( float* )=0;          // pure virtual, acquire sensor value
-    virtual const char *sensorUnits( uint8_t *idx=nullptr )=0;  // pure virtual, retrieve units of actual sensors (e.g celsius, %r.H, lux ...)
-                                                                // [nov.21] idx pointer enable multiples values to get returned
-    // Identity (i.e i2c addr)
-    virtual String subID( uint8_t *idx=nullptr )=0; // pure virtual, retrieve subID(s) (i.e i2c addr)
+    virtual const char *sensorUnits( uint8_t=0 )=0; // pure virtual, retrieve units of actual sensors (e.g celsius, %r.H, lux ...)
                                                     // [nov.21] idx pointer enable multiples values to get returned
+    // Identity (i.e i2c addr)
+    virtual String subID( uint8_t=0 )=0;    // pure virtual, retrieve subID(s) (i.e i2c addr)
+                                            // [nov.21] idx pointer enable multiples values to get returned
     // data integration
     inline bool getTrigger( void ) { return _trigger; };  // local driver trigger that indicates a new official value needs to get sent
     inline float getValue( uint8_t *idx=nullptr ) { return value; };  // get official value that has gone through the whole integration process
+                                                                      // [nov.21] idx may get increased if multiple data to send back
     void setDataSent( void );                             // data has been sent, reset the 'new official data' trigger
 
     // public attributes

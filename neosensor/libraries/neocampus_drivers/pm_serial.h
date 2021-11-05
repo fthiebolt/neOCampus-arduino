@@ -115,8 +115,8 @@ class pm_serial : public generic_driver {
 
     // send back sensor's value, units and subID
     boolean acquire( float* );
-    const char *sensorUnits( uint8_t *idx=nullptr ) { return units; };
-    String subID( uint8_t *idx=nullptr ) { return String("PM2.5"); };
+    const char *sensorUnits( uint8_t=0 ) { return units; };
+    String subID( uint8_t=0 );
 
     // data integration, override generic_driver
     inline bool getTrigger( void ) { return _trigger; };  // local driver trigger that indicates a new official value needs to get sent

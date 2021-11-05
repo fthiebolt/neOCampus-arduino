@@ -91,7 +91,7 @@ class MCP47X6 : public driver_dac {
     uint8_t setPercentOutput( uint8_t );         // parent class mandatory
     
     // MQTT need to retrieve i2c addr (i.e subID)
-    String subID( uint8_t *idx=nullptr ) { return String(_i2caddr); }; // parent class mandatory
+    String subID( uint8_t=0 ) { return String(_i2caddr); }; // parent class mandatory
     
     // --- static methods / constants -----------------------
     

@@ -111,8 +111,8 @@ class SHT3x : public generic_driver {
 
     // send back sensor's value, units and I2C addr
     boolean acquire( float* );
-    const char *sensorUnits( uint8_t *idx=nullptr );
-    String subID( uint8_t *idx=nullptr ) { return String(_i2caddr); };
+    const char *sensorUnits( uint8_t=0 );
+    String subID( uint8_t=0 ) { return String(_i2caddr); };
     
     // read sensor's values
     boolean getRH( float* );    // retrieve humidity

@@ -474,37 +474,59 @@ boolean airquality::_sendValues( void ) {
     StaticJsonDocument<DATA_JSON_SIZE> _doc;
     JsonObject root = _doc.to<JsonObject>();
 
-    // retrieve data from current sensor
-    float value = _sensor[cur_sensor]->getValue();
-    if( FLOAT_RESOLUTION ) {
-      root[F("value")] = serialized(String(value,FLOAT_RESOLUTION));   // [nov.20] force float encoding
-      //root[F("value")] = (float)( value );   // [may.20] force data as float (e.g ArduinoJson converts 20.0 to INT)
-                                                // this doesn't work since ArduinoJson converts to STRING withiout decimal!
-    }
-    else {
-      root[F("value")] = (int)( value );      // [may.20] force as INT
-    }
-    root[F("value_units")] = _sensor[cur_sensor]->sensorUnits();
-    root[F("subID")] = _sensor[cur_sensor]->subID();
+    /* Retrieve data from current sensor
+     * [nov.21] new protocol that enables to retrieve multiple data:
+     *   getValue( &index ) ==> if index has increase, then another data
+     *   needs to get sent, otherwise it's a regular driver sending back
+     *   a single data.
+     */
+    // TODO: get index of first data to retrieve ... maybe later
+    uint8_t _dataIdx=0;
+    uint8_t _curDataIdx;
+    do {
+      _curDataIdx=_dataIdx;
 
-    /*
-    * send MQTT message
-    */
-    if( sendmsg(root) ) {
-      log_info(F("\n[airquality] successfully published msg :)")); log_flush();
-      // _TXoccured = true;
+      float value = _sensor[cur_sensor]->getValue(&_dataIdx);
+      // [nov.21] _dataIdx may have increase if multiple data need to get retrieved
+      if( FLOAT_RESOLUTION ) {
+        root[F("value")] = serialized(String(value,FLOAT_RESOLUTION));   // [nov.20] force float encoding
+        //root[F("value")] = (float)( value );   // [may.20] force data as float (e.g ArduinoJson converts 20.0 to INT)
+                                                  // this doesn't work since ArduinoJson converts to STRING withiout decimal!
+      }
+      else {
+        root[F("value")] = (int)( value );      // [may.20] force as INT
+      }
+      root[F("value_units")] = _sensor[cur_sensor]->sensorUnits(_curDataIdx);
+      root[F("subID")] = _sensor[cur_sensor]->subID(_curDataIdx);
+
+      /*
+      * send MQTT message
+      */
+      if( sendmsg(root) ) {
+        log_info(F("\n[airquality] successfully published msg :)")); log_flush();
+        // _TXoccured = true;
+      }
+      else {
+        // we stop as soon as we've not been able to successfully send one message
+        log_error(F("\n[airquality] ERROR failure MQTT msg delivery :(")); log_flush();
+        return false;
+      }
+
+      // delay between two successives values to send
+      delay(20); 
+
     }
-    else {
-      // we stop as soon as we've not been able to successfully send one message
-      log_error(F("\n[airquality] ERROR failure MQTT msg delivery :(")); log_flush();
-      return false;
-    }
+    while( (_dataIdx != (uint8_t)(-1)) and
+           (_dataIdx > _curDataIdx) );
     
+    // DEBUG: print debug msg only if multiple data have been sent back
+    if( _dataIdx ) {
+      log_debug(F("\n[pm_serial] current driver sent back "));log_debug(_dataIdx);log_debug(F(" different values :)"));log_flush();
+    }
+
     // mark data as sent
     _sensor[cur_sensor]->setDataSent();
 
-    // delay between two successives values to send
-    delay(20); 
   }
 
   /* do we need to postpone to next TX slot:

@@ -108,7 +108,7 @@ class MCP47FEB : public driver_dac {
     uint8_t setPercentOutput( uint8_t );    // parent class mandatory
     
     // for MQTT
-    String subID( uint8_t *idx=nullptr ) { return String(_i2caddr); };
+    String subID( uint8_t=0 ) { return String(_i2caddr); };
 
 
     // --- static methods / constants -----------------------

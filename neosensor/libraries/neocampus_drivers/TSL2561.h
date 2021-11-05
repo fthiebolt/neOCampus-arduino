@@ -198,8 +198,8 @@ class TSL2561 : public generic_driver {
 
     // send back sensor's value and units
     boolean acquire( float* );
-    const char *sensorUnits( uint8_t *idx=nullptr ) { return units; };
-    String subID( uint8_t *idx=nullptr ) { return String(_i2caddr); };
+    const char *sensorUnits( uint8_t=0 ) { return units; };
+    String subID( uint8_t=0 ) { return String(_i2caddr); };
 
     // --- static methods / constants -----------------------
     

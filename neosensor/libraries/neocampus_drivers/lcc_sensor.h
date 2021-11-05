@@ -130,8 +130,8 @@ class lcc_sensor : public generic_driver {
     // send back sensor's value, units and subID
     boolean acquire( float* ) { return false; }   // [nov.21] unused because this sensor features its own process()
                                                   // data driven sending means that data won't get asked before we tell it's ready
-    const char *sensorUnits( uint8_t *idx=nullptr ) { return units; };
-    String subID( uint8_t *idx=nullptr ) { return _subID; };
+    const char *sensorUnits( uint8_t=0 ) { return units; };
+    String subID( uint8_t=0 ) { return _subID; };
 
     // data integration, override generic_driver
     inline bool getTrigger( void ) { return _trigger; };  // local driver trigger that indicates a new official value needs to get sent

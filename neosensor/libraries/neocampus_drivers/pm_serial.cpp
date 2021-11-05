@@ -102,7 +102,7 @@ boolean pm_serial::begin( JsonVariant root ) {
     return false;
   }
 
-//  log_debug(F("\n[pms_serial] params found :)\n")); log_flush();
+//  log_debug(F("\n[pm_serial] params found :)\n")); log_flush();
 //  serializeJsonPretty( root, Serial );
 
   /* parse all parameters of our sensor:
@@ -135,7 +135,8 @@ boolean pm_serial::begin( JsonVariant root ) {
     // LINK
     {
       const char *_param = PSTR("link");
-      if( strncmp_P(item[F("param")], _param, strlen_P(_param))==0 ) {
+      if( strlen_P(_param)==strlen_P(item[F("param")]) and
+          strncmp_P(item[F("param")], _param, strlen_P(_param))==0 ) {
         _link = (uint8_t)item[F("value")].as<int>();    // to force -1 to get converted to (uint8_t)255
       }
     }

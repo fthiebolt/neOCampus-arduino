@@ -12,6 +12,7 @@
  *  - noise detector (8bits DAC MCP4706)
  * ---
  *
+ * F.Thiebolt   Nov.21  esp32 added serial link definition
  * F.Thiebolt   Jul.21  esp32 added PIR sensor @ GPIO4
  *                      esp32 added switch INCR_SW @ GPIO18
  *                      esp32 added switch DECR_SW @ GPIO23
@@ -41,7 +42,7 @@
  */
 #define BOARD_NAME          "neOSensor"
 #define BOARD_REVISION      1.2
-#define BOARD_FWREV         211026          // Firmware revision <year><month><day> in 2 digits each
+#define BOARD_FWREV         211105          // Firmware revision <year><month><day> in 2 digits each
 
 
 /* #############################################################################
@@ -153,7 +154,7 @@
  */
 #ifndef SENSORS_SERIAL_LINK
   #ifdef ESP32
-    #define SENSORS_SERIAL_LINK     2   // [jul.21] neOSensor V5 added (i.e Serial2)
+    #define SENSORS_SERIAL_LINK     (uint8_t)2   // [jul.21] neOSensor V5 added (i.e Serial2)
   #else
     #define SENSORS_SERIAL_LINK     INVALID_SERIAL_LINK
   #endif

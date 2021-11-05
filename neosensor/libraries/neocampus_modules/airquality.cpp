@@ -379,7 +379,7 @@ boolean airquality::loadSensoConfig( senso *sp ) {
         // instantiate sensor
         pm_serial *cur_sensor = new pm_serial();
         if( cur_sensor->begin( item[F("params")] ) != true ) {
-          log_debug(F("\n[airquality] ###ERROR at pms_serial startup ... removing instance ..."));log_flush();
+          log_debug(F("\n[airquality] ###ERROR at pm_serial startup ... removing instance ..."));log_flush();
           free(cur_sensor);
           cur_sensor = NULL;
         }

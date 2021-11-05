@@ -149,7 +149,9 @@ boolean pm_serial::begin( JsonVariant root ) {
       continue;
     }
 
-    // LINK
+    /* LINK
+     * Note: added strlen comparison to distinguish between 'link' and 'link_speed'
+     */
     {
       const char *_param = PSTR("link");
       if( strlen_P(_param)==strlen_P(item[F("param")]) and
@@ -322,9 +324,12 @@ for sending over MQTT --> now replaced with getValue method
 */
 /**************************************************************************/
 String pm_serial::subID( uint8_t idx ) {
-
-  log_warning(F("\n[pm_serial] subID with index NOT YET IMPLEMENTED"));log_flush();
-  return String("PM2.5");
+  if( idx==(uint8_t)(-1) ) return {};
+  if( idx>=_nbMeasures ) return {};
+  if( !_measures[idx].subID ) return {};
+  
+  // ok, return current subID
+  return _measures[idx].subID;
 }
 
 

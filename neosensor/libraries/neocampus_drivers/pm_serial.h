@@ -108,7 +108,7 @@ typedef struct {
   float         valueSent;    // official value that has been sent
   unsigned long _lastMsSent;  // (ms) time the official value has been sent
 
-  const char *subID;          // subID string
+  const char    *subID;       // subID string
 } serialMeasure_t;
 
 #define PM_MAX_MEASURES         4 // maximum number of single measure
@@ -119,8 +119,6 @@ enum class pmsx003DataIdx_t : uint8_t {
   PM10,
   last
 };
-
-#define PM_PMSX003_SUBIDS       { "PM2_5", "PM10" }
 
 // SDS011 measurements
 enum class sds011DataIdx_t : uint8_t {

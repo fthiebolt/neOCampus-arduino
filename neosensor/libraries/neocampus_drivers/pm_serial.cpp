@@ -33,6 +33,9 @@
 
 /* declare kind of units (value_units) */
 const char *pm_serial::units = "µg/m3";
+/* declare subIDs */
+const char *pm_serial::subID_pm2_5  = "pm2_5";
+const char *pm_serial::subID_pm10   = "pm10";
 
 
 /**************************************************************************/
@@ -51,11 +54,25 @@ pm_serial::pm_serial( void ) : generic_driver( _MEASURES_INTERLEAVE_MS,
 
   _sensor_type = pmSensorType_t::undefined;
 
+  _measures = nullptr;
+  _nbMeasures = 0;
+
   /* [nov.21] we choose to disable PM%_ENABLE gpio because PMS sensors
    * already features both sleep() and wakeUp() commands
   _enable_gpio = PM_ENABLE;           // PM_ENABLE gpio
   */
   _enable_gpio = INVALID_GPIO;
+}
+
+
+/*
+ * Destructor
+ * Mostly intended to free the dynamically allocated structures
+ * Note: very scrase use of dynammic allocation in our code
+ */
+pm_serial::~pm_serial( void ) {
+  delete [] _measures;
+  _measures = nullptr;
 }
 
 
@@ -600,7 +617,7 @@ boolean lcc_sensor::measureBusy( void ) {
 
 
 
-/******************************************
+/*
  * DATA integration related methods:
  *  get official value that has gone through the whole integration process
  */
@@ -620,30 +637,61 @@ float pm_serial::getValue( uint8_t *idx ) {
 }
 
 
-/******************************************
+/*
  * DATA integration related methods
- *  cancel trigger that indicates that data are ready to get sent
+ *  cancel trigger and set value sent
  */
 void pm_serial::setDataSent( void ) {
 
   _trigger = false;
+  unsigned long curTime = millis();
 
-//  valueSent = value;
-//  _lastMsSent = millis();
+  // reinitialize measures array
+  for( uint8_t i=0; i<_nbMeasures; i++ ) {
+    if( !_measures[i]._trigger ) continue;
+
+    _measures[i]._trigger       = false;
+
+    _measures[i].valueSent      = value;
+    _measures[i]._lastMsSent    = curTime;
+  }
 }
 
 
 /**************************************************************************/
 /*! 
-    @brief  Low-level HW initialization
+    @brief  Low-level initialization
 */
 /**************************************************************************/
 boolean pm_serial::_init( void ) {
 
-  // check sensor type
+  // assertion checks
+  if( _measures ) {
+    log_error(F("\n[pm_serial] already allocated measurement array ?!?!"));log_flush();
+    return false;   // measurment array OUGHT not to get already initialized
+  }
+
+  // check sensor type and initialize measurements
   switch( _sensor_type ) {
+
+    // PMSx003
     case pmSensorType_t::PMSx003 :
       log_debug(F("\n[pm_serial] start PMSx003 PM sensor setup ..."));log_flush();
+      _nbMeasures = (uint8_t)pmsx003DataIdx_t::last;
+      _measures = new serialMeasure_t[_nbMeasures];
+      for( uint8_t i=0; i<_nbMeasures; i++ ) _measures[i].subID = nullptr;
+      _measures[(uint8_t)pmsx003DataIdx_t::PM2_5].subID = subID_pm2_5;
+      _measures[(uint8_t)pmsx003DataIdx_t::PM10].subID = subID_pm10;
+      break;
+
+    // SDS011
+    case pmSensorType_t::SDS011 :
+      log_debug(F("\n[pm_serial] start SDS011 PM sensor setup ..."));log_flush();
+      _nbMeasures = (uint8_t)sds011DataIdx_t::last;
+      _measures = new serialMeasure_t[_nbMeasures];
+      for( uint8_t i=0; i<_nbMeasures; i++ ) _measures[i].subID = nullptr;
+      _measures[(uint8_t)sds011DataIdx_t::PM2_5].subID = subID_pm2_5;
+      _measures[(uint8_t)sds011DataIdx_t::PM10].subID = subID_pm10;
       break;
 
     // add additional kind of sensor here
@@ -654,6 +702,20 @@ boolean pm_serial::_init( void ) {
   }
 
   _trigger = false;
+
+  /* Measurement array initialization
+   */
+  // initialize measures array
+  for( uint8_t i=0; i<_nbMeasures; i++ ) {
+    _measures[i]._trigger       = false;
+
+    _measures[i]._currentCpt    = (uint8_t)(-1);
+    _measures[i]._lastMsRead    = ULONG_MAX/2;
+    _measures[i]._lastMsWrite   = ULONG_MAX/2;
+    _measures[i]._lastMsSent    = ULONG_MAX/2;
+
+    _measures[i].value          = -1.0; // fool guard
+  }
 
   /* Initialize serial link.
    * Note: link number is the serialX stream object
@@ -695,7 +757,6 @@ boolean pm_serial::_init( void ) {
 
   return _initialized;
 }
-
 
 
 // ============================================================================

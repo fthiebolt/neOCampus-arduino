@@ -94,6 +94,41 @@ enum class pmSensorType_t : uint8_t {
   undefined     = (uint8_t)(-1)
 };
 
+// single measure data structure
+typedef struct {
+  bool          _trigger;     // stable official value ought to get sent according to variation constraints and the coolDown/_lastTX value
+
+  float         _current;
+  uint8_t       _currentCpt;  // nb iteration _current is stable 
+  unsigned long _lastMsRead;  // (ms) last time data has been read from sensor 
+
+  float         value;        // official value
+  unsigned long _lastMsWrite; // (ms) last time official value has been written
+
+  float         valueSent;    // official value that has been sent
+  unsigned long _lastMsSent;  // (ms) time the official value has been sent
+
+  const char *subID;          // subID string
+} serialMeasure_t;
+
+#define PM_MAX_MEASURES         4 // maximum number of single measure
+
+// PMSx003 measurements
+enum class pmsx003DataIdx_t : uint8_t {
+  PM2_5=0,
+  PM10,
+  last
+};
+
+#define PM_PMSX003_SUBIDS       { "PM2_5", "PM10" }
+
+// SDS011 measurements
+enum class sds011DataIdx_t : uint8_t {
+  PM2_5=0,
+  PM10,
+  last
+};
+
 
 
 /*
@@ -104,6 +139,9 @@ class pm_serial : public generic_driver {
 
     // constructor
     pm_serial( void );
+
+    // destructor
+    ~pm_serial( void );
     
     // sensor creation via sensOCampus JSON array 'params'
     boolean begin( JsonVariant );
@@ -142,9 +180,13 @@ class pm_serial : public generic_driver {
     
     boolean _initialized;
     static const char *units;
+    static const char *subID_pm2_5;
+    static const char *subID_pm10;
 
     // data integration
     boolean _trigger;                   // when triggered, multiple call to getValue(*idx) will send back all stable values
+    serialMeasure_t *_measures;         // array of measurement structs
+    uint8_t _nbMeasures;                // size of measurement array
 
     // -- private/protected methods
     boolean _init( void );          // low-level init
@@ -155,7 +197,7 @@ class pm_serial : public generic_driver {
     boolean measureStart( void );
     boolean measureBusy( void );
 #endif /* 0 */
-    // -- [ll] serial link private/protected methods
+    // -- [ll] private/protected methods
     boolean _ll_sleep( void );
     boolean _ll_wakeUp( void );
     boolean _ll_passiveMode( void );

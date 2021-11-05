@@ -203,13 +203,18 @@ boolean pm_serial::begin( JsonVariant root ) {
 void pm_serial::process( uint16_t coolDown, uint8_t decimals ) {
 
   if( !_initialized ) return;
-#if 0
+  
+  unsigned long _curTime = millis();
   // process according to our FSM
   switch( _FSMstatus ) {
 
     // IDLE
-    case pmsSensorState_t::idle:
-      log_debug(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] about to start a new acquisition cycle ...")); log_flush();
+    case pmSensorState_t::idle:
+      // still in cooldown phase ?
+      if( )
+to be continued
+
+      log_debug(F("\n\t[pm_serial] about to start a new acquisition cycle ...")); log_flush();
       _FSMtimerDelay = 0;
 
       // activate heating ...
@@ -277,9 +282,9 @@ void pm_serial::process( uint16_t coolDown, uint8_t decimals ) {
       log_error(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] unknown FSM state ?!?! ... resetting !")); log_flush();
       _init();
   }
-TO BE CONTINUED
+
 note: wakeup state --> nb_measures to 0
-#endif /* 0 */
+
 }
 
 

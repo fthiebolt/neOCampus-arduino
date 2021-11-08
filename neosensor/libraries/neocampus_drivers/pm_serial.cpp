@@ -218,7 +218,7 @@ void pm_serial::process( uint16_t coolDown, uint8_t decimals ) {
 
       // activate heating ...
       _FSMstatus = pmSensorState_t::wakeup;
-      if( wakeupStart() ) {
+      if( FSMwakeUpStart() ) {
         log_debug(F("\n\t[lcc_sensor] start wake up cycle ...")); log_flush();
       }
       // ... and continue with next step ...
@@ -228,9 +228,10 @@ void pm_serial::process( uint16_t coolDown, uint8_t decimals ) {
     // WAKE-UP
     case pmSensorState_t::wakeup:
       // still in wakeup cycle ?
-      if( wakeupBusy() ) break;
-TO BE CONTINUED
-      log_debug(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] heating is over (or not available) ...")); log_flush();
+      if( FSMwakeUpBusy() ) break;
+      log_debug(F("\n\t[lcc_sensor] wake up cycle is over ...")); log_flush();
+#if 0
+note: wakeup state --> nb_measures to 0
 
       // ok continue with next step: auto gain
       _FSMstatus = lccSensorState_t::auto_gain;
@@ -276,15 +277,13 @@ TO BE CONTINUED
       // let's restart on next loop()
       _FSMstatus = lccSensorState_t::idle;
       break;
-
+#endif /* 0 */
     // default
     default:
-      log_error(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] unknown FSM state ?!?! ... resetting !")); log_flush();
+      log_error(F("\n\t[lcc_sensor] unknown FSM state ?!?! ... resetting !")); log_flush();
+      delay(1000);
       _init();
   }
-
-note: wakeup state --> nb_measures to 0
-
 }
 
 
@@ -342,26 +341,23 @@ String pm_serial::subID( uint8_t idx ) {
  * Private'n Protected methods 
  */
 
-#if 0
+
 /**************************************************************************/
 /*! 
-    @brief  start heater for a specified duration up to 65535ms
+    @brief  start wake up cycle up to 65535ms
             for short pulse duration (< MAIN_DELAY_LOOP ---i.e 250ms), we
             wait for the specified delay, hence blocking behaviour,
             otherwise this is a non blocking API.
 */
 /**************************************************************************/
-boolean lcc_sensor::heaterStart( uint16_t pulse_ms ) {
+boolean pm_serial::FSMwakeUpStart( uint16_t pulse_ms ) {
 
-  if( _heater_gpio==INVALID_GPIO or pulse_ms==0 ) return false;
-
-  // ok, we start heating the sensor
-  digitalWrite( _heater_gpio, HIGH );
+  // start sensors
+  powerON();
 
   // short pulse ?
   if( pulse_ms < MAIN_LOOP_DELAY ) {
     delay( pulse_ms );
-    digitalWrite( _heater_gpio, LOW );
     _FSMtimerDelay = 0;
     return false; // no delay activated
   }
@@ -376,31 +372,28 @@ boolean lcc_sensor::heaterStart( uint16_t pulse_ms ) {
 
 /**************************************************************************/
 /*! 
-    @brief  non blocking API requesting about heating status
-            return false: heating is over
-            return true: heating is currently active
+    @brief  non blocking API requesting about wake up status
+            return false: wake up is over
+            return true: still waking up
  */
 /**************************************************************************/
-boolean lcc_sensor::heaterBusy( void ) {
-
-  if( _heater_gpio==INVALID_GPIO or _FSMtimerDelay==0 ) return false;
+boolean pm_serial::FSMwakeUpBusy( void ) {
 
   /* reached the delay ?
    * look at https://arduino.stackexchange.com/questions/33572/arduino-countdown-without-using-delay/33577#33577
    * for an explanation about millis() that wrap around!
    */
   if( (millis() - _FSMtimerStart) >= (unsigned long)_FSMtimerDelay ) {
-    // end of heating period
-    digitalWrite( _heater_gpio, LOW );
+    // sensor wakeUp cycle is over
     _FSMtimerDelay = 0;
     return false;
   }
 
-  // heating still on way
+  // wakeUp still on way
   return true;
 }
 
-
+#if 0
 /**************************************************************************/
 /*! 
     @brief  automatic selection of highest available gain for our AOP

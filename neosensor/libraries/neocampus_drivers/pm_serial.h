@@ -188,11 +188,11 @@ class pm_serial : public generic_driver {
     // -- private/protected methods
     boolean _init( void );          // low-level init
 
-    boolean wakeUpStart( uint16_t=PM_WAKEUP_DELAY );
-    boolean wakeUpBusy( void );
+    boolean FSMwakeUpStart( uint16_t=PM_WAKEUP_DELAY );
+    boolean FSMwakeUpBusy( void );
 #if 0
-    boolean measureStart( void );
-    boolean measureBusy( void );
+    boolean FSMmeasureStart( void );
+    boolean FSMmeasureBusy( void );
 #endif /* 0 */
     // -- [ll] private/protected methods
     boolean _ll_sleep( void );

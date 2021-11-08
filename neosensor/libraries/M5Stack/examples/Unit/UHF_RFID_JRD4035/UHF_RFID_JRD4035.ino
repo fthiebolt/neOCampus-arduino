@@ -1,8 +1,23 @@
+/*
+*******************************************************************************
+* Copyright (c) 2021 by M5Stack
+*                  Equipped with M5Core sample source code
+*                          配套  M5Core 示例源代码
+* Visit the website for more information：https://docs.m5stack.com/en/unit/uhf_rfid
+* 获取更多资料请访问：https://docs.m5stack.com/zh_CN/unit/uhf_rfid
+*
+* describe: uhf_rfid.
+* date：2021/9/1
+*******************************************************************************
+*/
 #include <M5Stack.h>
 #include "RFID_command.h"
+#include <M5GFX.h>
+
+M5GFX display;
+M5Canvas canvas(&display);
 
 UHF_RFID RFID;
-
 
 String comd = " ";
 CardpropertiesInfo card;
@@ -17,125 +32,159 @@ TestInfo Test;
 void setup()
 {
   M5.begin();
+  display.begin();
+  display.setTextSize(2);
+  canvas.setColorDepth(1); // mono color
+  canvas.createSprite(display.width(), display.height());
+  canvas.setTextSize((float)canvas.width() / 160);
+  canvas.setTextScroll(true);
 
-  RFID._debug = 1;
+  RFID._debug = 0;
   Serial2.begin(115200, SERIAL_8N1, 16, 17);//16.17
   if (RFID._debug == 1)Serial.begin(115200, SERIAL_8N1, 21, 22);
   M5.Lcd.fillRect(0, 0, 340, 280, BLACK);
 
+// UHF_RFID set UHF_RFID设置
   RFID.Set_transmission_Power(2600);
   RFID.Set_the_Select_mode();
   RFID.Delay(100);
   RFID.Readcallback();
   RFID.clean_data();
+  
+// Prompted to connect to UHF_RFID 提示连接UHF_RFID
+  display.println("Please connect UHF_RFID to Port C");
+  
+// Determined whether to connect to UHF_RFID 判断是否连接UHF_RFID
+  String soft_version;
+  soft_version = RFID.Query_software_version();
+  while(soft_version.indexOf("V2.3.5") == -1)
+  {
+    RFID.clean_data();
+    M5.Lcd.fillCircle(310, 10, 6, RED);
+    RFID.Delay(150);
+    M5.Lcd.fillCircle(310, 10, 6, BLACK);
+    RFID.Delay(150);
+    soft_version = RFID.Query_software_version();
+  }
+
+// The prompt will be RFID card close 提示将RFID卡靠近
+  display.println("Please approach the RFID card you need to use");
+  
 }
 
 void loop()
 {
-  M5.Lcd.fillCircle(310, 10, 6, GREEN);
-  RFID.Delay(150);
-  M5.Lcd.fillCircle(310, 10, 6, BLACK);
-  RFID.Delay(150);
+ // breathing light 呼吸灯
+ M5.Lcd.fillCircle(310, 10, 6, GREEN);
+ RFID.Delay(150);
+ M5.Lcd.fillCircle(310, 10, 6, BLACK);
+ RFID.Delay(150);
 
+//  A read/write operation specifies a particular card 读写操作需指定某一张卡
 //  comd = RFID.Set_the_select_parameter_directive("30751FEB705C5904E3D50D70");
-//  M5.Lcd.drawString(comd, 0, 0, 2);
-//  RFID.Delay(1000);
+//  canvas.println(comd);
 //  RFID.clean_data();
-//  M5.Lcd.fillRect(0, 0, 340, 280, BLACK);
-//
-  card = RFID.A_single_poll_of_instructions();
-  if (card._ERROR.length() != 0)
-  {
-    Serial.print(card._ERROR);
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ Query the card information once 查询一次卡的信息例子
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+ card = RFID.A_single_poll_of_instructions();
+ if (card._ERROR.length() != 0){
+    Serial.println(card._ERROR);
+ }else{
+    if(card._EPC.length() == 24){
+      canvas.println("RSSI :" + card._RSSI);
+      canvas.println("PC :" + card._PC);
+      canvas.println("EPC :" + card._EPC);
+      canvas.println("CRC :" + card._CRC);
+      canvas.println(" ");
+    }
   }
-  else
-  {
-    M5.Lcd.drawString(card._RSSI, 0, 0, 2);
-    M5.Lcd.drawString(card._PC, 0, 15, 2);
-    M5.Lcd.drawString(card._EPC, 0, 30, 2);
-    M5.Lcd.drawString(card._CRC, 0, 45, 2);
-  }
-  RFID.Delay(1000);
-  RFID.clean_data();
-  M5.Lcd.fillRect(0, 0, 340, 280, BLACK);
-//
-//  cards = RFID.Multiple_polling_instructions(6);
-//  for (size_t i = 0; i < cards.len; i++)
-//  {
-//    M5.Lcd.drawString(cards.card[i]._RSSI, 200, 5 + i * 15, 2);
-//    M5.Lcd.drawString(cards.card[i]._PC, 230, 5 + i * 15, 2);
-//    M5.Lcd.drawString(cards.card[i]._EPC, 0, 5 + i * 15, 2);
-//    M5.Lcd.drawString(cards.card[i]._CRC, 280, 5 + i * 15, 2);
-//  }
-//  RFID.Delay(1000);
-//  RFID.clean_data();
-//  M5.Lcd.fillRect(0, 0, 340, 280, BLACK);
-//
+  RFID.clean_data(); //Empty the data after using it 使用完数据后要将数据清空
+
+
+/*Other feature usage examples 其他功能使用例子*/
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  Read multiple RFID cards at once 一次读取多张RFID卡
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+/*  cards = RFID.Multiple_polling_instructions(6);
+ for (size_t i = 0; i < cards.len; i++)
+ {
+   if(cards.card[i]._EPC.length() == 24)
+     {
+        canvas.println("RSSI :" + cards.card[i]._RSSI);
+        canvas.println("PC :" + cards.card[i]._PC);
+        canvas.println("EPC :" + cards.card[i]._EPC);
+        canvas.println("CRC :" + cards.card[i]._CRC);
+      }
+ }
+ canvas.println(" ");  
+ RFID.clean_data();
+ */
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  Used to get the SELECT parameter 用于获取Select参数
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 //  Select = RFID.Get_the_select_parameter();
-//  M5.Lcd.drawString(Select.Mask, 0, 0, 2);
-//  M5.Lcd.drawString(Select.SelParam, 0, 15, 2);
-//  M5.Lcd.drawString(Select.Ptr, 0, 30, 2);
-//  M5.Lcd.drawString(Select.MaskLen, 0, 45, 2);
-//  M5.Lcd.drawString(Select.Truncate, 0, 60, 2);
-//  RFID.Delay(1000);
-//  RFID.clean_data();
-//  M5.Lcd.fillRect(0, 0, 340, 280, BLACK);
-//
-//  Cardinformation = RFID.NXP_Change_EAS(0x00000000);
-//  M5.Lcd.drawString(Cardinformation._UL, 0, 0, 2);
-//  M5.Lcd.drawString(Cardinformation._PC, 0, 15, 2);
-//  M5.Lcd.drawString(Cardinformation._EPC, 0, 30, 2);
-//  M5.Lcd.drawString(Cardinformation._Parameter, 0, 45, 2);
-//  M5.Lcd.drawString(Cardinformation._ErrorCode, 0, 60, 2);
-//  M5.Lcd.drawString(Cardinformation._Error, 0, 75, 2);
-//  M5.Lcd.drawString(Cardinformation._Data, 0, 90, 2);
-//  M5.Lcd.drawString(Cardinformation._Successful, 0, 105, 2);
-//  RFID.Delay(1000);
-//  RFID.clean_data();
-//  M5.Lcd.fillRect(0, 0, 340, 280, BLACK);
-//
-//  Query = RFID.Get_the_Query_parameter();
-//  M5.Lcd.drawString(Query.QueryParameter, 0, 0, 2);
-//  M5.Lcd.drawString(Query.DR, 0, 15, 2);
-//  M5.Lcd.drawString(Query.M, 0, 30, 2);
-//  M5.Lcd.drawString(Query.TRext, 0, 45, 2);
-//  M5.Lcd.drawString(Query.Sel, 0, 60, 2);
-//  M5.Lcd.drawString(Query.Session, 0, 75, 2);
-//  M5.Lcd.drawString(Query.Target, 0, 90, 2);
-//  M5.Lcd.drawString(Query.Q, 0, 105, 2);
-//  RFID.Delay(1000);
-//  RFID.clean_data();
-//  M5.Lcd.fillRect(0, 0, 340, 280, BLACK);
-//
-//
-//  Read = RFID.Read_receive_demodulator_parameters();
-//  M5.Lcd.drawString(Read.Region, 0, 0, 2);
-//  M5.Lcd.drawString(Read.Channel_Index, 0, 15, 2);
-//  M5.Lcd.drawString(Read.Pow, 0, 30, 2);
-//  M5.Lcd.drawString(Read.Mixer_G, 0, 45, 2);
-//  M5.Lcd.drawString(Read.IF_G, 0, 60, 2);
-//  M5.Lcd.drawString(Read.Thrd, 0, 75, 2);
-//  RFID.Delay(1000);
-//  RFID.clean_data();
-//  M5.Lcd.fillRect(0, 0, 340, 280, BLACK);
-//
-//  Test = RFID.Test_the_RSSI_input_signal();
-//  M5.Lcd.drawString(Test.CH_L, 0, 0, 2);
-//  M5.Lcd.drawString(Test.CH_H, 0, 15, 2);
-//  for (size_t i = 0; i < 20; i++)
+//  if(Select.Mask.length() != 0)
 //  {
-//    if (i < 10)
-//    {
-//      M5.Lcd.drawString(Test.Data[i], i * 20, 30, 2);
-//    }
-//    else
-//    {
-//      M5.Lcd.drawString(Test.Data[i], (i - 10) * 20, 45, 2);
-//    }
+//    canvas.println("Mask :" + Select.Mask);
+//    canvas.println("SelParam :" + Select.SelParam);
+//    canvas.println("Ptr :" + Select.Ptr);
+//    canvas.println("MaskLen :" + Select.MaskLen);
+//    canvas.println("Truncate :" + Select.Truncate);
+//    canvas.println(" ");
 //  }
-//  RFID.Delay(1000);
+//    RFID.clean_data();
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  Used to change the PSF bit of the NXP G2X label 用于改变 NXP G2X 标签的 PSF 位
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+//  Cardinformation = RFID.NXP_Change_EAS(0x00000000);
+//  if(Cardinformation._UL.length() != 0)
+//  {
+//    canvas.println("UL :" + Cardinformation._UL);
+//    canvas.println("PC :" + Cardinformation._PC);
+//    canvas.println("EPC :" + Cardinformation._EPC);
+//    canvas.println("Parameter :" + Cardinformation._Parameter);
+//    canvas.println("ErrorCode :" + Cardinformation._ErrorCode);
+//    canvas.println("Error :" + Cardinformation._Error);
+//    canvas.println("Data :" + Cardinformation._Data);
+//    canvas.println("Successful :" + Cardinformation._Successful);
+//    canvas.println(" ");
+//   }
+//    RFID.clean_data();
+  
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  Used to get the Query parameters 用于获取Query参数
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+//  Query = RFID.Get_the_Query_parameter();
+//  if(Query.QueryParameter.length() != 0)
+//  {
+//    canvas.println("QueryParameter :" + Query.QueryParameter);
+//    canvas.println("DR :" + Query.DR);
+//    canvas.println("M :" + Query.M);
+//    canvas.println("TRext :" + Query.TRext);
+//    canvas.println("Sel :" + Query.Sel);
+//    canvas.println("Session :" + Query.Session);
+//    canvas.println("Targetta :" + Query.Target);
+//    canvas.println("Q :" + Query.Q);
+//    canvas.println(" ");
+//  }
 //  RFID.clean_data();
-//  M5.Lcd.fillRect(0, 0, 340, 280, BLACK);
 
 
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  Used to get the Query parameters 用于读取接收解调器参数
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+//  Read = RFID.Read_receive_demodulator_parameters();
+//  if(Read.Mixer_G.length()!= 0)
+//  {
+//    canvas.println("Mixer_G :" + Read.Mixer_G);
+//    canvas.println("IF_G :" + Read.IF_G);
+//    canvas.println("Thrd :" + Read.Thrd);
+//    canvas.println(" ");
+//  }
+//  RFID.clean_data();
 }

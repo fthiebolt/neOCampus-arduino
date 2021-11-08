@@ -98,15 +98,12 @@ enum class pmSensorType_t : uint8_t {
 typedef struct {
   bool          _trigger;     // stable official value ought to get sent according to variation constraints and the coolDown/_lastTX value
 
-  float         _current;
-  uint8_t       _currentCpt;  // nb iteration _current is stable 
-  unsigned long _lastMsRead;  // (ms) last time data has been read from sensor 
+  float         _currentSum;  // sum of all values read (will get divided by readIter for avg)
 
   float         value;        // official value
-  unsigned long _lastMsWrite; // (ms) last time official value has been written
 
-  float         valueSent;    // official value that has been sent
-  unsigned long _lastMsSent;  // (ms) time the official value has been sent
+  float         valueSent;    // latest official value that has been sent
+  unsigned long _lastMsSent;  // (ms) time the official value has been sent (starvation avoidance)
 
   const char    *subID;       // subID string
 } serialMeasure_t;
@@ -146,8 +143,8 @@ class pm_serial : public generic_driver {
     void powerON( void );
     void powerOFF( void );
 
-    void process( uint16_t coolDown=0,
-                  uint8_t decimals=0 );  // override generic:process for our sensor internal processing
+    void process( uint16_t coolDown=0,    // cooldown(seconds)
+                  uint8_t decimals=0 );   // override generic:process for our sensor internal processing
 
     // send back sensor's value, units and subID
     boolean acquire( float* );
@@ -185,13 +182,15 @@ class pm_serial : public generic_driver {
     boolean _trigger;                   // when triggered, multiple call to getValue(*idx) will send back all stable values
     serialMeasure_t *_measures;         // array of measurement structs
     uint8_t _nbMeasures;                // size of measurement array
+    uint8_t _currentCpt;                // nb read iteration in current reading campaign
+    unsigned long _lastMsRead;          // (ms) last time data has been read from sensor 
 
     // -- private/protected methods
     boolean _init( void );          // low-level init
-#if 0
+
     boolean wakeUpStart( uint16_t=PM_WAKEUP_DELAY );
     boolean wakeUpBusy( void );
-
+#if 0
     boolean measureStart( void );
     boolean measureBusy( void );
 #endif /* 0 */

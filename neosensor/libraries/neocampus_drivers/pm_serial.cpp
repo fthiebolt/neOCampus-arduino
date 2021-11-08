@@ -205,31 +205,31 @@ void pm_serial::process( uint16_t coolDown, uint8_t decimals ) {
   if( !_initialized ) return;
   
   unsigned long _curTime = millis();
+
   // process according to our FSM
   switch( _FSMstatus ) {
 
     // IDLE
     case pmSensorState_t::idle:
       // still in cooldown phase ?
-      if( )
-to be continued
-
-      log_debug(F("\n\t[pm_serial] about to start a new acquisition cycle ...")); log_flush();
+      if( _curTime - _lastMsRead < ((unsigned long)coolDown)*1000 ) break;
+      log_debug(F("\n\t[pm_serial] going out of cooldown ...")); log_flush();
       _FSMtimerDelay = 0;
 
       // activate heating ...
-      _FSMstatus = lccSensorState_t::heating;
-      if( heaterStart() ) {
-        log_debug(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] start heating ...")); log_flush();
+      _FSMstatus = pmSensorState_t::wakeup;
+      if( wakeupStart() ) {
+        log_debug(F("\n\t[lcc_sensor] start wake up cycle ...")); log_flush();
       }
       // ... and continue with next step ...
       //yield();
       //break;
 
-    // HEATING
-    case lccSensorState_t::heating:
-      // still in heating process ?
-      if( heaterBusy() ) break;
+    // WAKE-UP
+    case pmSensorState_t::wakeup:
+      // still in wakeup cycle ?
+      if( wakeupBusy() ) break;
+TO BE CONTINUED
       log_debug(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] heating is over (or not available) ...")); log_flush();
 
       // ok continue with next step: auto gain
@@ -713,19 +713,17 @@ boolean pm_serial::_init( void ) {
 
   _trigger = false;
 
-  /* Measurement array initialization
+  /* 
+   * Measurement initialization
    */
   // initialize measures array
   for( uint8_t i=0; i<_nbMeasures; i++ ) {
     _measures[i]._trigger       = false;
-
-    _measures[i]._currentCpt    = (uint8_t)(-1);
-    _measures[i]._lastMsRead    = ULONG_MAX/2;
-    _measures[i]._lastMsWrite   = ULONG_MAX/2;
     _measures[i]._lastMsSent    = ULONG_MAX/2;
-
     _measures[i].value          = -1.0; // fool guard
   }
+  _currentCpt    = (uint8_t)(-1);
+  _lastMsRead    = ULONG_MAX/2;
 
   /* Initialize serial link.
    * Note: link number is the serialX stream object

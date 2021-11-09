@@ -148,14 +148,14 @@ class pm_serial : public generic_driver {
                   uint8_t decimals=0 );   // override generic:process for our sensor internal processing
 
     // send back sensor's value, units and subID
-    boolean acquire( float* );
+    boolean acquire( float* ) { return false; };    // acquire is part of generic::process() we override
     const char *sensorUnits( uint8_t=0 ) { return units; };
     String subID( uint8_t=0 );
 
     // data integration, override generic_driver
-    inline bool getTrigger( void ) { return _trigger; };  // local driver trigger that indicates a new official value needs to get sent
-    float getValue( uint8_t *idx=nullptr );               // get official value that has gone through the whole integration process
-    void setDataSent( void );                             // data has been sent, reset the 'new official data' trigger
+    inline bool getTrigger( void );                 // local driver trigger that indicates a new official value needs to get sent
+    float getValue( uint8_t *idx=nullptr );         // get official value that has gone through the whole integration process
+    void setDataSent( void );                       // data has been sent, reset the 'new official data' trigger
 
   // --- protected methods / attributes ---------------------
   // --- i.e subclass have direct access to
@@ -200,6 +200,8 @@ class pm_serial : public generic_driver {
     boolean _ll_wakeUp( void );
     boolean _ll_passiveMode( void );
     boolean _ll_activeMode( void );
+    boolean _ll_requestRead( void );
+    boolean _ll_readData( void );
 };
 
 #endif /* _PM_SERIAL_H_ */

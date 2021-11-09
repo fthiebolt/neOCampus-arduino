@@ -186,7 +186,6 @@ boolean pm_serial::begin( JsonVariant root ) {
 
   }
 
-
   /*
    * sensor HW initialisation
    */
@@ -245,6 +244,9 @@ void pm_serial::process( uint16_t coolDown, uint8_t decimals ) {
       if( FSMmeasureBusy() ) break;
       log_debug(F("\n\t[lcc_sensor] end of measures :)")); log_flush();
 
+      // shutdown sensor
+      powerOFF();
+
       // ok continue with next step: wait4read
       _FSMstatus = pmSensorState_t::wait4read;
       if( _trigger ) {
@@ -254,7 +256,7 @@ void pm_serial::process( uint16_t coolDown, uint8_t decimals ) {
       //break;
 
     // WAIT4READ
-    case lccSensorState_t::wait4read:
+    case pmSensorState_t::wait4read:
       // waiting for data to get read before acquiring new ones
       if( _trigger ) break;
 
@@ -272,6 +274,7 @@ void pm_serial::process( uint16_t coolDown, uint8_t decimals ) {
 }
 
 
+#if 0
 /**************************************************************************/
 /*! 
     @brief  return sensor value(s) read from serial link
@@ -279,8 +282,6 @@ void pm_serial::process( uint16_t coolDown, uint8_t decimals ) {
 /**************************************************************************/
 boolean pm_serial::acquire( float *pval )
 {
-#if 0
-
 WARNING: il older airquality module, acquire was intended to retrieve data
 for sending over MQTT --> now replaced with getValue method
 
@@ -299,12 +300,10 @@ for sending over MQTT --> now replaced with getValue method
 
   // reset measures counter (to avoid sending the same values)
   _nb_measures = 0;
-#endif /* 0 */
-
-  *pval = 42.0;
 
   return true;
 }
+#endif /* 0 */
 
 
 /**************************************************************************/
@@ -320,6 +319,7 @@ String pm_serial::subID( uint8_t idx ) {
   // ok, return current subID
   return _measures[idx].subID;
 }
+
 
 
 /* ------------------------------------------------------------------------------
@@ -364,6 +364,8 @@ boolean pm_serial::FSMwakeUpStart( uint16_t pulse_ms ) {
 /**************************************************************************/
 boolean pm_serial::FSMwakeUpBusy( void ) {
 
+  if( _FSMtimerDelay==0 ) return false;
+
   /* reached the delay ?
    * look at https://arduino.stackexchange.com/questions/33572/arduino-countdown-without-using-delay/33577#33577
    * for an explanation about millis() that wrap around!
@@ -388,15 +390,30 @@ boolean pm_serial::FSMwakeUpBusy( void ) {
 boolean pm_serial::FSMmeasureStart( void ) {
 
   // reset count of measures
-switch to _activeMode
-reset _currentSum
-_readCpt = 0;
+  for( uint8_t i=0; i<_nbMeasures; i++ ) {
+    _measures[i]._currentSum = (float)0;
+  }
+  _readCpt = 0;
+
+  // active mode
+  if( !_activeMode ) {
+    if( _ll_activeMode() ) {
+      _activeMode = true;
+      log_debug(F("\n[pm_serial] active mode enabled ..."));log_flush();
+    }
+    else {
+      log_warning(F("\n[pm_serial] unable to switch to activeMode !?!? ... continuing"));log_flush();
+      delay(500);
+    }
+  }
+  // start reading immediately
+  _FSMtimerDelay = 0;
 
   return true;
 }
 
 
-
+#if 0
 /**************************************************************************/
 /*! 
     @brief  internal ADC read; sends back voltage_mv
@@ -434,6 +451,7 @@ boolean lcc_sensor::readSensor_mv( uint32_t *pval ) {
   // error as default
   return false;
 }
+#endif /* 0 */
 
 
 /**************************************************************************/
@@ -441,16 +459,17 @@ boolean lcc_sensor::readSensor_mv( uint32_t *pval ) {
     @brief  check about undergoing measuremt process
 */
 /**************************************************************************/
-boolean lcc_sensor::measureBusy( void ) {
-
+boolean pm_serial::FSMmeasureBusy( void ) {
+#if 0
   boolean res;
-  while( _nb_measures < _MAX_MEASURES ) {
-    
+  while( _readCpt < DEFL_THRESHOLD_CPT ) {
+
     // do we need to wait (i.e are we busy) ?
     if( _FSMtimerDelay!=0 and 
         (millis() - _FSMtimerStart) < (unsigned long)_FSMtimerDelay ) return true;
 
     // acquire data
+    TO BE CONTINUED
     res = readSensor_mv( &_measures[_nb_measures] );
     if( !res ) {
       log_debug(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] read failure ?!?! ... next iteration :|")); log_flush();
@@ -482,12 +501,11 @@ boolean lcc_sensor::measureBusy( void ) {
 
 
 end of measures:
-- powerOFF sensor
 - compute avg
+#endif /* 0 */
 
   return false; // not busy anymore
 }
-#endif /* 0 */
 
 
 /*
@@ -721,3 +739,58 @@ boolean pm_serial::_ll_activeMode( void ) {
   }
   return res;
 }
+
+
+/**************************************************************************/
+/*! 
+    @brief  ask for data to get read
+    @note   only relevant if PM sensor has support for such feature
+*/
+/**************************************************************************/
+boolean pm_serial::_ll_requestRead( void ) {
+  if( ! _stream ) return false;
+  if( _activeMode ) return false;
+
+  boolean res = false;
+
+  if( _sensor_type ==  pmSensorType_t::PMSx003 ) {
+    uint8_t command[] = { 0x42, 0x4D, 0xE2, 0x00, 0x00, 0x01, 0x71 };
+    _stream->write(command, sizeof(command)); delay(50);
+    res = true;
+  }
+  return res;
+}
+
+
+/**************************************************************************/
+/*! 
+    @brief  Low-level read data from serial link
+*/
+/**************************************************************************/
+boolean pm_serial::_ll_readData( void ) {
+
+  if( ! _stream ) return false;
+
+  boolean res = false;
+
+  // request for data
+  _ll_requestRead();
+
+  if( _sensor_type ==  pmSensorType_t::PMSx003 ) {
+
+
+//TO BE CONTINUED
+
+
+    res = true;
+  }
+  else if( _sensor_type ==  pmSensorType_t::SDS011 ) {
+
+    // NOT YET IMPLEMENTED
+
+    res = false;
+  }
+
+  return res;
+}
+

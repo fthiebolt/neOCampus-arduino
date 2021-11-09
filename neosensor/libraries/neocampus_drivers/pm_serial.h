@@ -195,13 +195,15 @@ class pm_serial : public generic_driver {
     boolean FSMmeasureStart( void );
     boolean FSMmeasureBusy( void );
 
+    boolean serialRead_pmsx003( uint16_t=PM_READ_MSTIMEOUT );   // blocking call reading data from serial till data OK or timeout
+    boolean serialRead_sds011( uint16_t=PM_READ_MSTIMEOUT );    // blocking call reading data from serial till data OK or timeout
+
     // -- [ll] private/protected methods
     boolean _ll_sleep( void );
     boolean _ll_wakeUp( void );
     boolean _ll_passiveMode( void );
     boolean _ll_activeMode( void );
     boolean _ll_requestRead( void );
-    boolean _ll_readData( void );
 };
 
 #endif /* _PM_SERIAL_H_ */

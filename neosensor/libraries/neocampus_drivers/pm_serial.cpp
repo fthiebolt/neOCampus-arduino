@@ -218,7 +218,7 @@ void pm_serial::process( uint16_t coolDown, uint8_t decimals ) {
       // activate heating ...
       _FSMstatus = pmSensorState_t::wakeup;
       if( FSMwakeUpStart() ) {
-        log_debug(F("\n\t[lcc_sensor] start wake up cycle ...")); log_flush();
+        log_debug(F("\n\t[pm_serial] start wake up cycle ...")); log_flush();
       }
       // ... and continue with next step ...
       //yield();
@@ -228,12 +228,12 @@ void pm_serial::process( uint16_t coolDown, uint8_t decimals ) {
     case pmSensorState_t::wakeup:
       // still in wakeup cycle ?
       if( FSMwakeUpBusy() ) break;
-      log_debug(F("\n\t[lcc_sensor] wake up cycle is over ...")); log_flush();
+      log_debug(F("\n\t[pm_serial] wake up cycle is over ...")); log_flush();
 
       // ok continue with next step: auto gain
       _FSMstatus = pmSensorState_t::measuring;
       if( FSMmeasureStart() ) {
-        log_debug(F("\n\t[lcc_sensor] start measuring ...")); log_flush();
+        log_debug(F("\n\t[pm_serial] start measuring ...")); log_flush();
       }
       //yield();
       //break;
@@ -242,7 +242,7 @@ void pm_serial::process( uint16_t coolDown, uint8_t decimals ) {
     case pmSensorState_t::measuring:
       // still in the measuring process ?
       if( FSMmeasureBusy() ) break;
-      log_debug(F("\n\t[lcc_sensor] end of measures :)")); log_flush();
+      log_debug(F("\n\t[pm_serial] end of measures :)")); log_flush();
 
       // shutdown sensor
       powerOFF();
@@ -250,7 +250,7 @@ void pm_serial::process( uint16_t coolDown, uint8_t decimals ) {
       // ok continue with next step: wait4read
       _FSMstatus = pmSensorState_t::wait4read;
       if( _trigger ) {
-        log_debug(F("\n\t[lcc_sensor] now waiting for data to get read ...")); log_flush();
+        log_debug(F("\n\t[pm_serial] now waiting for data to get read ...")); log_flush();
       }
       //yield();
       //break;
@@ -262,12 +262,12 @@ void pm_serial::process( uint16_t coolDown, uint8_t decimals ) {
 
       // let's restart on next loop()
       _FSMstatus = pmSensorState_t::idle;
-      log_debug(F("\n\t[lcc_sensor] data sent back, switching to IDLE state ...")); log_flush();
+      log_debug(F("\n\t[pm_serial] data sent back, switching to IDLE state ...")); log_flush();
       break;
 
     // default
     default:
-      log_error(F("\n\t[lcc_sensor] unknown FSM state ?!?! ... resetting !")); log_flush();
+      log_error(F("\n\t[pm_serial] unknown FSM state ?!?! ... resetting !")); log_flush();
       delay(1000);
       _init();
   }
@@ -287,7 +287,7 @@ for sending over MQTT --> now replaced with getValue method
 
   // data available ?
   if( _nb_measures < _MAX_MEASURES ) return false;
-  if( _cur_gain == LCC_SENSOR_GAIN_NONE ) return false; // because it is needed to compute Rgain
+  if( _cur_gain == pm_serial_GAIN_NONE ) return false; // because it is needed to compute Rgain
 
   // we'll now parse our raw measures array to produce an average
   uint32_t mv_sum = 0;
@@ -419,7 +419,7 @@ boolean pm_serial::FSMmeasureStart( void ) {
     @brief  internal ADC read; sends back voltage_mv
 */
 /**************************************************************************/
-boolean lcc_sensor::readSensor_mv( uint32_t *pval ) {
+boolean pm_serial::readSensor_mv( uint32_t *pval ) {
 
   if( pval==nullptr ) return false;
 
@@ -429,7 +429,7 @@ boolean lcc_sensor::readSensor_mv( uint32_t *pval ) {
   esp_err_t res;
   uint8_t _retry = 3;
   do {
-    res = esp_adc_cal_get_voltage( (adc_channel_t)digitalPinToAnalogChannel(_inputs[LCC_SENSOR_ANALOG]),
+    res = esp_adc_cal_get_voltage( (adc_channel_t)digitalPinToAnalogChannel(_inputs[pm_serial_ANALOG]),
                                   adc_chars, pval );
     if( res!=ESP_OK ) delay(20);
   } while( res!=ESP_OK and _retry-- );
@@ -437,14 +437,14 @@ boolean lcc_sensor::readSensor_mv( uint32_t *pval ) {
 
   #else /* ADC_CAL is disabled */
   // regular ADC reading
-  *pval = ((uint32_t)(analogRead(_inputs[LCC_SENSOR_ANALOG]))*_adc_voltageRef) / ((uint32_t)(pow(2,_adc_resolution))-1);
+  *pval = ((uint32_t)(analogRead(_inputs[pm_serial_ANALOG]))*_adc_voltageRef) / ((uint32_t)(pow(2,_adc_resolution))-1);
   return true;
 
   #endif /* DISABLE_ADC_CAL */
 
 #elif defined(ESP8266)
   // 10bits resolution with 1.1 ref. voltage
-  *pval = ((uint32_t)(analogRead(_inputs[LCC_SENSOR_ANALOG]))*_adc_voltageRef) / ((uint32_t)(pow(2,_adc_resolution))-1);
+  *pval = ((uint32_t)(analogRead(_inputs[pm_serial_ANALOG]))*_adc_voltageRef) / ((uint32_t)(pow(2,_adc_resolution))-1);
   return true;
 #endif
 
@@ -460,51 +460,106 @@ boolean lcc_sensor::readSensor_mv( uint32_t *pval ) {
 */
 /**************************************************************************/
 boolean pm_serial::FSMmeasureBusy( void ) {
-#if 0
-  boolean res;
+
+  boolean res = true;
+
   while( _readCpt < DEFL_THRESHOLD_CPT ) {
 
     // do we need to wait (i.e are we busy) ?
     if( _FSMtimerDelay!=0 and 
         (millis() - _FSMtimerStart) < (unsigned long)_FSMtimerDelay ) return true;
 
-    // acquire data
-    TO BE CONTINUED
-    res = readSensor_mv( &_measures[_nb_measures] );
-    if( !res ) {
-      log_debug(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] read failure ?!?! ... next iteration :|")); log_flush();
-      return true;
-    }
-    _nb_measures++;
+    // acquire data trough blocking API
+    switch( _sensor_type ) {
 
-    // last data written ?
-    if( _nb_measures == _MAX_MEASURES ) break; // not busy anymore
+      // PMSX003
+      case pmSensorType_t::PMSx003 :
+        _ll_requestRead();
+        res = serialRead_pmsx003();   // blocking read
+        break;
+
+      // SDS011
+      case pmSensorType_t::SDS011 :
+        _ll_requestRead();
+        res = serialRead_sds011();    // blocking read
+        break;
+
+      // default
+      default:
+        log_error(F("\n\t[pm_serial] unknown sensor type Ox"));log_error((uint8_t)_sensor_type,HEX);log_flush();
+        delay(1000);
+        return false;
+    }
+
+    if( !res ) {
+      log_debug(F("\n\t[pm_serial] read failure ?!?! ... next iteration :|")); log_flush();
+    }
+    else {
+      _readCpt++;
+    }
+
+    // last data read ?
+    if( _readCpt == DEFL_THRESHOLD_CPT ) break; // not busy anymore
 
     // delay between two measures
-    if( _MEASURES_INTERLEAVE_MS < MAIN_LOOP_DELAY ) {
-      delay( _MEASURES_INTERLEAVE_MS );
+    if( DEFL_READ_MSINTERVAL < MAIN_LOOP_DELAY ) {
+      delay( DEFL_READ_MSINTERVAL );
       _FSMtimerDelay = 0;
-      continue;z
+      continue;
     }
 
     // long delay between measures
     _FSMtimerStart = millis();
-    _FSMtimerDelay = _MEASURES_INTERLEAVE_MS;
+    _FSMtimerDelay = DEFL_READ_MSINTERVAL;
     return true; // we're busy so check on next loop() iteration
   }
-
-  /* DEBUG DEBUG DEBUG */
-  log_debug(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] raw DATA read:")); log_flush();
-  for( uint32_t _val : _measures ) {
-    log_debug(F("\n\t")); log_debug(_val);log_debug(F("mv"));
-  }
-
+#if 0
+TO BE CONTINUED
 
 end of measures:
 - compute avg
 #endif /* 0 */
-
   return false; // not busy anymore
+}
+
+
+/*!
+ * PMSX003: serial data grabber and parser
+ * @note blocking call till data OK or timeout
+ */
+boolean pm_serial::serialRead_pmsx003( uint16_t timeout ) {
+  
+  boolean res=false;
+
+  // 
+  uint8_t _index = 0;
+  uint16_t _frameLen;
+  uint16_t _checksum;
+  uint16_t _calculatedChecksum;
+
+//TO BE CONTINUED
+
+  return res;
+}
+
+
+/*!
+ * SDS011: serial data grabber and parser
+ * @note blocking call till data OK or timeout
+ */
+boolean pm_serial::serialRead_sds011( uint16_t timeout ) {
+  
+  boolean res=false;
+
+  // 
+  uint8_t _index = 0;
+  uint16_t _frameLen;
+  uint16_t _checksum;
+  uint16_t _calculatedChecksum;
+
+//TO BE CONTINUED
+
+  return res;
 }
 
 
@@ -758,39 +813,6 @@ boolean pm_serial::_ll_requestRead( void ) {
     _stream->write(command, sizeof(command)); delay(50);
     res = true;
   }
-  return res;
-}
-
-
-/**************************************************************************/
-/*! 
-    @brief  Low-level read data from serial link
-*/
-/**************************************************************************/
-boolean pm_serial::_ll_readData( void ) {
-
-  if( ! _stream ) return false;
-
-  boolean res = false;
-
-  // request for data
-  _ll_requestRead();
-
-  if( _sensor_type ==  pmSensorType_t::PMSx003 ) {
-
-
-//TO BE CONTINUED
-
-
-    res = true;
-  }
-  else if( _sensor_type ==  pmSensorType_t::SDS011 ) {
-
-    // NOT YET IMPLEMENTED
-
-    res = false;
-  }
-
   return res;
 }
 

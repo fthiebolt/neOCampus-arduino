@@ -244,11 +244,11 @@ void pm_serial::process( uint16_t coolDown, uint8_t decimals ) {
       // still in the measuring process ?
       if( FSMmeasureBusy() ) break;
       log_debug(F("\n\t[lcc_sensor] end of measures :)")); log_flush();
-#if 0
+
       // ok continue with next step: wait4read
-      _FSMstatus = lccSensorState_t::wait4read;
-      if( _nb_measures ) {
-        log_debug(F("\n\t[lcc_sensor]["));log_debug(_subID);log_debug(F("] IDLE --> now waiting for data to get read ...")); log_flush();
+      _FSMstatus = pmSensorState_t::wait4read;
+      if( _trigger ) {
+        log_debug(F("\n\t[lcc_sensor] now waiting for data to get read ...")); log_flush();
       }
       //yield();
       //break;
@@ -256,10 +256,11 @@ void pm_serial::process( uint16_t coolDown, uint8_t decimals ) {
     // WAIT4READ
     case lccSensorState_t::wait4read:
       // waiting for data to get read before acquiring new ones
-      if( _nb_measures ) break;
-#endif /* 0 */
+      if( _trigger ) break;
+
       // let's restart on next loop()
       _FSMstatus = pmSensorState_t::idle;
+      log_debug(F("\n\t[lcc_sensor] data sent back, switching to IDLE state ...")); log_flush();
       break;
 
     // default
@@ -387,7 +388,9 @@ boolean pm_serial::FSMwakeUpBusy( void ) {
 boolean pm_serial::FSMmeasureStart( void ) {
 
   // reset count of measures
-  _nb_measures = 0;
+switch to _activeMode
+reset _currentSum
+_readCpt = 0;
 
   return true;
 }
@@ -477,10 +480,23 @@ boolean lcc_sensor::measureBusy( void ) {
     log_debug(F("\n\t")); log_debug(_val);log_debug(F("mv"));
   }
 
+
+end of measures:
+- powerOFF sensor
+- compute avg
+
   return false; // not busy anymore
 }
 #endif /* 0 */
 
+
+/*
+ * DATA integration related methods:
+ *  trigger indicates that a new data needs to get sent
+ */
+boolean pm_serial::getTrigger( void ) {
+  return _trigger;
+}
 
 
 /*

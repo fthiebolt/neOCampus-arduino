@@ -74,7 +74,8 @@
 enum class pmSensorState_t : uint8_t {
   idle            = 0,
   wakeup,               // only when sensor is sleeping
-  measuring             // reading PM values from serial link
+  measuring,            // reading PM values from serial link
+  wait4read             // waiting for triggered values to get read
 };
 #define PM_FSMSTATE_DEFL      pmSensorState_t::idle
 
@@ -100,7 +101,7 @@ typedef struct {
 
   float         _currentSum;  // sum of all values read (will get divided by readIter for avg)
 
-  float         value;        // official value
+  float         value;        // official value (i.e avg)
 
   float         valueSent;    // latest official value that has been sent
   unsigned long _lastMsSent;  // (ms) time the official value has been sent (starvation avoidance)
@@ -153,7 +154,7 @@ class pm_serial : public generic_driver {
 
     // data integration, override generic_driver
     inline bool getTrigger( void ) { return _trigger; };  // local driver trigger that indicates a new official value needs to get sent
-    inline float getValue( uint8_t *idx=nullptr );        // get official value that has gone through the whole integration process
+    float getValue( uint8_t *idx=nullptr );               // get official value that has gone through the whole integration process
     void setDataSent( void );                             // data has been sent, reset the 'new official data' trigger
 
   // --- protected methods / attributes ---------------------
@@ -182,7 +183,7 @@ class pm_serial : public generic_driver {
     boolean _trigger;                   // when triggered, multiple call to getValue(*idx) will send back all stable values
     serialMeasure_t *_measures;         // array of measurement structs
     uint8_t _nbMeasures;                // size of measurement array
-    uint8_t _currentCpt;                // nb read iteration in current reading campaign
+    uint8_t _readCpt;                   // nb read iteration in current reading campaign
     unsigned long _lastMsRead;          // (ms) last time data has been read from sensor 
 
     // -- private/protected methods

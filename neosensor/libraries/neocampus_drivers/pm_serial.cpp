@@ -28,7 +28,7 @@
  * Definitions
  */
 #define _MEASURES_INTERLEAVE_MS     DEFL_READ_MSINTERVAL  // delay between two measures in the 'measuring' state
-#define _MAX_MEASURES               (uint8_t)5            // max. number of measures during a single campaign
+#define _MAX_MEASURES               DEFL_THRESHOLD_CPT    // max. number of measures during a single campaign
 
 
 /* declare kind of units (value_units) */
@@ -463,7 +463,7 @@ boolean pm_serial::FSMmeasureBusy( void ) {
 
   boolean res = true;
 
-  while( _readCpt < DEFL_THRESHOLD_CPT ) {
+  while( _readCpt < _MAX_MEASURES ) {
 
     // do we need to wait (i.e are we busy) ?
     if( _FSMtimerDelay!=0 and 
@@ -499,30 +499,36 @@ boolean pm_serial::FSMmeasureBusy( void ) {
     }
 
     // last data read ?
-    if( _readCpt == DEFL_THRESHOLD_CPT ) break; // not busy anymore
+    if( _readCpt == _MAX_MEASURES ) break; // not busy anymore
 
     // delay between two measures
-    if( DEFL_READ_MSINTERVAL < MAIN_LOOP_DELAY ) {
-      delay( DEFL_READ_MSINTERVAL );
+    if( _MEASURES_INTERLEAVE_MS < MAIN_LOOP_DELAY ) {
+      delay( _MEASURES_INTERLEAVE_MS );
       _FSMtimerDelay = 0;
       continue;
     }
 
     // long delay between measures
     _FSMtimerStart = millis();
-    _FSMtimerDelay = DEFL_READ_MSINTERVAL;
+    _FSMtimerDelay = _MEASURES_INTERLEAVE_MS;
     return true; // we're busy so check on next loop() iteration
   }
 
   // END of measurement campaign ...
+  unsigned long curTime = millis();
+
   log_debug(F("\n[pm_serial] compute avg values:"));log_flush();
+
   for( uint8_t i=0; i<_nbMeasures; i++ ) {
     _measures[i].value = round(_measures[i]._currentSum / (float)_readCpt);
-    log_debug(F("\n[pm_serial] PM["));log_debug(i);log_debug(F("] = "));log_debug(_measures[i].value);log_flush();
+    log_debug(F("\n[pm_serial] value["));log_debug(i);log_debug(F("] = "));log_debug(_measures[i].value);log_flush();
+    // needs to get sent ?
+    if( (abs(_measures[i].value - _measures[i].valueSent) >= 1) || 
+      (curTime - _measures[i]._lastMsSent >= ((unsigned long)_MAX_COOLDOWN_SENSOR)*1000) ) {
+      _measures[i]._trigger = true; // activate per sensor trigger ...
+      _trigger = true;  // ... then activate module's trigger  
+    }
   }
-
-  // do we need to send data
-compute per sensor trigger and activate global trigger if any
 
   return false; // not busy anymore
 }

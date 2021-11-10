@@ -11,6 +11,9 @@ All this work was undertaken at Université Toulouse 3 / IRIT laboratory in the 
 ![neOSensorv5](/images/neOSensorV5.jpg)
 
 ## NEWS ##
+ * **[Nov.21]** added support for serial sensors.
+added PMSx003 sensors serie (e.g PMS5003 or PMSA003).
+SDS011 coming soon.
  * **[Aug.21]** added support for digital inputs (PIR & switches)
 introduced the cooldown approach and data integration
 ... means that we'll only send data when they differ from the previously sent

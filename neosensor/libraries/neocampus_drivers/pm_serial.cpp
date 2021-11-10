@@ -281,11 +281,17 @@ void pm_serial::process( uint16_t coolDown, uint8_t decimals ) {
 /**************************************************************************/
 String pm_serial::subID( uint8_t idx ) {
   if( idx==(uint8_t)(-1) ) return {};
-  if( idx>=_nbMeasures ) return {};
-  if( !_measures[idx].subID ) return {};
-  
-  // ok, return current subID
-  return _measures[idx].subID;
+
+  // looking for first available subTrigger
+  for( uint8_t i=idx; i<_nbMeasures; i++ ) {
+    if( !_measures[i]._trigger ) continue;
+    if( !_measures[i].subID ) return {};
+    // ok, return current subID
+    return _measures[i].subID;
+  }
+
+  // not found ...
+  return {};
 }
 
 
@@ -464,28 +470,32 @@ boolean pm_serial::FSMmeasureBusy( void ) {
 /*
  * DATA integration related methods:
  *  get official value that has gone through the whole integration process
+ * Note:
+ * - if idx is nullptr ==> simple getValue() call --> send back first available value
+ * - else search for first available value starting from *idx
+ *    if no data available ==> *idx = -1
  */
 float pm_serial::getValue( uint8_t *idx ) {
 
-si nullptr or -1 ==> search for first available value
-  if( idx==nullptr ) return _measures[0].value;
-
-  if( *idx==(uint8_t)(-1) ) {
-    // looking for first available subTrigger
-    for( uint8_t i=0; i<_nbMeasures; i++ ) {
-      if( _measures[i]._trigger ) {
-        _measures[i]._trigger = false;
-        *idx = i;
-        break;
-      }
-    }
-
+  // check validity of idx (if any)
+  if( idx and *idx==(uint8_t)(-1) ) {
+    log_error(F("\n[pm_serial] getValue(-1) ?!?!")); log_flush();
+    return -42.0;
   }
 
+  uint8_t startIdx = ( (idx==nullptr) ? 0 : *idx);
 
-TO BE CONTINUED
+  // looking for first available subTrigger
+  for( uint8_t i=startIdx; i<_nbMeasures; i++ ) {
+    if( _measures[i]._trigger ) {
+      if( idx ) *idx=i;
+      return _measures[i].value;
+    }
+  }
 
-
+  // no more data available
+  if( idx ) *idx=(uint8_t)(-1);
+  return -42.0;
 }
 
 

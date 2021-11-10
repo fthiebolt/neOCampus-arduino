@@ -481,14 +481,12 @@ boolean airquality::_sendValues( void ) {
      *   a single data.
      */
     // TODO: get index of first data to retrieve ... maybe later
-    uint8_t _dataIdx=(uint8_t)(-1);
-    uint8_t _curDataIdx;
-    do {
-      _curDataIdx=_dataIdx;
+    uint8_t _dataIdx=0;   // ask for first available data (i.e whose idx may be different from 0)
 
+    do {
       float value = _sensor[cur_sensor]->getValue(&_dataIdx);
       // check if there's a valid data ...
-      if( _dataIdx==(uint8_t)(-1) ) continue;
+      if( _dataIdx==(uint8_t)(-1) ) break;  // no more data from this sensor
 
       // [nov.21] _dataIdx may have increase if multiple data need to get retrieved
       if( FLOAT_RESOLUTION ) {
@@ -499,8 +497,8 @@ boolean airquality::_sendValues( void ) {
       else {
         root[F("value")] = (int)( value );      // [may.20] force as INT
       }
-      root[F("value_units")] = _sensor[cur_sensor]->sensorUnits(_curDataIdx);
-      root[F("subID")] = _sensor[cur_sensor]->subID(_curDataIdx);
+      root[F("value_units")] = _sensor[cur_sensor]->sensorUnits(_dataIdx);
+      root[F("subID")] = _sensor[cur_sensor]->subID(_dataIdx);
 
       /*
       * send MQTT message
@@ -518,15 +516,11 @@ boolean airquality::_sendValues( void ) {
       // delay between two successives values to send
       delay(20); 
 
-    }
-    while( (_dataIdx != (uint8_t)(-1)) and
-           (_dataIdx > _curDataIdx) );
-    
-    // DEBUG: print debug msg only if multiple data have been sent back
-    if( _dataIdx ) {
-      log_debug(F("\n[pm_serial] current driver sent back "));log_debug(_dataIdx);log_debug(F(" different values :)"));log_flush();
-    }
+      // increment to next idx
+      _dataIdx++;
 
+    } while( _dataIdx != (uint8_t)(-1) );
+    
     // mark data as sent
     _sensor[cur_sensor]->setDataSent();
 

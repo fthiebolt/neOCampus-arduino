@@ -274,38 +274,6 @@ void pm_serial::process( uint16_t coolDown, uint8_t decimals ) {
 }
 
 
-#if 0
-/**************************************************************************/
-/*! 
-    @brief  return sensor value(s) read from serial link
-*/
-/**************************************************************************/
-boolean pm_serial::acquire( float *pval )
-{
-WARNING: il older airquality module, acquire was intended to retrieve data
-for sending over MQTT --> now replaced with getValue method
-
-  // data available ?
-  if( _nb_measures < _MAX_MEASURES ) return false;
-  if( _cur_gain == pm_serial_GAIN_NONE ) return false; // because it is needed to compute Rgain
-
-  // we'll now parse our raw measures array to produce an average
-  uint32_t mv_sum = 0;
-  for( uint8_t i=0; i<_nb_measures; i++ ) {
-    mv_sum += _measures[i];
-  }
-
-  // we then convert the mv average value to a ppm one
-  *pval = calculatePPM( (float)mv_sum / (float)_nb_measures );
-
-  // reset measures counter (to avoid sending the same values)
-  _nb_measures = 0;
-
-  return true;
-}
-#endif /* 0 */
-
-
 /**************************************************************************/
 /*! 
     @brief  return current measure subID
@@ -413,47 +381,6 @@ boolean pm_serial::FSMmeasureStart( void ) {
 }
 
 
-#if 0
-/**************************************************************************/
-/*! 
-    @brief  internal ADC read; sends back voltage_mv
-*/
-/**************************************************************************/
-boolean pm_serial::readSensor_mv( uint32_t *pval ) {
-
-  if( pval==nullptr ) return false;
-
-#if defined(ESP32)
-  #if !defined(DISABLE_ADC_CAL)
-  // advanced ADC reading
-  esp_err_t res;
-  uint8_t _retry = 3;
-  do {
-    res = esp_adc_cal_get_voltage( (adc_channel_t)digitalPinToAnalogChannel(_inputs[pm_serial_ANALOG]),
-                                  adc_chars, pval );
-    if( res!=ESP_OK ) delay(20);
-  } while( res!=ESP_OK and _retry-- );
-  return (res==ESP_OK ? true : false);
-
-  #else /* ADC_CAL is disabled */
-  // regular ADC reading
-  *pval = ((uint32_t)(analogRead(_inputs[pm_serial_ANALOG]))*_adc_voltageRef) / ((uint32_t)(pow(2,_adc_resolution))-1);
-  return true;
-
-  #endif /* DISABLE_ADC_CAL */
-
-#elif defined(ESP8266)
-  // 10bits resolution with 1.1 ref. voltage
-  *pval = ((uint32_t)(analogRead(_inputs[pm_serial_ANALOG]))*_adc_voltageRef) / ((uint32_t)(pow(2,_adc_resolution))-1);
-  return true;
-#endif
-
-  // error as default
-  return false;
-}
-#endif /* 0 */
-
-
 /**************************************************************************/
 /*! 
     @brief  check about undergoing measuremt process
@@ -475,13 +402,13 @@ boolean pm_serial::FSMmeasureBusy( void ) {
       // PMSX003
       case pmSensorType_t::PMSx003 :
         _ll_requestRead();
-        res = serialRead_pmsx003();   // blocking read
+        res = serialRead_pmsx003();   // blocking read with timeout
         break;
 
       // SDS011
       case pmSensorType_t::SDS011 :
         _ll_requestRead();
-        res = serialRead_sds011();    // blocking read
+        res = serialRead_sds011();    // blocking read with timeout
         break;
 
       // default
@@ -525,8 +452,8 @@ boolean pm_serial::FSMmeasureBusy( void ) {
     // needs to get sent ?
     if( (abs(_measures[i].value - _measures[i].valueSent) >= 1) || 
       (curTime - _measures[i]._lastMsSent >= ((unsigned long)_MAX_COOLDOWN_SENSOR)*1000) ) {
-      _measures[i]._trigger = true; // activate per sensor trigger ...
-      _trigger = true;  // ... then activate module's trigger  
+      _measures[i]._trigger = true; // activate per subID trigger ...
+      _trigger = true;  // ... then activate sensor's trigger  
     }
   }
 
@@ -536,30 +463,29 @@ boolean pm_serial::FSMmeasureBusy( void ) {
 
 /*
  * DATA integration related methods:
- *  trigger indicates that a new data needs to get sent
- */
-boolean pm_serial::getTrigger( void ) {
-  return _trigger;
-}
-
-
-/*
- * DATA integration related methods:
  *  get official value that has gone through the whole integration process
  */
 float pm_serial::getValue( uint8_t *idx ) {
-#if 0
-  if( _idx ) {
-    if( *_idx==(uint8_t)(-1) ) {
-      return nb_vars2retrieve
-    }
-  }
-#endif /* 0 */
-//TO BE CONTINUED
 
-  // TODO !!
-  log_error(F("\n[pm_serial] NOT YET IMPLEMENTED"));log_flush();
-  return -1.0;
+si nullptr or -1 ==> search for first available value
+  if( idx==nullptr ) return _measures[0].value;
+
+  if( *idx==(uint8_t)(-1) ) {
+    // looking for first available subTrigger
+    for( uint8_t i=0; i<_nbMeasures; i++ ) {
+      if( _measures[i]._trigger ) {
+        _measures[i]._trigger = false;
+        *idx = i;
+        break;
+      }
+    }
+
+  }
+
+
+TO BE CONTINUED
+
+
 }
 
 

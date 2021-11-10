@@ -153,7 +153,6 @@ class pm_serial : public generic_driver {
     String subID( uint8_t=0 );
 
     // data integration, override generic_driver
-    inline bool getTrigger( void );                 // local driver trigger that indicates a new official value needs to get sent
     float getValue( uint8_t *idx=nullptr );         // get official value that has gone through the whole integration process
     void setDataSent( void );                       // data has been sent, reset the 'new official data' trigger
 

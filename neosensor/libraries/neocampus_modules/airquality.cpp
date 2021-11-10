@@ -481,12 +481,15 @@ boolean airquality::_sendValues( void ) {
      *   a single data.
      */
     // TODO: get index of first data to retrieve ... maybe later
-    uint8_t _dataIdx=0;
+    uint8_t _dataIdx=(uint8_t)(-1);
     uint8_t _curDataIdx;
     do {
       _curDataIdx=_dataIdx;
 
       float value = _sensor[cur_sensor]->getValue(&_dataIdx);
+      // check if there's a valid data ...
+      if( _dataIdx==(uint8_t)(-1) ) continue;
+
       // [nov.21] _dataIdx may have increase if multiple data need to get retrieved
       if( FLOAT_RESOLUTION ) {
         root[F("value")] = serialized(String(value,FLOAT_RESOLUTION));   // [nov.20] force float encoding

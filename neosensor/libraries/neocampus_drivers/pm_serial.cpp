@@ -263,9 +263,6 @@ void pm_serial::process( uint16_t coolDown, uint8_t decimals ) {
       // let's restart on next loop()
       _FSMstatus = pmSensorState_t::idle;
       log_debug(F("\n\t[pm_serial] data sent back, switching to IDLE state ...")); log_flush();
-      // set FSM timer ...
-      _FSMtimerStart = millis();
-      _FSMtimerDelay = ((unsigned long)coolDown)*1000 );
       break;
 
     // default
@@ -453,7 +450,7 @@ boolean pm_serial::FSMmeasureBusy( void ) {
 
   // END of measurement campaign ...
   unsigned long curTime = millis();
-
+  _lastMsRead = curTime;
   log_debug(F("\n[pm_serial] compute avg values:"));log_flush();
 
   for( uint8_t i=0; i<_nbMeasures; i++ ) {
@@ -818,11 +815,13 @@ boolean pm_serial::serialRead_pmsx003( uint16_t timeout ) {
             value = makeWord(_payload[10], _payload[11]);   // PM10
             log_debug(F("\n[pm_serial][PMSx003] PM10 = "));log_debug(value);log_flush();
             _measures[(uint8_t)pmsx003DataIdx_t::PM10]._currentSum += (float)value;
+
+            // data acquired, finisk :)
+            log_debug(F("\n[pm_serial][PMSx003] "));log_debug(millis()-startTime);
+            log_debug(F("ms reading data over serial link"));log_flush();
+            _index = 0; // useless since we return now ...
+            return true;
           }
-          // data acquired, finisk :)
-          log_debug(F("\n[pm_serial][PMSx003] "));log_debug(millis()-startTime);
-          log_debug(F("ms reading data over serial link"));log_flush();
-          return true;
         }
         else {
           _calculatedChecksum += ch;

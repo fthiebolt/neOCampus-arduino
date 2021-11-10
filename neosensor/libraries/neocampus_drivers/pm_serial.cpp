@@ -521,6 +521,9 @@ boolean pm_serial::FSMmeasureBusy( void ) {
     log_debug(F("\n[pm_serial] PM["));log_debug(i);log_debug(F("] = "));log_debug(_measures[i].value);log_flush();
   }
 
+  // do we need to send data
+compute per sensor trigger and activate global trigger if any
+
   return false; // not busy anymore
 }
 

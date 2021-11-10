@@ -68,7 +68,7 @@
 /* reading data timeout ms delay
  * Delay for data to arrive within serial buffer.
  */
-#define PM_READ_MSTIMEOUT     100   // ms timeout delay for reading data from serial link (use to be < 40ms)
+#define PM_READ_MSTIMEOUT     130   // ms timeout delay for reading data from serial link (use to be < 40ms)
 
 // Finite state machine
 enum class pmSensorState_t : uint8_t {

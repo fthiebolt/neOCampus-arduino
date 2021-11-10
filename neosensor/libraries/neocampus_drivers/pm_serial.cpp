@@ -513,53 +513,15 @@ boolean pm_serial::FSMmeasureBusy( void ) {
     _FSMtimerDelay = DEFL_READ_MSINTERVAL;
     return true; // we're busy so check on next loop() iteration
   }
-#if 0
-TO BE CONTINUED
 
-end of measures:
-- compute avg
-#endif /* 0 */
+  // END of measurement campaign ...
+  log_debug(F("\n[pm_serial] compute avg values:"));log_flush();
+  for( uint8_t i=0; i<_nbMeasures; i++ ) {
+    _measures[i].value = round(_measures[i]._currentSum / (float)_readCpt);
+    log_debug(F("\n[pm_serial] PM["));log_debug(i);log_debug(F("] = "));log_debug(_measures[i].value);log_flush();
+  }
+
   return false; // not busy anymore
-}
-
-
-/*!
- * PMSX003: serial data grabber and parser
- * @note blocking call till data OK or timeout
- */
-boolean pm_serial::serialRead_pmsx003( uint16_t timeout ) {
-  
-  boolean res=false;
-
-  // 
-  uint8_t _index = 0;
-  uint16_t _frameLen;
-  uint16_t _checksum;
-  uint16_t _calculatedChecksum;
-
-//TO BE CONTINUED
-
-  return res;
-}
-
-
-/*!
- * SDS011: serial data grabber and parser
- * @note blocking call till data OK or timeout
- */
-boolean pm_serial::serialRead_sds011( uint16_t timeout ) {
-  
-  boolean res=false;
-
-  // 
-  uint8_t _index = 0;
-  uint16_t _frameLen;
-  uint16_t _checksum;
-  uint16_t _calculatedChecksum;
-
-//TO BE CONTINUED
-
-  return res;
 }
 
 
@@ -816,3 +778,111 @@ boolean pm_serial::_ll_requestRead( void ) {
   return res;
 }
 
+
+
+// ============================================================================
+// === SENSORS SPECIFIC READ PROTOCOL methods =================================
+
+/*!
+ * PMSX003: serial data grabber and parser
+ * @note blocking call till data OK or timeout
+ */
+boolean pm_serial::serialRead_pmsx003( uint16_t timeout ) {
+  
+  uint8_t _index = 0;
+  uint16_t _frameLen = 0;
+  uint16_t _checksum = 0;
+  uint16_t _calculatedChecksum = 0;
+  uint8_t _payload[12];
+
+  unsigned long startTime=millis();
+
+  do {
+    // serial data available ?
+    if( !_stream->available() ) {
+      delay(5); continue;
+    }
+    // read serial char
+    uint8_t ch = _stream->read();
+    // switch to byte position in frame
+    switch( _index ) {
+
+      case 0:
+        if( ch != 0x42 ) continue;
+        _calculatedChecksum = ch;
+        break;
+
+      case 1:
+        if( ch != 0x4D ) {
+          _index = 0;
+          continue;
+        }
+        _calculatedChecksum += ch;
+        break;
+
+      case 2:
+        _calculatedChecksum += ch;
+        _frameLen = ch << 8;
+        break;
+
+      case 3:
+        _frameLen |= ch;
+        // Unsupported sensor, different frame length, transmission error e.t.c.
+        if( _frameLen != 2 * 9 + 2 && _frameLen != 2 * 13 + 2 ) {
+          _index = 0;
+          continue;
+        }
+        _calculatedChecksum += ch;
+        break;
+
+      default:
+        if(_index == _frameLen + 2 ) {
+          _checksum = ch << 8;
+        }
+        else if( _index == _frameLen + 2 + 1 ) {
+          _checksum |= ch;
+
+          if( _calculatedChecksum == _checksum ) {
+
+            /* Standard Particles, CF=1.
+            _data->PM_SP_UG_1_0 = makeWord(_payload[0], _payload[1]);
+            _data->PM_SP_UG_2_5 = makeWord(_payload[2], _payload[3]);
+            _data->PM_SP_UG_10_0 = makeWord(_payload[4], _payload[5]);
+            */
+            // Atmospheric Environment.
+            uint16_t value;
+            //value = makeWord(_payload[6], _payload[7]);   // PM1_0
+            value = makeWord(_payload[8], _payload[9]);     // PM2_5
+            log_debug(F("\n[pm_serial][PMSx003] PM2_5 = "));log_debug(value);log_flush();
+            _measures[(uint8_t)pmsx003DataIdx_t::PM2_5]._currentSum += (float)value;
+            value = makeWord(_payload[10], _payload[11]);   // PM10
+            log_debug(F("\n[pm_serial][PMSx003] PM10 = "));log_debug(value);log_flush();
+            _measures[(uint8_t)pmsx003DataIdx_t::PM10]._currentSum += (float)value;
+          }
+          // data acquired, finisk :)
+          return true;
+        }
+        else {
+          _calculatedChecksum += ch;
+          uint8_t payloadIndex = _index - 4;
+
+          // Payload is common to all sensors (first 2x6 bytes).
+          if( payloadIndex < sizeof(_payload) ) _payload[payloadIndex] = ch;
+        }
+    }
+    _index++;
+
+  } while( millis() - startTime < timeout );
+
+  return false;
+}
+
+
+/*!
+ * SDS011: serial data grabber and parser
+ * @note blocking call till data OK or timeout
+ */
+boolean pm_serial::serialRead_sds011( uint16_t timeout ) {
+  
+  return false;
+}

@@ -87,10 +87,10 @@ class generic_driver {
     virtual String subID( uint8_t=0 )=0;    // pure virtual, retrieve subID(s) (i.e i2c addr)
                                             // [nov.21] idx pointer enable multiples values to get returned
     // data integration
-    inline bool getTrigger( void ) { return _trigger; };  // local driver trigger that indicates a new official value needs to get sent
-    inline float getValue( uint8_t *idx=nullptr ) { return value; };  // get official value that has gone through the whole integration process
-                                                                      // [nov.21] idx may get increased if multiple data to send back
-    void setDataSent( void );                             // data has been sent, reset the 'new official data' trigger
+    virtual bool getTrigger( void );                // local driver trigger that indicates a new official value needs to get sent
+    virtual float getValue( uint8_t *idx=nullptr ); // get official value that has gone through the whole integration process
+                                                    // [nov.21] pointer enables multi sensing devices to send back multiple values
+    virtual void setDataSent( void );               // data has been sent, reset the 'new official data' trigger
 
     // public attributes
 

@@ -131,7 +131,26 @@ void generic_driver::process( uint16_t coolDown, uint8_t decimals ) {
 
 
 /******************************************
- * DATA integration related methods
+ * DATA integration related methods:
+ *  get global module's  trigger
+ */
+bool generic_driver::getTrigger( void ) {
+  return _trigger;
+}
+
+
+/******************************************
+ * DATA integration related methods:
+ *  get official value that has gone through the whole integration process
+ */
+float generic_driver::getValue( uint8_t *idx ) {
+  return value;
+}
+
+
+/******************************************
+ * DATA integration related methods:
+ *  mark data as sent
  */
 void generic_driver::setDataSent( void ) {
   _trigger = false;

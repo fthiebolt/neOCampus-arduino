@@ -468,6 +468,15 @@ boolean pm_serial::FSMmeasureBusy( void ) {
 
 
 /*
+ * DATA integration related methods
+ *  send back global sensor's trigger
+ */
+bool pm_serial::getTrigger( void ) {
+  return _trigger;
+}
+
+
+/*
  * DATA integration related methods:
  *  get official value that has gone through the whole integration process
  * Note:
@@ -805,6 +814,8 @@ boolean pm_serial::serialRead_pmsx003( uint16_t timeout ) {
             _measures[(uint8_t)pmsx003DataIdx_t::PM10]._currentSum += (float)value;
           }
           // data acquired, finisk :)
+          log_debug(F("\n[pm_serial][PMSx003] "));log_debug(millis()-startTime);
+          log_debug(F("ms reading data over serial link"));log_flush();
           return true;
         }
         else {

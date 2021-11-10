@@ -476,5 +476,5 @@ void loop() {
   Serial.println(humidity);
   Serial.flush();
 
-  delay(3000);  // min delay for 14bit temp reading is 85ms
+  delay(7000);  // min delay for 14bit temp reading is 85ms
 }

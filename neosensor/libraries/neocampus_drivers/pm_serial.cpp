@@ -263,6 +263,9 @@ void pm_serial::process( uint16_t coolDown, uint8_t decimals ) {
       // let's restart on next loop()
       _FSMstatus = pmSensorState_t::idle;
       log_debug(F("\n\t[pm_serial] data sent back, switching to IDLE state ...")); log_flush();
+      // set FSM timer ...
+      _FSMtimerStart = millis();
+      _FSMtimerDelay = ((unsigned long)coolDown)*1000 );
       break;
 
     // default
@@ -309,21 +312,22 @@ String pm_serial::subID( uint8_t idx ) {
             otherwise this is a non blocking API.
 */
 /**************************************************************************/
-boolean pm_serial::FSMwakeUpStart( uint16_t pulse_ms ) {
+boolean pm_serial::FSMwakeUpStart( uint16_t seconds ) {
 
   // start sensors
   powerON();
 
+  unsigned long delay_ms = seconds * 1000;
   // short pulse ?
-  if( pulse_ms < MAIN_LOOP_DELAY ) {
-    delay( pulse_ms );
+  if( delay_ms < MAIN_LOOP_DELAY ) {
+    delay( delay_ms );
     _FSMtimerDelay = 0;
     return false; // no delay activated
   }
 
   // set FSM timer ...
   _FSMtimerStart = millis();
-  _FSMtimerDelay = pulse_ms;
+  _FSMtimerDelay = delay_ms;
 
   return true;
 }
@@ -798,17 +802,19 @@ boolean pm_serial::serialRead_pmsx003( uint16_t timeout ) {
 
           if( _calculatedChecksum == _checksum ) {
 
+            uint16_t value;
             /* Standard Particles, CF=1.
             _data->PM_SP_UG_1_0 = makeWord(_payload[0], _payload[1]);
             _data->PM_SP_UG_2_5 = makeWord(_payload[2], _payload[3]);
             _data->PM_SP_UG_10_0 = makeWord(_payload[4], _payload[5]);
             */
             // Atmospheric Environment.
-            uint16_t value;
             //value = makeWord(_payload[6], _payload[7]);   // PM1_0
             value = makeWord(_payload[8], _payload[9]);     // PM2_5
             log_debug(F("\n[pm_serial][PMSx003] PM2_5 = "));log_debug(value);log_flush();
             _measures[(uint8_t)pmsx003DataIdx_t::PM2_5]._currentSum += (float)value;
+            log_debug(F("\t_currentSum = "));log_debug(_measures[(uint8_t)pmsx003DataIdx_t::PM2_5]._currentSum);
+            log_flush();
             value = makeWord(_payload[10], _payload[11]);   // PM10
             log_debug(F("\n[pm_serial][PMSx003] PM10 = "));log_debug(value);log_flush();
             _measures[(uint8_t)pmsx003DataIdx_t::PM10]._currentSum += (float)value;

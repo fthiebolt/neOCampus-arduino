@@ -29,6 +29,7 @@
  */
 #define _MEASURES_INTERLEAVE_MS     DEFL_READ_MSINTERVAL  // delay between two measures in the 'measuring' state
 #define _MAX_MEASURES               DEFL_THRESHOLD_CPT    // max. number of measures during a single campaign
+#define _MAX_FAILURES               3   // max. number of consecutives failures
 
 
 /* declare kind of units (value_units) */
@@ -262,7 +263,7 @@ void pm_serial::process( uint16_t coolDown, uint8_t decimals ) {
 
       // let's restart on next loop()
       _FSMstatus = pmSensorState_t::idle;
-      log_debug(F("\n\t[pm_serial] data sent back, switching to IDLE state ...")); log_flush();
+      log_debug(F("\n\t[pm_serial] end of cycle, switching to IDLE state ...")); log_flush();
       break;
 
     // default
@@ -395,9 +396,10 @@ boolean pm_serial::FSMmeasureStart( void ) {
 /**************************************************************************/
 boolean pm_serial::FSMmeasureBusy( void ) {
 
+  uint8_t _retry=_MAX_FAILURES;
   boolean res = true;
 
-  while( _readCpt < _MAX_MEASURES ) {
+  while( _readCpt < _MAX_MEASURES && !_retry ) {
 
     // do we need to wait (i.e are we busy) ?
     if( _FSMtimerDelay!=0 and 
@@ -427,6 +429,9 @@ boolean pm_serial::FSMmeasureBusy( void ) {
 
     if( !res ) {
       log_debug(F("\n\t[pm_serial] read failure ?!?! ... next iteration :|")); log_flush();
+      _retry--;
+      delay( _retry==0 ? 0 : 50 );
+      continue;
     }
     else {
       _readCpt++;
@@ -446,6 +451,13 @@ boolean pm_serial::FSMmeasureBusy( void ) {
     _FSMtimerStart = millis();
     _FSMtimerDelay = _MEASURES_INTERLEAVE_MS;
     return true; // we're busy so check on next loop() iteration
+  }
+
+  // check for many consecutives failures
+  if( !_retry ) {
+    log_error(F("\n[pm_serial] too many consecutives reading errors ... next cycle :|")); log_flush();
+    delay(500);
+    return false; // not busy anymore :|
   }
 
   // END of measurement campaign ...

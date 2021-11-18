@@ -399,7 +399,7 @@ boolean pm_serial::FSMmeasureBusy( void ) {
   uint8_t _retry=_MAX_FAILURES;
   boolean res = true;
 
-  while( _readCpt < _MAX_MEASURES && !_retry ) {
+  while( (_readCpt < _MAX_MEASURES) and _retry ) {
 
     // do we need to wait (i.e are we busy) ?
     if( _FSMtimerDelay!=0 and 
@@ -428,9 +428,9 @@ boolean pm_serial::FSMmeasureBusy( void ) {
     }
 
     if( !res ) {
-      log_debug(F("\n\t[pm_serial] read failure ?!?! ... next iteration :|")); log_flush();
+      //log_debug(F("\n\t[pm_serial] read failure ?!?! ... next iteration :|")); log_flush();
       _retry--;
-      delay( _retry==0 ? 0 : 50 );
+      delay( _retry==0 ? 0 : 80 );
       continue;
     }
     else {

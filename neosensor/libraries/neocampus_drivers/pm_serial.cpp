@@ -370,6 +370,7 @@ boolean pm_serial::FSMmeasureStart( void ) {
     _measures[i]._currentSum = (float)0;
   }
   _readCpt = 0;
+  _retryCpt = _MAX_FAILURES;
 
   // active mode
   if( !_activeMode ) {
@@ -396,10 +397,9 @@ boolean pm_serial::FSMmeasureStart( void ) {
 /**************************************************************************/
 boolean pm_serial::FSMmeasureBusy( void ) {
 
-  uint8_t _retry=_MAX_FAILURES;
   boolean res = true;
 
-  while( (_readCpt < _MAX_MEASURES) and _retry ) {
+  while( (_readCpt < _MAX_MEASURES) and _retryCpt ) {
 
     // do we need to wait (i.e are we busy) ?
     if( _FSMtimerDelay!=0 and 
@@ -428,10 +428,8 @@ boolean pm_serial::FSMmeasureBusy( void ) {
     }
 
     if( !res ) {
-      //log_debug(F("\n\t[pm_serial] read failure ?!?! ... next iteration :|")); log_flush();
-      _retry--;
-      delay( _retry==0 ? 0 : 80 );
-      continue;
+      log_debug(F("\n\t[pm_serial] read failure ?!?! ... next iteration :|")); log_flush();
+      _retryCpt--;
     }
     else {
       _readCpt++;
@@ -454,7 +452,7 @@ boolean pm_serial::FSMmeasureBusy( void ) {
   }
 
   // check for many consecutives failures
-  if( !_retry ) {
+  if( !_retryCpt ) {
     log_error(F("\n[pm_serial] too many consecutives reading errors ... next cycle :|")); log_flush();
     delay(500);
     return false; // not busy anymore :|

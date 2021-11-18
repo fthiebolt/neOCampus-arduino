@@ -184,6 +184,7 @@ class pm_serial : public generic_driver {
     serialMeasure_t *_measures;         // array of measurement structs
     uint8_t _nbMeasures;                // size of measurement array
     uint8_t _readCpt;                   // nb read iteration in current reading campaign
+    uint8_t _retryCpt;                  // nb reading retries during a measurement cycle
     unsigned long _lastMsRead;          // (ms) last time data has been read from sensor 
 
     // -- private/protected methods

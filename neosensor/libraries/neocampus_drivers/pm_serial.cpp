@@ -856,8 +856,13 @@ boolean pm_serial::serialRead_pmsx003( uint16_t timeout ) {
             _index = 0; // useless since we return now ...
             return true;
           }
+          // bad checksum ...
+          log_warning(F("\n[pm_serial][PMSx003] bad checksum ...")); log_flush();
+          _index = 0;
+          continue;
         }
         else {
+          // payload acquire
           _calculatedChecksum += ch;
           uint8_t payloadIndex = _index - 4;
 
@@ -888,6 +893,83 @@ boolean pm_serial::serialRead_sds011( uint16_t timeout ) {
  * @note blocking call till data OK or timeout
  */
 boolean pm_serial::serialRead_ikea( uint16_t timeout ) {
-  
+
+  uint8_t _index = 0;
+  uint16_t _frameLen = 0;
+  uint16_t _checksum = 0;
+  uint16_t _calculatedChecksum = 0;
+  uint8_t _payload[12];
+
+  unsigned long startTime=millis();
+
+  do {
+    // serial data available ?
+    if( !_stream->available() ) {
+      delay(5); continue;
+    }
+    // read serial char
+    uint8_t ch = _stream->read();
+    // switch to byte position in frame
+    switch( _index ) {
+
+      case 0:
+        if( ch != 0x16 ) continue;
+        _calculatedChecksum = ch;
+        break;
+
+      case 1:
+        _calculatedChecksum += ch;
+        _frameLen = ch;
+        break;
+
+      case 2:
+        if( ch != 0x02 ) {
+          _index = 0;
+          continue;
+        }
+        _calculatedChecksum += ch;
+        break;
+
+      default:
+        if(_index == _frameLen + 2) {
+          _checksum = ch;
+          
+          if( uint8_t(_calculatedChecksum+_checksum) == (uint8_t)0 ) {
+
+            uint16_t value;
+            // Atmospheric Environment.
+            //value = makeWord(_payload[6], _payload[7]);   // PM1_0
+            value = makeWord(_payload[2], _payload[3]);     // PM2_5
+            log_debug(F("\n[pm_serial][IKEA] PM2_5 = "));log_debug(value);log_flush();
+            _measures[(uint8_t)ikeaDataIdx_t::PM2_5]._currentSum += (float)value;
+            log_debug(F("\t_currentSum = "));log_debug(_measures[(uint8_t)ikeaDataIdx_t::PM2_5]._currentSum);
+            log_flush();
+            value = makeWord(_payload[10], _payload[11]);   // PM10
+            log_debug(F("\n[pm_serial][IKEA] PM10 = "));log_debug(value);log_flush();
+            _measures[(uint8_t)ikeaDataIdx_t::PM10]._currentSum += (float)value;
+
+            // data acquired, finisk :)
+            log_debug(F("\n[pm_serial][IKEA] "));log_debug(millis()-startTime);
+            log_debug(F("ms reading data over serial link"));log_flush();
+            _index = 0; // useless since we return now ...
+            return true;
+          }
+          // bad checksum ...
+          log_warning(F("\n[pm_serial][PMSx003] bad checksum ...")); log_flush();
+          _index = 0;
+          continue;
+        }
+        else {
+          // payload acquire
+          _calculatedChecksum += ch;
+          uint8_t payloadIndex = _index - 3;
+
+          if( payloadIndex < sizeof(_payload) ) _payload[payloadIndex] = ch;
+        }
+    }
+    _index++;
+
+  } while( millis() - startTime < timeout );
+
   return false;
 }

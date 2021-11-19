@@ -90,7 +90,7 @@ enum class pmSensorType_t : uint8_t {
   PMSx003       = 0x10,       // PMS5003, PMSA003 ...
   SDS011        = 0x20,
   SCP4X         = 0x30,       // sensiron SCP4X
-  IKEA          = 0x40,       // IKEA VINDTRIKNING features a Cube PM1006K
+  IKEA          = 0x40,       // IKEA VINDTRIKNING features a Cubic PM1006K particles sensor
   // add additional kind of PM sensors here
 
   undefined     = (uint8_t)(-1)

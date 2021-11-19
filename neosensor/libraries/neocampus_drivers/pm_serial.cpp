@@ -576,7 +576,7 @@ boolean pm_serial::_init( void ) {
     // SDS011
     case pmSensorType_t::SDS011 :
       log_debug(F("\n[pm_serial] start SDS011 PM sensor setup ..."));log_flush();
-      _activeMode = true;
+      _activeMode = true;  // [nov.21] mode really depends on previous config saved within sensor. Factory default is active
       _nbMeasures = (uint8_t)sds011DataIdx_t::last;
       _measures = new serialMeasure_t[_nbMeasures];
       for( uint8_t i=0; i<_nbMeasures; i++ ) _measures[i].subID = nullptr;
@@ -657,6 +657,7 @@ boolean pm_serial::_init( void ) {
 }
 
 
+
 // ============================================================================
 // === LOW-LEVEL serial methods ===============================================
 
@@ -677,6 +678,12 @@ boolean pm_serial::_ll_sleep( void ) {
     _stream->write(command, sizeof(command)); delay(50);
     res = true;
   }
+  else if( _sensor_type ==  pmSensorType_t::SDS011 ) {
+    uint8_t command[] = { 0xAA, 0xB4, 0x06, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	0x00, 0x00, 0x00, 0xFF,	0xFF, 0x05, 0xAB };
+    _stream->write(command, sizeof(command)); delay(50);
+    res = true;
+  }
+
   return res;
 }
 
@@ -697,6 +704,12 @@ boolean pm_serial::_ll_wakeUp( void ) {
       _stream->write(command, sizeof(command)); delay(50);
       res = true;
   }
+  else if( _sensor_type ==  pmSensorType_t::SDS011 ) {
+    uint8_t command[] = { 0xAA, 0xB4, 0x06, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x06, 0xAB };
+    _stream->write(command, sizeof(command)); delay(50);
+    res = true;
+  }
+
   return res;
 }
 
@@ -713,10 +726,16 @@ boolean pm_serial::_ll_passiveMode( void ) {
   boolean res = false;
 
   if( _sensor_type ==  pmSensorType_t::PMSx003 ) {
-      uint8_t command[] = { 0x42, 0x4D, 0xE1, 0x00, 0x00, 0x01, 0x70 };
-      _stream->write(command, sizeof(command)); delay(50);
-      res = true;
+    uint8_t command[] = { 0x42, 0x4D, 0xE1, 0x00, 0x00, 0x01, 0x70 };
+    _stream->write(command, sizeof(command)); delay(50);
+    res = true;
   }
+  else if( _sensor_type ==  pmSensorType_t::SDS011 ) {
+    uint8_t command[] = { 0xAA, 0xB4, 0x02, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x02, 0xAB };
+    _stream->write(command, sizeof(command)); delay(50);
+    res = true;
+  }
+
   return res;
 }
 
@@ -737,6 +756,12 @@ boolean pm_serial::_ll_activeMode( void ) {
       _stream->write(command, sizeof(command)); delay(50);
       res = true;
   }
+  else if( _sensor_type ==  pmSensorType_t::SDS011 ) {
+    uint8_t command[] = { 0xAA, 0xB4, 0x02, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x01, 0xAB };
+    _stream->write(command, sizeof(command)); delay(50);
+    res = true;
+  }
+
   return res;
 }
 
@@ -755,6 +780,11 @@ boolean pm_serial::_ll_requestRead( void ) {
 
   if( _sensor_type ==  pmSensorType_t::PMSx003 ) {
     uint8_t command[] = { 0x42, 0x4D, 0xE2, 0x00, 0x00, 0x01, 0x71 };
+    _stream->write(command, sizeof(command)); delay(50);
+    res = true;
+  }
+  else if( _sensor_type ==  pmSensorType_t::SDS011 ) {
+    uint8_t command[] = { 0xAA, 0xB4, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x02, 0xAB };
     _stream->write(command, sizeof(command)); delay(50);
     res = true;
   }
@@ -884,6 +914,75 @@ boolean pm_serial::serialRead_pmsx003( uint16_t timeout ) {
  */
 boolean pm_serial::serialRead_sds011( uint16_t timeout ) {
   
+  uint8_t _index = 0;
+  uint16_t _checksum = 0;
+  uint16_t _calculatedChecksum = 0;
+  uint8_t _payload[4];
+
+  unsigned long startTime=millis();
+
+  do {
+    // serial data available ?
+    if( !_stream->available() ) {
+      delay(5); continue;
+    }
+    // read serial char
+    uint8_t ch = _stream->read();
+    // switch to byte position in frame
+    switch( _index ) {
+
+      case 0:
+        if( ch != 0xAA ) continue;
+        break;
+
+      case 1:
+        if( ch != 0xC0 ) {
+          _index = 0;
+          continue;
+        }
+        break;
+
+      case 8:
+        _checksum = ch;
+        break;
+
+      case 9:
+        if( ch != 0xAB ) {
+          _index = 0;
+          continue;
+        }
+        if( (uint8_t)_calculatedChecksum != (uint8_t)_checksum ) {
+          log_warning(F("\n[pm_serial][SDS011] bad checksum ...")); log_flush();
+          _index = 0;
+          continue;
+        }
+        uint16_t value;
+        // Atmospheric Environment.
+        value = makeWord(_payload[1], _payload[0])/10;     // PM2_5
+        log_debug(F("\n[pm_serial][SDS011] PM2_5 = "));log_debug(value);log_flush();
+        _measures[(uint8_t)sds011DataIdx_t::PM2_5]._currentSum += (float)value;
+        log_debug(F("\t_currentSum = "));log_debug(_measures[(uint8_t)sds011DataIdx_t::PM2_5]._currentSum);
+        log_flush();
+        value = makeWord(_payload[3], _payload[2])/10;   // PM10
+        log_debug(F("\n[pm_serial][SDS011] PM10 = "));log_debug(value);log_flush();
+        _measures[(uint8_t)sds011DataIdx_t::PM10]._currentSum += (float)value;
+
+        // data acquired, finisk :)
+        log_debug(F("\n[pm_serial][SDS011] "));log_debug(millis()-startTime);
+        log_debug(F("ms reading data over serial link"));log_flush();
+        _index = 0; // useless since we return now ...
+        return true;
+
+      default:
+        if(_index == 2) _calculatedChecksum = ch;
+        else _calculatedChecksum += ch;
+
+        if( _index-2 < sizeof(_payload) ) _payload[_index-2] = ch;
+    }
+    _index++;
+
+  } while( millis() - startTime < timeout );
+
   return false;
 }
 

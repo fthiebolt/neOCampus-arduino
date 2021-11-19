@@ -89,7 +89,7 @@ enum class pmSensorState_t : uint8_t {
 enum class pmSensorType_t : uint8_t { 
   PMSx003       = 0x10,       // PMS5003, PMSA003 ...
   SDS011        = 0x20,
-  SCP4X         = 0x30,       // sensiron SCP4X
+  SPS3X         = 0x30,       // sensiron SPS3X
   IKEA          = 0x40,       // IKEA VINDTRIKNING features a Cubic PM1006K particles sensor
   // add additional kind of PM sensors here
 
@@ -110,9 +110,11 @@ typedef struct {
   const char    *subID;       // subID string
 } serialMeasure_t;
 
-#define PM_MAX_MEASURES         4 // maximum number of single measure
+#define PM_MAX_MEASURES         4 // maximum number of single measures
 
-// PMSx003 measurements
+/* PMSx003 measurements
+ * very low precision on 1µm particle so we don't take mention of them
+ */
 enum class pmsx003DataIdx_t : uint8_t {
   PM2_5=0,
   PM10,
@@ -126,7 +128,9 @@ enum class sds011DataIdx_t : uint8_t {
   last
 };
 
-// IKEA measurements
+/* IKEA measurements
+ * [nov.21] Cubic PM1006K only reports PM2.5 (downgraded firmware ?)
+ */
 enum class ikeaDataIdx_t : uint8_t {
   PM2_5=0,
   PM10,

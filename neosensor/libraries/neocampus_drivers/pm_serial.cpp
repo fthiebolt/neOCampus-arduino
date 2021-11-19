@@ -420,6 +420,12 @@ boolean pm_serial::FSMmeasureBusy( void ) {
         res = serialRead_sds011();    // blocking read with timeout
         break;
 
+      // IKEA
+      case pmSensorType_t::IKEA :
+        _ll_requestRead();
+        res = serialRead_ikea();    // blocking read with timeout
+        break;
+
       // default
       default:
         log_error(F("\n\t[pm_serial] unknown sensor type Ox"));log_error((uint8_t)_sensor_type,HEX);log_flush();
@@ -559,6 +565,7 @@ boolean pm_serial::_init( void ) {
     // PMSx003
     case pmSensorType_t::PMSx003 :
       log_debug(F("\n[pm_serial] start PMSx003 PM sensor setup ..."));log_flush();
+      _activeMode = true;
       _nbMeasures = (uint8_t)pmsx003DataIdx_t::last;
       _measures = new serialMeasure_t[_nbMeasures];
       for( uint8_t i=0; i<_nbMeasures; i++ ) _measures[i].subID = nullptr;
@@ -569,11 +576,23 @@ boolean pm_serial::_init( void ) {
     // SDS011
     case pmSensorType_t::SDS011 :
       log_debug(F("\n[pm_serial] start SDS011 PM sensor setup ..."));log_flush();
+      _activeMode = true;
       _nbMeasures = (uint8_t)sds011DataIdx_t::last;
       _measures = new serialMeasure_t[_nbMeasures];
       for( uint8_t i=0; i<_nbMeasures; i++ ) _measures[i].subID = nullptr;
       _measures[(uint8_t)sds011DataIdx_t::PM2_5].subID = subID_pm2_5;
       _measures[(uint8_t)sds011DataIdx_t::PM10].subID = subID_pm10;
+      break;
+
+    // IKEA VINDRIKTNING
+    case pmSensorType_t::IKEA :
+      log_debug(F("\n[pm_serial] start IKEA PM sensor setup ..."));log_flush();
+      _activeMode = false;  // [nov.21] yes, passive as default
+      _nbMeasures = (uint8_t)ikeaDataIdx_t::last;
+      _measures = new serialMeasure_t[_nbMeasures];
+      for( uint8_t i=0; i<_nbMeasures; i++ ) _measures[i].subID = nullptr;
+      _measures[(uint8_t)ikeaDataIdx_t::PM2_5].subID = subID_pm2_5;
+      _measures[(uint8_t)ikeaDataIdx_t::PM10].subID = subID_pm10;
       break;
 
     // add additional kind of sensor here
@@ -609,7 +628,6 @@ boolean pm_serial::_init( void ) {
   if( !_stream ) return false;
   
   // switch to passive mode (if any)
-  _activeMode = true;
   if( _ll_passiveMode() ) {
     log_debug(F("\n[pm_serial] switch to passive mode"));log_flush();
     _activeMode = false;
@@ -740,6 +758,12 @@ boolean pm_serial::_ll_requestRead( void ) {
     _stream->write(command, sizeof(command)); delay(50);
     res = true;
   }
+  else if( _sensor_type ==  pmSensorType_t::IKEA ) {
+    uint8_t command[] = { 0x11, 0x01, 0x02, 0xEC };
+    _stream->write(command, sizeof(command)); delay(50);
+    res = true;
+  }
+
   return res;
 }
 
@@ -854,6 +878,16 @@ boolean pm_serial::serialRead_pmsx003( uint16_t timeout ) {
  * @note blocking call till data OK or timeout
  */
 boolean pm_serial::serialRead_sds011( uint16_t timeout ) {
+  
+  return false;
+}
+
+
+/*!
+ * IKEA: serial data grabber and parser
+ * @note blocking call till data OK or timeout
+ */
+boolean pm_serial::serialRead_ikea( uint16_t timeout ) {
   
   return false;
 }

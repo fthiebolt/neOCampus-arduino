@@ -87,9 +87,10 @@ enum class pmSensorState_t : uint8_t {
 
 // type of PM sensor
 enum class pmSensorType_t : uint8_t { 
-  PMSx003       = 0x10,
+  PMSx003       = 0x10,       // PMS5003, PMSA003 ...
   SDS011        = 0x20,
-  SCP30         = 0x30,
+  SCP4X         = 0x30,       // sensiron SCP4X
+  IKEA          = 0x40,       // IKEA VINDTRIKNING features a Cube PM1006K
   // add additional kind of PM sensors here
 
   undefined     = (uint8_t)(-1)
@@ -120,6 +121,13 @@ enum class pmsx003DataIdx_t : uint8_t {
 
 // SDS011 measurements
 enum class sds011DataIdx_t : uint8_t {
+  PM2_5=0,
+  PM10,
+  last
+};
+
+// IKEA measurements
+enum class ikeaDataIdx_t : uint8_t {
   PM2_5=0,
   PM10,
   last
@@ -198,6 +206,7 @@ class pm_serial : public generic_driver {
 
     boolean serialRead_pmsx003( uint16_t=PM_READ_MSTIMEOUT );   // blocking call reading data from serial till data OK or timeout
     boolean serialRead_sds011( uint16_t=PM_READ_MSTIMEOUT );    // blocking call reading data from serial till data OK or timeout
+    boolean serialRead_ikea( uint16_t=PM_READ_MSTIMEOUT );      // blocking call reading data from serial till data OK or timeout
 
     // -- [ll] private/protected methods
     boolean _ll_sleep( void );

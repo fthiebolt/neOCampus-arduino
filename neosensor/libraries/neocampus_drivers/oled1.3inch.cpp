@@ -248,8 +248,10 @@ bool oled13inch::dispLogo( void ) {
 
 
 /*
- * Display TIME + temp/hygro/lux if available
+ * Display TIME + temp/hygro/lux/airquality ... if available
  * Note: Beware that this method may get called at any time ...
+ * Note: We won't display more than 3 parameters in such order
+ *  --> temp, hygro, lux, airquality, ...
  */
 uint8_t oled13inch::dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds ) {
   if( _u8g2==nullptr ) return false;
@@ -357,10 +359,30 @@ uint8_t oled13inch::dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds ) 
         // luminosity
         //serializeJsonPretty( kv.value(), Serial );
         for( JsonPair _kv : (kv.value()).as<JsonObject>() ) {
-          //log_debug(F("\n[oled13inch][humidity] key: ")); log_debug(_kv.key().c_str()); log_flush();
+          //log_debug(F("\n[oled13inch][luminosity] key: ")); log_debug(_kv.key().c_str()); log_flush();
           const char *_key2avoid = PSTR("value_units");
           if( strncmp_P(_kv.key().c_str(), _key2avoid, strlen_P(_key2avoid))!=0 ) {
             snprintf( _str, sizeof(_str), "%dlux", _kv.value().as<int>());
+            _u8g2->drawUTF8(x_offset, y_offset, _str);
+            y_offset += (str_height + 0);
+            sensor2display = true;
+            break;  // exit inner loop
+          }
+        }
+        continue; // iterate over next kind of sensor
+      }
+    }
+
+    {
+      const char *_key = PSTR("airquality");
+      if( strncmp_P(kv.key().c_str(), _key, strlen_P(_key))==0 ) {
+        // airquality
+        //serializeJsonPretty( kv.value(), Serial );
+        for( JsonPair _kv : (kv.value()).as<JsonObject>() ) {
+          //log_debug(F("\n[oled13inch][airquality] key: ")); log_debug(_kv.key().c_str()); log_flush();
+          const char *_key2avoid = PSTR("value_units");
+          if( strncmp_P(_kv.key().c_str(), _key2avoid, strlen_P(_key2avoid))!=0 ) {
+            snprintf( _str, sizeof(_str), "%s:%dµg/m3", _kv.key().c_str(), _kv.value().as<int>());
             _u8g2->drawUTF8(x_offset, y_offset, _str);
             y_offset += (str_height + 0);
             sensor2display = true;

@@ -216,10 +216,10 @@ void pm_serial::process( uint16_t coolDown, uint8_t decimals ) {
       log_debug(F("\n\t[pm_serial] going out of cooldown ...")); log_flush();
       _FSMtimerDelay = 0;
 
-      // activate heating ...
+      // wake-up sensor ...
       _FSMstatus = pmSensorState_t::wakeup;
       if( FSMwakeUpStart() ) {
-        log_debug(F("\n\t[pm_serial] start wake up cycle ...")); log_flush();
+        log_debug(F("\n\t[pm_serial] start wake-up cycle ...")); log_flush();
       }
       // ... and continue with next step ...
       //yield();
@@ -246,7 +246,7 @@ void pm_serial::process( uint16_t coolDown, uint8_t decimals ) {
       log_debug(F("\n\t[pm_serial] end of measures :)")); log_flush();
 
       // shutdown sensor
-      powerOFF();
+      if( _powerSave ) powerOFF();
 
       // ok continue with next step: wait4read
       _FSMstatus = pmSensorState_t::wait4read;
@@ -308,9 +308,15 @@ String pm_serial::subID( uint8_t idx ) {
             for short pulse duration (< MAIN_DELAY_LOOP ---i.e 250ms), we
             wait for the specified delay, hence blocking behaviour,
             otherwise this is a non blocking API.
+    @note   TODO: on very first measurement cycle, we need to wait the specified delay
 */
 /**************************************************************************/
 boolean pm_serial::FSMwakeUpStart( uint16_t seconds ) {
+
+  if( ! _powerSave ) {
+    _FSMtimerDelay = 0;
+    return false; // no delay
+  }
 
   // start sensors
   powerON();
@@ -559,6 +565,11 @@ boolean pm_serial::_init( void ) {
     return false;   // measurment array OUGHT not to get already initialized
   }
 
+  /* as a default power save is ENABLED
+   * ==> sensor is powered down and woke up when needed
+   */
+  _powerSave = true;
+
   // check sensor type and initialize measurements
   switch( _sensor_type ) {
 
@@ -576,7 +587,8 @@ boolean pm_serial::_init( void ) {
     // SDS011
     case pmSensorType_t::SDS011 :
       log_debug(F("\n[pm_serial] start SDS011 PM sensor setup ..."));log_flush();
-      _activeMode = true;  // [nov.21] mode really depends on previous config saved within sensor. Factory default is active
+      _activeMode = true;   // [nov.21] mode really depends on previous config saved within sensor. Factory default is active
+      _powerSave = false;   // [nov.21] noisy sensor, we prefer not having powerON / powerOFF cycles :|
       _nbMeasures = (uint8_t)sds011DataIdx_t::last;
       _measures = new serialMeasure_t[_nbMeasures];
       for( uint8_t i=0; i<_nbMeasures; i++ ) _measures[i].subID = nullptr;
@@ -633,17 +645,18 @@ boolean pm_serial::_init( void ) {
     _activeMode = false;
   }
 
-  // powerOFF module
-  powerOFF();
-
-  // flush serial buffer
-  while( _stream->available() ) _stream->read();
-
   // configure enable_gpio if any
   if( _enable_gpio != INVALID_GPIO ) {
     pinMode( _enable_gpio, INPUT );
     digitalWrite( _enable_gpio, LOW );  // this way, INPUT ==> normal ops, OUTPUT ==> sensor disabled
   }
+
+  // powerSave mode ==> stop sensor, otherwise start it
+  if( _powerSave ) powerOFF();
+  else powerON();
+
+  // flush serial buffer
+  while( _stream->available() ) _stream->read();
 
   // set FSM initial state
   _FSMstatus = PM_FSMSTATE_DEFL;

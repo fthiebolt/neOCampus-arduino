@@ -180,6 +180,7 @@ class pm_serial : public generic_driver {
 
     pmSensorType_t _sensor_type;        // kind of PM sensor (e.g PMSx003, SDS011, SCP30 ...)
     boolean _activeMode;                // only relevant to PM sensors having support for active/passive modes
+    boolean _powerSave;                 // power save enabled or not
 
     pmSensorState_t _FSMstatus;         // FSM
     unsigned long _FSMtimerStart;       // ms system time start of current state;

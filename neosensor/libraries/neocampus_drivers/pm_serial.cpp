@@ -83,6 +83,7 @@ pm_serial::~pm_serial( void ) {
 void pm_serial::powerOFF( void )
 {
   if( !_initialized or !_stream ) return;
+  if( ! _powerSave ) return;
 
   if( _enable_gpio != INVALID_GPIO ) {
     log_debug(F("\n[pm_serial] going to sleep through GPIO "));log_debug(_enable_gpio);log_flush();
@@ -588,7 +589,7 @@ boolean pm_serial::_init( void ) {
     case pmSensorType_t::SDS011 :
       log_debug(F("\n[pm_serial] start SDS011 PM sensor setup ..."));log_flush();
       _activeMode = true;   // [nov.21] mode really depends on previous config saved within sensor. Factory default is active
-      _powerSave = false;   // [nov.21] noisy sensor, we prefer not having powerON / powerOFF cycles :|
+      //_powerSave = false;   // [nov.21] noisy sensor, we prefer not having powerON / powerOFF cycles :|
       _nbMeasures = (uint8_t)sds011DataIdx_t::last;
       _measures = new serialMeasure_t[_nbMeasures];
       for( uint8_t i=0; i<_nbMeasures; i++ ) _measures[i].subID = nullptr;
@@ -653,7 +654,10 @@ boolean pm_serial::_init( void ) {
 
   // powerSave mode ==> stop sensor, otherwise start it
   if( _powerSave ) powerOFF();
-  else powerON();
+  else {
+    log_debug(F("\n[pm_serial] DISABLED power save mode ... "));log_flush();
+    powerON();
+  }
 
   // flush serial buffer
   while( _stream->available() ) _stream->read();
@@ -744,8 +748,11 @@ boolean pm_serial::_ll_passiveMode( void ) {
     res = true;
   }
   else if( _sensor_type ==  pmSensorType_t::SDS011 ) {
-    uint8_t command[] = { 0xAA, 0xB4, 0x02, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x02, 0xAB };
-    _stream->write(command, sizeof(command)); delay(50);
+    // [nov.21] SDS011 sleep command ... unless powerSave feature is disabled
+    if( _powerSave ) {
+      uint8_t command[] = { 0xAA, 0xB4, 0x02, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x02, 0xAB };
+      _stream->write(command, sizeof(command)); delay(50);
+    }
     res = true;
   }
 
@@ -770,6 +777,7 @@ boolean pm_serial::_ll_activeMode( void ) {
       res = true;
   }
   else if( _sensor_type ==  pmSensorType_t::SDS011 ) {
+    // SDS011 wake-up command ... whatever power save mode
     uint8_t command[] = { 0xAA, 0xB4, 0x02, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x01, 0xAB };
     _stream->write(command, sizeof(command)); delay(50);
     res = true;
@@ -1019,8 +1027,10 @@ boolean pm_serial::serialRead_ikea( uint16_t timeout ) {
     if( !_stream->available() ) {
       delay(5); continue;
     }
+
     // read serial char
     uint8_t ch = _stream->read();
+
     // switch to byte position in frame
     switch( _index ) {
 

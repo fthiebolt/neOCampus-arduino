@@ -589,7 +589,7 @@ boolean pm_serial::_init( void ) {
     case pmSensorType_t::SDS011 :
       log_debug(F("\n[pm_serial] start SDS011 PM sensor setup ..."));log_flush();
       _activeMode = true;   // [nov.21] mode really depends on previous config saved within sensor. Factory default is active
-      //_powerSave = false;   // [nov.21] noisy sensor, we prefer not having powerON / powerOFF cycles :|
+      _powerSave = false;   // [nov.21] noisy sensor, we prefer not having powerON / powerOFF cycles :|
       _nbMeasures = (uint8_t)sds011DataIdx_t::last;
       _measures = new serialMeasure_t[_nbMeasures];
       for( uint8_t i=0; i<_nbMeasures; i++ ) _measures[i].subID = nullptr;

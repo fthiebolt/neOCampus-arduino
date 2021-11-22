@@ -8,11 +8,11 @@
     Implement a generic display to leverage the needs that stems from
     multiple types of displays availability.
     
-    (c) Copyright 2018 Thiebolt F. <thiebolt@irit.fr>
+    (c) Copyright F.Thiebolt <thiebolt@irit.fr>
 
 	@section  HISTORY
 
-    2018-Jun    - First release, F. Thiebolt
+    2020    F.Thiebolt    initial release
     
 */
 /**************************************************************************/

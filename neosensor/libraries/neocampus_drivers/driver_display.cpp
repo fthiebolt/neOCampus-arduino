@@ -3,16 +3,16 @@
     @file     driver_display.cpp
     @author   F. Thiebolt
     @license
-
-    This is part of a the neOCampus drivers library.
-    Implement a generic DAC to leverage the needs that stems from
-    multiple DACs types availability.
     
-    (c) Copyright 2017 Thiebolt F. <thiebolt@irit.fr>
+    This is part of a the neOCampus drivers library.
+    Implement a generic display to leverage the needs that stems from
+    multiple types of displays availability.
+    
+    (c) Copyright F.Thiebolt <thiebolt@irit.fr>
 
-	  @section  HISTORY
+	@section  HISTORY
 
-    2018-Jun    - First release, F. Thiebolt
+    2020    F.Thiebolt    initial release
     
     
 */

@@ -15,6 +15,7 @@
 
 	  @section  HISTORY
 
+    2021-Nov  - F.Thiebolt    clear display in destructor
     2021-Sep  - F.Thiebolt    considering 1.3 inches oleds based on SH1106
     2020-Nov  - F.Thiebolt    Initial Release
 */
@@ -76,6 +77,7 @@ oled13inch::oled13inch( void ) : driver_display() {
 
 // destructor
 oled13inch::~oled13inch( void ) {
+  powerOFF(); delay(50);
   if( _u8g2 != nullptr ) {
     free( _u8g2 );
     _u8g2 = nullptr;
@@ -98,7 +100,7 @@ boolean oled13inch::begin( uint8_t addr=INVALID_I2CADDR ) {
 
   /* instantiate u8 device
    * _F_ full frame buffer
-   * _1_ or _2_ single or dual frame
+   * _1_ or _2_ single or dual line(s) of the frame
    */
   _u8g2 = new U8G2_SH1106_128X64_NONAME_F_HW_I2C(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
   if( _u8g2==nullptr ) return false;
@@ -120,11 +122,15 @@ boolean oled13inch::begin( uint8_t addr=INVALID_I2CADDR ) {
  * Power modes: ON or powerOFF
  */
 void oled13inch::powerON( void ) {
+  if( !_u8g2 ) return;
+
   // init display
   _u8g2->begin();
 }
 
 void oled13inch::powerOFF( void ) {
+  if( !_u8g2 ) return;
+
   // clear buffer & display
   _u8g2->clear();
   // enter power save mode

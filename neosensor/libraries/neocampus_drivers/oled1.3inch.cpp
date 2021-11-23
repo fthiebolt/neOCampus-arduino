@@ -382,7 +382,8 @@ uint8_t oled13inch::dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds ) 
           //log_debug(F("\n[oled13inch][airquality] key: ")); log_debug(_kv.key().c_str()); log_flush();
           const char *_key2avoid = PSTR("value_units");
           if( strncmp_P(_kv.key().c_str(), _key2avoid, strlen_P(_key2avoid))!=0 ) {
-            snprintf( _str, sizeof(_str), "%s:%dµg/m3", _kv.key().c_str(), _kv.value().as<int>());
+            //snprintf( _str, sizeof(_str), "%s:%dµg/m3", _kv.key().c_str(), _kv.value().as<int>());
+            snprintf( _str, sizeof(_str), "%dµg/m3", _kv.value().as<int>());
             _u8g2->drawUTF8(x_offset, y_offset, _str);
             y_offset += (str_height + 0);
             sensor2display = true;

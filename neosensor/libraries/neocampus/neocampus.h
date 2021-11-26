@@ -90,6 +90,7 @@ typedef uint32_t firmwareRev_t;
     #include "neosensor.h"  // for BOTH esp8266, esp32
 #elif defined(NEOSENSOR_AIRQUALITY_BOARD)
   #include "neosensor_airquality.h" // only for esp32
+  #error "[nov.21] LCC_sensor OUGHT to implement advanced data retrieval with _dataIdx pointer !!";
 #else
   #error "unknown specified board ?!?!"
 #endif /* NEOSENSOR_BOARD */

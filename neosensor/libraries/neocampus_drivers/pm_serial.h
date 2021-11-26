@@ -7,12 +7,15 @@
     This is part of a the neOCampus drivers library.
     This driver is intended various particules meters featuring a serial link:
     - PMSx003
-    - [later] SDS011
-    - [later] Sensirion SCP30
+    - SDS011
+    - [later] Sensirion SPS30
+    - CO2 sensor PMH-Z14 (*)
     
-    Note: we'll only send back PM2.5 values
-
     (c) Copyright 2021 Thiebolt F. <thiebolt@irit.fr>
+
+  @note
+    As of nov.21, in addition to the various particle meters supported, we decided
+    to add CO2 as being part of air quality measurement.
 
 	@section  HISTORY
 
@@ -85,12 +88,13 @@ enum class pmSensorState_t : uint8_t {
  */
 #define PM_DEFL_LINK_SPEED    9600  // serial link default speed
 
-// type of PM sensor
+// type of sensor
 enum class pmSensorType_t : uint8_t { 
   PMSx003       = 0x10,       // PMS5003, PMSA003 ...
   SDS011        = 0x20,
   SPS3X         = 0x30,       // sensiron SPS3X
   IKEA          = 0x40,       // IKEA VINDTRIKNING features a Cubic PM1006K particles sensor
+  MHZ1x         = 0x50,       // MH-Z1x CO2 sensors and variants (e.g MH-Z14a, MH-Z19b ...)
   // add additional kind of PM sensors here
 
   undefined     = (uint8_t)(-1)
@@ -108,6 +112,7 @@ typedef struct {
   unsigned long _lastMsSent;  // (ms) time the official value has been sent (starvation avoidance)
 
   const char    *subID;       // subID string
+  const char    *units;       // units string
 } serialMeasure_t;
 
 #define PM_MAX_MEASURES         4 // maximum number of single measures
@@ -137,6 +142,14 @@ enum class ikeaDataIdx_t : uint8_t {
   last
 };
 
+/* MH-Z1x measurements
+ * [nov.21] CO2 sensor
+ */
+enum class mhz1xDataIdx_t : uint8_t {
+  CO2=0,
+  last
+};
+
 
 
 /*
@@ -161,7 +174,7 @@ class pm_serial : public generic_driver {
 
     // send back sensor's value, units and subID
     boolean acquire( float* ) { return false; };    // acquire is part of generic::process() we override
-    const char *sensorUnits( uint8_t=0 ) { return units; };
+    const char *sensorUnits( uint8_t=0 );
     String subID( uint8_t=0 );
 
     // data integration, override generic_driver
@@ -188,9 +201,11 @@ class pm_serial : public generic_driver {
     uint16_t _FSMtimerDelay;            // ms delay to cur state timeout
     
     boolean _initialized;
-    static const char *units;
+    static const char *units_pm;
+    static const char *units_co2;
     static const char *subID_pm2_5;
     static const char *subID_pm10;
+    static const char *subID_co2;
 
     // data integration
     boolean _trigger;                   // when triggered, multiple call to getValue(*idx) will send back all stable values

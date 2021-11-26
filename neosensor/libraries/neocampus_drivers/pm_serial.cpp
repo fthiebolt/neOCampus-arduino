@@ -33,10 +33,12 @@
 
 
 /* declare kind of units (value_units) */
-const char *pm_serial::units = "µg/m3";
+const char *pm_serial::units_pm   = "µg/m3";
+const char *pm_serial::units_co2  = "ppm";
 /* declare subIDs */
 const char *pm_serial::subID_pm2_5  = "pm2_5";
 const char *pm_serial::subID_pm10   = "pm10";
+const char *pm_serial::subID_co2    = "co2";
 
 
 /**************************************************************************/
@@ -274,6 +276,27 @@ void pm_serial::process( uint16_t coolDown, uint8_t decimals ) {
       _init();
   }
 }
+
+
+/**************************************************************************/
+/*! 
+    @brief  return current measure units
+*/
+/**************************************************************************/
+const char* pm_serial::sensorUnits( uint8_t idx ) {
+  if( idx==(uint8_t)(-1) ) return nullptr;
+
+  // looking for first available units
+  for( uint8_t i=idx; i<_nbMeasures; i++ ) {
+    if( !_measures[i]._trigger ) continue;
+    if( !_measures[i].units ) return nullptr;
+    // ok, return current units
+    return _measures[i].units;
+  }
+
+  // not found ...
+  return nullptr;
+};
 
 
 /**************************************************************************/
@@ -580,9 +603,14 @@ boolean pm_serial::_init( void ) {
       _activeMode = true;
       _nbMeasures = (uint8_t)pmsx003DataIdx_t::last;
       _measures = new serialMeasure_t[_nbMeasures];
-      for( uint8_t i=0; i<_nbMeasures; i++ ) _measures[i].subID = nullptr;
+      for( uint8_t i=0; i<_nbMeasures; i++ ) {
+        _measures[i].subID = nullptr;
+        _measures[i].units = nullptr;
+      }
       _measures[(uint8_t)pmsx003DataIdx_t::PM2_5].subID = subID_pm2_5;
+      _measures[(uint8_t)pmsx003DataIdx_t::PM2_5].units = units_pm;
       _measures[(uint8_t)pmsx003DataIdx_t::PM10].subID = subID_pm10;
+      _measures[(uint8_t)pmsx003DataIdx_t::PM10].units = units_pm;
       break;
 
     // SDS011
@@ -592,9 +620,14 @@ boolean pm_serial::_init( void ) {
       _powerSave = false;   // [nov.21] noisy sensor, we prefer not having powerON / powerOFF cycles :|
       _nbMeasures = (uint8_t)sds011DataIdx_t::last;
       _measures = new serialMeasure_t[_nbMeasures];
-      for( uint8_t i=0; i<_nbMeasures; i++ ) _measures[i].subID = nullptr;
+      for( uint8_t i=0; i<_nbMeasures; i++ ) {
+        _measures[i].subID = nullptr;
+        _measures[i].units = nullptr;
+      }
       _measures[(uint8_t)sds011DataIdx_t::PM2_5].subID = subID_pm2_5;
+      _measures[(uint8_t)sds011DataIdx_t::PM2_5].units = units_pm;
       _measures[(uint8_t)sds011DataIdx_t::PM10].subID = subID_pm10;
+      _measures[(uint8_t)sds011DataIdx_t::PM10].units = units_pm;
       break;
 
     // IKEA VINDRIKTNING
@@ -603,9 +636,28 @@ boolean pm_serial::_init( void ) {
       _activeMode = false;  // [nov.21] yes, passive as default
       _nbMeasures = (uint8_t)ikeaDataIdx_t::last;
       _measures = new serialMeasure_t[_nbMeasures];
-      for( uint8_t i=0; i<_nbMeasures; i++ ) _measures[i].subID = nullptr;
+      for( uint8_t i=0; i<_nbMeasures; i++ ) {
+        _measures[i].subID = nullptr;
+        _measures[i].units = nullptr;
+      }
       _measures[(uint8_t)ikeaDataIdx_t::PM2_5].subID = subID_pm2_5;
+      _measures[(uint8_t)ikeaDataIdx_t::PM2_5].units = units_pm;
       _measures[(uint8_t)ikeaDataIdx_t::PM10].subID = subID_pm10;
+      _measures[(uint8_t)ikeaDataIdx_t::PM10].units = units_pm;
+      break;
+
+    // [CO2] MH-Z1x
+    case pmSensorType_t::MHZ1x :
+      log_debug(F("\n[pm_serial] start MH-Z1X CO2 sensor setup ..."));log_flush();
+      _activeMode = false;  // [nov.21] yes, passive as default
+      _nbMeasures = (uint8_t)mhz1xDataIdx_t::last;
+      _measures = new serialMeasure_t[_nbMeasures];
+      for( uint8_t i=0; i<_nbMeasures; i++ ) {
+        _measures[i].subID = nullptr;
+        _measures[i].units = nullptr;
+      }
+      _measures[(uint8_t)mhz1xDataIdx_t::CO2].subID = subID_co2;
+      _measures[(uint8_t)mhz1xDataIdx_t::CO2].units = units_co2;
       break;
 
     // add additional kind of sensor here

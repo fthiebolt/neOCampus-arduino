@@ -438,16 +438,29 @@ void airquality::_process_sensors( void ) {
     _sensor[cur_sensor]->process( _freq, FLOAT_RESOLUTION );
     if( _sensor[cur_sensor]->getTrigger()!=true ) continue;
 
-    // new data ready to get sent ==> activate module's trigger
-    log_debug(F("\n[airquality][")); log_debug(_sensor[cur_sensor]->subID());
-    log_debug(F("] new official value = "));log_debug(_sensor[cur_sensor]->getValue(),FLOAT_RESOLUTION); log_flush();
-    _trigger = true;  // activate module level trigger
-
     /*
-     * update shared JSON
+     * update shared JSON with ALL sensors that may have changed !
+     * WARNING: NOT COMPLIANT FOR REGULAR SENSORS (e.g lcc one)
      */
     JsonObject _obj = variant.as<JsonObject>();
-    _obj[_sensor[cur_sensor]->subID()] = _sensor[cur_sensor]->getValue();
+    uint8_t _dataIdx=0;
+    do {
+      float value = _sensor[cur_sensor]->getValue(&_dataIdx);
+      if( _dataIdx==(uint8_t)(-1) ) break;  // no more data from this sensor
+      _obj[_sensor[cur_sensor]->subID(_dataIdx)] = value;
+      log_debug(F("\n[airquality][")); log_debug(_sensor[cur_sensor]->subID(_dataIdx));
+      log_debug(F("] new official value = "));log_debug(value,FLOAT_RESOLUTION); log_flush();
+      if( _sensor[cur_sensor]->sensorUnits(_dataIdx)!=nullptr ) {
+        char _key[32];
+        snprintf(_key,sizeof(_key),"%s_value_units",_sensor[cur_sensor]->subID(_dataIdx).c_str());
+        _obj[_key] = _sensor[cur_sensor]->sensorUnits(_dataIdx);
+      }
+      _dataIdx++;
+    } while( _dataIdx != (uint8_t)(-1) );
+
+    // new data ready to get sent ==> activate module's trigger
+    _trigger = true;  // activate module level trigger
+
   }
 }
 
@@ -475,9 +488,9 @@ boolean airquality::_sendValues( void ) {
 
     /* Retrieve data from current sensor
      * [nov.21] new protocol that enables to retrieve multiple data:
-     *   getValue( &index ) ==> if index has increase, then another data
-     *   needs to get sent, otherwise it's a regular driver sending back
-     *   a single data.
+     *  index=0;
+     *  getValue( &index ) ==> if *index != -1, then no more data to send else *index is current data to send
+     * WARNING: NOT COMPLIANT FOR REGULAR SENSORS (e.g lcc one)
      */
     // TODO: get index of first data to retrieve ... maybe later
     uint8_t _dataIdx=0;   // ask for first available data (i.e whose idx may be different from 0)
@@ -487,7 +500,6 @@ boolean airquality::_sendValues( void ) {
       // check if there's a valid data ...
       if( _dataIdx==(uint8_t)(-1) ) break;  // no more data from this sensor
 
-      // [nov.21] _dataIdx may have increase if multiple data need to get retrieved
       if( FLOAT_RESOLUTION ) {
         root[F("value")] = serialized(String(value,FLOAT_RESOLUTION));   // [nov.20] force float encoding
         //root[F("value")] = (float)( value );   // [may.20] force data as float (e.g ArduinoJson converts 20.0 to INT)
@@ -496,7 +508,7 @@ boolean airquality::_sendValues( void ) {
       else {
         root[F("value")] = (int)( value );      // [may.20] force as INT
       }
-      root[F("value_units")] = _sensor[cur_sensor]->sensorUnits(_dataIdx);
+      root[F("value_units")] = ( _sensor[cur_sensor]->sensorUnits(_dataIdx)!=nullptr ? _sensor[cur_sensor]->sensorUnits(_dataIdx) : "" );
       root[F("subID")] = _sensor[cur_sensor]->subID(_dataIdx);
 
       /*

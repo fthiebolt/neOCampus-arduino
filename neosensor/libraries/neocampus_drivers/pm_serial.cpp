@@ -441,19 +441,25 @@ boolean pm_serial::FSMmeasureBusy( void ) {
       // PMSX003
       case pmSensorType_t::PMSx003 :
         _ll_requestRead();
-        res = serialRead_pmsx003();   // blocking read with timeout
+        res = serialRead_pmsx003(); // blocking read with timeout
         break;
 
       // SDS011
       case pmSensorType_t::SDS011 :
         _ll_requestRead();
-        res = serialRead_sds011();    // blocking read with timeout
+        res = serialRead_sds011();  // blocking read with timeout
         break;
 
       // IKEA
       case pmSensorType_t::IKEA :
         _ll_requestRead();
         res = serialRead_ikea();    // blocking read with timeout
+        break;
+
+      // [CO2] MH-Z1x
+      case pmSensorType_t::MHZ1x :
+        _ll_requestRead();
+        res = serialRead_mhz1x();   // blocking read with timeout
         break;
 
       // default
@@ -648,7 +654,7 @@ boolean pm_serial::_init( void ) {
 
     // [CO2] MH-Z1x
     case pmSensorType_t::MHZ1x :
-      log_debug(F("\n[pm_serial] start MH-Z1X CO2 sensor setup ..."));log_flush();
+      log_debug(F("\n[pm_serial] start MH-Z1x CO2 sensor setup ..."));log_flush();
       _activeMode = false;  // [nov.21] yes, passive as default
       _nbMeasures = (uint8_t)mhz1xDataIdx_t::last;
       _measures = new serialMeasure_t[_nbMeasures];
@@ -863,6 +869,11 @@ boolean pm_serial::_ll_requestRead( void ) {
   }
   else if( _sensor_type ==  pmSensorType_t::IKEA ) {
     uint8_t command[] = { 0x11, 0x01, 0x02, 0xEC };
+    _stream->write(command, sizeof(command)); delay(50);
+    res = true;
+  }
+  else if( _sensor_type ==  pmSensorType_t::MHZ1x ) {
+    uint8_t command[] = { 0XFF, 0x01, 0x86, 0x00, 0x00, 0x00, 0x00, 0x00, 0x79 };
     _stream->write(command, sizeof(command)); delay(50);
     res = true;
   }
@@ -1144,6 +1155,18 @@ boolean pm_serial::serialRead_ikea( uint16_t timeout ) {
     _index++;
 
   } while( millis() - startTime < timeout );
+
+  return false;
+}
+
+/*!
+ * MH-Z1x: serial data grabber and parser
+ * @note blocking call till data OK or timeout
+ */
+boolean pm_serial::serialRead_mhz1x( uint16_t timeout ) {
+
+
+// TO BE CONTINUED
 
   return false;
 }

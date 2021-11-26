@@ -227,6 +227,7 @@ class pm_serial : public generic_driver {
     boolean serialRead_pmsx003( uint16_t=PM_READ_MSTIMEOUT );   // blocking call reading data from serial till data OK or timeout
     boolean serialRead_sds011( uint16_t=PM_READ_MSTIMEOUT );    // blocking call reading data from serial till data OK or timeout
     boolean serialRead_ikea( uint16_t=PM_READ_MSTIMEOUT );      // blocking call reading data from serial till data OK or timeout
+    boolean serialRead_mhz1x( uint16_t=PM_READ_MSTIMEOUT );     // blocking call reading data from serial till data OK or timeout
 
     // -- [ll] private/protected methods
     boolean _ll_sleep( void );

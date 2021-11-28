@@ -1140,7 +1140,7 @@ boolean pm_serial::serialRead_ikea( uint16_t timeout ) {
             return true;
           }
           // bad checksum ...
-          log_warning(F("\n[pm_serial][PMSx003] bad checksum ...")); log_flush();
+          log_warning(F("\n[pm_serial][IKEA] bad checksum ...")); log_flush();
           _index = 0;
           continue;
         }
@@ -1165,8 +1165,75 @@ boolean pm_serial::serialRead_ikea( uint16_t timeout ) {
  */
 boolean pm_serial::serialRead_mhz1x( uint16_t timeout ) {
 
+  uint8_t _index = 0;
+  uint16_t _frameLen = 0;
+  uint16_t _checksum = 0;
+  uint16_t _calculatedChecksum = 0;
+  uint8_t _payload[6];
 
-// TO BE CONTINUED
+  unsigned long startTime=millis();
+
+  do {
+    // serial data available ?
+    if( !_stream->available() ) {
+      delay(5); continue;
+    }
+
+    // read serial char
+    uint8_t ch = _stream->read();
+
+    // switch to byte position in frame
+    switch( _index ) {
+
+      case 0:
+        if( ch != 0xff ) continue;
+        break;
+
+      case 1:
+        if( ch != 0x86 ) {
+          _index = 0;
+          continue;
+        }
+        _calculatedChecksum = ch; // yes, preamble is not part of checksum
+        _frameLen = sizeof(payload);  // fixed frame length
+        break;
+
+      default:
+        if(_index == _frameLen + 2) {
+          _checksum = ch;
+          
+          if( uint8_t(~_calculatedChecksum + 1) == (uint8_t)_checksum ) {
+
+            uint16_t value;
+            value = makeWord(_payload[0], _payload[1]);     // CO2
+            log_debug(F("\n[pm_serial][MHZ-1x] CO2 = "));log_debug(value);log_flush();
+            _measures[(uint8_t)mhz1xDataIdx_t::CO2]._currentSum += (float)value;
+            log_debug(F("\t_currentSum = "));log_debug(_measures[(uint8_t))mhz1xDataIdx_t::CO2]._currentSum);
+            log_flush();
+
+            // data acquired, finisk :)
+            log_debug(F("\n[pm_serial][MHZ-1x] "));log_debug(millis()-startTime);
+            log_debug(F("ms reading data over serial link"));log_flush();
+            _index = 0; // useless since we return now ...
+            return true;
+          }
+          // bad checksum ...
+          log_warning(F("\n[pm_serial][MHZ-1x] bad checksum ...")); log_flush();
+          _index = 0;
+          continue;
+        }
+        else {
+TO BE CONTINUED
+          // payload acquire
+          _calculatedChecksum += ch;
+          uint8_t payloadIndex = _index - 3;
+
+          if( payloadIndex < sizeof(_payload) ) _payload[payloadIndex] = ch;
+        }
+    }
+    _index++;
+
+  } while( millis() - startTime < timeout );
 
   return false;
 }

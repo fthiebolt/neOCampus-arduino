@@ -945,35 +945,35 @@ boolean pm_serial::serialRead_pmsx003( uint16_t timeout ) {
         else if( _index == _frameLen + 2 + 1 ) {
           _checksum |= ch;
 
-          if( _calculatedChecksum == _checksum ) {
-
-            uint16_t value;
-            /* Standard Particles, CF=1.
-            _data->PM_SP_UG_1_0 = makeWord(_payload[0], _payload[1]);
-            _data->PM_SP_UG_2_5 = makeWord(_payload[2], _payload[3]);
-            _data->PM_SP_UG_10_0 = makeWord(_payload[4], _payload[5]);
-            */
-            // Atmospheric Environment.
-            //value = makeWord(_payload[6], _payload[7]);   // PM1_0
-            value = makeWord(_payload[8], _payload[9]);     // PM2_5
-            log_debug(F("\n[pm_serial][PMSx003] PM2_5 = "));log_debug(value);log_flush();
-            _measures[(uint8_t)pmsx003DataIdx_t::PM2_5]._currentSum += (float)value;
-            log_debug(F("\t_currentSum = "));log_debug(_measures[(uint8_t)pmsx003DataIdx_t::PM2_5]._currentSum);
-            log_flush();
-            value = makeWord(_payload[10], _payload[11]);   // PM10
-            log_debug(F("\n[pm_serial][PMSx003] PM10 = "));log_debug(value);log_flush();
-            _measures[(uint8_t)pmsx003DataIdx_t::PM10]._currentSum += (float)value;
-
-            // data acquired, finisk :)
-            log_debug(F("\n[pm_serial][PMSx003] "));log_debug(millis()-startTime);
-            log_debug(F("ms reading data over serial link"));log_flush();
-            _index = 0; // useless since we return now ...
-            return true;
+          if( _calculatedChecksum != _checksum ) {
+            // bad checksum ...
+            log_warning(F("\n[pm_serial][PMSx003] bad checksum ...")); log_flush();
+            _index = 0;
+            continue;
           }
-          // bad checksum ...
-          log_warning(F("\n[pm_serial][PMSx003] bad checksum ...")); log_flush();
-          _index = 0;
-          continue;
+
+          uint16_t value;
+          /* Standard Particles, CF=1.
+          _data->PM_SP_UG_1_0 = makeWord(_payload[0], _payload[1]);
+          _data->PM_SP_UG_2_5 = makeWord(_payload[2], _payload[3]);
+          _data->PM_SP_UG_10_0 = makeWord(_payload[4], _payload[5]);
+          */
+          // Atmospheric Environment.
+          //value = makeWord(_payload[6], _payload[7]);   // PM1_0
+          value = makeWord(_payload[8], _payload[9]);     // PM2_5
+          log_debug(F("\n[pm_serial][PMSx003] PM2_5 = "));log_debug(value);log_flush();
+          _measures[(uint8_t)pmsx003DataIdx_t::PM2_5]._currentSum += (float)value;
+          log_debug(F("\t_currentSum = "));log_debug(_measures[(uint8_t)pmsx003DataIdx_t::PM2_5]._currentSum);
+          log_flush();
+          value = makeWord(_payload[10], _payload[11]);   // PM10
+          log_debug(F("\n[pm_serial][PMSx003] PM10 = "));log_debug(value);log_flush();
+          _measures[(uint8_t)pmsx003DataIdx_t::PM10]._currentSum += (float)value;
+
+          // data acquired, finisk :)
+          log_debug(F("\n[pm_serial][PMSx003] "));log_debug(millis()-startTime);
+          log_debug(F("ms reading data over serial link"));log_flush();
+          _index = 0; // useless since we return now ...
+          return true;
         }
         else {
           // payload acquire
@@ -1119,30 +1119,31 @@ boolean pm_serial::serialRead_ikea( uint16_t timeout ) {
         if(_index == _frameLen + 2) {
           _checksum = ch;
           
-          if( uint8_t(_calculatedChecksum+_checksum) == (uint8_t)0 ) {
-
-            uint16_t value;
-            // Atmospheric Environment.
-            //value = makeWord(_payload[6], _payload[7]);   // PM1_0
-            value = makeWord(_payload[2], _payload[3]);     // PM2_5
-            log_debug(F("\n[pm_serial][IKEA] PM2_5 = "));log_debug(value);log_flush();
-            _measures[(uint8_t)ikeaDataIdx_t::PM2_5]._currentSum += (float)value;
-            log_debug(F("\t_currentSum = "));log_debug(_measures[(uint8_t)ikeaDataIdx_t::PM2_5]._currentSum);
-            log_flush();
-            value = makeWord(_payload[10], _payload[11]);   // PM10
-            log_debug(F("\n[pm_serial][IKEA] PM10 = "));log_debug(value);log_flush();
-            _measures[(uint8_t)ikeaDataIdx_t::PM10]._currentSum += (float)value;
-
-            // data acquired, finisk :)
-            log_debug(F("\n[pm_serial][IKEA] "));log_debug(millis()-startTime);
-            log_debug(F("ms reading data over serial link"));log_flush();
-            _index = 0; // useless since we return now ...
-            return true;
+          if( uint8_t(_calculatedChecksum+_checksum) != (uint8_t)0 ) {
+            // bad checksum ...
+            log_warning(F("\n[pm_serial][IKEA] bad checksum ...")); log_flush();
+            _index = 0;
+            continue;
           }
-          // bad checksum ...
-          log_warning(F("\n[pm_serial][IKEA] bad checksum ...")); log_flush();
-          _index = 0;
-          continue;
+
+          uint16_t value;
+          // Atmospheric Environment.
+          //value = makeWord(_payload[6], _payload[7]);   // PM1_0
+          value = makeWord(_payload[2], _payload[3]);     // PM2_5
+          log_debug(F("\n[pm_serial][IKEA] PM2_5 = "));log_debug(value);log_flush();
+          _measures[(uint8_t)ikeaDataIdx_t::PM2_5]._currentSum += (float)value;
+          log_debug(F("\t_currentSum = "));log_debug(_measures[(uint8_t)ikeaDataIdx_t::PM2_5]._currentSum);
+          log_flush();
+          value = makeWord(_payload[10], _payload[11]);   // PM10
+          log_debug(F("\n[pm_serial][IKEA] PM10 = "));log_debug(value);log_flush();
+          _measures[(uint8_t)ikeaDataIdx_t::PM10]._currentSum += (float)value;
+
+          // data acquired, finisk :)
+          log_debug(F("\n[pm_serial][IKEA] "));log_debug(millis()-startTime);
+          log_debug(F("ms reading data over serial link"));log_flush();
+          _index = 0; // useless since we return now ...
+          return true;
+
         }
         else {
           // payload acquire
@@ -1195,38 +1196,37 @@ boolean pm_serial::serialRead_mhz1x( uint16_t timeout ) {
           continue;
         }
         _calculatedChecksum = ch; // yes, preamble is not part of checksum
-        _frameLen = sizeof(payload);  // fixed frame length
+        _frameLen = sizeof(_payload);  // fixed frame length
         break;
 
       default:
         if(_index == _frameLen + 2) {
           _checksum = ch;
           
-          if( uint8_t(~_calculatedChecksum + 1) == (uint8_t)_checksum ) {
-
-            uint16_t value;
-            value = makeWord(_payload[0], _payload[1]);     // CO2
-            log_debug(F("\n[pm_serial][MHZ-1x] CO2 = "));log_debug(value);log_flush();
-            _measures[(uint8_t)mhz1xDataIdx_t::CO2]._currentSum += (float)value;
-            log_debug(F("\t_currentSum = "));log_debug(_measures[(uint8_t))mhz1xDataIdx_t::CO2]._currentSum);
-            log_flush();
-
-            // data acquired, finisk :)
-            log_debug(F("\n[pm_serial][MHZ-1x] "));log_debug(millis()-startTime);
-            log_debug(F("ms reading data over serial link"));log_flush();
-            _index = 0; // useless since we return now ...
-            return true;
+          if( uint8_t(~_calculatedChecksum + 1) != (uint8_t)_checksum ) {
+            // bad checksum ...
+            log_warning(F("\n[pm_serial][MHZ-1x] bad checksum ...")); log_flush();
+            _index = 0;
+            continue;
           }
-          // bad checksum ...
-          log_warning(F("\n[pm_serial][MHZ-1x] bad checksum ...")); log_flush();
-          _index = 0;
-          continue;
+
+          uint16_t value;
+          value = makeWord(_payload[0], _payload[1]);     // CO2
+          log_debug(F("\n[pm_serial][MHZ-1x] CO2 = "));log_debug(value);log_flush();
+          _measures[(uint8_t)mhz1xDataIdx_t::CO2]._currentSum += (float)value;
+          log_debug(F("\t_currentSum = "));log_debug(_measures[(uint8_t)mhz1xDataIdx_t::CO2]._currentSum);
+          log_flush();
+
+          // data acquired, finisk :)
+          log_debug(F("\n[pm_serial][MHZ-1x] "));log_debug(millis()-startTime);
+          log_debug(F("ms reading data over serial link"));log_flush();
+          _index = 0; // useless since we return now ...
+          return true;
         }
         else {
-TO BE CONTINUED
           // payload acquire
           _calculatedChecksum += ch;
-          uint8_t payloadIndex = _index - 3;
+          uint8_t payloadIndex = _index - 2;
 
           if( payloadIndex < sizeof(_payload) ) _payload[payloadIndex] = ch;
         }

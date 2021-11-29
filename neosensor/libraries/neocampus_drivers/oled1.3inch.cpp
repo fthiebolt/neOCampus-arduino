@@ -302,8 +302,9 @@ uint8_t oled13inch::dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds ) 
   x_offset = 3;
   y_offset = str_height + 0;
 
-  //log_debug(F("\n[oled13inch] Global sharedJSON:\n")); log_flush();
-  //serializeJsonPretty( variant, Serial );
+  // DEBUG DEBUG DEBUG
+  log_debug(F("\n[oled13inch] Global sharedJSON:\n")); log_flush();
+  serializeJsonPretty( variant, Serial );
 
   bool sensor2display = false;
 
@@ -323,7 +324,7 @@ uint8_t oled13inch::dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds ) 
           const char *_key2avoid = PSTR("value_units");
           //if( strncmp_P(_kv.key().c_str(), _key2avoid, strlen_P(_key2avoid))!=0 ) {
           if( strstr_P(_kv.key().c_str(), _key2avoid)==nullptr ) {
-            //snprintf( _str, sizeof(_str), "%.1f°", (float)(_kv.value().as<float>()));
+            //snprintf( _str, sizeof(_str), "%.1f°c", (float)(_kv.value().as<float>()));
             snprintf( _str, sizeof(_str), "%.1f%s", _kv.value().as<float>(), _getUnits( _kv.key().c_str(), (kv.value()).as<JsonObject>() ) );
             _u8g2->drawUTF8(x_offset, y_offset, _str);
             y_offset += (str_height + 0);
@@ -345,7 +346,7 @@ uint8_t oled13inch::dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds ) 
           const char *_key2avoid = PSTR("value_units");
           //if( strncmp_P(_kv.key().c_str(), _key2avoid, strlen_P(_key2avoid))!=0 ) {
           if( strstr_P(_kv.key().c_str(), _key2avoid)==nullptr ) {
-            //snprintf( _str, sizeof(_str), "%d%%", _kv.value().as<int>());
+            //snprintf( _str, sizeof(_str), "%d%%r.h", _kv.value().as<int>());
             snprintf( _str, sizeof(_str), "%d%s", _kv.value().as<int>(), _getUnits( _kv.key().c_str(), (kv.value()).as<JsonObject>() ) );
             _u8g2->drawUTF8(x_offset, y_offset, _str);
             y_offset += (str_height + 0);

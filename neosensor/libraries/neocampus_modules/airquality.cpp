@@ -135,6 +135,11 @@ bool airquality::start( senso *sensocampus,  JsonDocument &sharedRoot ) {
   variant = sharedRoot.createNestedObject(MQTT_MODULE_NAME);
   // all sensors share the same units of values
   JsonObject _obj = variant.as<JsonObject>();
+
+  /* [nov.21] airquality sensors feature different value units ==> we'll afford a
+   * per sensor value_units, e.g: { 'CO2':842, 'CO2_value_units':'ppm', 'PM2_5':3, 'PM2_5_value_units':'µg/m3' }
+   */
+#if 0
   // we consider each module (e.g airquality) having each drivers producing the same king of value_units
   // hence we'll select value_units from first sensor of our sensors' list
   if( _sensor[0] != nullptr ) {
@@ -148,6 +153,8 @@ bool airquality::start( senso *sensocampus,  JsonDocument &sharedRoot ) {
     // e.g CP1="10042" CP1_value_units="ohm"
     // [oct.21] particle meters send back µg/m3 !
   }
+#endif /* 0 */
+
   // initialize module's publish and subscribe topics
   snprintf( pubTopic, sizeof(pubTopic), "%s/%s", sensocampus->getBaseTopic(), MQTT_MODULE_NAME);
   snprintf( subTopic, sizeof(subTopic), "%s/%s", pubTopic, "command" );

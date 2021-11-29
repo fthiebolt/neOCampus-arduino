@@ -576,7 +576,7 @@ void pm_serial::setDataSent( void ) {
 
     _measures[i]._trigger       = false;
 
-    _measures[i].valueSent      = value;
+    _measures[i].valueSent      = _measures[i].value;
     _measures[i]._lastMsSent    = curTime;
   }
 }

@@ -321,8 +321,10 @@ uint8_t oled13inch::dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds ) 
         for( JsonPair _kv : (kv.value()).as<JsonObject>() ) {
           //log_debug(F("\n[oled13inch][temperature] key: ")); log_debug(_kv.key().c_str()); log_flush();
           const char *_key2avoid = PSTR("value_units");
-          if( strncmp_P(_kv.key().c_str(), _key2avoid, strlen_P(_key2avoid))!=0 ) {
-            snprintf( _str, sizeof(_str), "%.1f°", (float)(_kv.value().as<float>()));
+          //if( strncmp_P(_kv.key().c_str(), _key2avoid, strlen_P(_key2avoid))!=0 ) {
+          if( strstr_P(_kv.key().c_str(), _key2avoid)==nullptr ) {
+            //snprintf( _str, sizeof(_str), "%.1f°", (float)(_kv.value().as<float>()));
+            snprintf( _str, sizeof(_str), "%.1f%s", _kv.value().as<float>(), _getUnits( _kv.key().c_str(), (kv.value()).as<JsonObject>() ) );
             _u8g2->drawUTF8(x_offset, y_offset, _str);
             y_offset += (str_height + 0);
             sensor2display = true;
@@ -341,8 +343,10 @@ uint8_t oled13inch::dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds ) 
         for( JsonPair _kv : (kv.value()).as<JsonObject>() ) {
           //log_debug(F("\n[oled13inch][humidity] key: ")); log_debug(_kv.key().c_str()); log_flush();
           const char *_key2avoid = PSTR("value_units");
-          if( strncmp_P(_kv.key().c_str(), _key2avoid, strlen_P(_key2avoid))!=0 ) {
-            snprintf( _str, sizeof(_str), "%d%%", _kv.value().as<int>());
+          //if( strncmp_P(_kv.key().c_str(), _key2avoid, strlen_P(_key2avoid))!=0 ) {
+          if( strstr_P(_kv.key().c_str(), _key2avoid)==nullptr ) {
+            //snprintf( _str, sizeof(_str), "%d%%", _kv.value().as<int>());
+            snprintf( _str, sizeof(_str), "%d%s", _kv.value().as<int>(), _getUnits( _kv.key().c_str(), (kv.value()).as<JsonObject>() ) );
             _u8g2->drawUTF8(x_offset, y_offset, _str);
             y_offset += (str_height + 0);
             sensor2display = true;
@@ -361,8 +365,10 @@ uint8_t oled13inch::dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds ) 
         for( JsonPair _kv : (kv.value()).as<JsonObject>() ) {
           //log_debug(F("\n[oled13inch][luminosity] key: ")); log_debug(_kv.key().c_str()); log_flush();
           const char *_key2avoid = PSTR("value_units");
-          if( strncmp_P(_kv.key().c_str(), _key2avoid, strlen_P(_key2avoid))!=0 ) {
-            snprintf( _str, sizeof(_str), "%dlux", _kv.value().as<int>());
+          //if( strncmp_P(_kv.key().c_str(), _key2avoid, strlen_P(_key2avoid))!=0 ) {
+          if( strstr_P(_kv.key().c_str(), _key2avoid)==nullptr ) {
+            //snprintf( _str, sizeof(_str), "%dlux", _kv.value().as<int>());
+            snprintf( _str, sizeof(_str), "%d%s", _kv.value().as<int>(), _getUnits( _kv.key().c_str(), (kv.value()).as<JsonObject>() ) );
             _u8g2->drawUTF8(x_offset, y_offset, _str);
             y_offset += (str_height + 0);
             sensor2display = true;
@@ -381,9 +387,10 @@ uint8_t oled13inch::dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds ) 
         for( JsonPair _kv : (kv.value()).as<JsonObject>() ) {
           //log_debug(F("\n[oled13inch][airquality] key: ")); log_debug(_kv.key().c_str()); log_flush();
           const char *_key2avoid = PSTR("value_units");
-          if( strncmp_P(_kv.key().c_str(), _key2avoid, strlen_P(_key2avoid))!=0 ) {
+          //if( strncmp_P(_kv.key().c_str(), _key2avoid, strlen_P(_key2avoid))!=0 ) {
+          if( strstr_P(_kv.key().c_str(), _key2avoid)==nullptr ) {
             //snprintf( _str, sizeof(_str), "%s:%dµg/m3", _kv.key().c_str(), _kv.value().as<int>());
-            snprintf( _str, sizeof(_str), "%dµg/m3", _kv.value().as<int>());
+            snprintf( _str, sizeof(_str), "%d%s", _kv.value().as<int>(), _getUnits( _kv.key().c_str(), (kv.value()).as<JsonObject>() ) );
             _u8g2->drawUTF8(x_offset, y_offset, _str);
             y_offset += (str_height + 0);
             sensor2display = true;
@@ -418,6 +425,30 @@ uint8_t oled13inch::dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds ) 
 /* ------------------------------------------------------------------------------
  * Private methods 
  */
+
+/*
+ * retrieve units for a key sensor in a Json dictionnary (JsonObject)
+ */
+const char* oled13inch::_getUnits( const char *key, JsonObject item ) {
+
+  static const char _deflUnits[]="";
+
+  //log_debug(F("\nlooking for unit of key: "));log_debug(key);log_flush();
+  //serializeJsonPretty( item, Serial );
+
+  /* search for key specific value units
+   * e.g CO2 --> CO2_value_units
+   */
+  char _key2find[32];
+  snprintf(_key2find, sizeof(_key2find), "%s_value_units", key );
+  if( item[_key2find] ) return item[_key2find];
+
+  // return regular 'value_units' key
+  if( item[F("value_units")] ) return item[F("value_units")];
+
+  return _deflUnits;
+}
+
 
 /*
  * Check that device identity is what we expect!

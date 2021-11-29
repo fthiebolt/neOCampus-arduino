@@ -99,6 +99,7 @@ class oled13inch : public driver_display {
     uint8_t _curHours, _curMinutes;
 
     // methods ...
+    const char* _getUnits( const char*, JsonObject ); // retrieve units for a key sensor in a Json dictionnary (JsonObject)
     static bool _check_identity( uint8_t );   // check device is what we expect!
 };
 

@@ -5,7 +5,7 @@ corner_power:   40
 work_power:     60
 
 * CARVE
-carve_speed:    200
-work_pwr:       1
-work_pwr:       1   (??)
+carve_speed:    300
+work_pwr:       10
+work_pwr:       10   (??)
 

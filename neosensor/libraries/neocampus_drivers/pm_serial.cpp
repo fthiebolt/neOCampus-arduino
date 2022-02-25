@@ -8,6 +8,8 @@
 
 	@section  HISTORY
 
+    feb.22  F.thiebolt  IKEA sensor: switched to a new read command borrowed 
+                        from on board IKEA PM sensor micro-controller
     oct.21  F.thiebolt  initial release
 */
 /**************************************************************************/
@@ -868,7 +870,8 @@ boolean pm_serial::_ll_requestRead( void ) {
     res = true;
   }
   else if( _sensor_type ==  pmSensorType_t::IKEA ) {
-    uint8_t command[] = { 0x11, 0x01, 0x02, 0xEC };
+    // uint8_t command[] = { 0x11, 0x01, 0x02, 0xEC }; // regular command
+    uint8_t command[] = { 0x11, 0x02, 0x0b, 0x01, 0xE1 }; // [feb.22] hidden command
     _stream->write(command, sizeof(command)); delay(50);
     res = true;
   }
@@ -1081,7 +1084,7 @@ boolean pm_serial::serialRead_ikea( uint16_t timeout ) {
   uint16_t _frameLen = 0;
   uint16_t _checksum = 0;
   uint16_t _calculatedChecksum = 0;
-  uint8_t _payload[12];
+  uint8_t _payload[16]; // [feb.22] newer command send back up to 16 bytes (no idea DF13-DF16 role)
 
   unsigned long startTime=millis();
 
@@ -1108,10 +1111,13 @@ boolean pm_serial::serialRead_ikea( uint16_t timeout ) {
         break;
 
       case 2:
+        // command byte answer: it could be 0x02 or 0x0b
+        /*
         if( ch != 0x02 ) {
           _index = 0;
           continue;
         }
+        */
         _calculatedChecksum += ch;
         break;
 
@@ -1137,6 +1143,7 @@ boolean pm_serial::serialRead_ikea( uint16_t timeout ) {
           value = makeWord(_payload[10], _payload[11]);   // PM10
           log_debug(F("\n[pm_serial][IKEA] PM10 = "));log_debug(value);log_flush();
           _measures[(uint8_t)ikeaDataIdx_t::PM10]._currentSum += (float)value;
+          // [feb.22] no idea DF13-DF16 bytes from 0x0B command are useful for ??
 
           // data acquired, finisk :)
           log_debug(F("\n[pm_serial][IKEA] "));log_debug(millis()-startTime);

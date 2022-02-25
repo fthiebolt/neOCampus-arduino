@@ -1,5 +1,7 @@
 /* Simple IKEA PM2.5 particle sensor test
  * https://github.com/fu-hsi/PMS
+ * 
+ * [feb.22] new command extracted from IKEA sensor 11 02 0b 01 E1
  */
 
 #include "Arduino.h"
@@ -22,6 +24,7 @@ public:
     uint16_t PM_1_0;
     uint16_t PM_2_5;
     uint16_t PM_10_0;
+    uint16_t PM_UNKNOWN;
   };
 
   PMS(Stream&);
@@ -38,7 +41,7 @@ private:
   enum STATUS { STATUS_WAITING, STATUS_OK };
   enum MODE { MODE_ACTIVE, MODE_PASSIVE };
 
-  uint8_t _payload[12];
+  uint8_t _payload[16];
   Stream* _stream;
   DATA* _data;
   STATUS _status;
@@ -95,9 +98,9 @@ void PMS::passiveMode()
 // Request read in Passive Mode.
 void PMS::requestRead()
 {
-  if (_mode == MODE_PASSIVE)
-  {
-    uint8_t command[] = { 0x11, 0x01, 0x02, 0xEC }; // [PREFIX] [nb_octets] [code_command] [checksum]
+  if (_mode == MODE_PASSIVE) {
+    // uint8_t command[] = { 0x11, 0x01, 0x02, 0xEC }; // [PREFIX] [nb_octets] [code_command] [checksum]
+    uint8_t command[] = { 0x11, 0x02, 0x0b, 0x01, 0xE1 }; // [PREFIX] [nb_octets] [code_command] [checksum]
     _stream->write(command, sizeof(command));
   }
 }
@@ -148,11 +151,13 @@ void PMS::loop()
       break;
 
     case 2:
-      if (ch != 0x02)
-      {
+      // command could be anything like 0x02 or 0x0b
+      /*
+      if (ch != 0x02) {
         _index = 0;
         return;
       }
+      */
       _calculatedChecksum += ch;
       break;
 
@@ -169,6 +174,7 @@ void PMS::loop()
           _data->PM_1_0 = makeWord(_payload[6], _payload[7]);
           _data->PM_2_5 = makeWord(_payload[2], _payload[3]);
           _data->PM_10_0 = makeWord(_payload[10], _payload[11]);
+          _data->PM_UNKNOWN = makeWord(_payload[14], _payload[15]);
         }
 
         _index = 0;
@@ -274,7 +280,7 @@ void setup() {
     Serial.println(F("\n[PM_sensor] request data ..."));Serial.flush();
     delay(250);
     while( Serial2.available() ) {
-      char msg[64];
+      char msg[128];
       char _cur = Serial2.read();
       if( _cur==0x16 ) {
         Serial.print(F("\n[new frame] = "));
@@ -311,8 +317,8 @@ void loop() {
       Serial.print(F("*"));Serial.flush();
     }
     unsigned long _cur = millis();
-    char msg[64];
-    snprintf(msg,sizeof(msg),"[PM_sensor] %lums read [PM1|PM2.5|PM10](µg/m3) %d %d %d", (_cur-_lastActive), data.PM_1_0, data.PM_2_5, data.PM_10_0 );
+    char msg[128];
+    snprintf(msg,sizeof(msg),"[PM_sensor] %lums read [PM1|PM2.5|PM10|PMunknown](µg/m3) %d %d %d %d", (_cur-_lastActive), data.PM_1_0, data.PM_2_5, data.PM_10_0, data.PM_UNKNOWN );
     Serial.println(msg);Serial.flush();
 /*
     Serial.print("\nPM 1.0 (ug/m3): ");

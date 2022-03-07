@@ -36,9 +36,9 @@ TO BE CONTINUED
 /*
  * Definitions
  */
-/* SHT3x sensors send back both T and RH at the same time, but since
- * we'll have both instances of this class ==> we implement a cache to
- * avoid reading the sensors two times one for T then for RH */
+/* SCD4x sensor send back both CO2, T and RH at the same time, but since
+ * we'll have three instances of this class ==> we implement a cache to
+ * avoid reading the sensor multiple times */
 #define SHT3X_SENSOR_CACHE_MS       5000  // ms caches values validity
 
 // Enable CRC lookup table (regular computation otherwise)

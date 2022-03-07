@@ -1,21 +1,20 @@
 /**************************************************************************/
 /*! 
-    @file     SHT3x.cpp
+    @file     SCD4x.h
     @author   F. Thiebolt
 	  @license
 	
     This is part of a the neOCampus drivers library.
-    SHT3x is humidity + temperature sensor with an I2C interface
+    SCD4x is an ultrasonic CO2 sensor that features both temperature and hygro
+    on an I2C interface
     
     Remember: all transfers are 16bits wide
     
-    (c) Copyright 2020 Thiebolt.F <thiebolt@irit.fr>
-
-    @note
+    (c) Copyright 2022 Thiebolt.F <thiebolt@irit.fr>
 
 	@section  HISTORY
 
-    2020-May    - F.Thiebolt Initial release (UUID's CRC check diasbled)
+    2022-March    - F.Thiebolt Initial release
     
 */
 /**************************************************************************/
@@ -31,17 +30,21 @@
 #include "neocampus_utils.h"
 
 
-#include "SHT3x.h"
+#include "SCD4x.h"
 
 
 
 /**************************************************************************/
 /*! 
     @brief  Declare list of possible I2C addrs
-    Note: only one i2c addr !
 */
 /**************************************************************************/
-const uint8_t SHT3x::i2c_addrs[2] = { 0x44, 0x45 };
+const uint8_t SCD4x::i2c_addrs[] = { 0x69 };
+
+
+#if 0
+TO BE CONTINUED
+
 
 
 /**************************************************************************/
@@ -502,3 +505,5 @@ bool SHT3x::_check_identity( uint8_t a ) {
 
   return true;
 }
+
+#endif /* 0 */

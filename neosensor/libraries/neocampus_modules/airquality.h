@@ -24,8 +24,8 @@
 // chips & devices drivers
 #include "generic_driver.h"
 #include "lcc_sensor.h"   // LCC's air quality sensors
-#include "pm_serial.h"    // particule meters with serial link: includes PMSx003, SDS011, sensirion SCD40 ...
-
+#include "pm_serial.h"    // particule meters with serial link: includes PMSx003, SDS011, sensirion SPS30 ...
+#include "SCD4x.h"        // Sensirion SCD4X CO2 sensor including temp + hygro
 
 
 

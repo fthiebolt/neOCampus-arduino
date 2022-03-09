@@ -5,8 +5,8 @@
 	  @license
 	
     This is part of a the neOCampus drivers library.
-    SCD4x is an ultrasonic CO2 sensor that features both temperature and hygro
-    on an I2C interface
+    SCD4x is an ultrasonic CO2 sensor that also features
+    both temperature and hygro on an I2C interface :)
     
     Remember: all transfers are 16bits wide
     
@@ -29,9 +29,6 @@
 #include "generic_driver.h"
 
 
-#if 0
-TO BE CONTINUED
-
 
 /*
  * Definitions
@@ -39,26 +36,60 @@ TO BE CONTINUED
 /* SCD4x sensor send back both CO2, T and RH at the same time, but since
  * we'll have three instances of this class ==> we implement a cache to
  * avoid reading the sensor multiple times */
-#define SHT3X_SENSOR_CACHE_MS       5000  // ms caches values validity
+#define SCD4X_SENSOR_CACHE_MS       5000  // ms caches values validity
 
 // Enable CRC lookup table (regular computation otherwise)
-#ifndef SHT3X_CRC_LOOKUP_TABLE
-#define SHT3X_CRC_LOOKUP_TABLE    1
+#ifndef SCD4X_CRC_LOOKUP_TABLE
+#define SCD4X_CRC_LOOKUP_TABLE    1
 #endif
 
-/* sht3x commands
+/* scd4x commands
  * Note:
- * - we won't make use of the 'Periodic Mode' features (i.e continuous measurement)
- * - avoid stretch modes because measuremernt can take up to 16ms
- * - useless heater
- * - Repeatability is resolution
  * - 1ms min. delay between two commands
- * - both temperature and humidity are measured and sent in a single 6bytes frame
- *      16bits T + CRC + 16bits RH + CRC
+ * - most commands need a 1ms execution time
+ * - CO2, temp and humidity are measured and sent in a single 9bytes frame
+ *      16bits C02 + CRC + 16bits T + CRC + 16bits RH + CRC
  * - every 16bits frames are CRC protected
  * - CRC8 0x31, initial=0xFF for 16bits data (first is )
  */
 enum class sht3xCmd_t : uint16_t {
+
+  // basic commands
+  start_periodic_measurement              = 0x21b1, // 5000ms measurement delay
+  read_measurement                        = 0xec05, // execution time: 1ms
+  stop_periodic_measurement               = 0x3f86, // execution time: 500ms
+
+  // output signal compensation
+  set_temperature_offset                  = 0x241d, // execution time: 1ms
+  get_temperature_offset                  = 0x2318, // execution time: 1ms
+  set_sensor_altitude                     = 0x2427, // execution time: 1ms
+  get_sensor_altitude                     = 0x2322, // execution time: 1ms
+  set_ambiant_pressure                    = 0xe000, // execution time: 1ms
+
+  // field calibration
+  perform_forced_calibration              = 0x362f // execution time: 400ms
+  set_automatic_self_calibration_enabled  = 0x2416 // execution time: 1ms
+  get_automatic_self_calibration_enabled  = 0x2313 // execution time: 1ms
+  
+  // low-power operations
+  start_low_power_periodoc_measurement    = 0x21ac, // 30s measurement delay
+  get_data_ready_status                   = 0xe4b8, // execution time: 1ms
+
+TO BE CONTINUED
+
+//Advanced features
+#define SCD4x_COMMAND_PERSIST_SETTINGS                        0x3615 // execution time: 800ms
+#define SCD4x_COMMAND_GET_SERIAL_NUMBER                       0x3682 // execution time: 1ms
+#define SCD4x_COMMAND_PERFORM_SELF_TEST                       0x3639 // execution time: 10000ms
+#define SCD4x_COMMAND_PERFORM_FACTORY_RESET                   0x3632 // execution time: 1200ms
+#define SCD4x_COMMAND_REINIT                                  0x3646 // execution time: 20ms
+
+//Low power single shot - SCD41 only
+#define SCD4x_COMMAND_MEASURE_SINGLE_SHOT                     0x219d // execution time: 5000ms
+#define SCD4x_COMMAND_MEASURE_SINGLE_SHOT_RHT_ONLY            0x2196 // execution time: 50ms
+
+
+
   soft_reset                = 0X30A2,   // software reset
   heater_enable             = 0x306D,   // on-chip heater enable
   heater_disable            = 0x3066,   // on-chip heater disable
@@ -157,7 +188,5 @@ class SHT3x : public generic_driver {
     static const uint8_t _crc8_table[256];
 #endif /* SHT3X_CRC_LOOKUP_TABLE */
 };
-
-#endif /* 0 */
 
 #endif /* _SCD4X_H_ */

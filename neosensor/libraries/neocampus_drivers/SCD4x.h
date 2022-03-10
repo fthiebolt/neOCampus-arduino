@@ -67,9 +67,9 @@ enum class sht3xCmd_t : uint16_t {
   set_ambiant_pressure                    = 0xe000, // execution time: 1ms
 
   // field calibration
-  perform_forced_calibration              = 0x362f // execution time: 400ms
-  set_automatic_self_calibration_enabled  = 0x2416 // execution time: 1ms
-  get_automatic_self_calibration_enabled  = 0x2313 // execution time: 1ms
+  perform_forced_calibration              = 0x362f, // execution time: 400ms
+  set_automatic_self_calibration_enabled  = 0x2416, // execution time: 1ms
+  get_automatic_self_calibration_enabled  = 0x2313, // execution time: 1ms
   
   // low-power operations
   start_low_power_periodoc_measurement    = 0x21ac, // 30s measurement delay

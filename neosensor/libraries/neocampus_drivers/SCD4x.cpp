@@ -265,23 +265,27 @@ boolean SHT3x::getTemp( float *pval )
 /*
  * Software reset through I2C command
  */
-void SHT3x::sw_reset( uint8_t adr ) {
-  log_debug(F("\n[SHT3x] SOFT RESET action started ..."));log_flush();
-  _writeCmd( adr, static_cast<uint16_t>(sht3xCmd_t::soft_reset) );
-  delay( 50 );
+void SCD4x::sw_reset( uint8_t adr ) {
+  log_debug(F("\n[SCD4x] SOFT RESET action started ..."));log_flush();
+  _writeCmd( adr, static_cast<uint16_t>(scd4xCmd_t::reinit) );
+  delay( 20 );
 }
 
 
 /*
- * Read 16bits sensor values registers and check CRCs
- * Note: SHT3x sensors read both T and RH with both CRCs
+ * Read 16bits sensors values and check CRCs
+ * Note: SCD4x sensors read CO2, T and RH, all feature CRC
  * hence we store static values with a timestamp to avoid
  * multiple (useless) access for same things.
  */
-bool SHT3x::_readSensor( uint16_t *pval ) {
+bool SCD4x::_readSensor( uint16_t *pval ) {
 
   // do we need to acquire fresh sensors values ?
-  if( (millis() - _lastMsRead ) >= (unsigned long)(SHT3X_SENSOR_CACHE_MS) ) {
+  if( (millis() - _lastMsRead ) >= (unsigned long)(SCD4X_SENSOR_CACHE_MS) ) {
+
+
+TO BE CONTINUED
+
 
     // select proper command
     uint16_t _cmd;
@@ -364,11 +368,11 @@ bool SHT3x::_readSensor( uint16_t *pval ) {
 /*
  * CRC related attributes
  */
-const uint8_t SHT3x::_crc8_polynom = 0x31;
+const uint8_t SCD4x::_crc8_polynom = 0x31;
 
-#ifdef SHT3X_CRC_LOOKUP_TABLE
+#ifdef SCD4X_CRC_LOOKUP_TABLE
 // CRC8 lookup table
-const uint8_t SHT3x::_crc8_table[256] PROGMEM = {
+const uint8_t SCD4x::_crc8_table[256] PROGMEM = {
 0x00,0x31,0x62,0x53,0xC4,0xF5,0xA6,0x97,0xB9,0x88,0xDB,0xEA,0x7D,0x4C,0x1F,0x2E,
 0x43,0x72,0x21,0x10,0x87,0xB6,0xE5,0xD4,0xFA,0xCB,0x98,0xA9,0x3E,0x0F,0x5C,0x6D,
 0x86,0xB7,0xE4,0xD5,0x42,0x73,0x20,0x11,0x3F,0x0E,0x5D,0x6C,0xFB,0xCA,0x99,0xA8,
@@ -388,7 +392,7 @@ const uint8_t SHT3x::_crc8_table[256] PROGMEM = {
 };
 
 // crc checksum verification
-bool SHT3x::crc_check( uint8_t data[], uint8_t nb_bytes, uint8_t checksum ) {
+bool SCD4x::crc_check( uint8_t data[], uint8_t nb_bytes, uint8_t checksum ) {
 	uint8_t crc = 0xff;
   while( nb_bytes ) {
     crc = pgm_read_byte_near(_crc8_table + (*data ^ crc));
@@ -401,7 +405,7 @@ bool SHT3x::crc_check( uint8_t data[], uint8_t nb_bytes, uint8_t checksum ) {
 }
 #else
 // crc checksum verification
-bool SHT3x::crc_check( uint8_t data[], uint8_t nb_bytes, uint8_t checksum ) {
+bool SCD4x::crc_check( uint8_t data[], uint8_t nb_bytes, uint8_t checksum ) {
 	uint8_t crc = 0xff;
   uint8_t byteCtr;
 
@@ -416,13 +420,13 @@ bool SHT3x::crc_check( uint8_t data[], uint8_t nb_bytes, uint8_t checksum ) {
  	if (crc != checksum) return false;
  	else return true;
 }
-#endif /* SHT3X_CRC_LOOKUP_TABLE */
+#endif /* SCD4X_CRC_LOOKUP_TABLE */
 
 
 /*
  * Check that device identity is what we expect!
  */
-void SHT3x::_writeCmd( uint8_t a, uint16_t cmd ) {
+void SCD4x::_writeCmd( uint8_t a, uint16_t cmd ) {
   write8( a, (uint8_t)(cmd>>8) , (uint8_t)(cmd&0xFF) );
   delay(1); // 1ms min between i2c transactions
 }
@@ -431,37 +435,44 @@ void SHT3x::_writeCmd( uint8_t a, uint16_t cmd ) {
 /*
  * Check that device identity is what we expect!
  */
-bool SHT3x::_check_identity( uint8_t a ) {
+bool SCD4x::_check_identity( uint8_t a ) {
 
   uint8_t _retry = 3;
   bool status = false;
 
   while( not status and _retry-- ) {
     // cmd for read out status register
-    _writeCmd( a, static_cast<uint16_t>(sht3xCmd_t::get_status) );
+    _writeCmd( a, static_cast<uint16_t>(scd4xCmd_t::get_serial_number) );
 
     // read answer (MSB + LSB + CRC)
-    uint8_t buf[3];
+    uint8_t buf[9];
     if( readList_ll(a, buf, sizeof(buf)) < sizeof(buf) ) {
-      log_error(F("\n[SHT3x] not enough bytes read !"));log_flush();
+      log_error(F("\n[SCD4x] not enough bytes read !"));log_flush();
       delay(1); // min time between commands
       sw_reset( a );
       continue;
     }
 
+    // DEBUG
+    hex_dump( buf, sizeof(buf) );
+    break;
+
     // check answer's CRC
     if( not crc_check(buf, 2, buf[2]) ) {
-      log_error(F("\n[SHT3x] CRC check failed !"));log_flush();
+      log_error(F("\n[SCD4x] CRC check failed !"));log_flush();
       delay(1); // min time between commands
       continue;
     }
   
+    // TODO: check subsequents word+CRC
+/*
     // finally does status match our expectations
     uint16_t status_reg = buf[0] << 8;
     status_reg |= buf[1];
     if( (status_reg & SHT3X_STATUS_REG_MASK) != SHT3X_STATUS_REG_DEFL ) return false;
 
     status = true;
+*/
   }
   // check result
   if( not status ) return false;

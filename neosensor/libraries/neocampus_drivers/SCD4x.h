@@ -52,7 +52,7 @@
  * - every 16bits frames are CRC protected
  * - CRC8 0x31, initial=0xFF, final xor=0x00 for 16bits data (first is )
  */
-enum class sht3xCmd_t : uint16_t {
+enum class scd4xCmd_t : uint16_t {
 
   // basic commands
   start_periodic_measurement              = 0x21b1, // 5000ms measurement delay

@@ -42,6 +42,17 @@
 const uint8_t SCD4x::i2c_addrs[] = { 0x69 };
 
 
+/* declare kind of units */
+const char *SCD4x::units_co2  = "ppm";
+const char *SCD4x::units_temp = "celsius";
+const char *SCD4x::units_rh   = "%r.H.";
+
+/* declare others static vars */
+unsigned long SCD4x::_lastMsRead  = 0;
+uint16_t SCD4x::_co2_sensor = (uint16_t)(-1);
+uint16_t SCD4x::_t_sensor   = (uint16_t)(-1);
+uint16_t SCD4x::_rh_sensor  = (uint16_t)(-1);
+
 
 /**************************************************************************/
 /*! 
@@ -77,18 +88,6 @@ SCD4x::SCD4x( scd4xMeasureType_t kindness  ) : generic_driver() {
   _i2caddr = -1;
   _measureType = kindness;
 }
-
-
-/* declare kind of units */
-const char *SCD4x::units_co2  = "ppm";
-const char *SCD4x::units_temp = "celsius";
-const char *SCD4x::units_rh   = "%r.H.";
-
-/* declare others static vars */
-unsigned long SCD4x::_lastMsRead  = 0;
-uint16_t SCD4x::_co2_sensor = (uint16_t)(-1);
-uint16_t SCD4x::_t_sensor   = (uint16_t)(-1);
-uint16_t SCD4x::_rh_sensor  = (uint16_t)(-1);
 
 
 /**************************************************************************/
@@ -156,38 +155,10 @@ void SCD4x::powerON( void )
   // device does not feature continuous integration so nothing to start or stop
 }
 
-TO BE CONTINUED
 
 /**************************************************************************/
 /*! 
-    @brief  Setups the HW: set resolution of sensor
-    @note   remember that resolution is virtual, we just set integration
-            timings, proper cmds for datat acquisition ought to get sent.
-*/
-/**************************************************************************/
-bool SHT3x::setResolution( sht3xResolution_t res ) {
-
-  // set integration timeout
-  if( res == sht3xResolution_t::high_res )
-    _integrationTime = static_cast<uint8_t>(sht3xIntegration_t::ms_integrate_high);
-  else if( res == sht3xResolution_t::medium_res )
-    _integrationTime = static_cast<uint8_t>(sht3xIntegration_t::ms_integrate_medium);
-  else if( res == sht3xResolution_t::low_res )
-    _integrationTime = static_cast<uint8_t>(sht3xIntegration_t::ms_integrate_low);
-  else return false;
-
-  // add some constant to integration time ...
-  _integrationTime+=(uint8_t)SHT3X_INTEGRATION_TIME_CTE;
-
-  // finish :)
-  return true;
-}
-
-
-/**************************************************************************/
-/*! 
-    @brief  Reads the 16-bit temperature register and returns the Centigrade
-            temperature as a float.
+    @brief  Reads the 16-bit [co2|temp|hygro] register and returns as float.
 
 */
 /**************************************************************************/
@@ -195,34 +166,28 @@ boolean SHT3x::acquire( float *pval )
 {
   if( pval==nullptr ) return false;
 
-  // HUMIDITY
-  if( _measureType == sht3xMeasureType_t::humidity ) {
-    return getRH( pval );
+  // CO2
+  if( _measureType == scd4xMeasureType_t::co2 ) {
+    return getCO2( pval );
   }
 
   // TEMPERATURE
-  if( !getTemp(pval) ) {
-    // error reading value ... too bad
-    return false;
+  if( _measureType == scd4xMeasureType_t::temperature ) {
+    return getTemp( pval );
   }
 
-  // [Mar.18] temperature correction for last i2c sensor ... the one
-  // supposed to get tied to the main board.
-#ifdef TEMPERATURE_CORRECTION_LASTI2C
-  static uint8_t _last_i2c = (uint8_t)-1;
-  // determine last i2c addr
-  if( _last_i2c == (uint8_t)-1 ) {
-    _last_i2c=i2c_addrs[(sizeof(i2c_addrs)/sizeof(i2c_addrs[0]))-1];
+  // HUMIDITY
+  if( _measureType == scd4xMeasureType_t::humidity ) {
+    return getRH( pval );
   }
-  // is last sensor ?
-  if ( _i2caddr == _last_i2c ) {
-    *pval += TEMPERATURE_CORRECTION_LASTI2C;
-    log_debug(F("\n[SHT3x] corrected temperature for i2c=0x"));log_debug(_i2caddr,HEX);log_flush();
-  }
-#endif
 
-  return true;
+  log_warning(F("\n[SCD4x] unknown MeasureType 0x"));log_warning(_measureType,HEX);log_flush();
+  return false;
 }
+
+
+TO BE CONTINUED
+
 
 
 /*

@@ -1,7 +1,7 @@
 /**************************************************************************/
 /*! 
     @file     SCD4x.h
-    @author   F. Thiebolt
+    @author   F.Thiebolt
 	  @license
 	
     This is part of a the neOCampus drivers library.
@@ -45,7 +45,9 @@
 
 /* scd4x commands
  * Note:
- * - 1ms min. delay between two commands
+ * Measurement is either 5s or 30s (normal vs low-power modes)
+ * It does not start a new measurement till you don't readout the values
+ * ==> using automatic measurement ought not to consume more power :s
  * - most commands need a 1ms execution time
  * - CO2, temp and humidity are measured and sent in a single 9bytes frame
  *      16bits C02 + CRC + 16bits T + CRC + 16bits RH + CRC
@@ -55,7 +57,7 @@
 enum class scd4xCmd_t : uint16_t {
 
   // basic commands
-  start_periodic_measurement              = 0x21b1, // 5000ms measurement delay
+  start_periodic_measurement              = 0x21b1, // execution time: none. 5000ms measurement delay (i.e read_measurement)
   read_measurement                        = 0xec05, // execution time: 1ms
   stop_periodic_measurement               = 0x3f86, // execution time: 500ms
 

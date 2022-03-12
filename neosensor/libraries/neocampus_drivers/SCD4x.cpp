@@ -42,16 +42,17 @@
 const uint8_t SCD4x::i2c_addrs[] = { 0x69 };
 
 
-/* declare kind of units */
+/* [static] declare kind of units */
 const char *SCD4x::units_co2  = "ppm";
 const char *SCD4x::units_temp = "celsius";
 const char *SCD4x::units_rh   = "%r.H.";
 
-/* declare others static vars */
+/* [static] initialize static vars */
 unsigned long SCD4x::_lastMsRead  = 0;
 uint16_t SCD4x::_co2_sensor = (uint16_t)(-1);
 uint16_t SCD4x::_t_sensor   = (uint16_t)(-1);
 uint16_t SCD4x::_rh_sensor  = (uint16_t)(-1);
+boolean SCD4x::_periodic_measure  = false;
 
 
 /**************************************************************************/
@@ -124,15 +125,24 @@ boolean SCD4x::begin( uint8_t addr=-1) {
   if( (addr < (uint8_t)(I2C_ADDR_START)) or (addr > (uint8_t)(I2C_ADDR_STOP)) ) return false;
   _i2caddr = addr;
 
+
+WARNING: if periodic measurement is already started ==> no others command will be accepted
+
+
   // check device identity
   if( !_check_identity(_i2caddr) ) return false;
 
   /* set config:
-   * - nothing to configure
-   * - reset ?
+   * - software reset
+   * - calibration ?
+   * - start periodic measurement
    */
 
-  // define defaults parameters
+  // soft reset
+  sw_reset( _i2caddr );
+
+  // start periodic measurement
+TO BE CONTINUED
 
   /* start lastmsg time measurement.
    * This way, we get sure to have at least a first acquisition! */
@@ -148,10 +158,14 @@ boolean SCD4x::begin( uint8_t addr=-1) {
  */
 void SCD4x::powerON( void )
 {
-  // select proper command
-  uint16_t _cmd = static_cast<uint16_t>(scd4xCmd_t::read_measurement);
+  // check if device's periodic measurement is not already engaged 
+  if( _periodic_measure ) return;
 
-  // device does not feature continuous integration so nothing to start or stop
+  // select proper command
+  uint16_t _cmd = static_cast<uint16_t>(scd4xCmd_t::start_periodic_measurement);
+  _i2caddr
+
+  _periodic_measure = true;
 }
 
 /*

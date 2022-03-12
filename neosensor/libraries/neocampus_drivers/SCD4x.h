@@ -149,6 +149,7 @@ class SCD4x : public generic_driver {
     static uint16_t _co2_sensor;  // shared across all instances
     static uint16_t _t_sensor;    // shared across all instances
     static uint16_t _rh_sensor;   // shared across all instances
+    static boolean _periodic_measure;   // if automatic periodic measurement has been activated
 
     // CRC computation
     static const uint8_t _crc8_polynom;    // crc P(x)=x^8+x^5+x^4+1 (0x31) 1.00110001, init=0xFF

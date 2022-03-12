@@ -143,14 +143,22 @@ boolean SCD4x::begin( uint8_t addr=-1) {
 
 
 /*
- * Power modes: ON or powerOFF
+ * Power ON
+ * Note: starting 
  */
-void SCD4x::powerOFF( void )
+void SCD4x::powerON( void )
 {
+  // select proper command
+  uint16_t _cmd = static_cast<uint16_t>(scd4xCmd_t::read_measurement);
+
   // device does not feature continuous integration so nothing to start or stop
 }
 
-void SCD4x::powerON( void )
+/*
+ * Power OFF
+ *
+ */
+void SCD4x::powerOFF( void )
 {
   // device does not feature continuous integration so nothing to start or stop
 }
@@ -283,19 +291,11 @@ bool SCD4x::_readSensor( uint16_t *pval ) {
   // do we need to acquire fresh sensors values ?
   if( (millis() - _lastMsRead ) >= (unsigned long)(SCD4X_SENSOR_CACHE_MS) ) {
 
+    // select proper command
+    uint16_t _cmd = static_cast<uint16_t>(scd4xCmd_t::read_measurement);
 
 TO BE CONTINUED
 
-
-    // select proper command
-    uint16_t _cmd;
-    if( _resolution == sht3xResolution_t::high_res )
-      _cmd = static_cast<uint16_t>(sht3xCmd_t::meas_highRes);
-    else if( _resolution == sht3xResolution_t::medium_res )
-      _cmd = static_cast<uint16_t>(sht3xCmd_t::meas_medRes);
-    else
-      _cmd = static_cast<uint16_t>(sht3xCmd_t::meas_lowRes);
-    
     uint8_t _retry = 3;
     bool status = false;
     while( status == false and _retry-- ) {

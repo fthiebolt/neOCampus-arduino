@@ -451,7 +451,7 @@ bool SHT3x::crc_check( uint8_t data[], uint8_t nb_bytes, uint8_t checksum ) {
 
 
 /*
- * Check that device identity is what we expect!
+ * Write i2c command
  */
 void SHT3x::_writeCmd( uint8_t a, uint16_t cmd ) {
   write8( a, (uint8_t)(cmd>>8) , (uint8_t)(cmd&0xFF) );

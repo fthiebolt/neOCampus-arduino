@@ -9,6 +9,8 @@
     
     Remember: all transfers are 16bits wide
     
+    Known issue: only one device per neOSensor (see setup guide)
+
     (c) Copyright 2020 Thiebolt.F <thiebolt@irit.fr>
 
 	@section  HISTORY

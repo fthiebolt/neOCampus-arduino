@@ -16,13 +16,18 @@
  * - as of aug.20, CONFIG_LWIP_MAX_ACTIVE_TCP=16
  * 
  * ---
+ * KNOWN ISSUES:
+ * - ONLY ONE SHT3x per neOSensor supported.
+ *    This stems from the fact that the SHT3x driver features static variables 
+ *    shared across all instances.
+ *
+ * ---
  * TODO:
  * - esp8266 now features a configTzTime() in newer API
  * - loadSensoConfig --> avoid data duplication, implement an iterator
  * - check sntp!=IPADDR_ANY works with ESP8266 (line 400)
  * - remove DISABLE_SSL compilation flag
  * - as the number of modules is increasing, implement a list of modules in the setup()
- * 
  * ---
  * F.Thiebolt   nov.21  corrected timezone definition for esp32
  * F.Thiebolt   sep.21  added display module support (e.g oled or 7segment displays)

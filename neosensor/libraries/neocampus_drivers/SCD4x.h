@@ -33,10 +33,15 @@
 /*
  * Definitions
  */
-/* SCD4x sensor send back both CO2, T and RH at the same time, but since
- * we'll have three instances of this class ==> we implement a cache to
- * avoid reading the sensor multiple times */
-#define SCD4X_SENSOR_CACHE_MS       5000  // ms caches values validity
+
+/* To avoid checking for the end of the priodic measurement process too often
+ * we set a min delay between two successives check for data readiness */
+#define SCD4X_DATA_CHECK_MS       1000  // ms check data measurement ending
+
+/* In normal operation, periodic measurement leads to new data available very 5s or 30s
+ * (normal vs low-power periodic measurement). If no new data is available for the
+ * specified tiemout, we (soft) reset the end-device */
+#define SCD4X_DATA_TIMEOUT        300   // seconds timeout delay before reseting the chip
 
 // Enable CRC lookup table (regular computation otherwise)
 #ifndef SCD4X_CRC_LOOKUP_TABLE
@@ -130,7 +135,8 @@ class SCD4x : public generic_driver {
 
   private:
     // -- private methods
-    bool _readSensor( uint16_t* );                // low-level function to read value registers
+    bool _readSensor( void );                     // low-level function to read sensors values
+    bool _isDataReady( void );                    // check is read measurement reached its end
     static void sw_reset( uint8_t );              // reset sensor via software reset procedure
     static bool crc_check( uint8_t[], uint8_t, uint8_t );  // data array, nb_bytes, checksum
     static bool _check_identity( uint8_t );       // check device is what we expect!
@@ -142,14 +148,17 @@ class SCD4x : public generic_driver {
     static const char *units_co2;
     static const char *units_temp;
     static const char *units_rh;
-    uint16_t _integrationTime;  // ms time to integrate a measure
                                 /* CO2, TEMP and RH are read at the same time ==> hence we store them
                                    as shared attributes across all instances */
-    static unsigned long _lastMsRead;   // last time data have been read (elapsed ms from beginning)
-    static uint16_t _co2_sensor;  // shared across all instances
-    static uint16_t _t_sensor;    // shared across all instances
-    static uint16_t _rh_sensor;   // shared across all instances
-    static boolean _periodic_measure;   // if automatic periodic measurement has been activated
+    static boolean _periodic_measure; // automatic periodic measurement already started or not
+    static unsigned long _lastCheck;  // last time we check for data readiness (@periodic measurement)
+    static unsigned long _lastData;   // last time a new data arrived from SCD4x device
+    static uint16_t _co2_sensor;      // shared across all instances
+    static boolean _co2_sensor_valid; // shared across all instances
+    static uint16_t _t_sensor;        // shared across all instances
+    static boolean _t_sensor_valid;   // shared across all instances
+    static uint16_t _rh_sensor;       // shared across all instances
+    static boolean _rh_sensor_valid;  // shared across all instances
 
     // CRC computation
     static const uint8_t _crc8_polynom;    // crc P(x)=x^8+x^5+x^4+1 (0x31) 1.00110001, init=0xFF

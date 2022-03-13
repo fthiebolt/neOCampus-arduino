@@ -47,12 +47,18 @@ const char *SCD4x::units_co2  = "ppm";
 const char *SCD4x::units_temp = "celsius";
 const char *SCD4x::units_rh   = "%r.H.";
 
-/* [static] initialize static vars */
-unsigned long SCD4x::_lastMsRead  = 0;
-uint16_t SCD4x::_co2_sensor = (uint16_t)(-1);
-uint16_t SCD4x::_t_sensor   = (uint16_t)(-1);
-uint16_t SCD4x::_rh_sensor  = (uint16_t)(-1);
+/* [static] initialize static vars
+ * REMEMBER: only possible because there's ONLY ONE SCD4x per neOSensor
+ */
+unsigned long SCD4x::_lastCheck   = 0;
+unsigned long SCD4x::_lastData    = 0;
 boolean SCD4x::_periodic_measure  = false;
+uint16_t SCD4x::_co2_sensor       = (uint16_t)(-1);
+boolean SCD4x::_co2_sensor_valid  = false;
+uint16_t SCD4x::_t_sensor         = (uint16_t)(-1);
+boolean SCD4x::_t_sensor_valid    = false;
+uint16_t SCD4x::_rh_sensor        = (uint16_t)(-1);
+boolean SCD4x::_rh_sensor_valid   = false;
 
 
 /**************************************************************************/
@@ -125,56 +131,40 @@ boolean SCD4x::begin( uint8_t addr=-1) {
   if( (addr < (uint8_t)(I2C_ADDR_START)) or (addr > (uint8_t)(I2C_ADDR_STOP)) ) return false;
   _i2caddr = addr;
 
-
-WARNING: if periodic measurement is already started ==> no others command will be accepted
-
-
   // check device identity
   if( !_check_identity(_i2caddr) ) return false;
 
   /* set config:
    * - software reset
    * - calibration ?
-   * - start periodic measurement
+   * - start periodic measurement ?
    */
 
   // soft reset
+  // REMEMBER: we're shared across multiple modules !!
   sw_reset( _i2caddr );
-
-  // start periodic measurement
-TO BE CONTINUED
-
-  /* start lastmsg time measurement.
-   * This way, we get sure to have at least a first acquisition! */
-  _lastMsRead = ULONG_MAX/2;
 
   return true;
 }
 
 
 /*
- * Power ON
- * Note: starting 
+ * Power modes: ON & OFF
  */
 void SCD4x::powerON( void )
 {
-  // check if device's periodic measurement is not already engaged 
-  if( _periodic_measure ) return;
-
-  // select proper command
-  uint16_t _cmd = static_cast<uint16_t>(scd4xCmd_t::start_periodic_measurement);
-  _i2caddr
-
-  _periodic_measure = true;
 }
 
-/*
- * Power OFF
- *
- */
 void SCD4x::powerOFF( void )
 {
-  // device does not feature continuous integration so nothing to start or stop
+  // stop periodic measure
+  if( _periodic_measure ) {
+    uint16_t _cmd = static_cast<uint16_t>(scd4xCmd_t::stop_periodic_measurement);
+    _writeCmd( _i2caddr, _cmd );
+    delay(500);
+
+    _periodic_measure = false;
+  }
 }
 
 
@@ -184,8 +174,28 @@ void SCD4x::powerOFF( void )
 
 */
 /**************************************************************************/
-boolean SHT3x::acquire( float *pval )
+boolean SCD4x::acquire( float *pval )
 {
+  // periodic measurement ?
+  if( !_periodic_measure ) {
+    // send command to acquire new sensors values
+    uint16_t _cmd = static_cast<uint16_t>(scd4xCmd_t::start_periodic_measurement);
+    _writeCmd( _i2caddr, _cmd );
+
+    _periodic_measure = true;
+    _lastCheck = millis();
+    _lastData = _lastCheck;
+    return false; // data won't get ready before min. 5000ms
+  }
+
+  // is measurement over ?
+  if( _isDataReady() ) {
+    /* extract new data along with CRC check
+     * and set proper flag in received data
+     */
+    _readSensor();
+  }
+
   if( pval==nullptr ) return false;
 
   // CO2
@@ -203,45 +213,24 @@ boolean SHT3x::acquire( float *pval )
     return getRH( pval );
   }
 
-  log_warning(F("\n[SCD4x] unknown MeasureType 0x"));log_warning(_measureType,HEX);log_flush();
+  log_warning(F("\n[SCD4x] unknown MeasureType 0x"));log_warning(static_cast<uint8_t>(_measureType),HEX);log_flush();
   return false;
 }
 
 
-TO BE CONTINUED
-
-
-
 /*
- * READ sensor's HUMIDITY
+ * READ sensor's CO2
+ * Note: only sends back new values
  */
-boolean SHT3x::getRH( float *pval ) {
-
+boolean SCD4x::getCO2( float *pval )
+{
   if( pval==nullptr ) return false;
+  if( !_co2_sensor_valid ) return false;
 
-  bool res = false;
-  uint8_t retry = 3;
-  uint16_t val;
-  
-  while( res==false and retry-- ) {
-    res = _readSensor( &val );
-    if( res == true ) break;
-    delay(1);  // 1ms demay between commands
-  }
+  *pval = (float)_co2_sensor;
 
-  if( res==false ) {
-    // error ...
-    log_error(F("\n[SHT3x] unable to read value ?!?!"));log_flush();
-    return false;
-  }
+  _co2_sensor_valid = false;
 
-  uint32_t _tmp = (uint32_t)val;
-  // from Adafruit SHT31
-  // simplified (65536 instead of 65535) integer version of:
-  // humidity = (shum * 100.0f) / 65535.0f;
-  // 100.0 x _rh = val x 100 x 100 / ( 4096 x 16 )
-  _tmp = (625 * _tmp) >> 12;
-  *pval = (float)_tmp / 100.0f;
   return true;
 }
 
@@ -249,33 +238,41 @@ boolean SHT3x::getRH( float *pval ) {
 /*
  * READ sensor's TEMPERATURE
  */
-boolean SHT3x::getTemp( float *pval )
+boolean SCD4x::getTemp( float *pval )
 {
   if( pval==nullptr ) return false;
+  if( !_t_sensor_valid ) return false;
 
-  bool res = false;
-  uint8_t retry = 3;
-  uint16_t val;
-  
-  while( res==false and retry-- ) {
-    res = _readSensor( &val );
-    if( res == true ) break;
-    delay(1);  // 1ms demay between commands
-  }
-
-  if( res==false ) {
-    // error ...
-    log_error(F("\n[SHT3x] unable to read value ?!?!"));log_flush();
-    return false;
-  }
-
-  int32_t _tmp = (int32_t)val;
+  int32_t _tmp = (int32_t)_t_sensor;
   // from Adafruit SHT31
-  // simplified (65536 instead of 65535) integer version of:
-  // temp = (stemp * 175.0f) / 65535.0f - 45.0f;
+  // temp = (stemp * 175.0f) / 65536.0f - 45.0f;
   // 100.0 x _tmp = (17500 x _tmp) / (16384 x 4) - 4500
   _tmp = ((4375 * _tmp) >> 14) - 4500;
   *pval = (float)_tmp / 100.0f;
+
+  _t_sensor_valid = false;
+
+  return true;
+}
+
+
+/*
+ * READ sensor's HUMIDITY
+ */
+boolean SCD4x::getRH( float *pval ) {
+
+  if( pval==nullptr ) return false;
+  if( !_rh_sensor_valid ) return false;
+
+  uint32_t _tmp = (uint32_t)_rh_sensor;
+  // from Adafruit SHT31
+  // humidity = (shum * 100.0f) / 65536.0f;
+  // 100.0 x _rh = val x 100 x 100 / ( 4096 x 16 )
+  _tmp = (625 * _tmp) >> 12;
+  *pval = (float)_tmp / 100.0f;
+
+  _rh_sensor = false;
+
   return true;
 }
 
@@ -291,91 +288,81 @@ void SCD4x::sw_reset( uint8_t adr ) {
   log_debug(F("\n[SCD4x] SOFT RESET action started ..."));log_flush();
   _writeCmd( adr, static_cast<uint16_t>(scd4xCmd_t::reinit) );
   delay( 20 );
+
+  _periodic_measure = false;
 }
 
 
 /*
  * Read 16bits sensors values and check CRCs
  * Note: SCD4x sensors read CO2, T and RH, all feature CRC
- * hence we store static values with a timestamp to avoid
- * multiple (useless) access for same things.
+ * Once a new data is available, we store it within the proper
+ * variable and we set its companion flag accordingly
  */
-bool SCD4x::_readSensor( uint16_t *pval ) {
+bool SCD4x::_readSensor( void ) {
 
-  // do we need to acquire fresh sensors values ?
-  if( (millis() - _lastMsRead ) >= (unsigned long)(SCD4X_SENSOR_CACHE_MS) ) {
+  uint8_t _retry = 3;
+  bool status = false;
 
-    // select proper command
-    uint16_t _cmd = static_cast<uint16_t>(scd4xCmd_t::read_measurement);
+  while( not status and _retry-- ) {
+    // cmd for read out serial number
+    _writeCmd( _i2caddr, static_cast<uint16_t>(scd4xCmd_t::read_measurement) );
 
-TO BE CONTINUED
-
-    uint8_t _retry = 3;
-    bool status = false;
-    while( status == false and _retry-- ) {
-      // start acquisition command
-      _writeCmd( _i2caddr, _cmd );
-
-      // wait for integration
-      delay( _integrationTime );
-
-      // retrieve data:
-      //  MSB[T] + LSB[T] + CRC[T] + MSB[RH] + LSB[RH] + CRC[RH]
-      uint8_t buf[6];
-      if( readList_ll(_i2caddr, buf, sizeof(buf)) < sizeof(buf) ) {
-        log_error(F("\n[SHT2x] insufficient bytes answered"));log_flush();
-        yield();
-        sw_reset( _i2caddr );
-        continue;
-      }
-
-      // check first CRC ( TEMP )
-      if( not crc_check(buf,2,buf[2]) ) {
-        log_error(F("\n[SHT3x] invalid CRC for TEMP ...")); log_flush();
-        yield();
-        continue;
-      }
-
-      // check second CRC ( RH )
-      if( not crc_check(&buf[3],2,buf[5]) ) {
-        log_error(F("\n[SHT3x] invalid CRC for RH ...")); log_flush();
-        yield();
-        continue;
-      }
-
-      // both CRC are valid, let's grab the data
-      _t_sensor = buf[0] << 8;
-      _t_sensor |= buf[1];
-      _rh_sensor = buf[3] << 8;
-      _rh_sensor |= buf[4];
-
-      status = true;  // success
-    }
-    // check acquisition is ok
-    if( not status ) {
-      log_error(F("\n[SHT3x] unable to read sensor ...give up :("));log_flush();
-      return false;
+    // read answer 3 * (MSB + LSB + CRC)
+    uint8_t buf[9];
+    if( readList_ll( _i2caddr, buf, sizeof(buf)) < sizeof(buf) ) {
+      log_error(F("\n[SCD4x] not enough bytes read !"));log_flush();
+      delay(10); // 1ms min. delay between commands
+      continue; // ... and let's retry ...
     }
 
-    // success ==> update last read
-    _lastMsRead = millis();
-  }
-  else {
-    log_debug(F("\n[SHT3x] using cached value for "));
-    if( _measureType == sht3xMeasureType_t::temperature ) {
-      log_debug(F("TEMP sensor!"));
+    // we don't know about bytes validity but we've been able to read
+    // measurement from sensor :)
+    _lastData = millis();
+    status = true;
+
+    // DEBUG
+    hex_dump( (char*)buf, sizeof(buf) );
+    break;
+
+    // CO2 + CRC
+    if( crc_check(buf, 2, buf[2]) ) {
+      // CO2 retrieval
+      _co2_sensor = makeWord(buf[0], buf[1]);
+      _co2_sensor_valid = true;
     }
     else {
-      log_debug(F("RH sensor!"));
+      log_error(F("\n[SCD4x] CO2 CRC check failed !"));log_flush();
+      status = false;
     }
-    log_flush();
+
+    // T + CRC
+    if( crc_check(buf+3, 2, buf[5]) ) {
+      // T retrieval
+      _t_sensor = makeWord(buf[3], buf[4]);
+      _t_sensor_valid = true;
+    }
+    else {
+      log_error(F("\n[SCD4x] Temp CRC check failed !"));log_flush();
+      status = false;
+    }
+
+    // RH + CRC
+    if( crc_check(buf+6, 2, buf[8]) ) {
+      // RH retrieval
+      _rh_sensor = makeWord(buf[6], buf[7]);
+      _rh_sensor_valid = true;
+    }
+    else {
+      log_error(F("\n[SCD4x] R.H CRC check failed !"));log_flush();
+      status = false;
+    }
+
+    // this is the end ... The Doors
+    break;
   }
 
-  // send back pointer to proper value
-  if( _measureType == sht3xMeasureType_t::temperature ) *pval = _t_sensor;
-  else *pval = _rh_sensor;
-
-  return true;
+  return status;
 }
 
 
@@ -438,11 +425,60 @@ bool SCD4x::crc_check( uint8_t data[], uint8_t nb_bytes, uint8_t checksum ) {
 
 
 /*
- * Check that device identity is what we expect!
+ * Write i2c command
  */
 void SCD4x::_writeCmd( uint8_t a, uint16_t cmd ) {
   write8( a, (uint8_t)(cmd>>8) , (uint8_t)(cmd&0xFF) );
   delay(1); // 1ms min between i2c transactions
+}
+
+
+/*
+ * Check if read_measurement is over or not
+ * Note: support for only one check per second
+ */
+bool SCD4x::_isDataReady( void ) {
+
+  unsigned long _curTime = millis();
+  if( (_curTime - _lastCheck) < (unsigned long)(SCD4X_DATA_CHECK_MS) ) return false;
+  _lastCheck = _curTime;
+
+  if( (_curTime -_lastData) >= (unsigned long)(SCD4X_DATA_TIMEOUT)*1000UL ) {
+    // TIMEOUT in data arrival detected !!
+    log_warning(F("\n[SCD4x] data TIMEOUT ?!?! ... restart the chip:s"));log_flush();
+    sw_reset( _i2caddr );
+    return false;
+  }
+
+  uint8_t _retry = 3;
+  bool status = false;
+
+  while( not status and _retry-- ) {
+    // cmd for getting measurement status
+    _writeCmd( _i2caddr, static_cast<uint16_t>(scd4xCmd_t::get_data_ready_status) );
+
+    // read answer (MSB + LSB + CRC)
+    uint8_t buf[3];
+    if( readList_ll(_i2caddr, buf, sizeof(buf)) < sizeof(buf) ) {
+      log_error(F("\n[SCD4x] not enough bytes read !"));log_flush();
+      delay(10); // 1ms is min. delay between commands
+      continue;
+    }
+
+    // check answer's CRC
+    if( not crc_check(buf, 2, buf[2]) ) {
+      log_error(F("\n[SCD4x] CRC check failed !"));log_flush();
+      delay(10); // 1ms is min. delay between commands
+      continue;
+    }
+
+    // then check status
+    uint16_t value = makeWord(buf[0], buf[1]);
+    if( value & (uint16_t)0x07FF ) status = true;
+    break;
+  }
+
+  return status;
 }
 
 
@@ -455,38 +491,48 @@ bool SCD4x::_check_identity( uint8_t a ) {
   bool status = false;
 
   while( not status and _retry-- ) {
-    // cmd for read out status register
+    // cmd for read out serial number
     _writeCmd( a, static_cast<uint16_t>(scd4xCmd_t::get_serial_number) );
 
-    // read answer (MSB + LSB + CRC)
+    // read answer 3 * (MSB + LSB + CRC)
     uint8_t buf[9];
     if( readList_ll(a, buf, sizeof(buf)) < sizeof(buf) ) {
       log_error(F("\n[SCD4x] not enough bytes read !"));log_flush();
-      delay(1); // min time between commands
-      sw_reset( a );
+      delay(10); // 1ms is min. delay between commands
+      sw_reset( a ); delay(10);
       continue;
     }
 
     // DEBUG
-    hex_dump( buf, sizeof(buf) );
+    hex_dump( (char*)buf, sizeof(buf) );
     break;
 
     // check answer's CRC
     if( not crc_check(buf, 2, buf[2]) ) {
       log_error(F("\n[SCD4x] CRC check failed !"));log_flush();
-      delay(1); // min time between commands
+      delay(10); // 1ms is min. delay between commands
+      continue;
+    }
+    if( not crc_check(buf+3, 2, buf[5]) ) {
+      log_error(F("\n[SCD4x] CRC check failed !"));log_flush();
+      delay(10); // 1ms is min. delay between commands
+      continue;
+    }
+    if( not crc_check(buf+6, 2, buf[8]) ) {
+      log_error(F("\n[SCD4x] CRC check failed !"));log_flush();
+      delay(10); // 1ms is min. delay between commands
       continue;
     }
   
-    // TODO: check subsequents word+CRC
-/*
-    // finally does status match our expectations
-    uint16_t status_reg = buf[0] << 8;
-    status_reg |= buf[1];
-    if( (status_reg & SHT3X_STATUS_REG_MASK) != SHT3X_STATUS_REG_DEFL ) return false;
+    // DISPLAY retrieved serial number :)
+    {
+      char tmp[48];
+      snprintf(tmp, sizeof(tmp),"\n[SCD4x] serial number = 0x%02X%02X %02X%02X %02X%02X",
+                buf[7],buf[6],buf[4],buf[3],buf[1],buf[0]);
+      log_debug(tmp); log_flush();
+    }
 
     status = true;
-*/
   }
   // check result
   if( not status ) return false;

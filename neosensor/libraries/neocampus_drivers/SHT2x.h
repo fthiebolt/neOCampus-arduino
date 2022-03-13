@@ -34,7 +34,9 @@
  */
 
 // Enable CRC lookup table (regular computation otherwise)
+#ifndef SHT2X_CRC_LOOKUP_TABLE
 #define SHT2X_CRC_LOOKUP_TABLE    1
+#endif
 
 /* enable UUID's CRC check
  * WARNING: some fakes devices does not support it!

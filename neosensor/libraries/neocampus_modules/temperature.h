@@ -27,6 +27,7 @@
 #include "Adafruit_MCP9808.h"
 #include "SHT2x.h"
 #include "SHT3x.h"
+#include "SCD4x.h"        // Sensirion SCD4X CO2 sensor including temp + hygro
 //#include "TCN75A.h" later maybe
 
 

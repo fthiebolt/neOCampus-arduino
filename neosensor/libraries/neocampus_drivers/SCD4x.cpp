@@ -33,13 +33,22 @@
 #include "SCD4x.h"
 
 
+/* 
+ * Definitions
+ * Time to obtain a new data point = _MAX_MEASURES * (5s or 30s) if periodic or low-power periodic)
+ */
+#define _MEASURES_INTERLEAVE_MS     DEFL_READ_MSINTERVAL  // delay between two measures in the 'measuring' state
+#define _MAX_MEASURES               3                     // max. number of measures during a single campaign
+//#define _MAX_MEASURES               DEFL_THRESHOLD_CPT    // max. number of measures during a single campaign
+
+
 
 /**************************************************************************/
 /*! 
     @brief  Declare list of possible I2C addrs
 */
 /**************************************************************************/
-const uint8_t SCD4x::i2c_addrs[] = { 0x69 };
+const uint8_t SCD4x::i2c_addrs[] = { 0x62 };
 
 
 /* [static] declare kind of units */
@@ -91,7 +100,8 @@ boolean SCD4x::is_device( uint8_t a ) {
     @brief  Instantiates a new class
 */
 /**************************************************************************/
-SCD4x::SCD4x( scd4xMeasureType_t kindness  ) : generic_driver() {
+SCD4x::SCD4x( scd4xMeasureType_t kindness  ) : generic_driver( _MEASURES_INTERLEAVE_MS,
+                                                                _MAX_MEASURES ) {
   _i2caddr = -1;
   _measureType = kindness;
 }
@@ -323,7 +333,7 @@ bool SCD4x::_readSensor( void ) {
 
     // DEBUG
     hex_dump( (char*)buf, sizeof(buf) );
-    break;
+    //break;
 
     // CO2 + CRC
     if( crc_check(buf, 2, buf[2]) ) {
@@ -504,8 +514,8 @@ bool SCD4x::_check_identity( uint8_t a ) {
     }
 
     // DEBUG
-    hex_dump( (char*)buf, sizeof(buf) );
-    break;
+    //hex_dump( (char*)buf, sizeof(buf) );
+    //break;
 
     // check answer's CRC
     if( not crc_check(buf, 2, buf[2]) ) {
@@ -526,8 +536,8 @@ bool SCD4x::_check_identity( uint8_t a ) {
   
     // DISPLAY retrieved serial number :)
     {
-      char tmp[48];
-      snprintf(tmp, sizeof(tmp),"\n[SCD4x] serial number = 0x%02X%02X %02X%02X %02X%02X",
+      char tmp[64];
+      snprintf(tmp, sizeof(tmp),"\n[SCD4x] detected serial number = 0x%02X%02X %02X%02X %02X%02X",
                 buf[7],buf[6],buf[4],buf[3],buf[1],buf[0]);
       log_debug(tmp); log_flush();
     }

@@ -11,6 +11,8 @@
 
 	@section  HISTORY
 
+    F.Thiebolt  mar.22  added early detection support to distinguish with
+                        newer SCD4x (0x62) chips
     2017-July    - F.Thiebolt Initial release
     
 */
@@ -52,10 +54,14 @@ boolean MCP47X6::is_device( uint8_t a ) {
   if( found == false ) return false;
 
   /*
-   * UNABLE to read MCP47X6 devices because of the specific I2C protocol that does not match
-   * those used at arduino :(
+   * WARNING: custom I2C reading !!!
+   * We'll ONLY read ONE byte (we don't care about the others)
    */
-  // unable to read anything so we assume it is ok :s
+  #warning "Please confirm MCP47X06 eading code"
+  uint8_t status,_res;
+  _res = readList_ll( a, &status, 1);
+  if( _res!=1 ) return false;
+  if( (status & 0xE0) != (uint8_t)0xC0 ) return false;
 
   // ... okay
   return true;

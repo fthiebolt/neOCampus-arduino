@@ -9,6 +9,7 @@
  * TODO:
  * - convert all 'frequency' parameters & define into 'cooldown' ones
  * ---
+ * F.Thiebolt mar.22  add support for SCD4x sensor
  * F.Thiebolt aug.20  switched to intelligent data sending vs timer based data sending
  * Thiebolt.F nov.20  previous 'force data as float' didn't work! we need to
  *                    use serialized(String(1.0,6)); // 1.000000
@@ -124,6 +125,21 @@ boolean temperature::add_sensor( uint8_t adr ) {
       cur_sensor->powerON();  // remember that device is shared across 2 modules
       // cur_sensor->setResolution(); default is max resolution
       cur_sensor->powerOFF(); // remember that device is shared across 2 modules
+      _sensor[_sensors_count++] = cur_sensor;
+      _sensor_added=true;
+    }
+  }
+  // check for SHT3x
+  else if( SCD4x::is_device( adr ) == true ) {
+    SCD4x *cur_sensor = new SCD4x( scd4xMeasureType_t::temperature );    // because it features several sensors
+    if( cur_sensor->begin( adr ) != true ) {
+      log_debug(F("\n[temperature] ###ERROR at SCD4x startup ... removing instance ..."));log_flush();
+      free(cur_sensor);
+      cur_sensor = NULL;
+    }
+    else {
+      cur_sensor->powerON();  // remember that device is shared across several modules
+      cur_sensor->powerOFF(); // remember that device is shared across several modules
       _sensor[_sensors_count++] = cur_sensor;
       _sensor_added=true;
     }

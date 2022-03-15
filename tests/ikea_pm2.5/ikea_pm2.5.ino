@@ -99,7 +99,7 @@ void PMS::passiveMode()
 void PMS::requestRead()
 {
   if (_mode == MODE_PASSIVE) {
-    // uint8_t command[] = { 0x11, 0x01, 0x02, 0xEC }; // [PREFIX] [nb_octets] [code_command] [checksum]
+    //uint8_t command[] = { 0x11, 0x01, 0x02, 0xEC }; // [PREFIX] [nb_octets] [code_command] [checksum]
     uint8_t command[] = { 0x11, 0x02, 0x0b, 0x01, 0xE1 }; // [PREFIX] [nb_octets] [code_command] [checksum]
     _stream->write(command, sizeof(command));
   }
@@ -202,7 +202,7 @@ void PMS::loop()
 
 
 /* Declarations */
-//#define DEBUG_SERIAL
+#define DEBUG_SERIAL
 #define PM_PASSIVE_MODE   1   // PASSIVE vs ACTIVE modes
 #define PM_POWER_SAVING   1   // enable sleep() wakeUp() cycles to save power
 

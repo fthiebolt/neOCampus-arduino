@@ -33,6 +33,8 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     @history
+    F.Thiebolt  mar.22  switch to newer i2c primitives that better match TSL2561
+                        communications requirements.
     2017  - mostly rewritten for neOCampus
 
 */
@@ -209,30 +211,29 @@ void TSL2561::_powerOFF( uint8_t a ) {
  */
 bool TSL2561::_check_identity( uint8_t a ) {
 
+  uint8_t res, data;
+
   // stop'n start device
   _powerOFF(a); delay(10);
+  data = (uint8_t)(-1);
+  res = readList( a, (uint8_t)(TSL2561_COMMAND_BIT | TSL2561_CLEAR_BIT | TSL2561_REGISTER_CONTROL), &data, 1 );
+  if( !res ) return false;
+  //log_debug(F("\n[TSL2561] REGISTER_CONTROL = 0x"));log_debug(data,HEX);log_flush();
+  if( (data&0x03)!=0x00 ) return false;
+
   _powerON(a); delay(10);
+  data = (uint8_t)(-1);
+  res = readList( a, (uint8_t)(TSL2561_COMMAND_BIT | TSL2561_CLEAR_BIT | TSL2561_REGISTER_CONTROL), &data, 1 );
+  if( !res ) return false;
+  //log_debug(F("\n[TSL2561] REGISTER_CONTROL = 0x"));log_debug(data,HEX);log_flush();
+  if( (data&0x03)!=0x03 ) return false;
 
   // check Register ID
-  Wire.beginTransmission(a);
-  Wire.write((uint8_t)(TSL2561_COMMAND_BIT | TSL2561_CLEAR_BIT | TSL2561_REGISTER_CONTROL));
-  Wire.beginTransmission(a);
-  Wire.requestFrom(a, (uint8_t)1);
-
-TO BE CONTINUED
-
-  else yield();
-
-  uint8_t i=0;
-  while( Wire.available() and (i < tabsize) ) {
-    tab[i++] = Wire.read();
-  }
-  Wire.endTransmission();
-
-TO BE CONTINUED
-
-  uint8_t _res = read8(a,TSL2561_REGISTER_ID);
-  if( (_res&0xF0)!=REGISTER_ID_TSL2561 and (_res&0xF0)!=0x00  ) return false;
+  data = (uint8_t)(-1);
+  res = readList( a, (uint8_t)(TSL2561_COMMAND_BIT | TSL2561_CLEAR_BIT | TSL2561_REGISTER_ID), &data, 1 );
+  if( !res ) return false;
+  //log_debug(F("\n[TSL2561] REGISTER_ID = 0x"));log_debug(data,HEX);log_flush();
+  if( (data&0xF0)!=REGISTER_ID_TSL2561 and !(data&0xF0) ) return false;
 
   return true;
 }

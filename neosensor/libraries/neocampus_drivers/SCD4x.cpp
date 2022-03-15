@@ -337,7 +337,7 @@ bool SCD4x::_readSensor( void ) {
     status = true;
 
     // DEBUG
-    hex_dump( (char*)buf, sizeof(buf) );
+    //hex_dump( (char*)buf, sizeof(buf) );
     //break;
 
     // CO2 + CRC

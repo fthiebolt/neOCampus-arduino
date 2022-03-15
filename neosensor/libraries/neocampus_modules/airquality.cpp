@@ -4,6 +4,7 @@
  * AirQuality module to manage all kind of air quality sensors that does not
  * fit within the existing sensOCampus classes.
  *
+ * F.Thiebolt   mar.22  added support for SCD4x along with its auto-detection
  * F.Thiebolt   oct.21  added support for particle meters (e.g PMS5003)
  *                      switched to data available delivery (instead of timer based)
  * F.Thiebolt   aug.21  in loadSensoConfig, replaced StaticJsonDocument (stack)
@@ -81,27 +82,23 @@ boolean airquality::add_sensor( uint8_t adr ) {
   if( _sensors_count>=_MAX_SENSORS ) return false;
 
   bool _sensor_added=false;
-  /*
-   * check for XXXX
-   * TODO: add auto-detect for some air quality sensors !
-   *
-   * The following was left as an example:
-   * 
-  if( TSL2561::is_device( adr ) == true ) {
-    TSL2561 *cur_sensor = new TSL2561();
+
+  // check for SCD4x
+  if( SCD4x::is_device( adr ) == true ) {
+    SCD4x *cur_sensor = new SCD4x( scd4xMeasureType_t::co2 );    // because it features several sensors
     if( cur_sensor->begin( adr ) != true ) {
-      log_debug(F("\n[airquality] ###ERROR at TSL2561 startup ... removing instance ..."));log_flush();
+      log_debug(F("\n[airquality] ###ERROR at SCD4x startup ... removing instance ..."));log_flush();
       free(cur_sensor);
       cur_sensor = NULL;
     }
     else {
-      // TODO: set auto_gain ?
-      cur_sensor->powerOFF();
+      cur_sensor->powerON();  // remember that device is shared across several modules
+      cur_sensor->powerOFF(); // remember that device is shared across several modules
       _sensor[_sensors_count++] = cur_sensor;
-      _sensor_added = true;
+      _sensor_added=true;
     }
   }
-   */
+
   // add check for additional device here
 
   // summary
@@ -133,7 +130,7 @@ bool airquality::start( senso *sensocampus,  JsonDocument &sharedRoot ) {
   // create module's JSON structure to hold all of our data
   // [aug.21] we create a dictionnary
   variant = sharedRoot.createNestedObject(MQTT_MODULE_NAME);
-  // all sensors share the same units of values
+
   JsonObject _obj = variant.as<JsonObject>();
 
   /* [nov.21] airquality sensors feature different value units ==> we'll afford a

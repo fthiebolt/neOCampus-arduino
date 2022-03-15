@@ -993,6 +993,11 @@ if( res!=uint8_t(0x44) ) {
       log_debug(F("\n\t\tadded humidity sensor at i2c addr = 0x"));log_debug(res,HEX); log_flush();
       _known = true;
     }
+    // is chip an airquality sensor ?
+    if( airqualityModule and airqualityModule->add_sensor(res) == true ) {
+      log_debug(F("\n\t\tadded airquality sensor at i2c addr = 0x"));log_debug(res,HEX); log_flush();
+      _known = true;
+    }
     // is chip a display ?
     if( displayModule and displayModule->add_display(res) == true ) {
       log_debug(F("\n\t\tadded display at i2c addr = 0x"));log_debug(res,HEX); log_flush();

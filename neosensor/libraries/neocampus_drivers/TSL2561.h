@@ -221,6 +221,8 @@ class TSL2561 : public generic_driver {
     static const char *units;
 
     // methods
+    static void _powerON( uint8_t );          // power UP device
+    static void _powerOFF( uint8_t );         // power DOWN device
     static bool _check_identity( uint8_t );   // check device is what we expect!
     void _getData( uint16_t *broadband, uint16_t *ir );
 };

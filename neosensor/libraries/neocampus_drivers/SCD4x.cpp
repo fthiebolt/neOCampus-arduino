@@ -281,7 +281,7 @@ boolean SCD4x::getRH( float *pval ) {
   _tmp = (625 * _tmp) >> 12;
   *pval = (float)_tmp / 100.0f;
 
-  _rh_sensor = false;
+  _rh_sensor_valid = false;
 
   return true;
 }
@@ -295,11 +295,16 @@ boolean SCD4x::getRH( float *pval ) {
  * Software reset through I2C command
  */
 void SCD4x::sw_reset( uint8_t adr ) {
+
   log_debug(F("\n[SCD4x] SOFT RESET action started ..."));log_flush();
+  
+  _writeCmd( adr, static_cast<uint16_t>(scd4xCmd_t::stop_periodic_measurement) );
+  delay(500);
+  _periodic_measure = false;
+
   _writeCmd( adr, static_cast<uint16_t>(scd4xCmd_t::reinit) );
   delay( 20 );
 
-  _periodic_measure = false;
 }
 
 

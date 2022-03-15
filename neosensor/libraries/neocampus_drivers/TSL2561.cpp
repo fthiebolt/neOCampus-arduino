@@ -142,14 +142,12 @@ boolean TSL2561::begin( uint8_t addr=INVALID_I2CADDR ) {
 
 void TSL2561::powerON(void)
 {
-  // Enable the device by setting the control bit to 0x03
-  write8(_i2caddr, TSL2561_COMMAND_BIT | TSL2561_CLEAR_BIT | TSL2561_REGISTER_CONTROL, TSL2561_CONTROL_POWERON);
+  _powerON( _i2caddr );
 }
 
 void TSL2561::powerOFF(void)
 {
-  // Disable the device by setting the control bit to 0x03
-  write8(_i2caddr, TSL2561_COMMAND_BIT | TSL2561_CLEAR_BIT | TSL2561_REGISTER_CONTROL, TSL2561_CONTROL_POWEROFF);
+  _powerOFF( _i2caddr );
 }
 
 
@@ -194,9 +192,26 @@ void TSL2561::setTiming(tsl2561IntegrationTime_t integration) {
  */
 
 /*
+ * static PowerON/OFF (for static acquire)
+ */
+void TSL2561::_powerON( uint8_t a ) {
+  // Enable the device by setting the control bit to 0x03
+  write8( a, TSL2561_COMMAND_BIT | TSL2561_CLEAR_BIT | TSL2561_REGISTER_CONTROL, TSL2561_CONTROL_POWERON);
+}
+
+void TSL2561::_powerOFF( uint8_t a ) {
+  // Disable the device by setting the control bit to 0x03
+  write8( a, TSL2561_COMMAND_BIT | TSL2561_CLEAR_BIT | TSL2561_REGISTER_CONTROL, TSL2561_CONTROL_POWEROFF);
+}
+
+/*
  * Check that device identity is what we expect!
  */
 bool TSL2561::_check_identity( uint8_t a ) {
+
+  // stop'n start device
+  _powerOFF(a); delay(10);
+  _powerON(a); delay(10);
 
   // check Register ID
   uint8_t _res = read8(a,TSL2561_REGISTER_ID);

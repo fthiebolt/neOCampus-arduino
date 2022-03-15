@@ -108,6 +108,21 @@ boolean humidity::add_sensor( uint8_t adr ) {
       _sensor_added=true;
     }
   }
+  // check for SCD4x
+  else if( SCD4x::is_device( adr ) == true ) {
+    SCD4x *cur_sensor = new SCD4x( scd4xMeasureType_t::humidity );    // because it features several sensors
+    if( cur_sensor->begin( adr ) != true ) {
+      log_debug(F("\n[temperature] ###ERROR at SCD4x startup ... removing instance ..."));log_flush();
+      free(cur_sensor);
+      cur_sensor = NULL;
+    }
+    else {
+      cur_sensor->powerON();  // remember that device is shared across several modules
+      cur_sensor->powerOFF(); // remember that device is shared across several modules
+      _sensor[_sensors_count++] = cur_sensor;
+      _sensor_added=true;
+    }
+  }
 
   // add check for additional device here
 

@@ -129,7 +129,7 @@ boolean temperature::add_sensor( uint8_t adr ) {
       _sensor_added=true;
     }
   }
-  // check for SHT3x
+  // check for SCD4x
   else if( SCD4x::is_device( adr ) == true ) {
     SCD4x *cur_sensor = new SCD4x( scd4xMeasureType_t::temperature );    // because it features several sensors
     if( cur_sensor->begin( adr ) != true ) {

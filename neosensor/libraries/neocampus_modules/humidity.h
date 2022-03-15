@@ -25,6 +25,7 @@
 #include "generic_driver.h"
 #include "SHT2x.h"
 #include "SHT3x.h"
+#include "SCD4x.h"        // Sensirion SCD4X CO2 sensor including temp + hygro
 
 
 

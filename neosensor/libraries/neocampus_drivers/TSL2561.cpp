@@ -214,6 +214,23 @@ bool TSL2561::_check_identity( uint8_t a ) {
   _powerON(a); delay(10);
 
   // check Register ID
+  Wire.beginTransmission(a);
+  Wire.write((uint8_t)(TSL2561_COMMAND_BIT | TSL2561_CLEAR_BIT | TSL2561_REGISTER_CONTROL));
+  Wire.beginTransmission(a);
+  Wire.requestFrom(a, (uint8_t)1);
+
+TO BE CONTINUED
+
+  else yield();
+
+  uint8_t i=0;
+  while( Wire.available() and (i < tabsize) ) {
+    tab[i++] = Wire.read();
+  }
+  Wire.endTransmission();
+
+TO BE CONTINUED
+
   uint8_t _res = read8(a,TSL2561_REGISTER_ID);
   if( (_res&0xF0)!=REGISTER_ID_TSL2561 and (_res&0xF0)!=0x00  ) return false;
 

@@ -15,6 +15,7 @@
 
 	  @section  HISTORY
 
+    F.Thiebolt  mar.22        change order (airquality before luminosity)
     2021-Nov  - F.Thiebolt    clear display in destructor
     2021-Sep  - F.Thiebolt    considering 1.3 inches oleds based on SH1106
     2020-Nov  - F.Thiebolt    Initial Release
@@ -359,16 +360,16 @@ uint8_t oled13inch::dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds ) 
     }
 
     {
-      const char *_key = PSTR("luminosity");
+      const char *_key = PSTR("airquality");
       if( strncmp_P(kv.key().c_str(), _key, strlen_P(_key))==0 ) {
-        // luminosity
+        // airquality
         //serializeJsonPretty( kv.value(), Serial );
         for( JsonPair _kv : (kv.value()).as<JsonObject>() ) {
-          //log_debug(F("\n[oled13inch][luminosity] key: ")); log_debug(_kv.key().c_str()); log_flush();
+          //log_debug(F("\n[oled13inch][airquality] key: ")); log_debug(_kv.key().c_str()); log_flush();
           const char *_key2avoid = PSTR("value_units");
           //if( strncmp_P(_kv.key().c_str(), _key2avoid, strlen_P(_key2avoid))!=0 ) {
           if( strstr_P(_kv.key().c_str(), _key2avoid)==nullptr ) {
-            //snprintf( _str, sizeof(_str), "%dlux", _kv.value().as<int>());
+            //snprintf( _str, sizeof(_str), "%s:%dµg/m3", _kv.key().c_str(), _kv.value().as<int>());
             snprintf( _str, sizeof(_str), "%d%s", _kv.value().as<int>(), _getUnits( _kv.key().c_str(), (kv.value()).as<JsonObject>() ) );
             _u8g2->drawUTF8(x_offset, y_offset, _str);
             y_offset += (str_height + 0);
@@ -381,16 +382,16 @@ uint8_t oled13inch::dispTime( uint8_t hours, uint8_t minutes, uint8_t seconds ) 
     }
 
     {
-      const char *_key = PSTR("airquality");
+      const char *_key = PSTR("luminosity");
       if( strncmp_P(kv.key().c_str(), _key, strlen_P(_key))==0 ) {
-        // airquality
+        // luminosity
         //serializeJsonPretty( kv.value(), Serial );
         for( JsonPair _kv : (kv.value()).as<JsonObject>() ) {
-          //log_debug(F("\n[oled13inch][airquality] key: ")); log_debug(_kv.key().c_str()); log_flush();
+          //log_debug(F("\n[oled13inch][luminosity] key: ")); log_debug(_kv.key().c_str()); log_flush();
           const char *_key2avoid = PSTR("value_units");
           //if( strncmp_P(_kv.key().c_str(), _key2avoid, strlen_P(_key2avoid))!=0 ) {
           if( strstr_P(_kv.key().c_str(), _key2avoid)==nullptr ) {
-            //snprintf( _str, sizeof(_str), "%s:%dµg/m3", _kv.key().c_str(), _kv.value().as<int>());
+            //snprintf( _str, sizeof(_str), "%dlux", _kv.value().as<int>());
             snprintf( _str, sizeof(_str), "%d%s", _kv.value().as<int>(), _getUnits( _kv.key().c_str(), (kv.value()).as<JsonObject>() ) );
             _u8g2->drawUTF8(x_offset, y_offset, _str);
             y_offset += (str_height + 0);

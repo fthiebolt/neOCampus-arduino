@@ -11,6 +11,7 @@
 
 	@section  HISTORY
 
+    F.Thiebolt  mar.22  added support for multi-sensors corner cases
     F.Thiebolt  nov.21  added support for single data threshold_cpt
     F.Thiebolt  aug.21  added support for analog data integration
     2020-May    - First release, F. Thiebolt
@@ -144,7 +145,13 @@ bool generic_driver::getTrigger( void ) {
  *  get official value that has gone through the whole integration process
  */
 float generic_driver::getValue( uint8_t *idx ) {
-  return value;
+
+  // regular case or first value required
+  if( !idx or *idx==0 ) return value;
+
+  // first value already sent back ...
+  if( idx ) *idx = (uint8_t)(-1);
+  return -42.0;
 }
 
 

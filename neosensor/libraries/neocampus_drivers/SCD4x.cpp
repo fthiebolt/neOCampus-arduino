@@ -26,7 +26,7 @@
 #include "neocampus_debug.h"
 #include "neocampus_i2c.h"
 
-// [may.20] debug
+// for hex_dump debug
 #include "neocampus_utils.h"
 
 

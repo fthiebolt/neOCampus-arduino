@@ -23,6 +23,9 @@
 #include "neocampus.h"
 #include "neocampus_debug.h"
 
+// for hex_dump debug
+#include "neocampus_utils.h"
+
 #include "pm_serial.h"   // neOCampus driver
 
 
@@ -870,8 +873,8 @@ boolean pm_serial::_ll_requestRead( void ) {
     res = true;
   }
   else if( _sensor_type ==  pmSensorType_t::IKEA ) {
-    // uint8_t command[] = { 0x11, 0x01, 0x02, 0xEC }; // regular command
-    uint8_t command[] = { 0x11, 0x02, 0x0b, 0x01, 0xE1 }; // [feb.22] hidden command
+    uint8_t command[] = { 0x11, 0x01, 0x02, 0xEC }; // regular command
+    // uint8_t command[] = { 0x11, 0x02, 0x0b, 0x01, 0xE1 }; // [feb.22] hidden command
     _stream->write(command, sizeof(command)); delay(50);
     res = true;
   }
@@ -1131,6 +1134,10 @@ boolean pm_serial::serialRead_ikea( uint16_t timeout ) {
             _index = 0;
             continue;
           }
+
+          // DEBUG
+          log_debug(F("\n[pm_serial][IKEA] frame received: ")); log_flush();
+          hex_dump( (char*)_payload, min(sizeof(_payload),(unsigned int)(_frameLen-1)) );
 
           uint16_t value;
           // Atmospheric Environment.

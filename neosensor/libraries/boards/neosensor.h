@@ -42,7 +42,7 @@
  */
 #define BOARD_NAME          "neOSensor"
 #define BOARD_REVISION      1.2
-#define BOARD_FWREV         220316          // Firmware revision <year><month><day> in 2 digits each
+#define BOARD_FWREV         220328          // Firmware revision <year><month><day> in 2 digits each
 
 
 /* #############################################################################

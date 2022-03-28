@@ -44,7 +44,8 @@ class wifiParametersMgt {
     
     const char * getWIFIssid( void );
     const char * getWIFIpass( void );
-    bool _getWIFIsettings( void );       // read struct station to extract WIFI parameters
+    bool setWIFIsettings( const char* ssid=nullptr, const char* pass=nullptr ); // extract WIFI parameters through Wifi global var
+                                                                                // or parameters and set our private attributes
     
     // wrapper for options querries
     bool isEnabledSandbox( void ) { return _opt_sandboxMode; };       // tell if neOCampus sandbox apply or if sensocampus is enabled (default)

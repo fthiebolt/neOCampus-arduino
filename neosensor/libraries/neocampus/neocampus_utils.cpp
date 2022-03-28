@@ -308,10 +308,11 @@ bool setupWiFi( wifiParametersMgt *wp ) {
   // Getting posted form values and overriding local variables parameters
   // Config file is written regardless the connection state
   // TODO: find a way to parse ALL parameters added in wifi manager
+
+  // save wifi settings to wifi parameters object
+  wp->setWIFIsettings( wifiManager.getWiFiSSID().c_str(), wifiManager.getWiFiPass().c_str() );
+
   if( _WMsaveAddonConfigFlag ) {
-    
-    // save wifi settings to wifi parameters object
-    wp->_getWIFIsettings();
     
     // save OPTIONS to parameters object
     wp->_setopt_sandboxMode( strncmp(p_sandbox.getValue(),"T",1)==0 ? true : false );
@@ -327,10 +328,10 @@ bool setupWiFi( wifiParametersMgt *wp ) {
     
     // Dangerous option !!
     wp->_setopt_eraseALL( strncmp(p_eraseALL.getValue(),"T",1)==0 ? true : false );
-    
-    // Writing JSON config file to flash for next boot
-    wp->saveConfigFile();
   }
+
+  // Writing JSON config file to flash for next boot ... if something has been updated :)
+  wp->saveConfigFile();
 
   if( WiFi.status() != WL_CONNECTED ) {
     log_error(F("\n[WiFi] failed to connect and hit timeout ... restart"));

@@ -201,46 +201,33 @@ bool wifiParametersMgt::saveConfigFile( void ) {
 
   
 /*
- * Grab WIFI settings from struct station_config
+ * Grab WIFI settings through Wifi global var or from parameters
+ *  and set within private attributes
  */
-bool wifiParametersMgt::_getWIFIsettings( void ) {
-  // grab WIFI station connexion parameters from current connexion ...
+bool wifiParametersMgt::setWIFIsettings( const char* ssid, const char* pass ) {
 
-  /*
-   * [sep.20] ESP8266 DEPRECATED CODE
-   *
-  struct station_config _conf;
-  if( wifi_station_get_config(&_conf) and strlen(reinterpret_cast<const char*>(_conf.ssid)) ) {
-  
-    log_debug(F("\n[wifiParams] retrieved current ssid = ")); log_debug(reinterpret_cast<const char*>(_conf.ssid));
-    log_debug(F("\n[wifiParams] retrieved current pass = ")); log_debug(reinterpret_cast<const char*>(_conf.password));
-    log_flush();
-    
-    if( strncmp(_ssid, reinterpret_cast<const char*>(_conf.ssid), sizeof(_ssid)) or
-        strncmp(_pass, reinterpret_cast<const char*>(_conf.password)), sizeof(_pass) ) {
-    
-      log_debug(F("\n[wifiParams] new credentials detected ... update!")); log_flush();
-      strncpy( _ssid, reinterpret_cast<const char*>(_conf.ssid), sizeof(_ssid) );
-      strncpy( _pass, reinterpret_cast<const char*>(_conf.password), sizeof(_pass) );
-      _updated = true;
-    }
-  }
-  else {
-    log_debug(F("\n[wifiParams] no SSID / PASS found neither in config file nor struct station ... probably first time connect ...")); log_flush();
-    return false;
-  }
-   */
+  const char *tmpSSID = ssid;
+  const char *tmpPASS = pass;
 
-  log_debug(F("\n[wifiParams] retrieved current ssid = ")); log_debug(WiFi.SSID());
-  log_debug(F("\n[wifiParams] retrieved current pass = ")); log_debug(WiFi.psk());
+  if( !tmpSSID ) tmpSSID = WiFi.SSID().c_str();
+  log_debug(F("\n[wifiParams] retrieved current ssid = ")); log_debug(tmpSSID);
+
+  if( !tmpPASS ) tmpPASS = WiFi.psk().c_str();
+  log_debug(F("\n[wifiParams] retrieved current pass = ")); log_debug(tmpPASS);
+
   log_flush();
   
-  if( strncmp(_ssid, WiFi.SSID().c_str(), sizeof(_ssid)) or
-      strncmp(_pass, WiFi.psk().c_str(), sizeof(_pass)) ) {
+  if( !strlen(tmpSSID) ) {
+    log_debug(F("\n[wifiParams] empty SSID ...")); log_flush();
+    return false;
+  }
+
+  if( strncmp(_ssid, tmpSSID, sizeof(_ssid)) or
+      strncmp(_pass, tmpPASS, sizeof(_pass)) ) {
   
     log_debug(F("\n[wifiParams] new credentials detected ... update!")); log_flush();
-    strncpy( _ssid, WiFi.SSID().c_str(), sizeof(_ssid) );
-    strncpy( _pass, WiFi.psk().c_str(), sizeof(_pass) );
+    strncpy( _ssid, tmpSSID, sizeof(_ssid) );
+    strncpy( _pass, tmpPASS, sizeof(_pass) );
     _updated = true;
   }
   else {
@@ -503,8 +490,8 @@ for (JsonObject::iterator it=root.begin(); it!=root.end(); ++it) {
    */
   if( _wifiSet ) return true;
   
-  // grab from previous settings ...
-  _getWIFIsettings();
+  // grab WiFi from previous settings (Wifi global var)
+  setWIFIsettings();
   
   // over :)
   return true;

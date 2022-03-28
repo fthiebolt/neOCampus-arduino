@@ -1,0 +1,6 @@
+(c) F.Thiebolt Université Toulouse3, Laboratoire IRIT
+
+=== Release 220328
+- save WiFi credentials even if wrongly typed or end device has not been able
+to connect to WiFi gateway
+

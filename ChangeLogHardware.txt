@@ -1,0 +1,7 @@
+(c) F.Thiebolt Université Toulouse3, Laboratoire IRIT
+
+=== (upcoming) HW Release neOSensorV5.2
+- add 0805 cap for those ESP32 that miss it on EN pin
+- test DAC detect on ESP8266 (check no interference with SCD4x autodetect)
+- switch to ESP32 layout featuring unaligned pins
+

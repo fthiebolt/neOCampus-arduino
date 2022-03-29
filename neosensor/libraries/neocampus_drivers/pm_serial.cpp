@@ -699,8 +699,15 @@ boolean pm_serial::_init( void ) {
     log_error(F("\n[pm_serial] inappropriate serial link number "));log_error(_link);log_flush();
     return false;
   }
+
+  #warning "esp8266 hack: Serial2 is not known ... correct me!"
+  #ifndef ESP8266
   Serial2.begin( _link_speed );
   _stream = &Serial2;  // TODO pointer to stream according to link number specified ... maybe later ;)
+  #else
+  return false;
+  #endif /* ESP8266 */
+
   if( !_stream ) return false;
   
   // switch to passive mode (if any)

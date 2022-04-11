@@ -38,11 +38,11 @@ The board features four specific sensors able to measure NO2, CO, CH20, NO2 alte
 First of all, you ought to install esp32, esp8266 or CubeCell support in your Arduino IDE.
 
 | Device   | Release | Arduino Board Manager json file                                                                            |
-|----------|----------------------------------------------------------------------------------------------------------------------|
+|----------|---------|------------------------------------------------------------------------------------------------------------|
 | esp8266  | 2.7.1   | https://arduino.esp8266.com/stable/package_esp8266com_index.json                                           |
 | esp32    | 1.0.6   | https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json                |
-| CubeCell | latest  | https://github.com/HelTecAutomation/CubeCell-Arduino/releases/download/V1.3.0/package_CubeCell_index.json  |
-| stm32    | latest  | https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json             |
+| CubeCell | *latest*  | https://github.com/HelTecAutomation/CubeCell-Arduino/releases/download/V1.3.0/package_CubeCell_index.json  |
+| stm32    | *latest*  | https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json             |
 
 Then, run script `./deploy.sh` and boards will get added to your Arduino boards list :)
 

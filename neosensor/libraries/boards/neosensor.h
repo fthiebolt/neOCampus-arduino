@@ -154,9 +154,17 @@
  */
 #ifndef SENSORS_SERIAL_LINK
   #ifdef ESP32
-    #define SENSORS_SERIAL_LINK     (uint8_t)2   // [jul.21] neOSensor V5 added (i.e Serial2)
-  #else
-    #define SENSORS_SERIAL_LINK     INVALID_SERIAL_LINK
+    #define SENSORS_SERIAL_LINK     (uint8_t)2    // [jul.21] neOSensor V5 added (i.e Serial2)
+  #elif defined(ESP8266)
+    /* [apr.22] notes about serial ports on esp8266
+     * - serial0(HW) is for programming and debug
+     * - serial1(HW) only TX
+     * - serial2(sw) this one
+     */
+    //#define SENSORS_SERIAL_LINK     INVALID_SERIAL_LINK
+    #define SENSORS_SERIAL_LINK     (uint8_t)2    // [apr.22] useless but just to have var defined (i.e Serial2)
+    #define SENSORS_SERIAL_LINK_RX  4             // shared with PIR sensor hence avoid double declaration ;)
+    #define SENSORS_SERIAL_LINK_TX  INVALID_GPIO  // no TX pin
   #endif
 #endif
 

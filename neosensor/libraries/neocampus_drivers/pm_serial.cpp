@@ -19,6 +19,9 @@
  * Includes
  */
 #include <Arduino.h>
+#ifdef ESP8266
+#include <SoftwareSerial.h>
+#endif /* ESP8266 */
 
 #include "neocampus.h"
 #include "neocampus_debug.h"
@@ -65,7 +68,7 @@ pm_serial::pm_serial( void ) : generic_driver( _MEASURES_INTERLEAVE_MS,
   _measures = nullptr;
   _nbMeasures = 0;
 
-  /* [nov.21] we choose to disable PM%_ENABLE gpio because PMS sensors
+  /* [nov.21] we choose to disable PM_ENABLE gpio because PMS sensors
    * already features both sleep() and wakeUp() commands
   _enable_gpio = PM_ENABLE;           // PM_ENABLE gpio
   */
@@ -700,12 +703,18 @@ boolean pm_serial::_init( void ) {
     return false;
   }
 
-  #warning "esp8266 hack: Serial2 is not known ... correct me!"
-  #ifndef ESP8266
-  Serial2.begin( _link_speed );
-  _stream = &Serial2;  // TODO pointer to stream according to link number specified ... maybe later ;)
+  #if defined(ESP8266)
+    #warning "esp8266 serial2 makes use of SoftwareSerial!"
+    SoftwareSerial *mySerial2 = new SoftwareSerial(SENSORS_SERIAL_LINK_RX,SENSORS_SERIAL_LINK_TX);
+    if( !mySerial2 ) return false;
+    mySerial2->begin( _link_speed );
+    _stream = mySerial2;
+  #elif defined(ESP32)
+    Serial2.begin( _link_speed );
+    _stream = &Serial2;  // TODO pointer to stream according to link number specified ... maybe later ;)
   #else
-  return false;
+    #warning "unknown architecture for Serial2 link"
+    return false;
   #endif /* ESP8266 */
 
   if( !_stream ) return false;

@@ -4,6 +4,9 @@
 # NEOSENSOR
 neOSensor.name=neOSensor
 
+neOSensor.bootloader.tool=esptool_py
+neOSensor.bootloader.tool.default=esptool_py
+
 neOSensor.upload.tool=esptool_py
 neOSensor.upload.maximum_size=1310720
 neOSensor.upload.maximum_data_size=327680
@@ -12,11 +15,14 @@ neOSensor.upload.wait_for_upload_port=true
 neOSensor.serial.disableDTR=true
 neOSensor.serial.disableRTS=true
 
+neOSensor.build.tarch=xtensa
+neOSensor.build.bootloader_addr=0x1000
+neOSensor.build.target=esp32
 neOSensor.build.mcu=esp32
 neOSensor.build.core=esp32
-# [aug.20] we keep node32s variant
-neOSensor.build.variant=node32s
-neOSensor.build.board=node32s
+# [aug.22] we keep node32s variant
+neOSensor.build.variant=nodemcu-32s
+neOSensor.build.board=nodeMCU_32S
 
 # [aug.20] seems to have some startup problems at 160MHz ... thus switching to 240MHz
 neOSensor.build.f_cpu=240000000L
@@ -65,6 +71,9 @@ neOSensor.menu.DebugLevel.verbose.build.code_debug=5
 # NEOSENSOR-AIRQUALITY
 neOSensor-airquality.name=neOSensor-airquality
 
+neOSensor-airquality.bootloader.tool=esptool_py
+neOSensor-airquality.bootloader.tool.default=esptool_py
+
 neOSensor-airquality.upload.tool=esptool_py
 neOSensor-airquality.upload.maximum_size=1310720
 neOSensor-airquality.upload.maximum_data_size=327680
@@ -73,11 +82,14 @@ neOSensor-airquality.upload.wait_for_upload_port=true
 neOSensor-airquality.serial.disableDTR=true
 neOSensor-airquality.serial.disableRTS=true
 
+neOSensor-airquality.build.tarch=xtensa
+neOSensor-airquality.build.bootloader_addr=0x1000
+neOSensor-airquality.build.target=esp32
 neOSensor-airquality.build.mcu=esp32
 neOSensor-airquality.build.core=esp32
-# [aug.20] we keep node32s variant
-neOSensor-airquality.build.variant=node32s
-neOSensor-airquality.build.board=node32s
+# [aug.22] we keep node32s variant
+neOSensor-airquality.build.variant=nodemcu-32s
+neOSensor-airquality.build.board=nodeMCU_32S
 
 # [aug.20] seems to have some startup problems at 160MHz ... thus switching to 240MHz
 neOSensor-airquality.build.f_cpu=240000000L

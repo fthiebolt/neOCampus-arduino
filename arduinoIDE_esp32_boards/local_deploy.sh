@@ -4,6 +4,8 @@
 #
 # Deploying specific settings for board
 #
+# F.Thiebolt    aug.22  update for 2.0.4 sdk with esp32 target only
+#                       i.e does not apply to esp32 derivatives like esp32c3
 # F.Thiebolt    aug.21  initial release
 #
 
@@ -16,13 +18,13 @@
 echo -e "Copying additional board files ..."
 
 # copying files
-cp -af opt.h $1/include/lwip/lwip/
-[ $? -ne 0 ] && { echo -e "\n###ERROR copying some files to '$1/include/lwip/lwip/'" >&2; exit 1; }
-chmod a+r $1/include/lwip/lwip/opt.h
+cp -af opt.h $1/esp32/include/lwip/lwip/src/include/lwip/
+[ $? -ne 0 ] && { echo -e "\n###ERROR copying some files to '$1/esp32/include/lwip/lwip/src/include/lwip/'" >&2; exit 1; }
+chmod a+r $1/esp32/include/lwip/lwip/src/include/lwip/opt.h
 
-cp -af *.a $1/lib/
-[ $? -ne 0 ] && { echo -e "\n###ERROR copying some files to '$1/lib/'" >&2; exit 1; }
-chmod a+r $1/lib/*.a
+cp -af *.a $1/esp32/lib/
+[ $? -ne 0 ] && { echo -e "\n###ERROR copying some files to '$1/esp32/lib/'" >&2; exit 1; }
+chmod a+r $1/esp32/lib/*.a
 
 #set +x
 

@@ -2,6 +2,7 @@
 #
 # Deployment script for neOCampus / neOSensor boards
 #
+# F.Thiebolt    aug.22  upgrades esp* SDKs
 # F.Thiebolt    feb.21  added CubeCell support
 # F.Thiebolt    sep.20  force SDK 2.7.1 for esp8266 (2.7.4 exhibits WiFi failures
 #                       in higly degraded WiFi environment).
@@ -10,8 +11,8 @@
 
 #
 # Global defs
-ESP32_REV=${ESP32_REV:-"1.0.6"}
-ESP8266_REV=${ESP8266_REV:-"2.7.1"}
+ESP32_REV=${ESP32_REV:-"2.0.4"}
+ESP8266_REV=${ESP8266_REV:-"3.0.2"}
 CUBECELL_REV=${CUBECELL_REV:-"1.3.0"}
 
 

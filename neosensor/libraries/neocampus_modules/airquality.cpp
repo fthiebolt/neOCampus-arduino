@@ -131,12 +131,13 @@ bool airquality::start( senso *sensocampus,  JsonDocument &sharedRoot ) {
   // [aug.21] we create a dictionnary
   variant = sharedRoot.createNestedObject(MQTT_MODULE_NAME);
 
+#if 0
   JsonObject _obj = variant.as<JsonObject>();
 
   /* [nov.21] airquality sensors feature different value units ==> we'll afford a
    * per sensor value_units, e.g: { 'CO2':842, 'CO2_value_units':'ppm', 'PM2_5':3, 'PM2_5_value_units':'µg/m3' }
    */
-#if 0
+
   // we consider each module (e.g airquality) having each drivers producing the same king of value_units
   // hence we'll select value_units from first sensor of our sensors' list
   if( _sensor[0] != nullptr ) {

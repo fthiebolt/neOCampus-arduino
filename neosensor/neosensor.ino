@@ -173,6 +173,10 @@
  * various led mods to express status of neOSensor
  * device while in setup()
  */
+#ifdef ESP8266
+  // since 3.X sdk, default range of analogWrite is now 255 while it used to be 1023
+  #define ESP8266_PWMRANGE    1023
+#endif
 typedef enum {
   WIFI,
   DISABLE
@@ -208,7 +212,7 @@ luminosity *luminosityModule        = nullptr;
 // noise class module
 noise *noiseModule                  = nullptr;
 // noise module ISR :(
-void ICACHE_RAM_ATTR noiseDetectISR() {             /* https://community.particle.io/t/cpp-attachinterrupt-to-class-function-help-solved/5147/2 */
+void IRAM_ATTR noiseDetectISR() {             /* https://community.particle.io/t/cpp-attachinterrupt-to-class-function-help-solved/5147/2 */
   if( noiseModule ) noiseModule->noiseDetectISR();
 }
 
@@ -423,14 +427,15 @@ void endLoop( void ) {
 // or the channel_id (esp32)
 void _ledWiFiMode( uint8_t id ) {
 
-#ifdef ESP8266  
+#ifdef ESP8266
+
   const uint8_t _val_steps = 50;
   static int16_t _val=0;
   
-  if( _val < PWMRANGE ) _val+=_val_steps;
-  else _val=-PWMRANGE;
+  if( _val < ESP8266_PWMRANGE ) _val+=_val_steps;
+  else _val=-ESP8266_PWMRANGE;
 
-  analogWrite( id, (abs(_val)<PWMRANGE) ? abs(_val) : PWMRANGE );
+  analogWrite( id, (abs(_val)<ESP8266_PWMRANGE) ? abs(_val) : ESP8266_PWMRANGE );
 
 #elif defined(ESP32)
   /* Ok, we'll get called every 50ms ... 
@@ -466,6 +471,7 @@ void setupLed( uint8_t led, enum_ledmode_t led_mode ) {
       // set led to show we're waiting for WiFi connect
 #ifdef ESP8266
       pinMode(led,OUTPUT);
+      analogWriteRange(ESP8266_PWMRANGE);
       timer_led.attach_ms(50, _ledWiFiMode, led);
 #elif defined(ESP32)
       ledcSetup(LED_CHANNEL, LED_BASE_FREQ, LED_RESOLUTION);

@@ -218,9 +218,6 @@ bool setupWiFi( wifiParametersMgt *wp ) {
   /*
    * Declare WiFiManager additional parameters
    * 
-   * [Jun.18] WARNING --> use Ken Taylor WiFiManager verion:
-   *    https://github.com/kentaylor/WiFiManager
-   * 
    * - hint reminder
    * - TM1637 7 segment display with optional pins
    * 
@@ -238,8 +235,11 @@ bool setupWiFi( wifiParametersMgt *wp ) {
   // enable / disable sensOCampus sandbox
   WiFiManagerParameter p_sandbox("sandbox", "neOCampus sandbox", "T", 2, _customHtml_checkbox, WFM_LABEL_AFTER);
   if( wp->isEnabledSandbox() ) {
-    // [Jun.18] HACK that requires modification in WiFiManager
+    WiFiManagerParameter p_sandbox("sandbox", "neOCampus sandbox", "T", 2, _customHtml_checkbox_checked, WFM_LABEL_AFTER);
+    #warning "REMOVE HACK below !"
+    /* [Jun.18] HACK that requires modification in WiFiManager
     p_sandbox._customHTML = _customHtml_checkbox_checked;
+    */
   }
   
   // TM1637 7 segment display parameters

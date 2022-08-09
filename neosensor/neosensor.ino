@@ -75,12 +75,9 @@
 
 /* As of esp8266 arduino lib >=2.4.0, time is managed via local or sntp along with TZ support :) */ 
 #include <time.h>                         // time() ctime()
+#include <sntp.h>
 #ifdef ESP8266
   #include <coredecls.h>                  // settimeofday_cb(), tune_timeshift64()
-
-  #include <sntp.h>
-#elif defined(ESP32)
-  #include "lwip/apps/sntp.h"
 #endif
 
 /*

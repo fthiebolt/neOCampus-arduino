@@ -245,15 +245,21 @@ bool setupWiFi( wifiParametersMgt *wp ) {
   // TM1637 7 segment display parameters
   WiFiManagerParameter p_sevenSegTM1637("sevenSegTM1637", "TM1637 7-seg (DIO=2,CLK=SCL)", "T", 2, _customHtml_checkbox, WFM_LABEL_AFTER);
   if( wp->isEnabled7segTM1637() ) {
-    // [Jun.18] HACK that requires modification in WiFiManager
+    WiFiManagerParameter p_sevenSegTM1637("sevenSegTM1637", "TM1637 7-seg (DIO=2,CLK=SCL)", "T", 2, _customHtml_checkbox_checked, WFM_LABEL_AFTER);
+    #warning "REMOVE HACK below !"
+    /* [Jun.18] HACK that requires modification in WiFiManager
     p_sevenSegTM1637._customHTML = _customHtml_checkbox_checked;
+    */
   }
   
   // PIR sensor
   WiFiManagerParameter p_PIRsensor("PIRsensor", "PIR sensor (pin=5)", "T", 2, _customHtml_checkbox, WFM_LABEL_AFTER);
   if( wp->isEnabledPIR() ) {
-    // [Jun.18] HACK that requires modification in WiFiManager
+    WiFiManagerParameter p_PIRsensor("PIRsensor", "PIR sensor (pin=5)", "T", 2, _customHtml_checkbox_checked, WFM_LABEL_AFTER);
+    #warning "REMOVE HACK below !"
+    /* [Jun.18] HACK that requires modification in WiFiManager
     p_PIRsensor._customHTML = _customHtml_checkbox_checked;
+    */
   }
 
   
@@ -503,9 +509,10 @@ const char *getCurTime( const char *fmt ) {
  */
 bool _http_get( const char *url, char *buf, size_t bufsize, const char *login, const char *passwd ) {
     
+  WiFiClient client;
   HTTPClient http;
 
-  http.begin(url);
+  http.begin(client, url);
   log_debug(F("\n[HTTP] GET url : ")); log_debug(url); log_flush();
   
   // authentication ?

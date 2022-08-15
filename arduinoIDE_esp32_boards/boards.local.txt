@@ -11,6 +11,8 @@ neOSensor.upload.tool=esptool_py
 neOSensor.upload.maximum_size=1310720
 neOSensor.upload.maximum_data_size=327680
 neOSensor.upload.wait_for_upload_port=true
+neOSensor.upload.flags=
+neOSensor.upload.extra_flags=
 
 neOSensor.serial.disableDTR=true
 neOSensor.serial.disableRTS=true
@@ -78,6 +80,8 @@ neOSensor-airquality.upload.tool=esptool_py
 neOSensor-airquality.upload.maximum_size=1310720
 neOSensor-airquality.upload.maximum_data_size=327680
 neOSensor-airquality.upload.wait_for_upload_port=true
+neOSensor-airquality.upload.flags=
+neOSensor-airquality.upload.extra_flags=
 
 neOSensor-airquality.serial.disableDTR=true
 neOSensor-airquality.serial.disableRTS=true

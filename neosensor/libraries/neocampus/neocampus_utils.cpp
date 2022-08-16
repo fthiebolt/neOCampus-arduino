@@ -9,6 +9,7 @@
  * - ...
  * 
  * ---
+ * F.Thiebolt   aug.22  removed WiFiparameters hack :) ... by means of dynamic allocation :|
  * F.Thiebolt   aug.21  extended checkCLEAR to 5000ms (some ESP32 have huge
  *                      internal capacitor enabled@starup ?!?!)
  * F.Thiebolt   apr.21  removed DNS related includes
@@ -157,9 +158,15 @@ void cb_enterConfigMode( WiFiManager *myWiFiManager ) {
 bool setupWiFi( wifiParametersMgt *wp ) {
 
   if( _need2reboot ) return false;
-  
+
   log_info(F("\n[WiFi] start WiFiManager ..."));
 
+  // WiFiManager local instance ... no need to keep it once business is done :)
+  WiFiManager wifiManager;
+
+  // debug messages
+  wifiManager.setDebugOutput( true );
+  
   // reload config file
   if( wp ) {
     // load WiFi parameters and options
@@ -186,13 +193,19 @@ bool setupWiFi( wifiParametersMgt *wp ) {
       log_debug(F("+"));log_flush();
     }
   }
+  
+  // set timeouts
+  if( WiFi.status() != WL_CONNECTED ) {
+    log_debug(F("\n[WiFi] AP will get open for "));log_debug(WM_CONFIG_PORTAL_TIMEOUT,DEC);log_debug(F(" seconds"));
+    wifiManager.setConfigPortalTimeout(WM_CONFIG_PORTAL_TIMEOUT);
+  }
+  else {
+    // [aug.22] if we get connected ... then activate autoreconnect :)
+    WiFi.setAutoReconnect(true);
+    log_debug(F("\n[WiFi] AP opened in CONFIG MODE for ")); log_debug(WM_CONFIG_PORTAL_TIMEOUT/6,DEC);log_debug(F(" seconds"));
+    wifiManager.setConfigPortalTimeout(WM_CONFIG_PORTAL_TIMEOUT/6);
+  }
 
-  // WiFiManager local instance ... no need to keep once business is done
-  WiFiManager wifiManager;
-  
-  // debug messages
-  wifiManager.setDebugOutput( true );
-  
   // set enter config mode callback
   wifiManager.setAPCallback( cb_enterConfigMode );
 
@@ -233,33 +246,30 @@ bool setupWiFi( wifiParametersMgt *wp ) {
   const char _customHtml_checkbox_checked[] = "type=\"checkbox\" checked";
   
   // enable / disable sensOCampus sandbox
-  WiFiManagerParameter p_sandbox("sandbox", "neOCampus sandbox", "T", 2, _customHtml_checkbox, WFM_LABEL_AFTER);
+  WiFiManagerParameter *p_sandbox = nullptr;
   if( wp->isEnabledSandbox() ) {
-    WiFiManagerParameter p_sandbox("sandbox", "neOCampus sandbox", "T", 2, _customHtml_checkbox_checked, WFM_LABEL_AFTER);
-    #warning "REMOVE HACK below !"
-    /* [Jun.18] HACK that requires modification in WiFiManager
-    p_sandbox._customHTML = _customHtml_checkbox_checked;
-    */
+    p_sandbox = new WiFiManagerParameter("sandbox", "neOCampus sandbox", "T", 2, _customHtml_checkbox_checked, WFM_LABEL_AFTER);
   }
-  
+  else {
+    p_sandbox = new WiFiManagerParameter("sandbox", "neOCampus sandbox", "T", 2, _customHtml_checkbox, WFM_LABEL_AFTER);
+  }
+
   // TM1637 7 segment display parameters
-  WiFiManagerParameter p_sevenSegTM1637("sevenSegTM1637", "TM1637 7-seg (DIO=2,CLK=SCL)", "T", 2, _customHtml_checkbox, WFM_LABEL_AFTER);
+  WiFiManagerParameter *p_sevenSegTM1637 = nullptr;
   if( wp->isEnabled7segTM1637() ) {
-    WiFiManagerParameter p_sevenSegTM1637("sevenSegTM1637", "TM1637 7-seg (DIO=2,CLK=SCL)", "T", 2, _customHtml_checkbox_checked, WFM_LABEL_AFTER);
-    #warning "REMOVE HACK below !"
-    /* [Jun.18] HACK that requires modification in WiFiManager
-    p_sevenSegTM1637._customHTML = _customHtml_checkbox_checked;
-    */
+    p_sevenSegTM1637 = new WiFiManagerParameter("sevenSegTM1637", "TM1637 7-seg (DIO=2,CLK=SCL)", "T", 2, _customHtml_checkbox_checked, WFM_LABEL_AFTER);
+  }
+  else {
+    p_sevenSegTM1637 = new WiFiManagerParameter("sevenSegTM1637", "TM1637 7-seg (DIO=2,CLK=SCL)", "T", 2, _customHtml_checkbox, WFM_LABEL_AFTER);
   }
   
   // PIR sensor
-  WiFiManagerParameter p_PIRsensor("PIRsensor", "PIR sensor (pin=5)", "T", 2, _customHtml_checkbox, WFM_LABEL_AFTER);
+  WiFiManagerParameter *p_PIRsensor = nullptr;
   if( wp->isEnabledPIR() ) {
-    WiFiManagerParameter p_PIRsensor("PIRsensor", "PIR sensor (pin=5)", "T", 2, _customHtml_checkbox_checked, WFM_LABEL_AFTER);
-    #warning "REMOVE HACK below !"
-    /* [Jun.18] HACK that requires modification in WiFiManager
-    p_PIRsensor._customHTML = _customHtml_checkbox_checked;
-    */
+    p_PIRsensor = new WiFiManagerParameter("PIRsensor", "PIR sensor (pin=5)", "T", 2, _customHtml_checkbox_checked, WFM_LABEL_AFTER);
+  }
+  else {
+    p_PIRsensor = new WiFiManagerParameter("PIRsensor", "PIR sensor (pin=5)", "T", 2, _customHtml_checkbox, WFM_LABEL_AFTER);
   }
 
   
@@ -273,27 +283,14 @@ bool setupWiFi( wifiParametersMgt *wp ) {
    * add all parameters to wifiManager
    */
   wifiManager.addParameter(&p_hint);
-  wifiManager.addParameter(&p_sandbox);
-  wifiManager.addParameter(&p_sevenSegTM1637);
-/*
-  wifiManager.addParameter(&p_pinTM1637dio);
-  wifiManager.addParameter(&p_pinTM1637clk);
-*/
-  wifiManager.addParameter(&p_PIRsensor);
+  wifiManager.addParameter(p_sandbox);
+  wifiManager.addParameter(p_sevenSegTM1637);
+  wifiManager.addParameter(p_PIRsensor);
   wifiManager.addParameter(&p_eraseALL);
 
   
-  //
-  // set timeouts
-  if( WiFi.status() != WL_CONNECTED ) {
-    log_debug(F("\n[WiFi] AP will get open for "));log_debug(WM_CONFIG_PORTAL_TIMEOUT,DEC);log_debug(F(" seconds"));
-    wifiManager.setConfigPortalTimeout(WM_CONFIG_PORTAL_TIMEOUT);
-  }
-  else {
-    log_debug(F("\n[WiFi] AP opened in CONFIG MODE for ")); log_debug(WM_CONFIG_PORTAL_TIMEOUT/6,DEC);log_debug(F(" seconds"));
-    wifiManager.setConfigPortalTimeout(WM_CONFIG_PORTAL_TIMEOUT/6);
-  }
   // set a timeout trying to connect to a specified AP
+  // Note: isn't it useless since we manage connection ahead of WiFiManager ??
   log_debug(F("\n[WiFi] will try a connexion for maximum "));log_debug(WM_CONNECTION_ATTEMPT_TIMEOUT,DEC);log_debug(F(" seconds"));
   wifiManager.setConnectTimeout(WM_CONNECTION_ATTEMPT_TIMEOUT);
 
@@ -321,9 +318,9 @@ bool setupWiFi( wifiParametersMgt *wp ) {
   if( _WMsaveAddonConfigFlag ) {
     
     // save OPTIONS to parameters object
-    wp->_setopt_sandboxMode( strncmp(p_sandbox.getValue(),"T",1)==0 ? true : false );
-    wp->_setopt_7segTM1637( strncmp(p_sevenSegTM1637.getValue(),"T",1)==0 ? true : false );
-    wp->_setopt_PIRsensor( strncmp(p_PIRsensor.getValue(),"T",1)==0 ? true : false );
+    wp->_setopt_sandboxMode( strncmp(p_sandbox->getValue(),"T",1)==0 ? true : false );
+    wp->_setopt_7segTM1637( strncmp(p_sevenSegTM1637->getValue(),"T",1)==0 ? true : false );
+    wp->_setopt_PIRsensor( strncmp(p_PIRsensor->getValue(),"T",1)==0 ? true : false );
 
     /*
     strcpy(thingspeakApiKey, p_thingspeakApiKey.getValue());
@@ -335,6 +332,11 @@ bool setupWiFi( wifiParametersMgt *wp ) {
     // Dangerous option !!
     wp->_setopt_eraseALL( strncmp(p_eraseALL.getValue(),"T",1)==0 ? true : false );
   }
+
+  // freeing allocated ressources :s
+  free(p_sandbox); p_sandbox = nullptr;
+  free(p_sevenSegTM1637); p_sevenSegTM1637 = nullptr;
+  free(p_PIRsensor); p_PIRsensor = nullptr;
 
   // Writing JSON config file to flash for next boot ... if something has been updated :)
   wp->saveConfigFile();

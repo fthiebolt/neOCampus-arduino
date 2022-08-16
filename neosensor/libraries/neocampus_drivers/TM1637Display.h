@@ -148,7 +148,7 @@ class TM1637Display : public driver_display {
     bool setDotsBlinking( bool );
     
     // Every half-second timer call to this method for central dots blinking
-    static void ICACHE_RAM_ATTR timerHandler( TM1637Display * );
+    static void IRAM_ATTR timerHandler( TM1637Display * );
 
 
     /* ------------------------------------------

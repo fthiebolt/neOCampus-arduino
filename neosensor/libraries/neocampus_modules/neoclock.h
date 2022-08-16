@@ -72,7 +72,7 @@ class neoclock : public base {
 
     // Handlers
     // Every second timer call to this method
-    static void ICACHE_RAM_ATTR timerHandler( neoclock * );
+    static void IRAM_ATTR timerHandler( neoclock * );
 
     // animation
     bool animate( displayAnimate_t mode=displayAnimate_t::demo );

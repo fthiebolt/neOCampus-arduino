@@ -11,12 +11,13 @@ Bumps to esp8266 3.0.2
 - uniformized sntp includes for all ESP :)
 - WIFImanager now used without mod
 - switched noise ISR from ICACHE_RAM_ATTR to newer IRAM_ATTR
+- improved NTP sync IPaddr used
 [esp32]
 - recompiled lwip for NTP server support from DHCP answer (IDF 4.4.2)
 [esp8266]
 - analogWrite now makes use of analogWriteRange set to 1023 to match previous
 defaults
-- setting up defaults parittionning IRAM to 32kb (usual defaults) in
+- setting up defaults partitionning IRAM to 32kb (defaults) in
 boards.local.txt
 
 === Release 220328

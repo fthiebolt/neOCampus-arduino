@@ -1,4 +1,24 @@
-(c) F.Thiebolt Université Toulouse3, Laboratoire IRIT
+#
+# neOCampus operation
+# (c) neOCampus / F.Thiebolt Université Toulouse3, Laboratoire IRIT
+
+=== Release 220815 / upcoming feature-SDKupgrade
+Bumps to esp32 2.0.4
+Bumps to esp8266 3.0.2
+- we're still using the deprecated SPIFFS filesystem
+- updated boards.local.txt
+- _http_get now makes use of newer API involving a WIFIClient variable
+- uniformized sntp includes for all ESP :)
+- WIFImanager now used without mod
+- switched noise ISR from ICACHE_RAM_ATTR to newer IRAM_ATTR
+- improved NTP sync IPaddr used
+[esp32]
+- recompiled lwip for NTP server support from DHCP answer (IDF 4.4.2)
+[esp8266]
+- analogWrite now makes use of analogWriteRange set to 1023 to match previous
+defaults
+- setting up defaults partitionning IRAM to 32kb (defaults) in
+boards.local.txt
 
 === Release 220328
 - save WiFi credentials even if wrongly typed or end device has not been able

@@ -325,7 +325,7 @@ bool noise::process( void ) {
  * Sliding Window for noise pulse count:
  * timer handler method called EVERY SECOND
  */
-void ICACHE_RAM_ATTR noise::timerHandler( noise *p ) {
+void IRAM_ATTR noise::timerHandler( noise *p ) {
 
   uint8_t _curNoiseEntry, nextNoiseEntry;
   
@@ -367,7 +367,7 @@ void ICACHE_RAM_ATTR noise::timerHandler( noise *p ) {
  * This method called upon interrup on _pinSensor
  * will increment noiseTab[curNoiseEntry]
  */
-void ICACHE_RAM_ATTR noise::noiseDetectISR( void ) {
+void IRAM_ATTR noise::noiseDetectISR( void ) {
 
   // static uint8_t _curNoiseEntry = -1;
   

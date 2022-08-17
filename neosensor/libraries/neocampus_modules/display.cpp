@@ -544,7 +544,7 @@ bool display::saveConfig( void ) {
  * 1s timer handler
  * Note: interrupt handler, no serial debug messages !
  */
-void ICACHE_RAM_ATTR display::timerHandler( display *p ) {
+void IRAM_ATTR display::timerHandler( display *p ) {
 
   if( p->_secondsLeft-- ) return;
 

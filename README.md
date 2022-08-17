@@ -11,6 +11,7 @@ All this work was undertaken at Université Toulouse 3 / IRIT laboratory in the 
 ![neOSensorv5](/images/neOSensorV5.jpg)
 
 ## NEWS ##
+ * **[Aug.22]** bumps to esp8266 3.0.2; bumps to esp32 2.0.4 along with recompiled lwip
  * **[Nov.21]** added support for various serial sensors like PMSx003, SDS011 and IKEA Vindriktning :D
  * **[Aug.21]** added support for digital inputs (PIR & switches)
 introduced the cooldown approach and data integration
@@ -39,8 +40,8 @@ First of all, you ought to install esp32, esp8266 or CubeCell support in your Ar
 
 | Device   | Release | Arduino Board Manager json file                                                                            |
 |----------|---------|------------------------------------------------------------------------------------------------------------|
-| esp8266  | 2.7.1   | https://arduino.esp8266.com/stable/package_esp8266com_index.json                                           |
-| esp32    | 1.0.6   | https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json                |
+| esp8266  | 3.0.2   | https://arduino.esp8266.com/stable/package_esp8266com_index.json                                           |
+| esp32    | 2.0.4   | https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json                |
 | CubeCell | *latest*  | https://github.com/HelTecAutomation/CubeCell-Arduino/releases/download/V1.3.0/package_CubeCell_index.json  |
 | stm32    | *latest*  | https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json             |
 

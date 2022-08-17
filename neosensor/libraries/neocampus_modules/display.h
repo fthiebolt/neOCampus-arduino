@@ -85,7 +85,7 @@ class display : public base {
 
     // Handlers
     // Every second timer call to this method
-    static void ICACHE_RAM_ATTR timerHandler( display * );
+    static void IRAM_ATTR timerHandler( display * );
 
     // animation
     bool animate( displayAnimate_t mode=displayAnimate_t::demo );

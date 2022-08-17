@@ -76,8 +76,8 @@ class noise : public base {
     bool setThreshold( uint16_t );        // set pulse count threshold across the whole sliding window
 
     // Every second timer call to this method
-    static void ICACHE_RAM_ATTR timerHandler( noise * );
-    void ICACHE_RAM_ATTR noiseDetectISR( void );
+    static void IRAM_ATTR timerHandler( noise * );
+    void IRAM_ATTR noiseDetectISR( void );
     
     // MQTT
     bool start( senso *, JsonDocument& );

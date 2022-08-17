@@ -64,6 +64,7 @@ bool neoclock::add_display( uint8_t id ) {
   };
 
   log_info(F("\n[neoclock] successfully added display_id ")); log_info(id,DEC); log_flush();
+  return true;
 }
 
 
@@ -172,7 +173,7 @@ bool neoclock::process( void ) {
  * 1s timer handler
  * Note: interrupt handler, no serial debug messages !
  */
-void ICACHE_RAM_ATTR neoclock::timerHandler( neoclock *p ) {
+void IRAM_ATTR neoclock::timerHandler( neoclock *p ) {
 
   if( p->_secondsLeft-- ) return;
 

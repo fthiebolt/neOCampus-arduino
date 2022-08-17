@@ -450,7 +450,7 @@ uint8_t TM1637Display::_computePercentBrightness( uint8_t percent ) {
 /*
  * 0.5s timer handler to manage central dots blinking
  */
-void ICACHE_RAM_ATTR TM1637Display::timerHandler( TM1637Display *p ) {
+void IRAM_ATTR TM1637Display::timerHandler( TM1637Display *p ) {
 
   // animation mode is exclusive with normal mode (i.e central leds blinking)
   if( p->_animMode != displayAnimate_t::stop ) {

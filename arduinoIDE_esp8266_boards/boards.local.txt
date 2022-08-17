@@ -26,6 +26,8 @@ neOSensor.build.vtable_flags=-DVTABLES_IN_FLASH
 neOSensor.build.exception_flags=-fno-exceptions
 neOSensor.build.stdcpp_lib=-lstdc++
 neOSensor.build.sslflags=
+# [aug.22] set default 32KB balanced IRAM / ICACHE
+neOSensor.build.mmuflags=-DMMU_IRAM_SIZE=0x8000 -DMMU_ICACHE_SIZE=0x8000
 neOSensor.build.debug_port=
 neOSensor.build.debug_level=
 

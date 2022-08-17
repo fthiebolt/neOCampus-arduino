@@ -75,12 +75,9 @@
 
 /* As of esp8266 arduino lib >=2.4.0, time is managed via local or sntp along with TZ support :) */ 
 #include <time.h>                         // time() ctime()
+#include <sntp.h>
 #ifdef ESP8266
   #include <coredecls.h>                  // settimeofday_cb(), tune_timeshift64()
-
-  #include <sntp.h>
-#elif defined(ESP32)
-  #include "lwip/apps/sntp.h"
 #endif
 
 /*
@@ -176,6 +173,10 @@
  * various led mods to express status of neOSensor
  * device while in setup()
  */
+#ifdef ESP8266
+  // since 3.X sdk, default range of analogWrite is now 255 while it used to be 1023
+  #define ESP8266_PWMRANGE    1023
+#endif
 typedef enum {
   WIFI,
   DISABLE
@@ -211,7 +212,7 @@ luminosity *luminosityModule        = nullptr;
 // noise class module
 noise *noiseModule                  = nullptr;
 // noise module ISR :(
-void ICACHE_RAM_ATTR noiseDetectISR() {             /* https://community.particle.io/t/cpp-attachinterrupt-to-class-function-help-solved/5147/2 */
+void IRAM_ATTR noiseDetectISR() {             /* https://community.particle.io/t/cpp-attachinterrupt-to-class-function-help-solved/5147/2 */
   if( noiseModule ) noiseModule->noiseDetectISR();
 }
 
@@ -393,25 +394,15 @@ void endLoop( void ) {
     // display NTP servers used for time sync
     if( _cbtime_call ) {
       _cbtime_call = false;
-      
+
+      //log_debug(F("\n[NTP_sync] IP_ADDR_ANY = "));log_debug(ipaddr_ntoa(&ip_addr_any));log_flush();
+
       // list active ntp servers
       for( uint8_t i=0; i<SNTP_MAX_SERVERS; i++ ) {
-        IPAddress sntp = *(IPAddress *)sntp_getserver(i);
-        const char* sntp_name = sntp_getservername(i);
-        // check if address is valid
-#ifdef ESP8266
-        if( sntp.isSet() ) {
-#elif defined(ESP32)
-        if( sntp != IPADDR_ANY ) {
-#endif
-          log_debugF("\n[NTP][%d]:     ", i);
-          if( sntp_name ) {
-            log_debugF("%s (%s) ", sntp_name, sntp.toString().c_str());
-          } else {
-            log_debugF("%s ", sntp.toString().c_str());
-          }
-        }
-      }      
+        const ip_addr_t* p_cur = sntp_getserver(i);
+        if( ip_addr_cmp(p_cur, IP_ADDR_ANY) ) continue;
+        log_debug(F("\n[NTP_sync] IPaddr = "));log_debug(ipaddr_ntoa(p_cur));log_flush();
+      }
     }
 
     // serial link activity marker ...
@@ -426,14 +417,15 @@ void endLoop( void ) {
 // or the channel_id (esp32)
 void _ledWiFiMode( uint8_t id ) {
 
-#ifdef ESP8266  
+#ifdef ESP8266
+
   const uint8_t _val_steps = 50;
   static int16_t _val=0;
   
-  if( _val < PWMRANGE ) _val+=_val_steps;
-  else _val=-PWMRANGE;
+  if( _val < ESP8266_PWMRANGE ) _val+=_val_steps;
+  else _val=-ESP8266_PWMRANGE;
 
-  analogWrite( id, (abs(_val)<PWMRANGE) ? abs(_val) : PWMRANGE );
+  analogWrite( id, (abs(_val)<ESP8266_PWMRANGE) ? abs(_val) : ESP8266_PWMRANGE );
 
 #elif defined(ESP32)
   /* Ok, we'll get called every 50ms ... 
@@ -469,6 +461,7 @@ void setupLed( uint8_t led, enum_ledmode_t led_mode ) {
       // set led to show we're waiting for WiFi connect
 #ifdef ESP8266
       pinMode(led,OUTPUT);
+      analogWriteRange(ESP8266_PWMRANGE);
       timer_led.attach_ms(50, _ledWiFiMode, led);
 #elif defined(ESP32)
       ledcSetup(LED_CHANNEL, LED_BASE_FREQ, LED_RESOLUTION);

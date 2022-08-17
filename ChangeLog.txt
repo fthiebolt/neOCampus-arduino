@@ -2,16 +2,14 @@
 # neOCampus operation
 # (c) neOCampus / F.Thiebolt Université Toulouse3, Laboratoire IRIT
 
-=== upcoming feature-SDKupgrade
+=== Release 220815 / upcoming feature-SDKupgrade
 Bumps to esp32 2.0.4
 Bumps to esp8266 3.0.2
 - we're still using the deprecated SPIFFS filesystem
 - updated boards.local.txt
 - _http_get now makes use of newer API involving a WIFIClient variable
 - uniformized sntp includes for all ESP :)
-    TBC that NTP servers sent by the DHCP server are in use
 - WIFImanager now used without mod
-    TBC that options appears valid when setting up the device
 - switched noise ISR from ICACHE_RAM_ATTR to newer IRAM_ATTR
 [esp32]
 - recompiled lwip for NTP server support from DHCP answer (IDF 4.4.2)

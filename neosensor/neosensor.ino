@@ -394,25 +394,15 @@ void endLoop( void ) {
     // display NTP servers used for time sync
     if( _cbtime_call ) {
       _cbtime_call = false;
-      
+
+      //log_debug(F("\n[NTP_sync] IP_ADDR_ANY = "));log_debug(ipaddr_ntoa(&ip_addr_any));log_flush();
+
       // list active ntp servers
       for( uint8_t i=0; i<SNTP_MAX_SERVERS; i++ ) {
-        IPAddress sntp = *(IPAddress *)sntp_getserver(i);
-        const char* sntp_name = sntp_getservername(i);
-        // check if address is valid
-#ifdef ESP8266
-        if( sntp.isSet() ) {
-#elif defined(ESP32)
-        if( sntp != IPADDR_ANY ) {
-#endif
-          log_debugF("\n[NTP][%d]:     ", i);
-          if( sntp_name ) {
-            log_debugF("%s (%s) ", sntp_name, sntp.toString().c_str());
-          } else {
-            log_debugF("%s ", sntp.toString().c_str());
-          }
-        }
-      }      
+        const ip_addr_t* p_cur = sntp_getserver(i);
+        if( ip_addr_cmp(p_cur, IP_ADDR_ANY) ) continue;
+        log_debug(F("\n[NTP_sync] IPaddr = "));log_debug(ipaddr_ntoa(p_cur));log_flush();
+      }
     }
 
     // serial link activity marker ...

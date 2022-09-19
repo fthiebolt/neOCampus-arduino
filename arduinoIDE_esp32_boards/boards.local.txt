@@ -68,6 +68,12 @@ neOSensor.menu.DebugLevel.debug.build.code_debug=4
 neOSensor.menu.DebugLevel.verbose=Verbose
 neOSensor.menu.DebugLevel.verbose.build.code_debug=5
 
+# Flash erasing
+neOSensor.menu.EraseFlash.none=Disabled
+neOSensor.menu.EraseFlash.none.upload.erase_cmd=
+neOSensor.menu.EraseFlash.all=Enabled
+neOSensor.menu.EraseFlash.all.upload.erase_cmd=-e
+
 
 #
 # NEOSENSOR-AIRQUALITY
@@ -110,6 +116,7 @@ neOSensor-airquality.build.partitions=default
 neOSensor-airquality.build.defines=-DNEOSENSOR_AIRQUALITY_BOARD -DMQTT_KEEPALIVE=60 -DMQTT_SOCKET_TIMEOUT=60 -DMQTT_MAX_PACKET_SIZE=256 -DDISABLE_I2C -DDISABLE_SSL -DDISABLE_AP_PASSWD
 #neOSensor-airquality.build.defines=-DNEOSENSOR_AIRQUALITY_BOARD -DMQTT_KEEPALIVE=60 -DMQTT_SOCKET_TIMEOUT=60 -DMQTT_MAX_PACKET_SIZE=256 -DDISABLE_I2C
 
+# upload speed
 neOSensor-airquality.menu.UploadSpeed.921600=921600
 neOSensor-airquality.menu.UploadSpeed.921600.upload.speed=921600
 neOSensor-airquality.menu.UploadSpeed.115200=115200
@@ -118,4 +125,24 @@ neOSensor-airquality.menu.UploadSpeed.115200.upload.speed=115200
 # FLASH partitioning
 neOSensor-airquality.menu.PartitionScheme.default=Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)
 neOSensor-airquality.menu.PartitionScheme.default.build.partitions=default
+
+# Core debug
+neOSensor-airquality.menu.DebugLevel.none=None
+neOSensor-airquality.menu.DebugLevel.none.build.code_debug=0
+neOSensor-airquality.menu.DebugLevel.error=Error
+neOSensor-airquality.menu.DebugLevel.error.build.code_debug=1
+neOSensor-airquality.menu.DebugLevel.warn=Warn
+neOSensor-airquality.menu.DebugLevel.warn.build.code_debug=2
+neOSensor-airquality.menu.DebugLevel.info=Info
+neOSensor-airquality.menu.DebugLevel.info.build.code_debug=3
+neOSensor-airquality.menu.DebugLevel.debug=Debug
+neOSensor-airquality.menu.DebugLevel.debug.build.code_debug=4
+neOSensor-airquality.menu.DebugLevel.verbose=Verbose
+neOSensor-airquality.menu.DebugLevel.verbose.build.code_debug=5
+
+# Flash erasing
+neOSensor-airquality.menu.EraseFlash.none=Disabled
+neOSensor-airquality.menu.EraseFlash.none.upload.erase_cmd=
+neOSensor-airquality.menu.EraseFlash.all=Enabled
+neOSensor-airquality.menu.EraseFlash.all.upload.erase_cmd=-e
 

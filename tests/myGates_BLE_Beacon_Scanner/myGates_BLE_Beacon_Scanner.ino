@@ -145,6 +145,8 @@ void setup()
   BLEDevice::init("");
 
   // [sep.22] Increase TX POWER ?
+  BLEDevice::setPower(ESP_PWR_LVL_P9);
+  // or ...
   esp_err_t errRc=esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_DEFAULT,ESP_PWR_LVL_P9);
   esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_ADV, ESP_PWR_LVL_P9);
   esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_SCAN ,ESP_PWR_LVL_P9);

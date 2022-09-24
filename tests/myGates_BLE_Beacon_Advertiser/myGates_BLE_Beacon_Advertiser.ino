@@ -1,10 +1,7 @@
 /*
    Based on Neil Kolban example for IDF: https://github.com/nkolban/esp32-snippets/blob/master/cpp_utils/tests/BLE%20Tests/SampleScan.cpp
    Ported to Arduino ESP32 by pcbreflux
-*/
 
- 
-/*
    Create a BLE server that will send periodic iBeacon frames.
    The design of creating the BLE server is:
    1. Create a BLE Server
@@ -13,6 +10,8 @@
    4. wait
    5. Stop advertising.
    6. deep sleep
+
+  TBC: Tx power changed ... check it works !
    
 */
 #include "sys/time.h"
@@ -51,6 +50,7 @@ void setBeacon() {
   oBeacon.setProximityUUID(BLEUUID(BEACON_UUID));
   oBeacon.setMajor((bootcount & 0xFFFF0000) >> 16);
   oBeacon.setMinor(bootcount&0xFFFF);
+  // ### TODO: add oBeacon.Txpower ??
   BLEAdvertisementData oAdvertisementData = BLEAdvertisementData();
   BLEAdvertisementData oScanResponseData = BLEAdvertisementData();
   
@@ -86,6 +86,11 @@ void setup() {
   
   // Create the BLE Device
   BLEDevice::init("");
+
+  // [sep.22] Increase TX POWER ?
+  esp_err_t errRc=esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_DEFAULT,ESP_PWR_LVL_P9);
+  esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_ADV, ESP_PWR_LVL_P9);
+  esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_SCAN ,ESP_PWR_LVL_P9);
 
   // Create the BLE Server
   // BLEServer *pServer = BLEDevice::createServer(); // <-- no longer required to instantiate BLEServer, less flash and ram usage

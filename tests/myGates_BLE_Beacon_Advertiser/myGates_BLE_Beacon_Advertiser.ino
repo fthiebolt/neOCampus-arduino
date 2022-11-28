@@ -1,116 +1,113 @@
-/*
-   Based on Neil Kolban example for IDF: https://github.com/nkolban/esp32-snippets/blob/master/cpp_utils/tests/BLE%20Tests/SampleScan.cpp
-   Ported to Arduino ESP32 by pcbreflux
-
-   Create a BLE server that will send periodic iBeacon frames.
-   The design of creating the BLE server is:
-   1. Create a BLE Server
-   2. Create advertising data
-   3. Start advertising.
-   4. wait
-   5. Stop advertising.
-   6. deep sleep
-
-  TBC: Tx power changed ... check it works !
-   
-*/
-#include "sys/time.h"
-
+#include <M5StickCPlus.h>
 #include "BLEDevice.h"
 #include "BLEUtils.h"
 #include "BLEBeacon.h"
-#include "esp_sleep.h"
 
-#define GPIO_DEEP_SLEEP_DURATION     10  // sleep x seconds and then wake up
-RTC_DATA_ATTR static time_t last;        // remember last boot in RTC Memory
-RTC_DATA_ATTR static uint32_t bootcount; // remember number of boots in RTC Memory
+#define ADVERTISMENT_INTERVAL     500  //(ms) advertise every 0.5 second
+#define ADVERTISMENT_DURATION     100  //(ms)
+#define BEACON_UUID               "DEADDEAD-F88F-0042-F88F-010203040506" //same UUID for all vehicles
+#define UT3_AUTONOMOUS_VEHICLE    0x0042
+#define EASYMILE_EZ10             0x0000
+#define FORCE_GATE_OPEN           0b0100000000000000
+#define CLEAR_GATE_CALIBRATION    0b1000000000000000
+#define TX_POWER                  ESP_PWR_LVL_N14
+
+
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-uint8_t temprature_sens_read();
-//uint8_t g_phyFuns;
-
 #ifdef __cplusplus
 }
 #endif
 
-// See the following for generating UUIDs:
-// https://www.uuidgenerator.net/
-BLEAdvertising *pAdvertising;
-struct timeval now;
+BLEAdvertising *pAdvertising; // BLE Advertisement type
 
-#define BEACON_UUID           "8ec76ea3-6668-48da-9866-75be8bc86f4d" // UUID 1 128-Bit (may use linux tool uuidgen or random numbers via https://www.uuidgenerator.net/)
+bool send_force_gate_frame = false;
+uint16_t MAJOR;
+uint16_t MINOR;
 
 void setBeacon() {
+  //configure ibeacon data
+  MAJOR = UT3_AUTONOMOUS_VEHICLE;
+  MINOR = EASYMILE_EZ10;
+  if(send_force_gate_frame){ // if button A was pressed, send FORCE_GATE_OPEN trame
+    MINOR = (MINOR | FORCE_GATE_OPEN);
+    send_force_gate_frame = false;
+    Serial.println("forcing gate to open");
+  }
 
+  
   BLEBeacon oBeacon = BLEBeacon();
   oBeacon.setManufacturerId(0x4C00); // fake Apple 0x004C LSB (ENDIAN_CHANGE_U16!)
   oBeacon.setProximityUUID(BLEUUID(BEACON_UUID));
-  oBeacon.setMajor((bootcount & 0xFFFF0000) >> 16);
-  oBeacon.setMinor(bootcount&0xFFFF);
-  // ### TODO: add oBeacon.Txpower ??
+  oBeacon.setMajor(MAJOR);
+  oBeacon.setMinor(MINOR);
+  oBeacon.setSignalPower(TX_POWER);
   BLEAdvertisementData oAdvertisementData = BLEAdvertisementData();
   BLEAdvertisementData oScanResponseData = BLEAdvertisementData();
-  
-  oAdvertisementData.setFlags(0x04); // BR_EDR_NOT_SUPPORTED 0x04
-  
+
+  oAdvertisementData.setFlags(0x04);
+
   std::string strServiceData = "";
-  
+
   strServiceData += (char)26;     // Len
   strServiceData += (char)0xFF;   // Type
   strServiceData += oBeacon.getData(); 
   oAdvertisementData.addData(strServiceData);
-  
+
   pAdvertising->setAdvertisementData(oAdvertisementData);
   pAdvertising->setScanResponseData(oScanResponseData);
-  pAdvertising->setAdvertisementType(ADV_TYPE_NONCONN_IND);
 
 }
+#define LED 10
 
 void setup() {
-  delay(3000);  // time for USB serial link to come up anew
+  pinMode(LED, OUTPUT);
+  pinMode(M5_BUTTON_HOME, INPUT_PULLUP);
+  digitalWrite(LED, HIGH);
+  M5.begin();
+  M5.Lcd.setRotation(1);
+  M5.Lcd.fillScreen(BLACK);
+
+  M5.Lcd.setCursor(2, 0, 2);
+  M5.Lcd.printf("UUID: %s",BEACON_UUID);
+ /* M5.Lcd.setCursor(2, 40, 2);
+  M5.Lcd.printf("Major %d Minor %d",MAJOR ,MINOR);  */
 
   Serial.begin(115200);
-  gettimeofday(&now, NULL);
 
-  // Arduino libs v2.4.1, to enable printf and debug messages output
-  Serial.setDebugOutput( true );
-
-  Serial.printf("start ESP32 %d\n",bootcount++);
-
-  Serial.printf("deep sleep (%lds since last reset, %lds since last boot)\n",now.tv_sec,now.tv_sec-last);
-
-  last = now.tv_sec;
-  
   // Create the BLE Device
-  BLEDevice::init("");
-
-  // [sep.22] Increase TX POWER ?
-  BLEDevice::setPower(ESP_PWR_LVL_P9);
-  // or ...
-  esp_err_t errRc=esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_DEFAULT,ESP_PWR_LVL_P9);
-  esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_ADV, ESP_PWR_LVL_P9);
-  esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_SCAN ,ESP_PWR_LVL_P9);
-
-
-
-  // Create the BLE Server
-  // BLEServer *pServer = BLEDevice::createServer(); // <-- no longer required to instantiate BLEServer, less flash and ram usage
-
+  BLEDevice::init("navette neOCampus");
   pAdvertising = BLEDevice::getAdvertising();
+
+  // Increase TX POWER
+  //BLEDevice::setPower(TX_POWER);
+  esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_DEFAULT, TX_POWER);
+  esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_ADV, TX_POWER);
+
+    // Create the BLE Server
+  BLEServer *pServer = BLEDevice::createServer();
+  pAdvertising = BLEDevice::getAdvertising();
+  BLEDevice::startAdvertising();
   
   setBeacon();
-   // Start advertising
-  pAdvertising->start();
-  Serial.println("Advertizing started...");
-  delay(100);
-  pAdvertising->stop();
-  Serial.printf("enter deep sleep\n");
-  esp_deep_sleep(1000000LL * GPIO_DEEP_SLEEP_DURATION);
-  Serial.printf("in deep sleep\n");
 }
 
 void loop() {
+  M5.update();  // Read the press state of the key
+  if (M5.BtnA.wasReleased()) {  // If the button A is pressed
+    send_force_gate_frame = true;
+    Serial.println("button A was pressed");
+  }
+  setBeacon();
+  pAdvertising->start();
+  digitalWrite(LED, LOW);  
+  Serial.printf("Advertizing started...\n");
+  delay(ADVERTISMENT_DURATION);
+  Serial.println("Advertizing stop...");
+  pAdvertising->stop();
+  digitalWrite(LED, HIGH);  
+  delay(ADVERTISMENT_INTERVAL - ADVERTISMENT_DURATION);
 }

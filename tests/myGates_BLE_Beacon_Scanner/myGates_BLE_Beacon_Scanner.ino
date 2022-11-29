@@ -10,6 +10,8 @@
 #define ENDIAN_CHANGE_U16(x) ((((x)&0xFF00) >> 8) + (((x)&0xFF) << 8))
 #define HIGH2BITS_U16(x) (((x)&0b1100000000000000) >> 14)
 
+#define RELAY1 32
+
 #define NAVETTE_UUID          "DEADDEAD-F88F-0042-F88F-010203040506" // same UUID for all vehicles
 #define FORCEGATEOPEN         0b01 // minor high bits = 0b01 => force gate to open
 #define CLEARGATECALIBRATION  0b11 // minor high bits = 0b11 => clear gate calibration
@@ -112,6 +114,9 @@ class IBeaconAdvertised: public BLEAdvertisedDeviceCallbacks {
     // ***** open gate *****
     void openGate() {
       Serial.println(" OPENING GATE");
+      digitalWrite (RELAY1, HIGH);
+      delay (1000);
+      digitalWrite (RELAY1, LOW);
     }
   
     // ***** is frame iBeacon ? *****
@@ -221,7 +226,11 @@ class IBeaconAdvertised: public BLEAdvertisedDeviceCallbacks {
 
 void setup() { 
   Serial.begin(115200);
-  BLEDevice::init("");
+  
+  pinMode (RELAY1, OUTPUT);
+
+  //init state
+  STATE = STATE_SCAN;
 
   //init tabRSSI
   tabRSSI[0].val = -100;
@@ -229,8 +238,9 @@ void setup() {
   tabRSSI[0].time = 0;
   tabRSSI[1].time = 0;
 
-  //init state
-  STATE = STATE_SCAN;
+
+
+  BLEDevice::init("");
 }
 
 void loop() {

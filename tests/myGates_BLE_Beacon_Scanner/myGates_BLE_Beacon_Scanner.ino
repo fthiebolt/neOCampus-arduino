@@ -9,38 +9,60 @@
 #include <time.h>
 
 #define ENDIAN_CHANGE_U16(x) ((((x)&0xFF00) >> 8) + (((x)&0xFF) << 8))
-#define HIGH2BITS_U16(x) (((x)&0b1100000000000000) >> 14)
+#define HIGH4BITS_U16(x) (((x)&0b1111000000000000) >> 12)
 
 #define RELAY1 32
 
-#define NAVETTE_UUID "DEADDEAD-F88F-0042-F88F-010203040506"  // same UUID for all vehicles
-#define FORCEGATEOPEN 0b01                                   // minor high bits = 0b01 => force gate to open
-#define CLEARGATECALIBRATION 0b11                            // minor high bits = 0b11 => clear gate calibration
+#define NAVETTE_UUID "DEADDEAD-F88F-0042-F88F-010203040506"   // same UUID for all vehicles
+#define FORCEGATEOPEN 0b0100                                  // minor high bits = 0b01 => force gate to open
+#define CLEARGATECALIBRATION 0b1000                           // minor high bits = 0b10 => disable BLE scan and upload software
+#define OTASWUPDATE 0b1100                                    // minor high bits = 0b11 => clear gate calibration
 
-#define STATE_SCAN 1       // STATE_SCAN : scanning iBeacon tram with UUID = NAVETTE_UUID. Opening door when the RSSI is high enough. Go to STATE_OPEN_GATE after opening the door.
-#define STATE_OPEN_GATE 2  // STATE_OPEN_GATE : door is open. Keep the door open while receiving tram. Go to STATE_SCAN when not receiving tram after GO_TO_SCAN_STATE_DELAY
-
-#define SCAN_TIME 2                   // scan period in second
+#define OTA_EXIT_AFTER 60*5             // after X sec if the software is not updating, getting out of the mode STATE_OTA
+#define SCAN_TIME 1                   // scan period in second
 #define GO_TO_SCAN_STATE_DELAY 3      // if no trame was received during X sec, go to STATE_SCAN
 #define DELAY_REJECT_TRAM 3           // if the last tram was received more than X seconds ago, the average RSSI is not computed and returns an average RSSI of -100
 #define PULSE_DURATION 500            // pulse to open gate. duration in ms
 #define DELAY_BETWEEN_PULSE 5         // to keep the gate open emit a pulse every X seconds
 #define RSSI_THRESHOLD_OPEN_GATE -95  // if the average RSSI is above this threshold the gate can be open
 #define SERIAL_BAUDRATE 115200
+
 // ***** definitions *****
-int STATE;     // state of the system : can be either STATE_SCAN or STATE_OPEN_GATE
+// Wifi credentials
+const char *ssid = "Gate";
+const char *password = "neOCampus";
+
+typedef enum {
+  STATE_SCAN = 0, // STATE_SCAN : scanning iBeacon tram with UUID = NAVETTE_UUID. Opening door when the RSSI is high enough. Go to STATE_OPEN_GATE after opening the door.
+  STATE_OPEN_GATE, // STATE_OPEN_GATE : door is open. Keep the door open while receiving tram. Go to STATE_SCAN when not receiving tram after GO_TO_SCAN_STATE_DELAY
+  STATE_OTA // STATE_OTA : disable BLE and start uploading software with Wifi
+} MACHINE_STATE;
+
+MACHINE_STATE STATE;     // state of the system : can be either STATE_SCAN or STATE_OPEN_GATE or STATE_OTA
 time_t t;      // time is seconds
+time_t timerOTA;      // time OTA software update started
+time_t tPulseGate;  
+
 struct RSSI {  // table contening the RSSI and time of the last 2 trams. Used to compute the average RSSI.
   int val = -100;
   time_t time = 0;
-} tabRSSI[2];
-time_t tPulseGate = 0;
+} tabRSSI[3];
 
+bool BLEScanDeactivated = false;
+
+// ***** set up Serial Port *****
+void setupSerial() {
+#ifdef SERIAL_BAUDRATE
+  delay(3000);                    // time for USB serial link to come up anew
+  Serial.begin(SERIAL_BAUDRATE);  // Start serial for output
+  Serial.setDebugOutput(true);
+#endif
+}
 
 // ***** set up WiFi *****
 void setUpWifi() {
   WiFi.mode(WIFI_AP);
-  WiFi.softAP("gate01");
+  WiFi.softAP(ssid,password);
 }
 
 // ***** set up On The Air software upload *****
@@ -64,6 +86,7 @@ void setupOTA() {
   });
   ArduinoOTA.onEnd([]() {
     Serial.println("\nEnd");
+    STATE = STATE_SCAN;
   });
   ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
     Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
@@ -80,13 +103,31 @@ void setupOTA() {
 
 // ***** open gate *****
 void openGate() {
-  Serial.println(" OPENING GATE");  //DEBUG
+  time(&t); // get time
+  Serial.printf("time:%d OPENING GATE\n",t);  //DEBUG
   digitalWrite(RELAY1, HIGH);       //activate relay1 for 0.5 sec
   delay(PULSE_DURATION);
   digitalWrite(RELAY1, LOW);
   tPulseGate = t;  // save time of the last pulse
 }
 
+  // ***** update RSSI table *****
+void updateRSSItab(RSSI newRSSI) {  // save RSSI and time in the table tabRSSI
+    tabRSSI[2] = tabRSSI[1];
+    tabRSSI[1] = tabRSSI[0];
+    tabRSSI[0] = newRSSI;
+}
+  
+// ***** compute average RSSI *****
+int averageRSSI() {
+  if ((tabRSSI[0].time - tabRSSI[1].time) > DELAY_REJECT_TRAM) {  // if last trame was detected more than x sec ago, return an average RSSI of -100
+    return -100;
+  } else {
+    int avRSSI = (tabRSSI[2].val + tabRSSI[1].val + tabRSSI[0].val) / 3;  // compute the average RSSI using the last 3 RSSI values
+    return avRSSI;
+  }
+}
+  
 class IBeaconAdvertised : public BLEAdvertisedDeviceCallbacks {
 public:
 
@@ -103,44 +144,27 @@ public:
     }
 
     // received a trame FORCE GATE OPEN
-    if (HIGH2BITS_U16(getMinor(device)) == FORCEGATEOPEN) {
-      //printIBeacon(device);                    // DEBUG
-      //Serial.printf("  - force open tram\n");  // DEBUG
+    if (HIGH4BITS_U16(getMinor(device)) == FORCEGATEOPEN) {
+      time(&t); // get time
+      Serial.printf("time:%d FORCE OPEN TRAM",t);    // DEBUG
       openGate();
-      updateRSSItab(getRSSI(device));
       return;
     }
 
-    //check gate state (STATE_SCAN or STATE_OPEN_GATE)
-    switch (STATE) {
-
-      case STATE_OPEN_GATE:
-        // gate is open, keep the door open by sending a pulse every x sec
-        //printIBeacon(device);                 // DEBUG
-        //Serial.printf("  - gate is open\n");  // DEBUG
-        updateRSSItab(getRSSI(device));  // save RSSI in the table
-
-        break;
-
-      case STATE_SCAN:
-      default:
-        //check if gate needs to be open
-        RSSI newRSSI = getRSSI(device);           // get RSSI
-        int avRSSI = averageRSSI(newRSSI);        // compute average RSSI (with 3 last values)
-        if (avRSSI > RSSI_THRESHOLD_OPEN_GATE) {  // if the received signal power is above the threshold RSSI_THRESHOLD_OPEN_GATE
-          //printIBeacon(device);                               // DEBUG
-          //Serial.printf("  - RSSI average OK:%d\n", avRSSI);  // DEBUG
-          openGate();               // open the gate
-          updateRSSItab(newRSSI);   // save received tram RSSI in the table
-          STATE = STATE_OPEN_GATE;  // change state and go to state STATE_OPEN_GATE
-        } else {
-          //printIBeacon(device);                                    // DEBUG
-          //Serial.printf("  - RSSI average too low:%d\n", avRSSI);  // DEBUG
-          updateRSSItab(newRSSI);
-          STATE = STATE_SCAN;
-        }
-        break;
+        // received a trame OTA Software Update
+    if (HIGH4BITS_U16(getMinor(device)) == OTASWUPDATE) {
+      time(&t); // get time
+      timerOTA = t;
+      Serial.printf("time:%d OTA UPDATING",timerOTA);    // DEBUG
+      STATE = STATE_OTA;
+      return;
     }
+
+    RSSI newRSSI = getRSSI(device);   // get RSSI of the received tram
+    updateRSSItab(newRSSI);   // save received tram RSSI in the table
+    printIBeacon(device);    // DEBUG
+    manageGateState(true);    // manage gate opening
+    
   }
 
 private:
@@ -175,24 +199,6 @@ private:
     newRSSI.val = device.getRSSI();
     newRSSI.time = t;
     return newRSSI;
-  }
-
-  // ***** update RSSI table *****
-  void updateRSSItab(RSSI newRSSI) {  // save RSSI and time in the table tabRSSI
-    tabRSSI[1] = tabRSSI[0];
-    tabRSSI[0] = newRSSI;
-  }
-
-  // ***** compute average RSSI *****
-  int averageRSSI(RSSI newRSSI) {
-    if ((newRSSI.time - tabRSSI[0].time) > DELAY_REJECT_TRAM) {  // if last trame was detected more than x sec ago, return an average RSSI of -100
-      updateRSSItab(newRSSI);
-      return -100;
-    } else {
-      int averageRSSI = (newRSSI.val + tabRSSI[0].val + tabRSSI[1].val) / 3;  // compute the average RSSI using the last 3 RSSI values
-      updateRSSItab(newRSSI);
-      return averageRSSI;
-    }
   }
 
   // ***** companyId *****
@@ -255,65 +261,103 @@ private:
 
   // ***** print iBeacon device info *****
   void printIBeacon(BLEAdvertisedDevice device) {
+    // char buf[512];
+    // memset(buf,0, sizeof (buf));
+    // strncpy(buf, msg, (sizeof msg)-1);
     time(&t);
-    Serial.printf("time:%d name:%s uuid:%s major:%d minor:%d rssi:%d\r",
+    Serial.printf("time:%d name:%s uuid:%s major:%d minor:%d rssi:%d, avRSSI:%d \r\n",
                   t,
                   device.getName().c_str(),
                   getProxyUuid(device).toString().c_str(),
                   getMajor(device),
                   getMinor(device),
-                  device.getRSSI());
+                  device.getRSSI(),
+                  averageRSSI());
   }
 };
 
-void setupSerial() {
-#ifdef SERIAL_BAUDRATE
-  delay(3000);                    // time for USB serial link to come up anew
-  Serial.begin(SERIAL_BAUDRATE);  // Start serial for output
-  Serial.setDebugOutput(true);
-#endif
+void manageGateState(bool receivedTram)
+{
+  time(&t); // get time
+  
+  switch (STATE) { //check gate state
+    case STATE_OTA :
+      BLEScanDeactivated = true; //disable bluetooth scanning
+      if(t - timerOTA > OTA_EXIT_AFTER){
+        STATE = STATE_SCAN; // go to STATE_SCAN
+        BLEScanDeactivated = false; //enable bluetooth scanning
+      }
+    break;//end case STATE_OTA
+    case STATE_OPEN_GATE:
+      BLEScanDeactivated = false;
+      if ((t - tabRSSI[0].time) > GO_TO_SCAN_STATE_DELAY) {  // if last tram was received more than x seconds ago (GO_TO_SCAN_STATE_DELAY)
+        STATE = STATE_SCAN; // change state : go to STATE_SCAN
+        Serial.printf("time:%d GO TO STATE_SCAN\n",t);  // DEBUG
+      } 
+      else if ((t - tPulseGate) > DELAY_BETWEEN_PULSE) {  // send a pulse to keep the door open every X sec (DELAY_BETWEEN_PULSE)
+        //Serial.printf("time:%d KEEPING GATE OPEN, last pulse sent at t:%d", t, tPulseGate);  // DEBUG
+        openGate();
+      }
+    break; //end case STATE_OPEN_GATE
+
+    case STATE_SCAN:
+    default:
+      BLEScanDeactivated = false;
+      if (receivedTram != true) { // return if no tram was received
+        return ;
+      }
+      // if a tram was received check if gate needs to be open
+      int avRSSI = averageRSSI();        // compute average RSSI (with 3 last values)
+      if (avRSSI > RSSI_THRESHOLD_OPEN_GATE) {  // if the received signal power is above the threshold RSSI_THRESHOLD_OPEN_GATE
+        openGate();               // open the gate
+        STATE = STATE_OPEN_GATE;  // change state and go to state STATE_OPEN_GATE
+      } else { // RSSI is too low
+        STATE = STATE_SCAN;
+      }
+    break; //end case STATE_SCAN
+    }
+}
+void manageBLEscan(){
+
+   if (BLEScanDeactivated == false){
+    BLEScan *scan = BLEDevice::getScan(); // start scanning
+    scan->setAdvertisedDeviceCallbacks(new IBeaconAdvertised(), true);
+    scan->setActiveScan(true);
+    scan->start(SCAN_TIME);
+  }
 }
 
 void setup() {
   //init serial port
   setupSerial();
+  
   //init relay module
   pinMode(RELAY1, OUTPUT);
+  
   //init state
+  BLEScanDeactivated = false;
   STATE = STATE_SCAN;
+ 
   //setup WiFi
   setUpWifi();
   yield();
+
   //setup OTA
   setupOTA();
-  yield();
+  yield();  
   ArduinoOTA.begin();
   yield();
+
   //init BLE
   BLEDevice::init("");
-  yield();
+  
   Serial.println("Ready");
 }
 
 void loop() {
   ArduinoOTA.handle();
-  yield();
   
-  if (STATE == STATE_OPEN_GATE) {  // if in STATE_OPEN_GATE (gate is already open)
-    time(&t);                      // get time
-
-    if ((t - tabRSSI[0].time) > GO_TO_SCAN_STATE_DELAY) {                                           // if last tram was received more than x seconds ago (GO_TO_SCAN_STATE_DELAY)
-      STATE = STATE_SCAN;                                                                           // change state : go to STATE_SCAN
-      Serial.printf("time:%d GO TO STATE_SCAN, last tram received at t:%d\n", t, tabRSSI[0].time);  // DEBUG
-    } else {
-      if ((t - tPulseGate) > DELAY_BETWEEN_PULSE) {  // send a pulse to keep the door open every X sec (DELAY_BETWEEN_PULSE)
-        //Serial.printf("time:%d KEEPING GATE OPEN, last pulse sent at t:%d", t, tPulseGate);  // DEBUG
-        openGate();
-      }
-    }
-  }
-  BLEScan *scan = BLEDevice::getScan(); // start scanning
-  scan->setAdvertisedDeviceCallbacks(new IBeaconAdvertised(), true);
-  scan->setActiveScan(true);
-  scan->start(SCAN_TIME);
+  manageGateState(false);
+  
+  manageBLEscan();
 }

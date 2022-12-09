@@ -9,6 +9,7 @@
 #define UT3_AUTONOMOUS_VEHICLE    0x0042
 #define EASYMILE_EZ10             0x0000
 #define FORCE_GATE_OPEN           0b0100000000000000
+#define OTA_SW_UPDATE             0b1100000000000000
 #define CLEAR_GATE_CALIBRATION    0b1000000000000000
 #define TX_POWER                  ESP_PWR_LVL_N14
 
@@ -25,6 +26,7 @@ extern "C" {
 BLEAdvertising *pAdvertising; // BLE Advertisement type
 
 bool send_force_gate_frame = false;
+bool send_OTA_update_frame = false;
 uint16_t MAJOR;
 uint16_t MINOR;
 
@@ -32,10 +34,16 @@ void setBeacon() {
   //configure ibeacon data
   MAJOR = UT3_AUTONOMOUS_VEHICLE;
   MINOR = EASYMILE_EZ10;
+  
   if(send_force_gate_frame){ // if button A was pressed, send FORCE_GATE_OPEN trame
     MINOR = (MINOR | FORCE_GATE_OPEN);
     send_force_gate_frame = false;
     Serial.println("forcing gate to open");
+  }
+  if(send_OTA_update_frame){ // if button B was pressed, send FORCE_GATE_OPEN trame
+   MINOR = (MINOR | OTA_SW_UPDATE);
+   send_OTA_update_frame = false;
+   Serial.println("starting On The Air software update");
   }
 
   
@@ -100,6 +108,10 @@ void loop() {
   if (M5.BtnA.wasReleased()) {  // If the button A is pressed
     send_force_gate_frame = true;
     Serial.println("button A was pressed");
+  }
+    if (M5.BtnB.wasReleasefor(5000)) {  // If the button B is pressed for 5sec
+    send_OTA_update_frame = true;
+    Serial.println("button B was pressed for 5 sec");
   }
   setBeacon();
   pAdvertising->start();

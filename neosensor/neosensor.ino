@@ -642,7 +642,7 @@ void earlySetup( void ) {
    *  we decided to set WiFi physical mode explicitly
    */
 #ifdef ESP8266
-  WiFi.setPhyMode(WIFI_PHY_MODE_11G);   # [jan.23] does it solve esp8266 DHCP issue ??? not really sure
+  WiFi.setPhyMode(WIFI_PHY_MODE_11G);   // [jan.23] does it solve esp8266 DHCP issue ??? not really sure
 #endif /* ESP8266 */
 
   // WiFi.disconnect(true); // to erase default credentials

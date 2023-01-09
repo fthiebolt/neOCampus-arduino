@@ -29,8 +29,11 @@ neOSensor.build.sslflags=
 # [aug.22] set default 32KB balanced IRAM / ICACHE
 neOSensor.build.mmuflags=-DMMU_IRAM_SIZE=0x8000 -DMMU_ICACHE_SIZE=0x8000
 neOSensor.build.non32xferflags=
+# Debug ?
 neOSensor.build.debug_port=
 neOSensor.build.debug_level=
+#neOSensor.build.debug_port=-DDEBUG_ESP_PORT=Serial
+#neOSensor.build.debug_level=-DDEBUG_ESP_WIFI
 
 neOSensor.build.flash_mode=dio
 neOSensor.build.flash_flags=-DFLASHMODE_DIO

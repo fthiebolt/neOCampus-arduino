@@ -9,6 +9,7 @@
  * - ...
  * 
  * ---
+ * F.Thiebolt   jan.23  removed wifiManager.setMinimumSignalQuality(); cause of DHCP issues ??
  * F.Thiebolt   aug.22  removed WiFiparameters hack :) ... by means of dynamic allocation :|
  * F.Thiebolt   aug.21  extended checkCLEAR to 5000ms (some ESP32 have huge
  *                      internal capacitor enabled@starup ?!?!)
@@ -213,7 +214,8 @@ bool setupWiFi( wifiParametersMgt *wp ) {
   wifiManager.setSaveConfigCallback( cb_exitConfigMode );
 
   // set minimum signal level
-  wifiManager.setMinimumSignalQuality();      // min. default is 8%
+  // [jan.23] disabled while trying to overcome DHCP issues :|
+  // wifiManager.setMinimumSignalQuality();      // min. default is 8%
 
   /* [aug.20] does not work on ESP32 ... segfault :(
    * set custom ip for AP portal

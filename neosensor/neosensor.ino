@@ -24,15 +24,15 @@
  *
  * ---
  * TODO:
+ * - remove WiFi.setPhyMode(WIFI_PHY_MODE_11G) once DHCP issue would have been solved
  * - esp8266 now features a configTzTime() in newer API
  * - loadSensoConfig --> avoid data duplication, implement an iterator
- * - check sntp!=IPADDR_ANY works with ESP8266 (line 400)
  * - remove DISABLE_SSL compilation flag
- * - as the number of modules is increasing, implement a list of modules in the setup()
  * ---
+ * F.Thiebolt   jan.23  some cleanup about MAX_TCP connection that is defined at LWIP compile time
  * F.Thiebolt   nov.21  corrected timezone definition for esp32
  * F.Thiebolt   sep.21  added display module support (e.g oled or 7segment displays)
- * F.Thiebolt   aug.21  added digital inputs support (e;g PIR sensor)
+ * F.Thiebolt   aug.21  added digital inputs support (e.g PIR sensor)
  *                      added support for shared JSON document for data exchange 
  *                      between modules
  * F.Thiebolt   aug.20  initial port from neOSensor based on ESP8266
@@ -642,7 +642,7 @@ void earlySetup( void ) {
    *  we decided to set WiFi physical mode explicitly
    */
 #ifdef ESP8266
-  WiFi.setPhyMode(WIFI_PHY_MODE_11G);
+  WiFi.setPhyMode(WIFI_PHY_MODE_11G);   # [jan.23] does it solve esp8266 DHCP issue ??? not really sure
 #endif /* ESP8266 */
 
   // WiFi.disconnect(true); // to erase default credentials

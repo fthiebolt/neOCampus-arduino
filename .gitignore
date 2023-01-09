@@ -17,6 +17,7 @@
 
 # others
 .vscode
+.vsd
 
 # KiCad
 .bck

@@ -30,11 +30,7 @@
 /*
  * Definitions
  */
-#ifndef MAX_TCP_CONNECTIONS
-#define MAX_ACTIVE_MODULES          5   // as a default, ESP8266 features max 5 TCP concurrent sockets
-#else
 #define MAX_ACTIVE_MODULES          MAX_TCP_CONNECTIONS
-#endif
 
 
 /*

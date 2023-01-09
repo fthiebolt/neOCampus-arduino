@@ -10,10 +10,11 @@
  * 
  * ---
  * NOTES:
+ * - [ESP8266]MEMP_NUM_TCP_PCB= 8 (MAX simulteaneous listening TCP connections)
  * - you need to 'deploy' our boards definitions (run the deploy.sh script)
  * - select your board from the Arduino IDE boards menu (located end of list)
  * - a compilation flag tells which bord it is (i.e NEOSENSOR_AIRQUALITY)
- * - as of aug.20, CONFIG_LWIP_MAX_ACTIVE_TCP=16
+ * - as of aug.20, [ESP32] CONFIG_LWIP_MAX_ACTIVE_TCP=16
  * 
  * ---
  * KNOWN ISSUES:
@@ -86,9 +87,6 @@
 #if defined ESP8266
   extern "C" {
     #include "user_interface.h"           // wifi_station_dhcpc_start, ...
-  }
-  extern "C" {
-    #include "espconn.h"                  // espconn_tcp_set_max_con() set maximum number of simultaneous TCP connexions
   }
 #endif /* ESP8266 */
 
@@ -640,11 +638,12 @@ void earlySetup( void ) {
   // note: no log_xxx msg since they will get defined later
   // log_info(F("\n[Early] disable autoConnect and clear saved IP ...")); log_flush();
 
-#if defined(MAX_TCP_CONNECTIONS) && defined(ESP8266)
-  // set maximum number of simultaneous TCP connexions 
-  // log_info(F("\n[Early] set max TCP concurrent sockets to ")); log_info(MAX_TCP_CONNECTIONS, DEC); log_flush();
-  espconn_tcp_set_max_con( MAX_TCP_CONNECTIONS );
-#endif /* MAX_TCP_CONNECTIONS */
+  /* [jan.23] due to numerous DHCP issues, and following issue https://github.com/esp8266/Arduino/issues/8299
+   *  we decided to set WiFi physical mode explicitly
+   */
+#ifdef ESP8266
+  WiFi.setPhyMode(WIFI_PHY_MODE_11G);
+#endif /* ESP8266 */
 
   // WiFi.disconnect(true); // to erase default credentials
   WiFi.setAutoReconnect(false);
@@ -718,15 +717,7 @@ void lateSetup( void ) {
   }
 #endif /* ESP32 adcanced ADC */
 
-#if defined(MAX_TCP_CONNECTIONS) && defined(ESP8266)
-  log_info(F("\n# max TCP concurrent sockets = ")); log_info(MAX_TCP_CONNECTIONS, DEC); log_flush();
-#elif defined(ESP32)
-  log_info(F("\n# max TCP concurrent sockets = ")); log_info(CONFIG_LWIP_MAX_ACTIVE_TCP, DEC); log_flush();
-  if( CONFIG_LWIP_MAX_ACTIVE_TCP < MAX_TCP_CONNECTIONS ) {
-    log_warning(F("\nNOT ENOUGHT TCP CONNEXIONS ...")); log_flush();
-    delay(1000);
-  }
-#endif /* MAX_TCP_CONNECTIONS */
+  log_info(F("\n# max TCP listening sockets = ")); log_info(MAX_TCP_CONNECTIONS, DEC); log_flush();
 
   // display loop() delay
   log_info(F("\n# lopp() delay(ms): ")); log_info(MAIN_LOOP_DELAY,DEC); log_flush();

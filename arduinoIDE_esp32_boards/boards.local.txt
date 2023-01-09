@@ -1,7 +1,7 @@
 # neOCampus / ESP32 additional boards
 
 #
-# NEOSENSOR
+# NEOSENSOR (based on nodemcu-32s)
 neOSensor.name=neOSensor
 
 neOSensor.bootloader.tool=esptool_py

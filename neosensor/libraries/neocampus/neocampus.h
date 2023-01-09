@@ -5,9 +5,8 @@
  * 
  * ---
  * TODO:
- * - remove MAX_TCP_CONNECTIONS once we switched to MQTTs with a single connect
- *
  * ---
+ * F.Thiebolt   jan.23  MAX listening TCP connexion is defined at lwip compile time
  * F.Thiebolt   aug.21  added support for COOLDOWN approach
  * F.Thiebolt   Aug.20  automatic board selection according to the compilation flag
  *                      named XXX_BOARD (e.g NEOSENSOR_BOARD)
@@ -40,15 +39,13 @@ typedef uint32_t firmwareRev_t;
 
 
 /*
- * Simultaneous TCP connexions
+ * Get max simultaneous listening TCP connections
  */
-#ifndef MAX_TCP_CONNECTIONS
-  #if defined(ESP8266)
-    #define MAX_TCP_CONNECTIONS       8     // maximum number of simultaneous TCP connexions (5 as default)
-  #elif defined(ESP32)
-    #define MAX_TCP_CONNECTIONS       8     // maximum number of simultaneous TCP connexions (8 as default)
-  #endif
-#endif /* MAX_TCP_CONNECTIONS */
+#if defined(ESP8266)
+  #define MAX_TCP_CONNECTIONS       MEMP_NUM_TCP_PCB_LISTEN
+#elif defined(ESP32)
+  #define MAX_TCP_CONNECTIONS       CONFIG_LWIP_MAX_LISTENING_TCP
+#endif
 
 
 /*

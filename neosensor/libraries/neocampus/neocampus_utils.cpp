@@ -213,9 +213,10 @@ bool setupWiFi( wifiParametersMgt *wp ) {
   // set config save notify callback: only usefull for additional parameters
   wifiManager.setSaveConfigCallback( cb_exitConfigMode );
 
-  // set minimum signal level
-  // [jan.23] disabled while trying to overcome DHCP issues :|
-  // wifiManager.setMinimumSignalQuality();      // min. default is 8%
+  /* set minimum signal level
+   * [jan.23] disabled while trying to overcome DHCP issues :|
+   * wifiManager.setMinimumSignalQuality();      // min. default is 8%
+  */
 
   /* [aug.20] does not work on ESP32 ... segfault :(
    * set custom ip for AP portal

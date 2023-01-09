@@ -3,6 +3,11 @@
 # (c) neOCampus / F.Thiebolt Université Toulouse3, Laboratoire IRIT
 
 === Release 220815 / feature-SDKupgrade
+Bumps to esp32 2.0.6
+Bumps to esp8266 3.1.0
+- to be continued
+
+=== Release 220815 / feature-SDKupgrade
 Bumps to esp32 2.0.4
 Bumps to esp8266 3.0.2
 - we're still using the deprecated SPIFFS filesystem

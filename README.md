@@ -11,6 +11,7 @@ All this work was undertaken at Université Toulouse 3 / IRIT laboratory in the 
 ![neOSensorv5](/images/neOSensorV5.jpg)
 
 ## NEWS ##
+ * **[Jan.23]** bumps to esp8266 3.10.0; bumps to esp32 2.0.6 along with recompiled lwip
  * **[Aug.22]** bumps to esp8266 3.0.2; bumps to esp32 2.0.4 along with recompiled lwip
  * **[Nov.21]** added support for various serial sensors like PMSx003, SDS011 and IKEA Vindriktning :D
  * **[Aug.21]** added support for digital inputs (PIR & switches)

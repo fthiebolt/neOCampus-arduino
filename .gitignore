@@ -18,6 +18,8 @@
 # others
 .vscode
 *.svd
+debug.cfg
+debug_custom.json
 
 # KiCad
 .bck

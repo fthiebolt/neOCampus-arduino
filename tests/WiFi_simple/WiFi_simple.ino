@@ -10,7 +10,7 @@
 #endif
 
 #include <Arduino.h>
-#include <WiFiManager.h> // https://github.com/tzapu/WiFiManager
+#include <WiFi.h>
 #include <esp_wifi.h>
 #include <esp_log.h>
 
@@ -18,8 +18,8 @@
 #define SET_WIFI_PROTOCOL   1
 
 /* Global variables */
-const char* ssid = "freebox_Bonzo";
-const char* password = "Hedgehog";
+const char* ssid = "neOCampus";
+const char* password = "XXXXXXX";
 esp_err_t _err;
 
 
@@ -47,23 +47,21 @@ void display_wifi_protocol( wifi_interface_t ifx=WIFI_IF_STA ) {
 }
 
 
-TO BE CONTINUED
-
-
 /* 
  * Setup
  */
-void setup() {
-  delay(3000);  // time for USB serial link to come up anew
-  Serial.begin(115200); // Start serial for output
+void setup(){
+  Serial.begin(115200);
+  delay(3000);
 
-  Serial.println(F("\n\n###\n### Starting simple WiFiManager connection test ...\n###"));
+  Serial.print(F("\n###\nConnecting to SSID "));Serial.println(ssid);Serial.flush();
 
-  // Arduino libs v2.4.1, to enable printf and debug messages output
-  Serial.setDebugOutput( true );
-
-  WiFi.mode(WIFI_STA); // explicitly set mode, esp defaults to STA+AP
-  // it is a good practice to make sure your code sets wifi mode how you want it.
+  /* WARNING: WiFi mode resets the protocol definition ...
+   *  hence est_wifi_set_protocol is set AFTER */
+  WiFi.mode(WIFI_STA); // Optional
+  Serial.println(F("\nDefault WiFi protocols at startup"));
+  display_wifi_protocol();
+  delay(500);
 
 #ifdef SET_WIFI_PROTOCOL
   Serial.println(F("\tsetting WiFi protocol ..."));Serial.flush();
@@ -80,36 +78,48 @@ void setup() {
 
   display_wifi_protocol();
   delay(500);
- 
-  //WiFiManager, Local intialization. Once its business is done, there is no need to keep it around
-  WiFiManager wm;
-  wm.setDebugOutput(true);
 
-  Serial.println(F("\tconnection timeout to 5mn ..."));
-  wm.setConnectTimeout(300);
+  Serial.println(F("\tChanging to AP mode ..."));
+  WiFi.mode(WIFI_AP);
+  display_wifi_protocol(WIFI_IF_AP);
+  delay(500);
 
-    bool res;
-    // res = wm.autoConnect(); // auto generated AP name from chipid
-    // res = wm.autoConnect("AutoConnectAP"); // anonymous ap
-    res = wm.autoConnect(ssid,passwd); // password protected ap
+  Serial.println(F("\tSet WIFI_STA mode one more time ..."));
+  WiFi.mode(WIFI_STA); // Optional
+  display_wifi_protocol();
+  delay(500);
 
-    if(!res) {
-        Serial.println("Failed to connect");
-        // ESP.restart();
-    } 
-    else {
-        //if you get here you have connected to the WiFi    
-        Serial.println("connected...yeey :)");
-    }
+  // Start connection
+  WiFi.begin(ssid, password);
 
+  uint8_t count=240;
+  while(WiFi.status() != WL_CONNECTED && count ){
+      Serial.print(".");
+      delay(250);
+      count--;
+  }
+
+ if( WiFi.status() != WL_CONNECTED ) {
+      Serial.println(F("Failed to connect ... let's restart ..."));
+      delay(2000);
+      ESP.restart();
+  }
+  
+  //if you get here you have connected to the WiFi    
+  Serial.println("connected ...yeey :)");
+  
+  Serial.print("\nConnected to the WiFi network ");Serial.println(ssid);
+  Serial.print("Local ESP32 IP: ");
+  Serial.println(WiFi.localIP());
 }
+
 
 
 /* 
  * Loop
  */
 void loop() {
-    // put your main code here, to run repeatedly:
-    Serial.print(".");
-    delay(1000);   
+  // put your main code here, to run repeatedly:
+  Serial.print(".");
+  delay(1000);
 }

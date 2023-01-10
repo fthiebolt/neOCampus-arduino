@@ -635,6 +635,31 @@ void processWIFIparameters( wifiParametersMgt *wp=nullptr ) {
 
 
 // ---
+// show WiFi protocols in use
+void display_wifi_protocol( wifi_interface_t ifx=WIFI_IF_STA ) {
+
+  uint8_t cur_protocols;
+  esp_err_t _err;
+  _err = esp_wifi_get_protocol(ifx, &cur_protocols);
+  if( _err != ESP_OK ) {
+    log_error(F("\n[WiFiProtocol] Could not get protocol!"));
+    return;
+  }
+  
+  log_debug(F("\nWIFI protocols = 0x"));log_debug(cur_protocols,HEX);log_flush();
+  if( cur_protocols & WIFI_PROTOCOL_11N ) {
+    log_debug(F("\n\tWiFi_Protocol_11n"));
+  }
+  if( cur_protocols & WIFI_PROTOCOL_11G ) {
+    log_debug(F("\n\tWiFi_Protocol_11g"));
+  }
+  if( cur_protocols & WIFI_PROTOCOL_11B ) {
+    log_debug(F("\n\tWiFi_Protocol_11b"));
+  }
+}
+
+
+// ---
 // earlySetup: called at the very begining of setup()
 void earlySetup( void ) {
 
@@ -643,13 +668,16 @@ void earlySetup( void ) {
 
   /* [jan.23] due to numerous DHCP issues, and following issue https://github.com/esp8266/Arduino/issues/8299
    *  we decided to set WiFi physical mode explicitly
+   *  BEWARE IT IS PERSISTENT across reboot, flash ...
    */
 #if defined(ESP8266)
-  WiFi.setPhyMode(WIFI_PHY_MODE_11G);   // [jan.23] does it solve esp8266 DHCP issue ??? not really sure
+  WiFi.setPhyMode(WIFI_PHY_MODE_11B);   // [jan.23] 11B or 11G SOLVED OUR DHCP issue !!!
 #elif defined(ESP32)
-  esp_wifi_set_protocol(WIFI_IF_STA, WIFI_PROTOCOL_11B|WIFI_PROTOCOL_11G);
-  // check with ESP_GET_protocol)
-  esp_wifi_config_11b_rate(WIFI_IF_STA,true); // to suppress 802.11B
+  // set PERSISTANT mode for station
+  WiFi.mode(WIFI_STA);
+  esp_wifi_set_protocol(WIFI_IF_STA, WIFI_PROTOCOL_11B);  // maybe check ret_code ?
+  //esp_wifi_set_protocol(WIFI_IF_STA, WIFI_PROTOCOL_11B|WIFI_PROTOCOL_11G);
+  //esp_wifi_config_11b_rate(WIFI_IF_STA,true); // to suppress 802.11B
 #endif
 
   // WiFi.disconnect(true); // to erase default credentials
@@ -699,6 +727,8 @@ void lateSetup( void ) {
 
   WiFi.setAutoReconnect(true);
 
+  display_wifi_protocol();
+  
 #if ESP32
   // switch back POWER MODES to auto
   if( esp_sleep_pd_config(ESP_PD_DOMAIN_MAX,ESP_PD_OPTION_AUTO) != ESP_OK ) {

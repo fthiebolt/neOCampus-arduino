@@ -2,10 +2,17 @@
 # neOCampus operation
 # (c) neOCampus / F.Thiebolt Université Toulouse3, Laboratoire IRIT
 
-=== Release 220815 / feature-SDKupgrade
+=== Release 230116 / feature-SDKupgrade
 Bumps to esp32 2.0.6
 Bumps to esp8266 3.1.0
-- to be continued
+- force 802.11b for both ESP8266 and ESP32 --> solved our DHCP issues :D
+- WARNING: breaks SPIFFS format@ESP32 ==> reformat @ reboot ==> per device setup :'(
+	no SPIFFS format change @ ESP8266
+- WiFiManager 2.0.15-rc1 no debug --> revert to 2.0.14-beta
+- newer WiFiManager introduces ASYNC SCAN ==> very slow (almost unanswered)
+[esp32]
+- recompiled lwip for NTP server support from DHCP answer (IDF 4.4.3)
+
 
 === Release 220815 / feature-SDKupgrade
 Bumps to esp32 2.0.4

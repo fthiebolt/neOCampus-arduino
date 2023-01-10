@@ -9,6 +9,9 @@
  * (c) F.Thiebolt / neOCampus operation - Université Toulouse 3
  * 
  * ---
+ * WARNING: [jan.23] WiFiManager 2.0.15-rc1 does not list WiFi networks available !?!?!
+ *          ==> UPGRADE WiFiManager for bsp_update branch <==
+ * ---
  * NOTES:
  * - [ESP8266]MEMP_NUM_TCP_PCB= 8 (MAX simulteaneous listening TCP connections)
  * - you need to 'deploy' our boards definitions (run the deploy.sh script)

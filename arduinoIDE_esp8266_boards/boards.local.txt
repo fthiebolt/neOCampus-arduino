@@ -64,8 +64,9 @@ neOSensor.menu.ResetMethod.ck.upload.resetmethod=--before no_reset --after soft_
 neOSensor.menu.ResetMethod.nodemcu=dtr (aka nodemcu)
 neOSensor.menu.ResetMethod.nodemcu.upload.resetmethod=--before default_reset --after hard_reset
 
-neOSensor.menu.baud.921600=921600
-neOSensor.menu.baud.921600.upload.speed=921600
+# [jan.23] disabled 921600 that may cause upload failures on some ESP8266 boards
+#neOSensor.menu.baud.921600=921600
+#neOSensor.menu.baud.921600.upload.speed=921600
 neOSensor.menu.baud.115200=115200
 neOSensor.menu.baud.115200.upload.speed=115200
 

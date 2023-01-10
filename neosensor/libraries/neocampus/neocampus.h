@@ -42,7 +42,7 @@ typedef uint32_t firmwareRev_t;
  * Get max simultaneous listening TCP connections
  */
 #if defined(ESP8266)
-  #define MAX_TCP_CONNECTIONS       MEMP_NUM_TCP_PCB_LISTEN
+  #define MAX_TCP_CONNECTIONS       MEMP_NUM_TCP_PCB
 #elif defined(ESP32)
   #define MAX_TCP_CONNECTIONS       CONFIG_LWIP_MAX_LISTENING_TCP
 #endif

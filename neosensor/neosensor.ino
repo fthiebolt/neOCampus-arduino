@@ -13,7 +13,6 @@
  *          ==> UPGRADE WiFiManager for bsp_update branch <==
  * ---
  * NOTES:
- * - [ESP8266]MEMP_NUM_TCP_PCB= 8 (MAX simulteaneous listening TCP connections)
  * - you need to 'deploy' our boards definitions (run the deploy.sh script)
  * - select your board from the Arduino IDE boards menu (located end of list)
  * - a compilation flag tells which bord it is (i.e NEOSENSOR_AIRQUALITY)
@@ -27,12 +26,12 @@
  *
  * ---
  * TODO:
- * - remove WiFi.setPhyMode(WIFI_PHY_MODE_11G) once DHCP issue would have been solved
  * - esp8266 now features a configTzTime() in newer API
  * - loadSensoConfig --> avoid data duplication, implement an iterator
  * - remove DISABLE_SSL compilation flag
  * ---
  * F.Thiebolt   jan.23  some cleanup about MAX_TCP connection that is defined at LWIP compile time
+ *                      WiFi.setPhyMode(WIFI_PHY_MODE_11G) SOLVE THE looonnngggg DHCP issue
  * F.Thiebolt   nov.21  corrected timezone definition for esp32
  * F.Thiebolt   sep.21  added display module support (e.g oled or 7segment displays)
  * F.Thiebolt   aug.21  added digital inputs support (e.g PIR sensor)
@@ -644,9 +643,12 @@ void earlySetup( void ) {
   /* [jan.23] due to numerous DHCP issues, and following issue https://github.com/esp8266/Arduino/issues/8299
    *  we decided to set WiFi physical mode explicitly
    */
-#ifdef ESP8266
+#if defined(ESP8266)
   WiFi.setPhyMode(WIFI_PHY_MODE_11G);   // [jan.23] does it solve esp8266 DHCP issue ??? not really sure
-#endif /* ESP8266 */
+#elif defined(ESP32)
+  //wifi_set_phy_mode(PHY_MODE_11B);
+  WIFI_PROTOCOL_11B
+#endif
 
   // WiFi.disconnect(true); // to erase default credentials
   WiFi.setAutoReconnect(false);

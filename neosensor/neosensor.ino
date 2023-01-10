@@ -73,6 +73,7 @@
   #include <ESP8266WiFi.h>
 #elif defined(ESP32)
   #include <WiFi.h>
+  #include <esp_wifi.h>
 #endif
 #include <lwipopts.h>                     // for ESP32 max tcp connections CONFIG_LWIP_MAX_ACTIVE_TCP
 
@@ -646,8 +647,9 @@ void earlySetup( void ) {
 #if defined(ESP8266)
   WiFi.setPhyMode(WIFI_PHY_MODE_11G);   // [jan.23] does it solve esp8266 DHCP issue ??? not really sure
 #elif defined(ESP32)
-  //wifi_set_phy_mode(PHY_MODE_11B);
-  WIFI_PROTOCOL_11B
+  esp_wifi_set_protocol(WIFI_IF_STA, WIFI_PROTOCOL_11B|WIFI_PROTOCOL_11G);
+  // check with ESP_GET_protocol)
+  esp_wifi_config_11b_rate(WIFI_IF_STA,true); // to suppress 802.11B
 #endif
 
   // WiFi.disconnect(true); // to erase default credentials

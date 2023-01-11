@@ -18,6 +18,7 @@
 #define SET_WIFI_PROTOCOL   1
 
 /* Global variables */
+#error "Change SSID/passwd !!"
 const char* ssid = "neOCampus";
 const char* password = "XXXXXXX";
 esp_err_t _err;

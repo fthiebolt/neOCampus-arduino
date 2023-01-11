@@ -12,6 +12,8 @@
  *  - noise detector (8bits DAC MCP4706)
  * ---
  *
+ * F.Thieolt    Jan.23  added option to force 802.11b WiFi protocol
+ *                      in order to overcome the DHCP issue
  * F.Thiebolt   Nov.21  esp32 added serial link definition
  * F.Thiebolt   Jul.21  esp32 added PIR sensor @ GPIO4
  *                      esp32 added switch INCR_SW @ GPIO18
@@ -42,7 +44,24 @@
  */
 #define BOARD_NAME          "neOSensor"
 #define BOARD_REVISION      1.2
-#define BOARD_FWREV         230109          // Firmware revision <year><month><day> in 2 digits each
+#define BOARD_FWREV         230111          // Firmware revision <year><month><day> in 2 digits each
+
+
+
+/* #############################################################################
+ * ###                                                                       ###
+ * ###                      WiFi protocol enforcement                        ###
+ * ###                                                                       ###
+ *      [Jan.23] ESP SDK bug activated by WiFi GWs firmware upgrades
+ *      We offer the opportunity to FORCE a specific WiFi protocol
+ *      [WARNING]: this is reboot PERSISTANT i.e once set you need to manually
+ *      set another value
+ * 
+ * #############################################################################
+ */
+#ifndef FORCE_WIFI_PROTOCOL
+#define FORCE_WIFI_PROTOCOL     1
+#endif // FORCE_WIFI_PROTOCOL
 
 
 /* #############################################################################

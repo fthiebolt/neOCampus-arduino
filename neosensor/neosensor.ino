@@ -9,9 +9,6 @@
  * (c) F.Thiebolt / neOCampus operation - Université Toulouse 3
  * 
  * ---
- * WARNING: [jan.23] WiFiManager 2.0.15-rc1 does not list WiFi networks available !?!?!
- *          ==> UPGRADE WiFiManager for bsp_update branch <==
- * ---
  * NOTES:
  * - you need to 'deploy' our boards definitions (run the deploy.sh script)
  * - select your board from the Arduino IDE boards menu (located end of list)
@@ -646,7 +643,8 @@ void display_wifi_protocol( wifi_interface_t ifx=WIFI_IF_STA ) {
     return;
   }
   
-  log_debug(F("\nWIFI protocols = 0x"));log_debug(cur_protocols,HEX);log_flush();
+  log_debug(F("\n# WIFI protocols = 0x"));log_debug(cur_protocols,HEX);log_flush();
+
   if( cur_protocols & WIFI_PROTOCOL_11N ) {
     log_debug(F("\n\tWiFi_Protocol_11n"));
   }
@@ -670,15 +668,18 @@ void earlySetup( void ) {
    *  we decided to set WiFi physical mode explicitly
    *  BEWARE IT IS PERSISTENT across reboot, flash ...
    */
-#if defined(ESP8266)
-  WiFi.setPhyMode(WIFI_PHY_MODE_11B);   // [jan.23] 11B or 11G SOLVED OUR DHCP issue !!!
-#elif defined(ESP32)
-  // set PERSISTANT mode for station
-  WiFi.mode(WIFI_STA);
-  esp_wifi_set_protocol(WIFI_IF_STA, WIFI_PROTOCOL_11B);  // maybe check ret_code ?
-  //esp_wifi_set_protocol(WIFI_IF_STA, WIFI_PROTOCOL_11B|WIFI_PROTOCOL_11G);
-  //esp_wifi_config_11b_rate(WIFI_IF_STA,true); // to suppress 802.11B
-#endif
+#ifdef FORCE_WIFI_PROTOCOL
+  #warning "WiFi protocol enforcement is active !!"
+  #if defined(ESP8266)
+    WiFi.setPhyMode(WIFI_PHY_MODE_11B);   // [jan.23] 11B or 11G SOLVED OUR DHCP issue !!!
+  #elif defined(ESP32)
+    // set PERSISTANT mode for station
+    WiFi.mode(WIFI_STA);
+    esp_wifi_set_protocol(WIFI_IF_STA, WIFI_PROTOCOL_11B);  // maybe check ret_code ?
+    //esp_wifi_set_protocol(WIFI_IF_STA, WIFI_PROTOCOL_11B|WIFI_PROTOCOL_11G);
+    //esp_wifi_config_11b_rate(WIFI_IF_STA,true); // to suppress 802.11B
+  #endif
+#endif /* FORCE_WIFI_PROTOCOL */
 
   // WiFi.disconnect(true); // to erase default credentials
   WiFi.setAutoReconnect(false);

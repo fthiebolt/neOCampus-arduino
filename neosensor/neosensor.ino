@@ -558,16 +558,12 @@ bool setupNTP( void ) {
 #ifdef ESP8266
   // register ntp sync callback
   settimeofday_cb( syncNTP_cb );
-  // [may.20] as default, NTP server is provided by the DHCP server
-  configTime( MYTZ, NTP_DEFAULT_SERVER1, NTP_DEFAULT_SERVER2, NTP_DEFAULT_SERVER3 );
 #elif ESP32
   // register ntp sync callback
   sntp_set_time_sync_notification_cb( _syncNTP_cb );
-  // [nov.21] now using timezone definition :)
-  configTzTime( MYTZ, NTP_DEFAULT_SERVER1, NTP_DEFAULT_SERVER2, NTP_DEFAULT_SERVER3 );
-  // [may.20] as default, NTP server is provided by the DHCP server
-  // configTime(gmtOffset_sec, daylightOffset_sec, NTP_DEFAULT_SERVER1, NTP_DEFAULT_SERVER2, NTP_DEFAULT_SERVER3 );
 #endif    
+  // [may.23] esp32/8266 unified API
+  configTzTime( MYTZ, NTP_DEFAULT_SERVER1, NTP_DEFAULT_SERVER2, NTP_DEFAULT_SERVER3 );
 
   log_flush();
   // the end ...
@@ -632,18 +628,22 @@ void processWIFIparameters( wifiParametersMgt *wp=nullptr ) {
 
 // ---
 // show WiFi protocols in use
-void display_wifi_protocol( wifi_interface_t ifx=WIFI_IF_STA ) {
+void display_wifi_protocol( void ) {
 
   uint8_t cur_protocols;
-  esp_err_t _err;
-  _err = esp_wifi_get_protocol(ifx, &cur_protocols);
+  int _err;
+#ifdef ESP32
+  _err = esp_wifi_get_protocol(WIFI_IF_STA, &cur_protocols);
   if( _err != ESP_OK ) {
     log_error(F("\n[WiFiProtocol] Could not get protocol!"));
     return;
   }
-  
-  log_debug(F("\n# WIFI protocols = 0x"));log_debug(cur_protocols,HEX);log_flush();
+#elif defined (ESP8266)
+  cur_protocols = (uint8_t)WiFi.getPhyMode();
+#endif
 
+  log_debug(F("\n# WIFI protocols = 0x"));log_debug(cur_protocols,HEX);log_flush();
+#ifdef ESP32
   if( cur_protocols & WIFI_PROTOCOL_11N ) {
     log_debug(F("\n\tWiFi_Protocol_11n"));
   }
@@ -653,6 +653,17 @@ void display_wifi_protocol( wifi_interface_t ifx=WIFI_IF_STA ) {
   if( cur_protocols & WIFI_PROTOCOL_11B ) {
     log_debug(F("\n\tWiFi_Protocol_11b"));
   }
+#elif defined (ESP8266)
+  if( cur_protocols==WIFI_PHY_MODE_11N ) {
+    log_debug(F("\n\tWiFi_Protocol_11n"));
+  }
+  else if( cur_protocols==WIFI_PHY_MODE_11G ) {
+    log_debug(F("\n\tWiFi_Protocol_11g"));
+  }
+  else if( cur_protocols==WIFI_PHY_MODE_11B ) {
+    log_debug(F("\n\tWiFi_Protocol_11b"));
+  }
+#endif
 }
 
 

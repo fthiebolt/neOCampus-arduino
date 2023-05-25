@@ -2,7 +2,7 @@
 # neOCampus operation
 # (c) neOCampus / F.Thiebolt Université Toulouse3, Laboratoire IRIT
 
-=== Feature-bspupgrade
+=== 25 may 2023 / Feature-bspupgrade
 Bumps to esp32 2.0.9
 Bumps to esp8266 3.1.2
 - switch WiFi to both 802.11b AND 802.11g (DSI cut down 802.11b !!)

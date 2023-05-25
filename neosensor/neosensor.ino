@@ -1,5 +1,4 @@
-/* -----------------------------------------------------------------------------
- *
+/*
  * neOCampus operation
  * 
  * neOSensor firmware for various ESP8266 and ESP32 based boards:

@@ -2,6 +2,13 @@
 # neOCampus operation
 # (c) neOCampus / F.Thiebolt Université Toulouse3, Laboratoire IRIT
 
+=== Feature-bspupgrade
+Bumps to esp32 2.0.9
+Bumps to esp8266 3.1.2
+- switch WiFi to both 802.11b AND 802.11g (DSI cut down 802.11b !!)
+- recompiled lwip for NTP server support from DHCP answer (IDF 4.4.4)
+
+
 === Release 230116 / feature-SDKupgrade
 Bumps to esp32 2.0.6
 Bumps to esp8266 3.1.0

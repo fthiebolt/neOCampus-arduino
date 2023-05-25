@@ -670,12 +670,13 @@ void earlySetup( void ) {
 #ifdef FORCE_WIFI_PROTOCOL
   #warning "WiFi protocol enforcement is active !!"
   #if defined(ESP8266)
-    WiFi.setPhyMode(WIFI_PHY_MODE_11B);   // [jan.23] 11B or 11G SOLVED OUR DHCP issue !!!
+    //WiFi.setPhyMode(WIFI_PHY_MODE_11B);   // [jan.23] 11B or 11G SOLVED OUR DHCP issue !!!
+    WiFi.setPhyMode(WIFI_PHY_MODE_11G);   // [may.23] 11B or 11G SOLVED OUR DHCP issue --> hope 11G allows 11B too
   #elif defined(ESP32)
     // set PERSISTANT mode for station
     WiFi.mode(WIFI_STA);
-    esp_wifi_set_protocol(WIFI_IF_STA, WIFI_PROTOCOL_11B);  // maybe check ret_code ?
-    //esp_wifi_set_protocol(WIFI_IF_STA, WIFI_PROTOCOL_11B|WIFI_PROTOCOL_11G);
+    //esp_wifi_set_protocol(WIFI_IF_STA, WIFI_PROTOCOL_11B);
+    esp_wifi_set_protocol(WIFI_IF_STA, WIFI_PROTOCOL_11B|WIFI_PROTOCOL_11G);
     //esp_wifi_config_11b_rate(WIFI_IF_STA,true); // to suppress 802.11B
   #endif
 #endif /* FORCE_WIFI_PROTOCOL */

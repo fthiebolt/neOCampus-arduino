@@ -29,6 +29,8 @@
   #include <WiFi.h>
 #endif /* ESP8266 */
 
+#include "Preferences.h"          // NVS storage (instead of the DEPRECATED eeprom)
+
 #include "neocampus.h"
 
 #include "neocampus_debug.h"
@@ -52,6 +54,9 @@ extern bool _need2reboot;
 #define WIFI_CONFIG_FILE        "/wifi.json"        // WiFi configuration file to store credentials and locales confs
 
 #define CONFIG_JSON_SIZE        (JSON_OBJECT_SIZE(20))
+
+// NVS namespace for WiFi credentials
+#define WIFI_NVS_NAMESPACE      "wifiCredentials"  // 15 chars max.
 
 
 // constructor
@@ -342,6 +347,17 @@ void wifiParametersMgt::_applyDefaults( void ) {
   // Whole destruction option
   _opt_eraseALL = false;
   
+  /*
+   * [may.23] now trying to access wifi credentias NVS namespace
+   */
+  Preferences nvs_area;
+  if( nvs_area.begin(WIFI_NVS_NAMESPACE,true) ) {  // readonly mode
+    log_debug(F("\n[wifiParams] opened NVS WiFi credentials namespace ..."));log_flush();
+
+    // TO BE CONTINUED
+
+  }
+
   /*
    * finally structure is initialized
    */

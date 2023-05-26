@@ -29,8 +29,14 @@
   #include <WiFi.h>
 #endif /* ESP8266 */
 
-#include "Preferences.h"          // NVS storage (instead of the DEPRECATED eeprom)
+/* NVS namespace @ EPS32 */
+#ifdef ESP32
+  #include "Preferences.h"          // NVS storage (instead of the DEPRECATED eeprom)
+#elif defined (ESP8266)
+  #warning "[esp8266] no NVS namespace available ... grab WiFi ssid/psk from last connection"
+#endif
 
+/* neOCampus related includes */
 #include "neocampus.h"
 
 #include "neocampus_debug.h"

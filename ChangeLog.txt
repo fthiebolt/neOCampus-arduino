@@ -6,6 +6,8 @@
 Bumps to esp32 2.0.9
 Bumps to esp8266 3.1.2
 - switch WiFi to both 802.11b AND 802.11g (DSI cut down 802.11b !!)
+- make use of NVS namespace to save WiFi crdentials (in order to avoid SPIFFS
+	partitionning issues)
 - recompiled lwip for NTP server support from DHCP answer (IDF 4.4.4)
 
 
@@ -14,7 +16,7 @@ Bumps to esp32 2.0.6
 Bumps to esp8266 3.1.0
 - force 802.11b for both ESP8266 and ESP32 --> solved our DHCP issues :D
 - WARNING: breaks SPIFFS format@ESP32 ==> reformat @ reboot ==> per device setup :'(
-	no SPIFFS format change @ ESP8266
+	(hopefully) no SPIFFS format change @ ESP8266
 - WiFiManager 2.0.15-rc1 no debug --> revert to 2.0.14-beta
 - newer WiFiManager introduces ASYNC SCAN ==> very slow (almost unanswered)
 [esp32]

@@ -26,8 +26,7 @@
  * - loadSensoConfig --> avoid data duplication, implement an iterator
  * - remove DISABLE_SSL compilation flag
  * ---
- * F.Thiebolt   jan.23  some cleanup about MAX_TCP connection that is defined at LWIP compile time
- *                      WiFi.setPhyMode(WIFI_PHY_MODE_11G) SOLVE THE looonnngggg DHCP issue
+ * ======= SEE 'ChangeLog.txt' for information about updates starting 2023 =========
  * F.Thiebolt   nov.21  corrected timezone definition for esp32
  * F.Thiebolt   sep.21  added display module support (e.g oled or 7segment displays)
  * F.Thiebolt   aug.21  added digital inputs support (e.g PIR sensor)

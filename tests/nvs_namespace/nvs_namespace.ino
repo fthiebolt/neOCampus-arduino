@@ -88,7 +88,7 @@ void setup() {
   /*
    * Open NVS-WiFi namespace to retrieve SSID / PSK
    */
-  if( not nvs_wifi.begin(WIFI_NVS_NAMESPACE,true) ) {  // readonly mode
+  if( not nvs_wifi.begin(WIFI_NVS_NAMESPACE,false) ) {  // R/Wf mode
     Serial.print(F("\n[NVS-WiFi] unable to open NVS namespace '"));Serial.print(WIFI_NVS_NAMESPACE);Serial.print(F("' ... reboot !"));Serial.flush();
     delay(2000);
     ESP.restart();
@@ -113,7 +113,7 @@ void setup() {
     Serial.print(_tmp);Serial.flush();
     delay(1000);
     // do we need to change them ?
-    Serial.setTimeout(3000);
+    Serial.setTimeout(10000);
     Serial.print(F("\n"));
     Serial.print(F("\nDo we need to change them (Y/n) ? "));Serial.flush();
     _answer='\0';
@@ -122,6 +122,7 @@ void setup() {
       delay(1000);
       return;
     }
+    Serial.begin(115200);   // flush input buffer
   }
 
   /*
@@ -130,7 +131,7 @@ void setup() {
   Serial.print(F("\n[NVS-WiFi] now setting WiFi credentials (15s timeout) ... "));Serial.flush();
   Serial.print(F("\n\tSSID --> "));Serial.flush();
   Serial.setTimeout(15000);
-  _str = Serial.readString();  //read until timeout
+  _str = Serial.readStringUntil('\n');  //read until timeout
   _str.trim();                        // remove any \r \n whitespace at the end of the String
   if( not _str.length() ) {
     Serial.print(F("\n\tno input detected ... reboot !"));Serial.flush();
@@ -139,10 +140,11 @@ void setup() {
     delay(5000);
   }
   strncpy(mySSID,_str.c_str(),sizeof(mySSID)); mySSID[sizeof(mySSID)-1]='\0';
+  Serial.print(mySSID);Serial.flush();
   
   Serial.print(F("\n\tPASS --> "));Serial.flush();
   Serial.setTimeout(15000);
-  _str = Serial.readString();  //read until timeout
+  _str = Serial.readStringUntil('\n');  //read until timeout
   _str.trim();                        // remove any \r \n whitespace at the end of the String
   if( not _str.length() ) {
     Serial.print(F("\n\tno input detected ... reboot !"));Serial.flush();
@@ -151,14 +153,15 @@ void setup() {
     delay(5000);
   }
   strncpy(myPSK,_str.c_str(),sizeof(myPSK)); myPSK[sizeof(myPSK)-1]='\0';
+  Serial.print(myPSK);Serial.flush();
 
   // save it to NVS ?
   Serial.print(F("\n"));
-  Serial.print(F("\n[NVS-WiFi] entered crdentials :)"));Serial.flush();
+  Serial.print(F("\n[NVS-WiFi] entered credentials :)"));Serial.flush();
   snprintf(_tmp,sizeof(_tmp), "\n\tSSID : %s\n\tPASS : %s", mySSID, myPSK);
   Serial.print(_tmp);Serial.flush();
   delay(1000);
-  Serial.setTimeout(3000);
+  Serial.setTimeout(10000);
   Serial.print(F("\nSave it to NVS (Y/n) ? "));Serial.flush();
   _answer='\0';
   if( not Serial.readBytes(&_answer,1) or (_answer!='Y' and _answer!='y') ) {
@@ -167,6 +170,7 @@ void setup() {
     ESP.restart();
     delay(5000);
   }
+  Serial.begin(115200);   // flush input buffer
 
   // saving to namespace :)
   if( not nvs_wifi.begin(WIFI_NVS_NAMESPACE,false) ) {  // R/W mode
@@ -208,8 +212,25 @@ void setup() {
 
 // --- LOOP --------------------------------------------------------------------
 void loop() {
+  static unsigned long _lastMsg = 0;    // elapsed ms since last check
 
   // do we want to reboot ?
+  if( ((millis() - _lastMsg) >= (unsigned long)45000UL) == true ) {
+    _lastMsg = millis();
+
+    Serial.begin(115200);   // flush input buffer
+    Serial.print(F("\n\tDo you want to REBOOT (Y/n) ?"));
+    Serial.setTimeout(5000);
+    char _answer='\0';
+    Serial.readBytes(&_answer,1);
+    if( _answer=='Y' or _answer=='y' ) {
+      Serial.print(F("\n\t... OK, reboot is on way ... "));Serial.flush();
+      _need2reboot = true;
+  }
+  Serial.begin(115200);   // flush input buffer
+    
+  }
+
   /*
    * do something here ...
    */

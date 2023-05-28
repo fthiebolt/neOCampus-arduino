@@ -63,6 +63,8 @@ extern bool _need2reboot;
 
 // NVS namespace for WiFi credentials
 #define WIFI_NVS_NAMESPACE      "wifiCredentials"  // 15 chars max.
+#define WIFI_NVS_SSID_KEY       "ssid"
+#define WIFI_NVS_PASS_KEY       "pass"
 
 
 // constructor
@@ -328,6 +330,8 @@ bool wifiParametersMgt::_setopt_eraseALL( bool value ) {
 /*
  * apply DEFAULTS values
  * Note: options ought to get false as defaults
+ * [may.23] trying to read WiFi credentials from ESP32 NVS
+ * specific namesace ... or from WiFi global vars @ ESP8266
  */
 void wifiParametersMgt::_applyDefaults( void ) {
 
@@ -347,22 +351,46 @@ void wifiParametersMgt::_applyDefaults( void ) {
   // PIR sensor set as an option because it can't get detected
   _opt_PIRsensor = false;
   
+
+  /*
+   * add additioanl options here
+   */
   
-  
-  
+
   // Whole destruction option
   _opt_eraseALL = false;
   
   /*
-   * [may.23] now trying to access wifi credentias NVS namespace
+   * [may.23] now trying to access wifi credentials from NVS namespace
    */
-  Preferences nvs_area;
-  if( nvs_area.begin(WIFI_NVS_NAMESPACE,true) ) {  // readonly mode
+#ifdef ESP32
+  Preferences nvs_wifi;
+  if( nvs_wifi.begin(WIFI_NVS_NAMESPACE,true) ) {  // readonly mode
     log_debug(F("\n[wifiParams] opened NVS WiFi credentials namespace ..."));log_flush();
-
-    // TO BE CONTINUED
-
+    if( nvs_wifi.isKey(WIFI_NVS_SSID_KEY) ) {
+      nvs_wifi.getBytes(WIFI_NVS_SSID_KEY, _ssid, sizeof(_ssid));
+      log_debug(F("\n\t[NVS] SSID :"));log_debug(_ssid);log_flush();
+    }
+    if( nvs_wifi.isKey(WIFI_NVS_PASS_KEY) ) {
+      nvs_wifi.getBytes(WIFI_NVS_PASS_KEY, _pass, sizeof(_pass));
+      log_debug(F("\n\t[NVS] PASS :"));log_debug(_pass);log_flush();
+    }
+    // close NVS namespace
+    nvs_wifi.end();
   }
+#elif defined (ESP8266)
+  #warning "[ESP8266] retrieving WiFi credentials from WiFi library is experimental"
+  if( WiFi.SSID().length() ) {
+    strncpy(_ssid,WiFi.SSID().c_str(),sizeof(_ssid));
+    _ssid[sizeof(_ssid)-1]='\0';
+    log_debug(F("\n\t[NVS-like] SSID :"));log_debug(_ssid);log_flush();
+  }
+  if( WiFi.psk().length() ) {
+    strncpy(_pass,WiFi.psk().c_str(),sizeof(_pass));
+    _pass[sizeof(_pass)-1]='\0';
+    log_debug(F("\n\t[NVS-like] PASS :"));log_debug(_pass);log_flush();
+  }
+#endif
 
   /*
    * finally structure is initialized
@@ -374,6 +402,9 @@ void wifiParametersMgt::_applyDefaults( void ) {
 
 /*
  * fill JSON structure with things to save
+ * [may.23] save WiFi credentials in NVS area of ESP32 too
+ * ... this is intended to avoid SPIFFS wrong partitionning
+ * that will cut access to WiFi credentials !
  */
 bool wifiParametersMgt::_saveConfig( JsonObject root ) {
   
@@ -381,6 +412,26 @@ bool wifiParametersMgt::_saveConfig( JsonObject root ) {
   if( strlen(_ssid) ) {
     root["ssid"] = _ssid;
     root["pass"] = _pass;
+#ifdef ESP32
+    // save WiFi credentials to NVS
+    Preferences nvs_wifi;
+    if( nvs_wifi.begin(WIFI_NVS_NAMESPACE,false) ) {  // R/W mode
+      log_debug(F("\n[wifiParams] save WiFi credentials to NVS namespace '"));log_debug(WIFI_NVS_NAMESPACE);log_debug(F("' ... "));log_flush();
+
+      if( nvs_wifi.putBytes(WIFI_NVS_SSID_KEY,_ssid,strlen(_ssid)+1) != strlen(_ssid)+1 ) {
+        log_error(F("\n[wifiParams] ERROR while saving SSID to NVS ?!?!"));log_flush();
+      }
+      if( nvs_wifi.putBytes(WIFI_NVS_PASS_KEY,_pass,strlen(_pass)+1) != strlen(_pass)+1 ) {
+        log_error(F("\n[[wifiParams] ERROR while saving PASS to NVS ?!?!"));log_flush();
+      }
+      // close NVS namespace
+      nvs_wifi.end();
+    }
+    else {
+      log_error(F("\n[wifiParams] unable to create WiFi credentials namespace in NVS ?!?!"));log_flush();
+    }
+#endif /* ESP32 */
+
   }
   else {
     log_debug(F("\n[wifiParams] no WIFI credentials to save ..."));log_flush();

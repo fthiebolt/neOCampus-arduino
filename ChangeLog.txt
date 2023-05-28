@@ -6,6 +6,7 @@
 Bumps to esp32 2.0.9
 Bumps to esp8266 3.1.2
 - switch WiFi to both 802.11b AND 802.11g (DSI cut down 802.11b !!)
+- esp8266 now features a configTzTime() that unifies NTP setup for both ESPs
 - make use of NVS namespace to save WiFi crdentials (in order to avoid SPIFFS
 	partitionning issues)
 - recompiled lwip for NTP server support from DHCP answer (IDF 4.4.4)
@@ -41,7 +42,19 @@ defaults
 - setting up defaults partitionning IRAM to 32kb (defaults) in
 boards.local.txt
 
+
 === Release 220328
 - save WiFi credentials even if wrongly typed or end device has not been able
 to connect to WiFi gateway
+
+
+=== Changes before 2022
+ * F.Thiebolt   nov.21  corrected timezone definition for esp32
+ * F.Thiebolt   sep.21  added display module support (e.g oled or 7segment displays)
+ * F.Thiebolt   aug.21  added digital inputs support (e.g PIR sensor)
+ *                      added support for shared JSON document for data exchange
+ *                      between modules
+ * F.Thiebolt   aug.20  initial port from neOSensor based on ESP8266
+ *                      added esp32 adc calibration support
+ *                      setupNTP called AFTER network setup
 

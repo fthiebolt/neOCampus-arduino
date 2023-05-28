@@ -22,19 +22,8 @@
  *
  * ---
  * TODO:
- * - esp8266 now features a configTzTime() in newer API
  * - loadSensoConfig --> avoid data duplication, implement an iterator
  * - remove DISABLE_SSL compilation flag
- * ---
- * ======= SEE 'ChangeLog.txt' for information about updates starting 2023 =========
- * F.Thiebolt   nov.21  corrected timezone definition for esp32
- * F.Thiebolt   sep.21  added display module support (e.g oled or 7segment displays)
- * F.Thiebolt   aug.21  added digital inputs support (e.g PIR sensor)
- *                      added support for shared JSON document for data exchange 
- *                      between modules
- * F.Thiebolt   aug.20  initial port from neOSensor based on ESP8266
- *                      added esp32 adc calibration support
- *                      setupNTP called AFTER network setup
  * ----------------------------------------------------------------------------- */
 
 

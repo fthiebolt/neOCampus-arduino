@@ -52,9 +52,9 @@
 #define CONFIG_JSON_SIZE        (JSON_OBJECT_SIZE(20))  // used to parse sensOCampus config FILE
 
 // NVS namespace for WiFi credentials
-#define SENCO_NVS_NAMESPACE     "sensOCampus"  // 15 chars max.
-#define SENSO_MQTT_LOGIN_KEY    xxxxxxx
-#define SENSO_MQTT_PASS_KEY     yyyyyy
+#define SENSO_NVS_NAMESPACE     "sensOCampus"  // 15 chars max.
+#define SENSO_MQTT_LOGIN_KEY    "mqtt_login"
+#define SENSO_MQTT_PASS_KEY     "mqtt_password"
 
 
 

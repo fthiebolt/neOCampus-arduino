@@ -2,8 +2,18 @@
 # neOCampus operation
 # (c) neOCampus / F.Thiebolt Université Toulouse3, Laboratoire IRIT
 
+
 === (upcoming) HW Release neOSensorV5.2
 - add 0805 cap for those ESP32 that miss it on EN pin
 - test DAC detect on ESP8266 (check no interference with SCD4x autodetect)
 - switch to ESP32 layout featuring unaligned pins
+- 90° rotate of C2 capacitor
+
+
+===
+=== Changes prior to 2023
+ * F.Thiebolt	jun.21	added KiCad PCB for LoRaWAN V2 (Heltec CubeCell)
+ * F.Thiebolt	apr.21	added KiCad PCB for neOSensor v5.1 (ESP32 based)
+ * F.Thiebolt	feb.21	added KiCad PCB for neOSensor v5 (ESP32 based)
+ * F.Thiebolt	dec.20	added PCB from ESP8266 version 4 (KiCad)
 

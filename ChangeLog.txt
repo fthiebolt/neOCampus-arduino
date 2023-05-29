@@ -1,18 +1,26 @@
 #
 # neOCampus operation
+# Note: 'UNPUBLISHED' means the release may have been installed on some
+#	devices BUT not set as globally available for firmware upgrades
 # (c) neOCampus / F.Thiebolt Université Toulouse3, Laboratoire IRIT
 
-=== 25 may 2023 / Feature-bspupgrade
+
+=== Release 221225 only for ESP32 | NVS WiFiCredentials backport
+Based on esp32 2.0.4 (because later releases broke the SPIFFS partitioning)
+- backport NVS namespace for WiFi credentials
+
+
+=== [UNPUBLISHED] 28 may 2023 / Feature-bspupgrade
 Bumps to esp32 2.0.9
 Bumps to esp8266 3.1.2
 - switch WiFi to both 802.11b AND 802.11g (DSI cut down 802.11b !!)
 - esp8266 now features a configTzTime() that unifies NTP setup for both ESPs
-- make use of NVS namespace to save WiFi crdentials (in order to avoid SPIFFS
+- NVS namespace to save WiFi crdentials (in order to avoid SPIFFS
 	partitionning issues)
 - recompiled lwip for NTP server support from DHCP answer (IDF 4.4.4)
 
 
-=== Release 230116 / feature-SDKupgrade
+=== [UNPUBLISHED] Release 230116 / feature-SDKupgrade
 Bumps to esp32 2.0.6
 Bumps to esp8266 3.1.0
 - force 802.11b for both ESP8266 and ESP32 --> solved our DHCP issues :D
@@ -48,13 +56,24 @@ boards.local.txt
 to connect to WiFi gateway
 
 
-=== Changes before 2022
+===
+=== Changes prior to 2022
  * F.Thiebolt   nov.21  corrected timezone definition for esp32
+ *						added support for various serial sensors like PMSx003, SDS011 and IKEA Vindriktning :D
+ *						added support for digital inputs (PIR & switches)
+ *						introduced the cooldown approach and data integration
+ *						... means that we'll only send data when they differ from the previously sent
  * F.Thiebolt   sep.21  added display module support (e.g oled or 7segment displays)
- * F.Thiebolt   aug.21  added digital inputs support (e.g PIR sensor)
+ * F.Thiebolt   aug.21  started digital inputs support (e.g PIR sensor)
  *                      added support for shared JSON document for data exchange
  *                      between modules
+ * F.Thiebolt	apr.21	added support for 3 NTP servers + NTP from DHCP to lwip
+ *						Have a look to `arduinoIDE_esp32_boards/README.md`
  * F.Thiebolt   aug.20  initial port from neOSensor based on ESP8266
  *                      added esp32 adc calibration support
  *                      setupNTP called AFTER network setup
+ * 						new definition board for neOSensor-AirQuality board
+ *						added definition board for (future) neOSensor esp32 based board\
+ *						added suppport for boards configuration via sensOCampus JSON config\
+ *						added Arduino IDE support for our various neOSensor boards
 

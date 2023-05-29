@@ -10,26 +10,6 @@ All this work was undertaken at Université Toulouse 3 / IRIT laboratory in the 
 
 ![neOSensorv5](/images/neOSensorV5.jpg)
 
-## NEWS ##
- * **[May.23]** bumps to esp8266 3.1.2; bumps to esp32 2.0.9 along with recompiled lwip (no need for esp8266)
-    allow WiFi 802.11b & 802.11g
- * **[Jan.23]** bumps to esp8266 3.1.0; bumps to esp32 2.0.6 along with recompiled lwip
-    force WiFi 802.11b
- * **[Aug.22]** bumps to esp8266 3.0.2; bumps to esp32 2.0.4 along with recompiled lwip
- * **[Nov.21]** added support for various serial sensors like PMSx003, SDS011 and IKEA Vindriktning :D
- * **[Aug.21]** added support for digital inputs (PIR & switches)
-introduced the cooldown approach and data integration
-... means that we'll only send data when they differ from the previously sent
- * **[Jun.21]** added KiCad PCB for LoRaWAN V2 (Heltec CubeCell)
- * **[Apr.21]** added support for 3 NTP servers + NTP from DHCP to lwip. Have a look to `arduinoIDE_esp32_boards/README.md`
-                added KiCad PCB for neOSensor v5.1 (ESP32 based)
- * **[Feb.21]** added KiCad PCB for neOSensor v5 (ESP32 based)
- * **[Dec.20]** added PCB from ESP8266 version 4 (KiCad)
- * **[Aug.20]** new definition board for neOSensor-AirQuality board
-added definition board for (future) neOSensor esp32 based board\
-added suppport for boards configuration via sensOCampus JSON config\
-added Arduino IDE support for our various neOSensor boards
-
 ## neOSensor boards ##
 neOSensor first boards releases were based on esp8266. Nowadays, we added support for esp32 and CubeCell devices :)
 
@@ -40,7 +20,7 @@ This board comes from CNRS LCC lab, it's a PhD work undertaken by Aymen Sendi (a
 The board features four specific sensors able to measure NO2, CO, CH20, NO2 alternate.
 
 ## Getting started ##
-First of all, you ought to install esp32, esp8266 or CubeCell support in your Arduino IDE.
+First of all, you ought to install esp32, esp8266 or CubeCell support in your Arduino IDE (IDE version <2).
 
 | Device   | Release   | Arduino Board Manager json file                                                                            |
 |----------|-----------|------------------------------------------------------------------------------------------------------------|
@@ -77,5 +57,35 @@ Once WiFi has been set, on each reboot, the neOSensor AP will get available for 
 
 **Reset whole configuration**\
 To erase all of the previously set parameters (including WiFi settings), press the RST button for 10s when powering the device.
+
+***
+
+## Create branch | development of a new feature ##
+In order to work on a new feature, best is to create a new branch that will get merged later during a *pull request*
+
+```
+git switch -C feature-xxxxx
+```
+
+For first commit:
+```
+git push --set-upstream origin feature-xxxxx
+```
+
+... then `./git-push.sh` on subsequent commits
+
+
+## Merge branch | integration of an existing feature ##
+After having successfully completed yout feature, you need to create a *pull request* to get your code integrated into the main branch:
+
+```
+git branch
+git checkout master
+git merge feature-xxxxx
+./git-push.sh
+```
+https://www.w3schools.com/git/git_branch_merge.asp?remote=github
+
+In the end, you can delete your local branch: `git branch -d feature-xxxxx`
 
 

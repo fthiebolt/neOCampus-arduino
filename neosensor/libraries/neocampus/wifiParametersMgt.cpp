@@ -4,6 +4,7 @@
  * User's high-level parameters management class.
  * Most of those parameters come from WiFiManager parameters
  *
+ * F.Thiebolt   may.23  NVS @ ESP32 to store WiFi credentials in namespace
  * Thiebolt F. Jun.18 initial release
  * 
  */
@@ -29,6 +30,13 @@
   #include <WiFi.h>
 #endif /* ESP8266 */
 
+/* NVS namespace @ EPS32 */
+#ifdef ESP32
+  #include "Preferences.h"          // NVS storage (instead of the DEPRECATED eeprom)
+#elif defined (ESP8266)
+  #warning "[esp8266] no NVS namespace available ... grab WiFi ssid/psk from last connection"
+#endif
+
 #include "neocampus.h"
 
 #include "neocampus_debug.h"
@@ -52,6 +60,11 @@ extern bool _need2reboot;
 #define WIFI_CONFIG_FILE        "/wifi.json"        // WiFi configuration file to store credentials and locales confs
 
 #define CONFIG_JSON_SIZE        (JSON_OBJECT_SIZE(20))
+
+// NVS namespace for WiFi credentials
+#define WIFI_NVS_NAMESPACE      "wifiCredentials"  // 15 chars max.
+#define WIFI_NVS_SSID_KEY       "ssid"
+#define WIFI_NVS_PASS_KEY       "pass"
 
 
 // constructor
@@ -317,6 +330,8 @@ bool wifiParametersMgt::_setopt_eraseALL( bool value ) {
 /*
  * apply DEFAULTS values
  * Note: options ought to get false as defaults
+ * [may.23] trying to read WiFi credentials from ESP32 NVS
+ * specific namesace ... or from WiFi global vars @ ESP8266
  */
 void wifiParametersMgt::_applyDefaults( void ) {
 
@@ -343,6 +358,38 @@ void wifiParametersMgt::_applyDefaults( void ) {
   _opt_eraseALL = false;
   
   /*
+   * [may.23] now trying to access wifi credentials from NVS namespace
+   */
+#ifdef ESP32
+  Preferences nvs_wifi;
+  if( nvs_wifi.begin(WIFI_NVS_NAMESPACE,true) ) {  // readonly mode
+    log_debug(F("\n[wifiParams] opened NVS WiFi credentials namespace ..."));log_flush();
+    if( nvs_wifi.isKey(WIFI_NVS_SSID_KEY) ) {
+      nvs_wifi.getBytes(WIFI_NVS_SSID_KEY, _ssid, sizeof(_ssid));
+      log_debug(F("\n\t[NVS] SSID :"));log_debug(_ssid);log_flush();
+    }
+    if( nvs_wifi.isKey(WIFI_NVS_PASS_KEY) ) {
+      nvs_wifi.getBytes(WIFI_NVS_PASS_KEY, _pass, sizeof(_pass));
+      log_debug(F("\n\t[NVS] PASS :"));log_debug(_pass);log_flush();
+    }
+    // close NVS namespace
+    nvs_wifi.end();
+  }
+#elif defined (ESP8266)
+  #warning "[ESP8266] retrieving WiFi credentials from WiFi library is experimental"
+  if( WiFi.SSID().length() ) {
+    strncpy(_ssid,WiFi.SSID().c_str(),sizeof(_ssid));
+    _ssid[sizeof(_ssid)-1]='\0';
+    log_debug(F("\n\t[NVS-like] SSID :"));log_debug(_ssid);log_flush();
+  }
+  if( WiFi.psk().length() ) {
+    strncpy(_pass,WiFi.psk().c_str(),sizeof(_pass));
+    _pass[sizeof(_pass)-1]='\0';
+    log_debug(F("\n\t[NVS-like] PASS :"));log_debug(_pass);log_flush();
+  }
+#endif
+
+  /*
    * finally structure is initialized
    */
   _initialized = true;
@@ -359,6 +406,25 @@ bool wifiParametersMgt::_saveConfig( JsonObject root ) {
   if( strlen(_ssid) ) {
     root["ssid"] = _ssid;
     root["pass"] = _pass;
+#ifdef ESP32
+    // save WiFi credentials to NVS
+    Preferences nvs_wifi;
+    if( nvs_wifi.begin(WIFI_NVS_NAMESPACE,false) ) {  // R/W mode
+      log_debug(F("\n[wifiParams] save WiFi credentials to NVS namespace '"));log_debug(WIFI_NVS_NAMESPACE);log_debug(F("' ... "));log_flush();
+
+      if( nvs_wifi.putBytes(WIFI_NVS_SSID_KEY,_ssid,strlen(_ssid)+1) != strlen(_ssid)+1 ) {
+        log_error(F("\n[wifiParams] ERROR while saving SSID to NVS ?!?!"));log_flush();
+      }
+      if( nvs_wifi.putBytes(WIFI_NVS_PASS_KEY,_pass,strlen(_pass)+1) != strlen(_pass)+1 ) {
+        log_error(F("\n[[wifiParams] ERROR while saving PASS to NVS ?!?!"));log_flush();
+      }
+      // close NVS namespace
+      nvs_wifi.end();
+    }
+    else {
+      log_error(F("\n[wifiParams] unable to create WiFi credentials namespace in NVS ?!?!"));log_flush();
+    }
+#endif /* ESP32 */
   }
   else {
     log_debug(F("\n[wifiParams] no WIFI credentials to save ..."));log_flush();
@@ -487,8 +553,32 @@ for (JsonObject::iterator it=root.begin(); it!=root.end(); ++it) {
   /*
    * check if wifi connexion parameters have been read ...
    * ... otherwise we'll extract them from struct station
+   * [may.23] special NVS backport ==> force WiFi credentials
+   * to get saved in the NVS area
    */
-  if( _wifiSet ) return true;
+  if( _wifiSet ) {
+#ifdef ESP32
+    // save WiFi credentials to NVS
+    Preferences nvs_wifi;
+    if( nvs_wifi.begin(WIFI_NVS_NAMESPACE,false) ) {  // R/W mode
+      log_debug(F("\n[wifiParams] save WiFi credentials to NVS namespace '"));log_debug(WIFI_NVS_NAMESPACE);log_debug(F("' ... "));log_flush();
+
+      if( nvs_wifi.putBytes(WIFI_NVS_SSID_KEY,_ssid,strlen(_ssid)+1) != strlen(_ssid)+1 ) {
+        log_error(F("\n[wifiParams] ERROR while saving SSID to NVS ?!?!"));log_flush();
+      }
+      if( nvs_wifi.putBytes(WIFI_NVS_PASS_KEY,_pass,strlen(_pass)+1) != strlen(_pass)+1 ) {
+        log_error(F("\n[[wifiParams] ERROR while saving PASS to NVS ?!?!"));log_flush();
+      }
+      // close NVS namespace
+      nvs_wifi.end();
+    }
+    else {
+      log_error(F("\n[wifiParams] unable to create WiFi credentials namespace in NVS ?!?!"));log_flush();
+    }
+#endif /* ESP32 */
+
+    return true;
+  }
   
   // grab WiFi from previous settings (Wifi global var)
   setWIFIsettings();

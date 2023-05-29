@@ -5,12 +5,12 @@
 # (c) neOCampus / F.Thiebolt Université Toulouse3, Laboratoire IRIT
 
 
-=== Release 221225 only for ESP32 | NVS WiFiCredentials backport
-Based on esp32 2.0.4 (because later releases broke the SPIFFS partitioning)
+=== Release 221225 / feature-NVSbackport (ESP32 NVS WiFiCredentials backport)
+Based on Release 220815 / esp32 2.0.4 (because later releases broke the SPIFFS partitioning)
 - backport NVS namespace for WiFi credentials
 
 
-=== [UNPUBLISHED] 28 may 2023 / Feature-bspupgrade
+=== [UNPUBLISHED] Release 230528
 Bumps to esp32 2.0.9
 Bumps to esp8266 3.1.2
 - switch WiFi to both 802.11b AND 802.11g (DSI cut down 802.11b !!)

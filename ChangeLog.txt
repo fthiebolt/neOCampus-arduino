@@ -5,7 +5,8 @@
 # (c) neOCampus / F.Thiebolt Université Toulouse3, Laboratoire IRIT
 
 
-=== Release 221225 / feature-NVSbackport (ESP32 NVS WiFiCredentials backport)
+=== Release 221225 / backport-NVSnamespace
+Note: temporary release only intended to neOSensors with FW <= 220815
 Based on Release 220815 / esp32 2.0.4 (because later releases broke the SPIFFS partitioning)
 - backport NVS namespace for WiFi credentials
 

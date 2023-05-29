@@ -10,10 +10,11 @@
  * ---
  * Notes:
  * ---
- * F.Thiebolt  aug.20   removed EEPROM support
+ * F.Thiebolt   may.23  add NVS support to save sensOCampus given credentials
+ * F.Thiebolt   aug.20  removed EEPROM support
  *                      added SPIFFS support to load/save config file
- * Thiebolt F. Nov.19   migrate to Arduino Json 6
- * Thiebolt F. July 17
+ * Thiebolt F.  Nov.19  migrate to Arduino Json 6
+ * Thiebolt F.  July 17
  * 
  */
 
@@ -27,6 +28,14 @@
   #include "SPIFFS.h"
 #endif
 
+/* NVS namespace @ EPS32 */
+#ifdef ESP32
+  #include "Preferences.h"          // NVS storage (instead of the DEPRECATED eeprom)
+#elif defined (ESP8266)
+  #warning "[esp8266] no NVS namespace available ... grab WiFi ssid/psk from last connection"
+#endif
+
+/* neOCampus related includes */
 #include "sensocampus.h"
 
 #include "neocampus_utils.h"
@@ -42,6 +51,10 @@
                                                         // note that config of various modules is NOT saved
 #define CONFIG_JSON_SIZE        (JSON_OBJECT_SIZE(20))  // used to parse sensOCampus config FILE
 
+// NVS namespace for WiFi credentials
+#define SENCO_NVS_NAMESPACE     "sensOCampus"  // 15 chars max.
+#define SENSO_MQTT_LOGIN_KEY    xxxxxxx
+#define SENSO_MQTT_PASS_KEY     yyyyyy
 
 
 

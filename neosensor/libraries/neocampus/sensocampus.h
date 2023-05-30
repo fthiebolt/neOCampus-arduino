@@ -75,11 +75,11 @@ private:
      */
     void _applyDefaults( void );
     bool _parseCredentials( char * );
-    bool _parseConfig( const char * );    // VERY IMPORTANT 'const' as it force ArduinoJson to create a copy
-    bool _loadConfig( JsonObject );       // interprets JSON buffer from config file
-    bool _saveConfig( JsonObject );       // fill JSON buffer with things to save to config file
-    bool _NVSgetLogin( & );               // [NVS] retrieve sensOCampus mqtt_login from NonVolatileStorage
-    bool _NVSgetPasswd( & );              // [NVS] retrieve sensOCampus mqtt_passwd from NonVolatileStorage
+    bool _parseConfig( const char * );        // VERY IMPORTANT 'const' as it force ArduinoJson to create a copy
+    bool _loadConfig( JsonObject );           // interprets JSON buffer from config file
+    bool _saveConfig( JsonObject );           // fill JSON buffer with things to save to config file
+    bool _getNVScredentials( const char * );  // [NVS] retrieve sensOCampus mqtt login/passwd from Non Volatile Storage
+                                              // if they match the (JSON mqtt_login) parameter
 
     /*
      * private attributes

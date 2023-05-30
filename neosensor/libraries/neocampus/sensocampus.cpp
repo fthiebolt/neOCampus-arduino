@@ -9,6 +9,7 @@
  *  duplication in 'loadSensoConfig()
  * ---
  * Notes:
+ * - BASE_TOPIC is not taken from http credentials but from 1st topic of config !
  * ---
  * F.Thiebolt   may.23  add NVS support to save sensOCampus given credentials
  * F.Thiebolt   aug.20  removed EEPROM support
@@ -367,6 +368,33 @@ bool senso::_saveConfig( JsonObject root ) {
     /*
      * add additional parameters to save here
      */
+
+
+    /*
+     * NVS: saving mqtt credentials
+     */
+#ifdef ESP32
+    // save SENSO MQTT credentials to NVS
+    Preferences _nvs;
+
+    if( _nvs.begin(SENSO_NVS_NAMESPACE,false) ) {  // R/W mode
+
+      if( _nvs.putBytes(SENSO_MQTT_LOGIN_KEY,_mqtt_login,strlen(_mqtt_login)+1) != strlen(_mqtt_login)+1 ) {
+        log_error(F("\n[senso] ERROR while saving MQTT_LOGIN to NVS ?!?!"));log_flush();
+      }
+      if( _nvs.putBytes(SENSO_MQTT_PASS_KEY,_mqtt_passwd,strlen(_mqtt_passwd)+1) != strlen(_mqtt_passwd)+1 ) {
+        log_error(F("\n[senso] ERROR while saving MQTT_PASSWD to NVS ?!?!"));log_flush();
+      }
+      // close NVS namespace
+      _nvs.end();
+      log_debug(F("\n[senso] successfully saved MQTT credentials to NVS namespace '"));log_debug(SENSO_NVS_NAMESPACE);log_debug(F("' ... "));log_flush();
+    }
+    else {
+      log_error(F("\n[senso] unable to save sensOCampus MQTT credentials in NVS ?!?!"));log_flush();
+    }
+
+#endif /* ESP32 */
+
   }
   else {
     log_debug(F("\n[senso] no change in options to save ..."));log_flush();
@@ -541,9 +569,14 @@ bool senso::_parseCredentials( char *json ) {
     // no password provided but login matches ours ==> we also have the right password :)
     log_info(F("\n[senso] found SAME 'login' = "));log_info(_mqtt_login); log_flush();
   }
-  // no password provided and login does not match ... but will it match login from NVS ?
-  else if( ) {
-    to be continued
+  /* so far, no password provided and login does not match
+   * trying to get credentials from NVS ... if it matches JSON login
+   */
+  else if( _getNVScredentials( (const char *)(root[F("login")]) ) ) {
+    // ok, JSON['login']==NVS['login'] ==> NVS has valid credentials :)
+    // ... probably cause SPIFFS SENSO file has been deleted by new SPIFFS format
+    log_info(F("\n[senso] found NVS'login' = "));log_info(_mqtt_login); log_flush();
+    log_info(F("\n[senso] found NVS'password' = "));log_info(_mqtt_passwd); log_flush();    
     _updated = true;  // to save config
   }
   else {
@@ -604,6 +637,62 @@ bool senso::_parseConfig( const char *json ) {
    */
 
   return true;
+}
+
+
+/*
+ * [NVS] retrieve sensOCampus mqtt login/passwd from Non Volatile Storage
+ * if NVS_login matches the jsonLogin parameter, mqtt credentials will get
+ * copied to senso object + return true; return false otherwise
+ * Note: only for ESP32
+ */
+bool senso::_getNVScredentials( const char * jsonMQTTlogin ) {
+#ifndef ESP32
+  log_info(F("\n[senso] sensOCampus NVS credentials not available on this system ..."));log_flush();
+  return false;
+#else
+  // ESP32
+  Preferences _nvs;
+  
+  // open NVS sensOCampus namespace
+  if( not _nvs.begin(SENSO_NVS_NAMESPACE,true) ) {  // readonly mode
+    log_debug(F("\n[senso] NVS sensOCampus namespace does not exists ..."));log_flush();
+    return false;
+  }
+
+  // ok, NVS sensOCampus namespace exists ...
+  log_debug(F("\n[senso] opened NVS sensOCampus credentials namespace ..."));log_flush();
+
+  // check if NVS mqtt_login exists 
+  if( not _nvs.isKey(SENSO_MQTT_LOGIN_KEY) ) {
+    _nvs.end();
+    return false;
+  }
+
+  // ok NVS mqtt_login exists ... but does it matches the parameter
+  char _nvs_mqtt_login[SENSO_MQTT_LOGIN_LENGTH];
+  _nvs.getBytes(SENSO_MQTT_LOGIN_KEY, _nvs_mqtt_login, sizeof(_nvs_mqtt_login));
+  _nvs_mqtt_login[sizeof(_nvs_mqtt_login)-1]='\0';  // just to get sure ...
+  if( strncmp(_nvs_mqtt_login,jsonMQTTlogin,sizeof(_nvs_mqtt_login)) !=0 ) {
+    // NVS mqtt_login does not matches JsonMQTTlogin !
+    log_debug(F("\n[senso] NVS mqtt_login does NOT matches the one provided by sensOCampus ..."));log_flush();
+    _nvs.end();
+    return false;
+  }
+
+  // excellent, NVS mqtt_login == JsonMQTTlogin ... check passwd exists
+  if( not _nvs.isKey(SENSO_MQTT_PASS_KEY) ) {
+    log_error(F("\n[senso] NVS mqtt_password does not exists while NVS mqtt_login exists ?!?!"));log_flush();
+    _nvs.end();
+    return false;
+  }
+  // now set credentials from NVS
+  strncpy(_mqtt_login,_nvs_mqtt_login,sizeof(_mqtt_login));
+  _nvs.getBytes(SENSO_MQTT_PASS_KEY, _mqtt_passwd, sizeof(_mqtt_passwd));
+
+  _nvs.end();
+  return true;
+#endif /* ESP32 */  
 }
 
 

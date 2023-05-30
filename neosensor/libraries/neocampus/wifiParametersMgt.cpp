@@ -364,19 +364,19 @@ void wifiParametersMgt::_applyDefaults( void ) {
    * [may.23] now trying to access wifi credentials from NVS namespace
    */
 #ifdef ESP32
-  Preferences nvs_wifi;
-  if( nvs_wifi.begin(WIFI_NVS_NAMESPACE,true) ) {  // readonly mode
+  Preferences _nvs;
+  if( _nvs.begin(WIFI_NVS_NAMESPACE,true) ) {  // readonly mode
     log_debug(F("\n[wifiParams] opened NVS WiFi credentials namespace ..."));log_flush();
-    if( nvs_wifi.isKey(WIFI_NVS_SSID_KEY) ) {
-      nvs_wifi.getBytes(WIFI_NVS_SSID_KEY, _ssid, sizeof(_ssid));
+    if( _nvs.isKey(WIFI_NVS_SSID_KEY) ) {
+      _nvs.getBytes(WIFI_NVS_SSID_KEY, _ssid, sizeof(_ssid));
       log_debug(F("\n\t[NVS] SSID :"));log_debug(_ssid);log_flush();
     }
-    if( nvs_wifi.isKey(WIFI_NVS_PASS_KEY) ) {
-      nvs_wifi.getBytes(WIFI_NVS_PASS_KEY, _pass, sizeof(_pass));
+    if( _nvs.isKey(WIFI_NVS_PASS_KEY) ) {
+      _nvs.getBytes(WIFI_NVS_PASS_KEY, _pass, sizeof(_pass));
       log_debug(F("\n\t[NVS] PASS :"));log_debug(_pass);log_flush();
     }
     // close NVS namespace
-    nvs_wifi.end();
+    _nvs.end();
   }
 #elif defined (ESP8266)
   #warning "[ESP8266] retrieving WiFi credentials from WiFi library is experimental"
@@ -414,18 +414,18 @@ bool wifiParametersMgt::_saveConfig( JsonObject root ) {
     root["pass"] = _pass;
 #ifdef ESP32
     // save WiFi credentials to NVS
-    Preferences nvs_wifi;
-    if( nvs_wifi.begin(WIFI_NVS_NAMESPACE,false) ) {  // R/W mode
+    Preferences _nvs;
+    if( _nvs.begin(WIFI_NVS_NAMESPACE,false) ) {  // R/W mode
       log_debug(F("\n[wifiParams] save WiFi credentials to NVS namespace '"));log_debug(WIFI_NVS_NAMESPACE);log_debug(F("' ... "));log_flush();
 
-      if( nvs_wifi.putBytes(WIFI_NVS_SSID_KEY,_ssid,strlen(_ssid)+1) != strlen(_ssid)+1 ) {
+      if( _nvs.putBytes(WIFI_NVS_SSID_KEY,_ssid,strlen(_ssid)+1) != strlen(_ssid)+1 ) {
         log_error(F("\n[wifiParams] ERROR while saving SSID to NVS ?!?!"));log_flush();
       }
-      if( nvs_wifi.putBytes(WIFI_NVS_PASS_KEY,_pass,strlen(_pass)+1) != strlen(_pass)+1 ) {
-        log_error(F("\n[[wifiParams] ERROR while saving PASS to NVS ?!?!"));log_flush();
+      if( _nvs.putBytes(WIFI_NVS_PASS_KEY,_pass,strlen(_pass)+1) != strlen(_pass)+1 ) {
+        log_error(F("\n[wifiParams] ERROR while saving PASS to NVS ?!?!"));log_flush();
       }
       // close NVS namespace
-      nvs_wifi.end();
+      _nvs.end();
     }
     else {
       log_error(F("\n[wifiParams] unable to create WiFi credentials namespace in NVS ?!?!"));log_flush();

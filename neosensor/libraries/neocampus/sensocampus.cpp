@@ -51,10 +51,13 @@
                                                         // note that config of various modules is NOT saved
 #define CONFIG_JSON_SIZE        (JSON_OBJECT_SIZE(20))  // used to parse sensOCampus config FILE
 
-// NVS namespace for WiFi credentials
+/* --- NVS namespace for WiFi credentials
+ * Note: MQTT_PASSWD sent once by sensOCampus, others
+ * parameters always sent ==> save MQTT_PASSWD in NVS (and file)
+ */
 #define SENSO_NVS_NAMESPACE     "sensOCampus"  // 15 chars max.
 #define SENSO_MQTT_LOGIN_KEY    "mqtt_login"
-#define SENSO_MQTT_PASS_KEY     "mqtt_password"
+#define SENSO_MQTT_PASS_KEY     "mqtt_passwd"
 
 
 
@@ -533,6 +536,12 @@ bool senso::_parseCredentials( char *json ) {
     log_info(F("\n[senso] found 'password' = "));log_info(_mqtt_passwd); log_flush();
     _updated = true;
   }
+  else {
+    // no password provided
+
+
+si NVS ==> _updated = true to force saving file + save senso credentials to NVS
+
   // no password provided --> does login match ?
   else if( strncmp(_mqtt_login,(const char *)(root[F("login")]),sizeof(_mqtt_login))!=0 ) {
     // mqtt_login does not match and no password provided ... you're dead!
@@ -540,7 +549,7 @@ bool senso::_parseCredentials( char *json ) {
     return false;
   }
   else {
-    // no password provided but login matches ours :)
+    // no password provided but login matches ours ==> we also have the right password :)
     log_info(F("\n[senso] found SAME 'login' = "));log_info(_mqtt_login); log_flush();
   }
 

@@ -78,12 +78,14 @@ private:
     bool _parseConfig( const char * );    // VERY IMPORTANT 'const' as it force ArduinoJson to create a copy
     bool _loadConfig( JsonObject );       // interprets JSON buffer from config file
     bool _saveConfig( JsonObject );       // fill JSON buffer with things to save to config file
+    bool _NVSgetLogin( & );               // [NVS] retrieve sensOCampus mqtt_login from NonVolatileStorage
+    bool _NVSgetPasswd( & );              // [NVS] retrieve sensOCampus mqtt_passwd from NonVolatileStorage
 
     /*
      * private attributes
      */
     bool _initialized;                    // check if structure is valid
-    bool _updated;                        // any change in current parameters ?
+    bool _updated;                        // any change in current parameters ? yes ==> save it
     bool _defaults;                       // default parameters, hence no need to save
     
     wifiParametersMgt *_wp;               // global wifiParametersMgt

@@ -536,21 +536,20 @@ bool senso::_parseCredentials( char *json ) {
     log_info(F("\n[senso] found 'password' = "));log_info(_mqtt_passwd); log_flush();
     _updated = true;
   }
-  else {
-    // no password provided
-
-
-si NVS ==> _updated = true to force saving file + save senso credentials to NVS
-
   // no password provided --> does login match ?
-  else if( strncmp(_mqtt_login,(const char *)(root[F("login")]),sizeof(_mqtt_login))!=0 ) {
+  else if( strncmp(_mqtt_login,(const char *)(root[F("login")]),sizeof(_mqtt_login))==0 ) {
+    // no password provided but login matches ours ==> we also have the right password :)
+    log_info(F("\n[senso] found SAME 'login' = "));log_info(_mqtt_login); log_flush();
+  }
+  // no password provided and login does not match ... but will it match login from NVS ?
+  else if( ) {
+    to be continued
+    _updated = true;  // to save config
+  }
+  else {
     // mqtt_login does not match and no password provided ... you're dead!
     log_error(F("\n[senso] no password provided and logins do not match ... dead :(")); log_flush();
     return false;
-  }
-  else {
-    // no password provided but login matches ours ==> we also have the right password :)
-    log_info(F("\n[senso] found SAME 'login' = "));log_info(_mqtt_login); log_flush();
   }
 
   // success :)

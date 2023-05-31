@@ -5,20 +5,21 @@
 # (c) neOCampus / F.Thiebolt Université Toulouse3, Laboratoire IRIT
 
 
-=== Release 221225 / backport-NVSnamespace
-Note: temporary release only intended to neOSensors with FW <= 220815
-Based on Release 220815 / esp32 2.0.4 (because later releases broke the SPIFFS partitioning)
-- backport NVS namespace for WiFi credentials
-
-
-=== [UNPUBLISHED] Release 230528
+=== Release 230528 / feature-NVSsensocampus
 Bumps to esp32 2.0.9
 Bumps to esp8266 3.1.2
 - switch WiFi to both 802.11b AND 802.11g (DSI cut down 802.11b !!)
 - esp8266 now features a configTzTime() that unifies NTP setup for both ESPs
-- NVS namespace to save WiFi crdentials (in order to avoid SPIFFS
+- NVS WiFinamespace to save WiFi credentials (in order to avoid SPIFFS
 	partitionning issues)
+- NVS SENSOnamespace to sensOCampus credentials (MQTT creds)
 - recompiled lwip for NTP server support from DHCP answer (IDF 4.4.4)
+
+
+=== Release 221225 / backport-NVSnamespace
+Note: temporary release only intended to neOSensors with FW <= 220815
+Based on Release 220815 / esp32 2.0.4 (because later releases broke the SPIFFS partitioning)
+- backport NVS namespace for WiFi credentials
 
 
 === [UNPUBLISHED] Release 230116 / feature-SDKupgrade

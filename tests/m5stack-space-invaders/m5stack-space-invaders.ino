@@ -11,6 +11,8 @@
 // Space Shooter with M5STACK : 2018.01.12 Transplant by macsbug
 // Controller   : Buttons A = LEFT, B = RIGHT, C = START or SHOOTING
 // Github:https://macsbug.wordpress.com/2018/01/12/esp32-spaceshooter-with-m5stack/
+// alternate:
+// https://github.com/PartsandCircuits/M5Stack-SpaceShooter
 //===================================================================
 #include <M5Stack.h>
 //============================= game variables =========================

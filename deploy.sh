@@ -2,6 +2,7 @@
 #
 # Deployment script for neOCampus / neOSensor boards
 #
+# F.Thiebolt    jul.23  upgrades esp* SDKs
 # F.Thiebolt    jan.23  upgrades esp* SDKs
 # F.Thiebolt    aug.22  upgrades esp* SDKs
 # F.Thiebolt    feb.21  added CubeCell support
@@ -12,7 +13,7 @@
 
 #
 # Global defs
-ESP32_REV=${ESP32_REV:-"2.0.9"}
+ESP32_REV=${ESP32_REV:-"2.0.11"}
 ESP8266_REV=${ESP8266_REV:-"3.1.2"}
 CUBECELL_REV=${CUBECELL_REV:-"1.3.0"}
 

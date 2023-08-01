@@ -25,7 +25,7 @@ First of all, you ought to install esp32, esp8266 or CubeCell support in your Ar
 | Device   | Release   | Arduino Board Manager json file                                                                            |
 |----------|-----------|------------------------------------------------------------------------------------------------------------|
 | esp8266  | 3.1.2     | https://arduino.esp8266.com/stable/package_esp8266com_index.json                                           |
-| esp32    | 2.0.9     | https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json                |
+| esp32    | 2.0.11    | https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json                |
 | CubeCell | *latest*  | https://github.com/HelTecAutomation/CubeCell-Arduino/releases/download/V1.3.0/package_CubeCell_index.json  |
 | stm32    | *latest*  | https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json             |
 

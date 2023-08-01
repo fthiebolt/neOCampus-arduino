@@ -4,6 +4,8 @@
 #	devices BUT not set as globally available for firmware upgrades
 # (c) neOCampus / F.Thiebolt Université Toulouse3, Laboratoire IRIT
 
+=== [jul.23] SDK upgrade ===
+Updated to latest esp32 core Arduino (i.e 2.0.11)
 
 === Release 230528 / feature-NVSsensocampus
 Bumps to esp32 2.0.9

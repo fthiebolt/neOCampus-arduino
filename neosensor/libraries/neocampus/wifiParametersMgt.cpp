@@ -561,8 +561,31 @@ for (JsonObject::iterator it=root.begin(); it!=root.end(); ++it) {
    * check if wifi connexion parameters have been read ...
    * ... otherwise we'll extract them from struct station
    */
-  if( _wifiSet ) return true;
-  
+  if( _wifiSet ) {
+
+#ifdef ESP32
+    /* [oct.23][TEMPORARY] will save credentials retrieved from JSON file to NVS
+     * Note: only usefull for devices with older firmware that did not already saved
+     *  their wifi credentials in the NVS area
+     */
+    Preferences _nvs;
+    if( _nvs.begin(WIFI_NVS_NAMESPACE,false) ) {  // readwrite mode
+      if( ! _nvs.isKey(WIFI_NVS_SSID_KEY) and ! _nvs.isKey(WIFI_NVS_PASS_KEY) ) {
+        log_debug(F("\n[wifiParams] copying SSID credentials to NVS WiFi namespace ..."));log_flush();
+        if( _nvs.putBytes(WIFI_NVS_SSID_KEY,_ssid,strlen(_ssid)+1) != strlen(_ssid)+1 ) {
+          log_error(F("\n[wifiParams] ERROR while saving SSID to NVS ?!?!"));log_flush();
+        }
+        if( _nvs.putBytes(WIFI_NVS_PASS_KEY,_pass,strlen(_pass)+1) != strlen(_pass)+1 ) {
+          log_error(F("\n[wifiParams] ERROR while saving PASS to NVS ?!?!"));log_flush();
+        }
+      }
+      // close NVS namespace
+      _nvs.end();
+    }
+#endif /* ESP32 */
+    return true;
+  }
+
   // grab WiFi from previous settings (Wifi global var)
   setWIFIsettings();
   

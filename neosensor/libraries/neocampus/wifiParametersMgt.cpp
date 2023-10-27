@@ -569,18 +569,19 @@ for (JsonObject::iterator it=root.begin(); it!=root.end(); ++it) {
      *  their wifi credentials in the NVS area
      */
     Preferences _nvs;
-    if( _nvs.begin(WIFI_NVS_NAMESPACE,false) ) {  // readwrite mode
-      if( ! _nvs.isKey(WIFI_NVS_SSID_KEY) and ! _nvs.isKey(WIFI_NVS_PASS_KEY) ) {
-        log_debug(F("\n[wifiParams] copying SSID credentials to NVS WiFi namespace ..."));log_flush();
+    if( ! _nvs.begin(WIFI_NVS_NAMESPACE,true) ) {  // read-only to check if it exists
+      log_debug(F("\n[wifiParams] copying SSID credentials to NVS WiFi namespace ..."));log_flush();
+      if( _nvs.begin(WIFI_NVS_NAMESPACE,false) ) { // open NVS WiFi credentials area in RW mode
+
         if( _nvs.putBytes(WIFI_NVS_SSID_KEY,_ssid,strlen(_ssid)+1) != strlen(_ssid)+1 ) {
           log_error(F("\n[wifiParams] ERROR while saving SSID to NVS ?!?!"));log_flush();
         }
         if( _nvs.putBytes(WIFI_NVS_PASS_KEY,_pass,strlen(_pass)+1) != strlen(_pass)+1 ) {
           log_error(F("\n[wifiParams] ERROR while saving PASS to NVS ?!?!"));log_flush();
         }
+        // close NVS namespace
+        _nvs.end();
       }
-      // close NVS namespace
-      _nvs.end();
     }
 #endif /* ESP32 */
     return true;

@@ -4,6 +4,11 @@
 #	devices BUT not set as globally available for firmware upgrades
 # (c) neOCampus / F.Thiebolt Université Toulouse3, Laboratoire IRIT
 
+
+=== Release 231027 for esp32 only (Arduino Core ESP32 2.0.11)
+Added support to save WiFi credentials retrieved from JSON file to get automatically
+  saved in NVS WiFi credentials area if this later does not already exists
+
 === [jul.23] SDK upgrade ===
 Updated to latest esp32 core Arduino (i.e 2.0.11)
 

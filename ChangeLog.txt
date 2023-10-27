@@ -5,6 +5,18 @@
 # (c) neOCampus / F.Thiebolt Université Toulouse3, Laboratoire IRIT
 
 
+=== Upcoming release / feature-calibration
+The main goal is to maje use of a BLE enabled ambiant sensor and to get at latest
+  two different measures points to compute the y= Ax + B parameters to achieve
+  correction of non calibrated sensors.
+Bumps to esp32 2.0.14
+Kept esp8266 3.1.2
+- added status mode with additional functionnalities set @boot time:
+	press CLR 5s --> format SPIFFS (standard behaviour)
+	press CLR,SW+ for 5s --> format SPIFFS and CLEAR NVS namespaces
+	press SW+,SW- for 5s --> enter calibration mode
+- to be continued
+
 === Release 231027 for esp32 only (Arduino Core ESP32 2.0.11)
 Added support to save WiFi credentials retrieved from JSON file to get automatically
   saved in NVS WiFi credentials area if this later does not already exists

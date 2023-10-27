@@ -1,5 +1,0 @@
-# TFTTerminal
-
-## License
-
-[MIT](LICENSE)

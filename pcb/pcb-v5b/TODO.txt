@@ -1,0 +1,5 @@
+=== neOSensor PCB V5.2 ===
+TODO list:
+  * instead of OLED and IRsensor labels, you may add VCC/GND/SCL/SDA labels on silk screen
+  * add 470 ohm in line with IR pin @ esp32
+  * add ATECC508A crypt eeprom

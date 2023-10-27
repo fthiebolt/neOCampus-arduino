@@ -164,6 +164,7 @@
 #endif
 typedef enum {
   WIFI,
+  CALIBRATE,
   DISABLE
 } enum_ledmode_t;
 

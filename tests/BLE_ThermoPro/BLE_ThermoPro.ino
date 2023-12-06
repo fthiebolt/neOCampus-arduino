@@ -1,6 +1,7 @@
 /*******************************/
 /*********** INCLUDES***********/
 /*******************************/
+#include <M5StickCPlus.h>
 #include <Arduino.h>
 #include <BLEDevice.h>
 #include <BLEUtils.h>
@@ -13,7 +14,7 @@
 
 #define SCAN_TIME 5                   // scan period in second
 bool BLEScanActivated = false;
-
+#define ENDIAN_CHANGE_U16(x) ((((x)&0xFF00) >> 8) + (((x)&0xFF) << 8))
 /*****************************/
 /********* FONCTIONS *********/
 /*****************************/
@@ -45,14 +46,18 @@ class Advertised : public BLEAdvertisedDeviceCallbacks {
       
     // ***** getTemperature *****
     float getTemperature(BLEAdvertisedDevice device) {
-      uint8_t *pTemp = (uint8_t *)&device.getManufacturerData().c_str()[1];
-      return ((float)*pTemp) /10;
+      
+      uint8_t temp_lb = (uint8_t) device.getManufacturerData().c_str()[1]; // temperature lower byte 
+      uint8_t temp_hb = (uint8_t)(device.getManufacturerData().c_str()[2]); // temperature higher byte 
+      int16_t temperature = (int16_t)((uint16_t)(temp_hb)<<8) + (uint16_t)temp_lb;
+      return ((float)(temperature)/10);
+      
+      return ((float)(temperature));
     }
 
         // ***** getHumidity *****
     uint8_t getHumidity(BLEAdvertisedDevice device) {
-      const uint8_t *pHum = (const uint8_t *)&device.getManufacturerData()
-                                      .c_str()[3];
+      const uint8_t *pHum = (const uint8_t *)&device.getManufacturerData().c_str()[3];
       return *pHum;
     }
    };
@@ -60,7 +65,7 @@ class Advertised : public BLEAdvertisedDeviceCallbacks {
 void setup() {
   //init serial port
   setupSerial();
-
+  M5.begin();
   //init BLE
   BLEDevice::init("");
   Serial.printf("Starting \n");

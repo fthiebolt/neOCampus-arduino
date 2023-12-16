@@ -17,12 +17,23 @@ Kept esp8266 3.1.2
 	press SW+,SW- for 5s --> enter calibration mode
 - to be continued
 
+=== Release 231216 for esp32 only (Arduino Core ESP32 2.0.14) /
+feature-calibration
+Note: the calibration itself is not yet available (upcoming release)
+Bumps to esp32 2.0.14
+Kept esp8266 3.1.2
+- set support for ONYL ONE NTP server (we do not manage anymore the three NTP
+servers support)
+
+
 === Release 231027 for esp32 only (Arduino Core ESP32 2.0.11)
 Added support to save WiFi credentials retrieved from JSON file to get automatically
   saved in NVS WiFi credentials area if this later does not already exists
 
+
 === [jul.23] SDK upgrade ===
 Updated to latest esp32 core Arduino (i.e 2.0.11)
+
 
 === Release 230528 / feature-NVSsensocampus
 Bumps to esp32 2.0.9

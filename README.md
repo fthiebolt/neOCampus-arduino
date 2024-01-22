@@ -1,5 +1,8 @@
 # neOCampus-arduino | home of the neOSensor end-devices #
 ________________________________________________________________
+# WE MOVED #
+# to https://gitlab.irit.fr/gis-neocampus/neosensor/neOCampus-arduino #
+________________________________________________________________
 
 This repository provides support for the following neOCampus boards:
   * neOSensor boards based on ESP32
